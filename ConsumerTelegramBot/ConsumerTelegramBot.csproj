@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TwitterProducer\TwitterProducer.csproj" />
+    <ProjectReference Include="..\TwitterProvider\TwitterProvider.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ProducerApi
 {
-    public interface IProducer
+    public interface IUpdatesProvider
     {
         Task<IEnumerable<IUpdate>> GetUpdates(long authorId);
     }

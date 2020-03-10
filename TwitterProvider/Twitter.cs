@@ -12,7 +12,7 @@ using Tweetinvi.Models;
 
 namespace TwitterProducer
 {
-    public class Twitter : IProducer
+    public class Twitter : IUpdatesProvider
     {
         private readonly TwitterExecuter _executer;
 

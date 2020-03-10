@@ -10,7 +10,7 @@ namespace ConsumerTelegramBot
     {
         private readonly IUpdatesValidator _validator;
         private readonly TimeSpan _interval;
-        private readonly IProducer _producer;
+        private readonly IUpdatesProvider _provider;
         private readonly IEnumerable<long> _watchedUsersIds;
         private readonly Subject<IUpdate> _updates;
 
@@ -19,12 +19,12 @@ namespace ConsumerTelegramBot
         public UsersWatcher(
             IUpdatesValidator validator,
             TimeSpan interval,
-            IProducer producer,
+            IUpdatesProvider provider,
             IEnumerable<long> watchedUsersIds)
         {
             _validator = validator;
             _interval = interval;
-            _producer = producer;
+            _provider = provider;
             _watchedUsersIds = watchedUsersIds;
             _updates = new Subject<IUpdate>();
 
@@ -47,7 +47,7 @@ namespace ConsumerTelegramBot
         {
             foreach (long authorId in _watchedUsersIds)
             {
-                IEnumerable<IUpdate> updates = await _producer.GetUpdates(authorId);
+                IEnumerable<IUpdate> updates = await _provider.GetUpdates(authorId);
 
                 foreach (IUpdate update in updates)
                 {

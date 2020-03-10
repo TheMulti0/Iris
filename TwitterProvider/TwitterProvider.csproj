@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>TwitterProducer</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ProducerApi\ProducerApi.csproj" />
+      <ProjectReference Include="..\UpdatesApi\UpdatesApi.csproj" />
     </ItemGroup>
 
 </Project>

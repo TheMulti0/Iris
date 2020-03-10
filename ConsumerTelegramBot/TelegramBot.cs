@@ -37,7 +37,7 @@ namespace ConsumerTelegramBot
 
         private void RegisterProducers()
         {
-            foreach ((IProducer producer, long[] watchedUsersIds) in GetProducers())
+            foreach ((IUpdatesProvider producer, long[] watchedUsersIds) in GetProducers())
             {
                 var usersWatcher = new UsersWatcher(
                     _validator,
@@ -63,7 +63,7 @@ namespace ConsumerTelegramBot
             }
         }
 
-        private IEnumerable<(IProducer, long[])> GetProducers()
+        private IEnumerable<(IUpdatesProvider, long[])> GetProducers()
         {
             TwitterConfig twitterConfig = _config.TwitterConfig;
 
