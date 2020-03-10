@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ConsumerTelegramBot.Configuration
 {
-    internal class MediaForwarderConfig
+    internal class ConsumerTelegramBotConfig
     {
         public long[] PostChannelIds { get; set; }
 
