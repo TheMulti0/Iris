@@ -21,6 +21,8 @@
 x64/
 x86/
 [Aa][Rr][Mm]/
+ConsumerTelegramBot/appsettings.json
+
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/

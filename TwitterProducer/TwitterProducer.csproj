@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
+      <PackageReference Include="System.Reactive" Version="4.3.2" />
+      <PackageReference Include="TweetinviAPI" Version="4.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ProducerApi\ProducerApi.csproj" />
+    </ItemGroup>
+
+</Project>
