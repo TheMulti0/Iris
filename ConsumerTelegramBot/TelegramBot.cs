@@ -33,9 +33,17 @@ namespace ConsumerTelegramBot
 
         private void RegisterProducers()
         {
-            foreach (IProducer producer in GetProducers())
+            foreach ((IProducer producer, long[] watchedUsersIds) in GetProducers())
             {
-                producer.Updates.Subscribe(OnProducerUpdate);
+                var usersWatcher = new UsersWatcher(
+                    TimeSpan.FromSeconds(_config.TwitterConfig.PollIntervalSeconds),
+                    producer,
+                    watchedUsersIds);
+                
+                usersWatcher
+                    .Updates
+                    .Subscribe(OnProducerUpdate);
+                
                 _logger.LogInformation($"Subscribed to updates of the producer `{producer.GetType().Name}`");
             }
         }
@@ -50,20 +58,20 @@ namespace ConsumerTelegramBot
             }
         }
 
-        private IEnumerable<IProducer> GetProducers()
+        private IEnumerable<(IProducer, long[])> GetProducers()
         {
             TwitterConfig twitterConfig = _config.TwitterConfig;
 
-            return new[]
-            {
+            yield return
+            (
                 new Twitter(
-                    twitterConfig.WatchedUsersIds,
-                    TimeSpan.FromSeconds(twitterConfig.PollIntervalSeconds),
                     twitterConfig.ConsumerKey,
                     twitterConfig.ConsumerSecret,
                     twitterConfig.AccessToken,
-                    twitterConfig.AccessTokenSecret)
-            };
+                    twitterConfig.AccessTokenSecret
+                ),
+                    twitterConfig.WatchedUsersIds
+            );
         }
     }
 }

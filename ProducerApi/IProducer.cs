@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProducerApi
 {
     public interface IProducer
     {
-        IObservable<IUpdate> Updates { get; }
+        Task<IEnumerable<IUpdate>> GetUpdates(long authorId);
     }
 }
