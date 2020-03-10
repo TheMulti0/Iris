@@ -5,7 +5,7 @@ namespace ConsumerTelegramBot.Configuration
 {
     internal class ConsumerTelegramBotConfig
     {
-        public long[] PostChannelIds { get; set; }
+        public long[] PostChatIds { get; set; }
 
         public string Token { get; set; }
         
