@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ConsumerTelegramBot
 {
-    internal class TelegramBotApplication
+    internal static class TelegramBotApplication
     {
         private static async Task Main(string[] args)
         {
@@ -16,7 +16,10 @@ namespace ConsumerTelegramBot
 
             ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
             
-            var telegramBot = new TelegramBot(config, factory.CreateLogger<TelegramBot>());
+            var telegramBot = new TelegramBot(
+                config,
+                factory.CreateLogger<TelegramBot>(),
+                new UpdatesValidator());
 
             await Task.Delay(-1);
         }

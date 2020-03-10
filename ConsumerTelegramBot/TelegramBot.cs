@@ -17,7 +17,8 @@ namespace ConsumerTelegramBot
 
         public TelegramBot(
             ConsumerTelegramBotConfig config,
-            ILogger<TelegramBot> logger)
+            ILogger<TelegramBot> logger,
+            IUpdatesValidator validator)
         {
             _config = config;
             _logger = logger;
@@ -25,7 +26,7 @@ namespace ConsumerTelegramBot
             _client = new TelegramBotClient(config.Token);
             _client.StartReceiving();
             
-            _validator = new UpdatesValidator();
+            _validator = validator;
             
             _logger.LogInformation("Starting to receive Telegram events");
 
@@ -54,11 +55,11 @@ namespace ConsumerTelegramBot
 
         private async void OnProducerUpdate(IUpdate update)
         {
-            _logger.LogInformation($"Caught new update #{update.Id} by {update.Author.Name}");
+            _logger.LogInformation($"Caught new update: Id: {update.Id, -15} | Author: {update.Author.Name}");
             foreach (long chatId in _config.PostChatIds)
             {
                 await _client.SendTextMessageAsync(chatId, update.Url);
-                _logger.LogInformation($"Posted update #{update.Id} to chat {chatId}");
+                _logger.LogInformation($"Posted new update: Id: {update.Id, -15} | ChatId: {update.Author.Name}");
             }
         }
 
