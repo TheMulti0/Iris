@@ -3,11 +3,9 @@ using System.Threading.Tasks;
 
 namespace ConsumerTelegramBot.Configuration
 {
-    internal class ConsumerTelegramBotConfig
+    internal class ApplicationConfig
     {
-        public long[] PostChatIds { get; set; }
-
-        public string Token { get; set; }
+        public TelegramBotConfig TelegramBotConfig { get; set; }
         
         public TwitterConfig TwitterConfig { get; set; }
     }

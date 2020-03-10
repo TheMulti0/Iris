@@ -10,20 +10,20 @@ namespace ConsumerTelegramBot
 {
     internal class TelegramBot
     {
-        private readonly ConsumerTelegramBotConfig _config;
+        private readonly ApplicationConfig _config;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ITelegramBotClient _client;
         private readonly IUpdatesValidator _validator;
 
         public TelegramBot(
-            ConsumerTelegramBotConfig config,
+            ApplicationConfig config,
             ILogger<TelegramBot> logger,
             IUpdatesValidator validator)
         {
             _config = config;
             _logger = logger;
 
-            _client = new TelegramBotClient(config.Token);
+            _client = new TelegramBotClient(config.TelegramBotConfig.Token);
             _client.StartReceiving();
             
             _validator = validator;
@@ -56,7 +56,7 @@ namespace ConsumerTelegramBot
         private async void OnProducerUpdate(IUpdate update)
         {
             _logger.LogInformation($"Caught new update: Id: {update.Id, -15} | Author: {update.Author.Name}");
-            foreach (long chatId in _config.PostChatIds)
+            foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
             {
                 await _client.SendTextMessageAsync(chatId, update.Url);
                 _logger.LogInformation($"Posted new update: Id: {update.Id, -15} | ChatId: {update.Author.Name}");

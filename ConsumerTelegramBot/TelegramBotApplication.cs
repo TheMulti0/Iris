@@ -11,7 +11,7 @@ namespace ConsumerTelegramBot
         private static async Task Main(string[] args)
         {
             var config = await JsonSerializer
-                .DeserializeAsync<ConsumerTelegramBotConfig>(
+                .DeserializeAsync<ApplicationConfig>(
                     new FileStream("../../../appsettings.json", FileMode.Open));
 
             ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
