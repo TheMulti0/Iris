@@ -8,6 +8,7 @@ namespace ConsumerTelegramBot
 {
     internal class UsersWatcher : IUsersWatcher
     {
+        private readonly IUpdatesValidator _validator;
         private readonly TimeSpan _interval;
         private readonly IProducer _producer;
         private readonly IEnumerable<long> _watchedUsersIds;
@@ -16,10 +17,12 @@ namespace ConsumerTelegramBot
         public IObservable<IUpdate> Updates => _updates;
 
         public UsersWatcher(
+            IUpdatesValidator validator,
             TimeSpan interval,
             IProducer producer,
             IEnumerable<long> watchedUsersIds)
         {
+            _validator = validator;
             _interval = interval;
             _producer = producer;
             _watchedUsersIds = watchedUsersIds;
@@ -42,13 +45,21 @@ namespace ConsumerTelegramBot
 
         private async Task Watch()
         {
-            foreach (long userId in _watchedUsersIds)
+            foreach (long authorId in _watchedUsersIds)
             {
-                IEnumerable<IUpdate> updates = await _producer.GetUpdates(userId);
+                IEnumerable<IUpdate> updates = await _producer.GetUpdates(authorId);
 
                 foreach (IUpdate update in updates)
                 {
+                    long updateId = update.Id;
+                    
+                    if (_validator.WasUpdateSent(updateId, authorId))
+                    {
+                        continue;
+                    }
+                    
                     _updates.OnNext(update);
+                    _validator.UpdateSent(updateId, authorId);
                 }
             }
         }

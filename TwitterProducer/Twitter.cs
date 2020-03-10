@@ -37,7 +37,7 @@ namespace TwitterProducer
                 .Execute(() => UserAsync.GetUserFromId(authorId));
 
             IEnumerable<ITweet> tweets = await _executer
-                .Execute(() => user.GetUserTimelineAsync());
+                .Execute(() => user.GetUserTimelineAsync(10));
 
             return tweets.Select(itweet => new Tweet(itweet));
         }

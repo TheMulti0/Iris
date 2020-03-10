@@ -13,6 +13,7 @@ namespace ConsumerTelegramBot
         private readonly ConsumerTelegramBotConfig _config;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ITelegramBotClient _client;
+        private readonly IUpdatesValidator _validator;
 
         public TelegramBot(
             ConsumerTelegramBotConfig config,
@@ -23,6 +24,8 @@ namespace ConsumerTelegramBot
 
             _client = new TelegramBotClient(config.Token);
             _client.StartReceiving();
+            
+            _validator = new UpdatesValidator();
             
             _logger.LogInformation("Starting to receive Telegram events");
 
@@ -36,6 +39,7 @@ namespace ConsumerTelegramBot
             foreach ((IProducer producer, long[] watchedUsersIds) in GetProducers())
             {
                 var usersWatcher = new UsersWatcher(
+                    _validator,
                     TimeSpan.FromSeconds(_config.TwitterConfig.PollIntervalSeconds),
                     producer,
                     watchedUsersIds);
