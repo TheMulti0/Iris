@@ -16,7 +16,7 @@ namespace Iris
                 .DeserializeAsync<ApplicationConfig>(
                     new FileStream("data/appsettings.json", FileMode.Open));
 
-            ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+            ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole().AddFile());
         
             var telegramBot = new TelegramBot(
                 config,
