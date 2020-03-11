@@ -8,6 +8,8 @@ namespace Iris.Configuration
         
         public double PollIntervalSeconds { get; set; }
 
+        public int MaxResults { get; set; } = 40;
+
         public string ConsumerKey { get; set; }
 
         public string ConsumerSecret { get; set; }

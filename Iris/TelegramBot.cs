@@ -71,12 +71,12 @@ namespace Iris
             yield return
             (
                 new Twitter(
+                    twitterConfig.MaxResults,
                     twitterConfig.ConsumerKey,
                     twitterConfig.ConsumerSecret,
                     twitterConfig.AccessToken,
-                    twitterConfig.AccessTokenSecret
-                ),
-                    twitterConfig.WatchedUsersIds
+                    twitterConfig.AccessTokenSecret),
+                twitterConfig.WatchedUsersIds
             );
         }
     }
