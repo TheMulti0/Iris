@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Iris.Config;
@@ -13,14 +14,14 @@ namespace Iris
         {
             var config = await JsonSerializer
                 .DeserializeAsync<ApplicationConfig>(
-                    new FileStream("../../../appsettings.json", FileMode.Open));
+                    new FileStream("data/appsettings.json", FileMode.Open));
 
             ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-            
+        
             var telegramBot = new TelegramBot(
                 config,
                 factory.CreateLogger<TelegramBot>(),
-                new JsonUpdateValidator("../../../savedUpdates.json"));
+                new JsonUpdateValidator("data/savedUpdates.json"));
 
             await Task.Delay(-1);
         }
