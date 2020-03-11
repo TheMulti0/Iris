@@ -16,6 +16,8 @@ namespace Updates.Twitter
         public DateTime CreatedAt { get; }
         
         public string Url { get; }
+        
+        public string FormattedMessage { get; }
 
         public Tweet(ITweet tweet)
         {
@@ -24,8 +26,9 @@ namespace Updates.Twitter
             Author = new TwitterUser(tweet.CreatedBy);
             CreatedAt = tweet.CreatedAt;
             Url = tweet.Url;
+            
+            const string tweetedAt = "צייץ ב";
+            FormattedMessage = $"{Author.DisplayName} ({Author.Name}) {tweetedAt} {CreatedAt:HH:mm} \n {Url}";
         }
-
-        public bool Equals(IUpdate other) => Id == other?.Id;
     }
 }

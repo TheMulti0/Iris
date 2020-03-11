@@ -15,6 +15,8 @@ namespace Updates.Watcher.Tests
         
         public string Url { get; }
         
+        public string FormattedMessage => Url;
+
         public MockUpdate(
             long id,
             string message,

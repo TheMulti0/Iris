@@ -13,5 +13,7 @@ namespace Updates.Api
         DateTime CreatedAt { get; }
 
         string Url { get; }
+        
+        string FormattedMessage { get; }
     }
 }

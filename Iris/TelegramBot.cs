@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
@@ -67,7 +67,9 @@ namespace Iris
             {
                 try
                 {
-                    await _client.SendTextMessageAsync(chatId, update.Url);
+                    await _client.SendTextMessageAsync(
+                        chatId,
+                        update.FormattedMessage);
 
                     _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at: {DateTime.Now}");
                 }
