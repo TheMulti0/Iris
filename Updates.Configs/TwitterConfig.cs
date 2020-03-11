@@ -1,6 +1,6 @@
 ﻿namespace Updates.Configs
 {
-    public class TwitterConfig
+    public class TwitterConfig : IProviderConfig
     {
         public long[] WatchedUsersIds { get; set; }
         

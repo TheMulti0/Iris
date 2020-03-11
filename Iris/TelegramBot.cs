@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
-using Updates.Api;
 using Telegram.Bot;
+using Updates.Api;
 using Updates.Configs;
 using Updates.Twitter;
 using Updates.Watcher;
@@ -27,53 +27,51 @@ namespace Iris
 
             _client = new TelegramBotClient(config.TelegramBotConfig.Token);
             _client.StartReceiving();
-            
+
             _validator = validator;
-            
+
             _logger.LogInformation("Starting to receive Telegram events");
 
             RegisterProducers();
-            
+
             _logger.LogInformation("Completed construction");
         }
 
         private void RegisterProducers()
         {
-            foreach ((IUpdatesProvider producer, long[] watchedUsersIds) in GetProducersAndWatchedUsers())
+            foreach ((IUpdatesProvider provider, IProviderConfig config) in GetProviders())
             {
                 var usersWatcher = new UpdatesWatcher(
-                    _validator,
-                    TimeSpan.FromSeconds(_config.TwitterConfig.PollIntervalSeconds),
-                    producer,
-                    watchedUsersIds);
-                
-                usersWatcher
-                    .Updates
+                    provider,
+                    config,
+                    _validator);
+
+                usersWatcher.Updates
                     .Subscribe(OnProducerUpdate);
-                
-                _logger.LogInformation($"Subscribed to updates of the producer `{producer.GetType().Name}`");
+
+                _logger.LogInformation($"Subscribed to updates of the producer `{provider.GetType().Name}`");
             }
         }
 
         private async void OnProducerUpdate(IUpdate update)
         {
-            _logger.LogInformation($"Caught new update: Id: {update.Id, -15} | Author: {update.Author.Name}");
+            _logger.LogInformation($"Caught new update: Id: {update.Id,-15} | Author: {update.Author.Name}");
             foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
             {
                 await _client.SendTextMessageAsync(chatId, update.Url);
-                _logger.LogInformation($"Posted new update: Id: {update.Id, -15} | ChatId: {update.Author.Name}");
+                _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name}");
             }
         }
 
-        private IEnumerable<(IUpdatesProvider, long[])> GetProducersAndWatchedUsers()
+        private Dictionary<IUpdatesProvider, IProviderConfig> GetProviders()
         {
-            TwitterConfig twitterConfig = _config.TwitterConfig;
-
-            yield return
-            (
-                new Twitter(twitterConfig),
-                twitterConfig.WatchedUsersIds
-            );
+            return new Dictionary<IUpdatesProvider, IProviderConfig>
+            {
+                {
+                    new Twitter(_config.TwitterConfig), 
+                    _config.TwitterConfig
+                }
+            };
         }
     }
 }

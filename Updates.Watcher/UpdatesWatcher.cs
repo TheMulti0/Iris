@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Updates.Api;
+using Updates.Configs;
 
 namespace Updates.Watcher
 {
@@ -17,16 +18,18 @@ namespace Updates.Watcher
         public IObservable<IUpdate> Updates => _updates;
 
         public UpdatesWatcher(
-            IUpdatesValidator validator,
-            TimeSpan interval,
             IUpdatesProvider provider,
-            IEnumerable<long> watchedUsersIds)
+            IProviderConfig config,
+            IUpdatesValidator validator)
         {
-            _validator = validator;
-            _interval = interval;
-            _provider = provider;
-            _watchedUsersIds = watchedUsersIds;
             _updates = new Subject<IUpdate>();
+
+            _provider = provider;
+
+            _watchedUsersIds = config.WatchedUsersIds;
+            _interval = TimeSpan.FromSeconds(config.PollIntervalSeconds);
+            
+            _validator = validator;
 
             Task.Run(RepeatWatch);
         }
