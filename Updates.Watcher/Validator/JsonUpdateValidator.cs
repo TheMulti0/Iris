@@ -73,12 +73,10 @@ namespace Updates.Watcher
 
             Add(updateId, chatId, _operatedPosts);
 
-            Dictionary<long,List<long>> savedUpdates = GetSavedUpdates();
-            Add(updateId, chatId, savedUpdates);
             File.Delete(_fileName);
             var updates = new Updates
             {
-                Pairs = savedUpdates.Select(pair => new UpdatePair
+                Pairs = _operatedPosts.Select(pair => new UpdatePair
                 {
                     UpdateId = pair.Key,
                     ChatIds = pair.Value
