@@ -28,7 +28,7 @@ namespace Updates.Twitter
             Url = tweet.Url;
             
             const string tweetedAt = "צייץ ב";
-            FormattedMessage = $"{Author.DisplayName} ({Author.Name}) {tweetedAt} {CreatedAt:HH:mm} \n {Url}";
+            FormattedMessage = $"{Author.DisplayName} (@{Author.Name}) {tweetedAt} {CreatedAt:HH:mm} \n {Url}";
         }
     }
 }
