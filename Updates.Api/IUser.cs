@@ -1,4 +1,4 @@
-﻿namespace ProducerApi
+﻿namespace Updates.Api
 {
     public interface IUser
     {

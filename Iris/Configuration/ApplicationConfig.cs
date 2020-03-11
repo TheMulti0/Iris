@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ConsumerTelegramBot.Configuration
+namespace Iris.Configuration
 {
     internal class ApplicationConfig
     {

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using ConsumerTelegramBot.Configuration;
+using Iris.Configuration;
+using Iris.Watcher;
 using Microsoft.Extensions.Logging;
-using ProducerApi;
+using Updates.Api;
 using Telegram.Bot;
-using TwitterProducer;
+using Updates.Twitter;
 
-namespace ConsumerTelegramBot
+namespace Iris
 {
     internal class TelegramBot
     {

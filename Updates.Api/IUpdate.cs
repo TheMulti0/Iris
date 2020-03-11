@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProducerApi
+namespace Updates.Api
 {
     public interface IUpdate
     {

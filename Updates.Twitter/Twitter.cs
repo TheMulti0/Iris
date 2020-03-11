@@ -1,16 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using ProducerApi;
 using Tweetinvi;
 using Tweetinvi.Models;
+using Updates.Api;
 
-namespace TwitterProducer
+namespace Updates.Twitter
 {
     public class Twitter : IUpdatesProvider
     {

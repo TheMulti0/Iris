@@ -1,8 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <RootNamespace>TwitterProducer</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UpdatesApi\UpdatesApi.csproj" />
+      <ProjectReference Include="..\Updates.Api\Updates.Api.csproj" />
     </ItemGroup>
 
 </Project>

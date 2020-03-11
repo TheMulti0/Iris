@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsumerTelegramBot.Configuration
+namespace Iris.Configuration
 {
     internal class TwitterConfig
     {

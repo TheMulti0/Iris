@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using ProducerApi;
+using Updates.Api;
 
-namespace ConsumerTelegramBot
+namespace Iris.Watcher
 {
     internal class UsersWatcher : IUsersWatcher
     {

@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ConsumerTelegramBot.Configuration;
+using Iris.Configuration;
+using Iris.Watcher;
 using Microsoft.Extensions.Logging;
 
-namespace ConsumerTelegramBot
+namespace Iris
 {
     internal static class TelegramBotApplication
     {

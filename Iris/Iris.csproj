@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TwitterProvider\TwitterProvider.csproj" />
+    <ProjectReference Include="..\Updates.Twitter\Updates.Twitter.csproj" />
   </ItemGroup>
 
 </Project>

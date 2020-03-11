@@ -1,7 +1,7 @@
 ﻿using System;
-using ProducerApi;
+using Updates.Api;
 
-namespace ConsumerTelegramBot
+namespace Iris.Watcher
 {
     internal interface IUsersWatcher
     {

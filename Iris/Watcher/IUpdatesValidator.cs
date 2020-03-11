@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsumerTelegramBot
+namespace Iris.Watcher
 {
     internal interface IUpdatesValidator
     {

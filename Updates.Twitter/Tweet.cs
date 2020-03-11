@@ -1,9 +1,9 @@
 using System;
-using ProducerApi;
 using Tweetinvi.Models;
-using IUser = ProducerApi.IUser;
+using Updates.Api;
+using IUser = Updates.Api.IUser;
 
-namespace TwitterProducer
+namespace Updates.Twitter
 {
     public class Tweet : IUpdate
     {

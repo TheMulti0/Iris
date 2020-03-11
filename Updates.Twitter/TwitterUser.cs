@@ -1,6 +1,6 @@
-using ProducerApi;
+using Updates.Api;
 
-namespace TwitterProducer
+namespace Updates.Twitter
 {
     public class TwitterUser : IUser
     {
