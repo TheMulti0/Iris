@@ -41,25 +41,40 @@ namespace Iris
         {
             foreach ((IUpdatesProvider provider, IProviderConfig config) in GetProviders())
             {
-                var usersWatcher = new UpdatesWatcher(
-                    provider,
-                    config,
-                    _validator);
+                try
+                {
+                    var usersWatcher = new UpdatesWatcher(
+                        provider,
+                        config,
+                        _validator);
 
-                usersWatcher.Updates
-                    .Subscribe(OnProducerUpdate);
+                    usersWatcher.Updates
+                        .Subscribe(OnProducerUpdate);
 
-                _logger.LogInformation($"Subscribed to updates of the producer `{provider.GetType().Name}`");
+                    _logger.LogInformation($"Subscribed to updates of the producer `{provider.GetType() .Name}`");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Exception in RegisterProducers()");
+                }
             }
         }
 
         private async void OnProducerUpdate(IUpdate update)
         {
-            _logger.LogInformation($"Caught new update: Id: {update.Id,-15} | Author: {update.Author.Name}");
+            _logger.LogInformation($"Caught new update: Id: {update.Id,-15} | Author: {update.Author.Name, -20} | Created At: {update.CreatedAt}");
             foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
             {
-                await _client.SendTextMessageAsync(chatId, update.Url);
-                _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name}");
+                try
+                {
+                    await _client.SendTextMessageAsync(chatId, update.Url);
+
+                    _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at: {DateTime.Now}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation(e, $"Failed to post update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at {DateTime.Now}");
+                }
             }
         }
 
