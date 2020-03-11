@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Iris.Configuration
+﻿namespace Updates.Configs
 {
-    internal class TwitterConfig
+    public class TwitterConfig
     {
         public long[] WatchedUsersIds { get; set; }
         

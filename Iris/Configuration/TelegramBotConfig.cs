@@ -1,4 +1,4 @@
-﻿namespace Iris.Configuration
+﻿namespace Iris.Config
 {
     internal class TelegramBotConfig
     {

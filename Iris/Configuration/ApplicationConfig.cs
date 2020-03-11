@@ -1,7 +1,6 @@
-﻿using System.Text.Json;
-using System.Threading.Tasks;
+﻿using Updates.Configs;
 
-namespace Iris.Configuration
+namespace Iris.Config
 {
     internal class ApplicationConfig
     {

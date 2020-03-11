@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Iris.Configuration;
+using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Updates.Api;
 using Telegram.Bot;
+using Updates.Configs;
 using Updates.Twitter;
 using Updates.Watcher;
 
@@ -38,7 +39,7 @@ namespace Iris
 
         private void RegisterProducers()
         {
-            foreach ((IUpdatesProvider producer, long[] watchedUsersIds) in GetProducers())
+            foreach ((IUpdatesProvider producer, long[] watchedUsersIds) in GetProducersAndWatchedUsers())
             {
                 var usersWatcher = new UpdatesWatcher(
                     _validator,
@@ -64,18 +65,13 @@ namespace Iris
             }
         }
 
-        private IEnumerable<(IUpdatesProvider, long[])> GetProducers()
+        private IEnumerable<(IUpdatesProvider, long[])> GetProducersAndWatchedUsers()
         {
             TwitterConfig twitterConfig = _config.TwitterConfig;
 
             yield return
             (
-                new Twitter(
-                    twitterConfig.MaxResults,
-                    twitterConfig.ConsumerKey,
-                    twitterConfig.ConsumerSecret,
-                    twitterConfig.AccessToken,
-                    twitterConfig.AccessTokenSecret),
+                new Twitter(twitterConfig),
                 twitterConfig.WatchedUsersIds
             );
         }

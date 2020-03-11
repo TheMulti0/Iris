@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tweetinvi;
+using Tweetinvi.Logic.Model;
 using Tweetinvi.Models;
 using Updates.Api;
+using Updates.Configs;
 
 namespace Updates.Twitter
 {
@@ -12,19 +14,14 @@ namespace Updates.Twitter
         private readonly int _maxResults;
         private readonly TwitterExecuter _executer;
 
-        public Twitter(
-            int maxResults,
-            string consumerKey,
-            string consumerSecret,
-            string accessToken,
-            string accessTokenSecret)
+        public Twitter(TwitterConfig config)
         {
-            _maxResults = maxResults;
+            _maxResults = config.MaxResults;
             ITwitterCredentials credentials = Auth.SetUserCredentials(
-                consumerKey,
-                consumerSecret,
-                accessToken,
-                accessTokenSecret);
+                config.ConsumerKey,
+                config.ConsumerSecret,
+                config.AccessToken,
+                config.AccessTokenSecret);
             
             _executer = new TwitterExecuter(credentials);
         }
