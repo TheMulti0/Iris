@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
 
-namespace Iris.Watcher
+namespace Updates.Watcher
 {
-    internal class UpdatesValidator : IUpdatesValidator
+    public class UpdatesValidator : IUpdatesValidator
     {
         private readonly ConcurrentDictionary<long, List<long>> _operatedPosts;
         private readonly Subject<(long updateId, long authorId)> _sentUpdates;

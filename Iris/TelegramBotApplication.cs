@@ -2,8 +2,8 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using Iris.Configuration;
-using Iris.Watcher;
 using Microsoft.Extensions.Logging;
+using Updates.Watcher;
 
 namespace Iris
 {

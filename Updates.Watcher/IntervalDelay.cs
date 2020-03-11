@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Iris.Watcher
+namespace Updates.Watcher
 {
     internal class IntervalDelay
     {

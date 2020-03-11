@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Iris.Configuration;
-using Iris.Watcher;
 using Microsoft.Extensions.Logging;
 using Updates.Api;
 using Telegram.Bot;
 using Updates.Twitter;
+using Updates.Watcher;
 
 namespace Iris
 {
@@ -40,7 +40,7 @@ namespace Iris
         {
             foreach ((IUpdatesProvider producer, long[] watchedUsersIds) in GetProducers())
             {
-                var usersWatcher = new UsersWatcher(
+                var usersWatcher = new UpdatesWatcher(
                     _validator,
                     TimeSpan.FromSeconds(_config.TwitterConfig.PollIntervalSeconds),
                     producer,

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Iris.Watcher
+namespace Updates.Watcher
 {
-    internal interface IUpdatesValidator
+    public interface IUpdatesValidator
     {
         IObservable<(long updateId, long authorId)> SentUpdates { get; }
         

@@ -4,9 +4,9 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Updates.Api;
 
-namespace Iris.Watcher
+namespace Updates.Watcher
 {
-    internal class UsersWatcher : IUsersWatcher
+    public class UpdatesWatcher : IUpdatesWatcher
     {
         private readonly IUpdatesValidator _validator;
         private readonly TimeSpan _interval;
@@ -16,7 +16,7 @@ namespace Iris.Watcher
 
         public IObservable<IUpdate> Updates => _updates;
 
-        public UsersWatcher(
+        public UpdatesWatcher(
             IUpdatesValidator validator,
             TimeSpan interval,
             IUpdatesProvider provider,

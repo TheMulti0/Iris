@@ -1,9 +1,9 @@
 ﻿using System;
 using Updates.Api;
 
-namespace Iris.Watcher
+namespace Updates.Watcher
 {
-    internal interface IUsersWatcher
+    public interface IUpdatesWatcher
     {
         IObservable<IUpdate> Updates { get; }
     }
