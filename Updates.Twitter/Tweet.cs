@@ -26,9 +26,19 @@ namespace Updates.Twitter
             Author = new TwitterUser(tweet.CreatedBy);
             CreatedAt = tweet.CreatedAt;
             Url = tweet.Url;
-            
-            const string tweetedAt = "צייץ ב";
-            FormattedMessage = $"{Author.DisplayName} (@{Author.Name}) {tweetedAt} {CreatedAt:HH:mm} \n {Url}";
+
+            const string newPostPostedBy = "ציוץ חדש פורסם מאת";
+            const string at = "בשעה";
+            FormattedMessage =
+                $"*{newPostPostedBy}:*" +
+                "\n" +
+                $"*{Author.DisplayName}* (@{Author.Name})" +
+                "\n" +
+                $"*{at} {CreatedAt.AddHours(2):HH:mm}:*" +
+                "\n \n \n" +
+                $"`\"{Message}\"`" +
+                "\n \n \n" +
+                $"{Url}";
         }
     }
 }

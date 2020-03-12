@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 using Updates.Api;
 using Updates.Configs;
 using Updates.Twitter;
@@ -69,7 +70,8 @@ namespace Iris
                 {
                     await _client.SendTextMessageAsync(
                         chatId,
-                        update.FormattedMessage);
+                        update.FormattedMessage,
+                        ParseMode.Markdown);
 
                     _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at: {DateTime.Now}");
                 }
