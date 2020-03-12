@@ -49,7 +49,7 @@ namespace Iris
                 try
                 {
                     var usersWatcher = new UpdatesWatcher(
-                        _loggerFactory.CreateLogger<IUpdatesWatcher>(),
+                        _loggerFactory.CreateLogger<UpdatesWatcher>(),
                         provider,
                         config);
 

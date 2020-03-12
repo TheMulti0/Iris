@@ -20,7 +20,7 @@ namespace Updates.Watcher
         public IObservable<IUpdate> Updates => _updates;
 
         public UpdatesWatcher(
-            ILogger<IUpdatesWatcher> logger,
+            ILogger<UpdatesWatcher> logger,
             IUpdatesProvider provider,
             IProviderConfig config)
         {
