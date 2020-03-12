@@ -105,7 +105,10 @@ namespace Iris
             return new Dictionary<IUpdatesProvider, IProviderConfig>
             {
                 {
-                    new Twitter(_config.TwitterConfig), 
+                    new Twitter(
+                        _loggerFactory.CreateLogger<Twitter>(),
+                        _config.TwitterConfig),
+                    
                     _config.TwitterConfig
                 }
             };

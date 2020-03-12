@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Updates.Api;
 using Updates.Configs;
 using Xunit;
@@ -16,7 +17,7 @@ namespace Updates.Twitter.Tests
             var config = JsonSerializer.Deserialize<TwitterConfig>(
                 File.ReadAllText("../../../appsettings.json"));
             
-            var twitter = new Twitter(config);
+            var twitter = new Twitter(NullLogger<Twitter>.Instance, config);
             IEnumerable<IUpdate> updates = await twitter.GetUpdates(25073877); // @realDonaldTrump
             foreach (IUpdate update in updates)
             {
