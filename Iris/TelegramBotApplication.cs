@@ -23,8 +23,8 @@ namespace Iris
 
             ILoggerFactory factory = LoggerFactory
                 .Create(builder => builder
-                            .AddConsole()
-                            .AddFile(options => options.LogDirectory = $"{rootDirectory}/logs"));
+                    .AddConsole()
+                    .AddFile(options => options.LogDirectory = $"{rootDirectory}/logs"));
         
             var telegramBot = new TelegramBot(
                 config,
