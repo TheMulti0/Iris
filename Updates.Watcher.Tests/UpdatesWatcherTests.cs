@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Reactive.Linq;
+using Microsoft.Extensions.Logging.Abstractions;
 using Updates.Api;
 using Xunit;
 
@@ -13,9 +14,9 @@ namespace Updates.Watcher.Tests
             var config = new MockProviderConfig();
 
             var watcher = new UpdatesWatcher(
+                NullLogger<IUpdatesWatcher>.Instance,
                 new MockUpdatesProvider(),
-                config,
-                new MockUpdatesValidator());
+                config);
 
             IUpdate[] updates = watcher.Updates.Take(10).ToEnumerable().ToArray();
             

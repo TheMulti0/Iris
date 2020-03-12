@@ -28,7 +28,7 @@ namespace Iris
         
             var telegramBot = new TelegramBot(
                 config,
-                factory.CreateLogger<TelegramBot>(),
+                factory,
                 new JsonUpdateValidator($"{rootDirectory}/savedUpdates.json"));
 
             await Task.Delay(-1);
