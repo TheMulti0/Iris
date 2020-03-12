@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -14,17 +15,20 @@ namespace Iris
     internal class TelegramBot
     {
         private readonly ApplicationConfig _config;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ITelegramBotClient _client;
         private readonly IUpdatesValidator _validator;
 
         public TelegramBot(
             ApplicationConfig config,
-            ILogger<TelegramBot> logger,
+            ILoggerFactory loggerFactory,
             IUpdatesValidator validator)
         {
             _config = config;
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            
+            _logger = _loggerFactory.CreateLogger<TelegramBot>();
 
             _client = new TelegramBotClient(config.TelegramBotConfig.Token);
             _client.StartReceiving();
@@ -45,9 +49,9 @@ namespace Iris
                 try
                 {
                     var usersWatcher = new UpdatesWatcher(
+                        _loggerFactory.CreateLogger<IUpdatesWatcher>(),
                         provider,
-                        config,
-                        _validator);
+                        config);
 
                     usersWatcher.Updates
                         .Subscribe(OnProducerUpdate);
@@ -63,22 +67,36 @@ namespace Iris
 
         private async void OnProducerUpdate(IUpdate update)
         {
-            _logger.LogInformation($"Caught new update: Id: {update.Id,-15} | Author: {update.Author.Name, -20} | Created At: {update.CreatedAt}");
+            _logger.LogInformation($"Caught new update: Id: {update.Id, -15}, Author: {update.Author.Name, -15}, Created at: {update.CreatedAt}");
             foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
             {
-                try
-                {
-                    await _client.SendTextMessageAsync(
-                        chatId,
-                        update.FormattedMessage,
-                        ParseMode.Markdown);
+                await SendMessage(update, chatId);
+            }
+        }
 
-                    _logger.LogInformation($"Posted new update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at: {DateTime.Now}");
-                }
-                catch (Exception e)
+        private async Task SendMessage(IUpdate update, long chatId)
+        {
+            try
+            {
+                if (!_validator.WasUpdateSent(update.Id, chatId))
                 {
-                    _logger.LogInformation(e, $"Failed to post update: Id: {update.Id,-15} | ChatId: {update.Author.Name, -20} | Executed at {DateTime.Now}");
+                    _logger.LogInformation($"Update #{update.Id} was already sent to chat #{chatId}");
+                    return;
                 }
+
+                await _client.SendTextMessageAsync(
+                    chatId,
+                    update.FormattedMessage,
+                    ParseMode.Markdown);
+
+                _logger.LogInformation(
+                    $"Sent new update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at: {DateTime.Now}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(
+                    e,
+                    $"Failed to send update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at {DateTime.Now}");
             }
         }
 
