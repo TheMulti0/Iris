@@ -11,19 +11,25 @@ namespace Iris
     {
         private static async Task Main(string[] args)
         {
+#if DEBUG
+            const string rootDirectory = "../../..";
+#else
+            const string rootDirectory = "data";
+#endif
+            
             var config = await JsonSerializer
                 .DeserializeAsync<ApplicationConfig>(
-                    new FileStream("data/appsettings.json", FileMode.Open));
+                    new FileStream($"{rootDirectory}/appsettings.json", FileMode.Open));
 
             ILoggerFactory factory = LoggerFactory
                 .Create(builder => builder
                             .AddConsole()
-                            .AddFile(options => options.LogDirectory = "data/logs"));
+                            .AddFile(options => options.LogDirectory = $"{rootDirectory}/logs"));
         
             var telegramBot = new TelegramBot(
                 config,
                 factory.CreateLogger<TelegramBot>(),
-                new JsonUpdateValidator("data/savedUpdates.json"));
+                new JsonUpdateValidator($"{rootDirectory}/savedUpdates.json"));
 
             await Task.Delay(-1);
         }
