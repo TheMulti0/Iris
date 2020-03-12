@@ -14,7 +14,7 @@ namespace Updates.Watcher.Tests
             var config = new MockProviderConfig();
 
             var watcher = new UpdatesWatcher(
-                NullLogger<IUpdatesWatcher>.Instance,
+                NullLogger<UpdatesWatcher>.Instance,
                 new MockUpdatesProvider(),
                 config);
 
