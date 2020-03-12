@@ -27,14 +27,11 @@ namespace Updates.Twitter
             CreatedAt = tweet.CreatedAt;
             Url = tweet.Url;
 
-            const string newPostPostedBy = "ציוץ חדש פורסם מאת";
-            const string at = "בשעה";
+            const string newPostPostedBy = "ציוץ חדש פורסם כעט מאת";
             FormattedMessage =
                 $"*{newPostPostedBy}:*" +
                 "\n" +
                 $"*{Author.DisplayName}* (@{Author.Name})" +
-                "\n" +
-                $"*{at} {CreatedAt.AddHours(2):HH:mm}:*" +
                 "\n \n \n" +
                 $"`\"{Message}\"`" +
                 "\n \n \n" +
