@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Iris.Config;
@@ -16,7 +15,10 @@ namespace Iris
                 .DeserializeAsync<ApplicationConfig>(
                     new FileStream("data/appsettings.json", FileMode.Open));
 
-            ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole().AddFile());
+            ILoggerFactory factory = LoggerFactory
+                .Create(builder => builder
+                            .AddConsole()
+                            .AddFile(options => options.LogDirectory = "data/logs"));
         
             var telegramBot = new TelegramBot(
                 config,
