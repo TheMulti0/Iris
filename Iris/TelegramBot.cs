@@ -33,6 +33,11 @@ namespace Iris
             _client = new TelegramBotClient(config.TelegramBotConfig.Token);
             _client.StartReceiving();
 
+            _client.OnUpdate += (sender, args) =>
+            {
+
+            };
+
             _validator = validator;
 
             _logger.LogInformation("Starting to receive Telegram events");
@@ -78,7 +83,7 @@ namespace Iris
         {
             try
             {
-                if (!_validator.WasUpdateSent(update.Id, chatId))
+                if (_validator.WasUpdateSent(update.Id, chatId))
                 {
                     _logger.LogInformation($"Update #{update.Id} was already sent to chat #{chatId}");
                     return;
@@ -88,7 +93,9 @@ namespace Iris
                     chatId,
                     update.FormattedMessage,
                     ParseMode.Markdown);
-
+                
+                _validator.UpdateSent(update.Id, chatId);
+                
                 _logger.LogInformation(
                     $"Sent new update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at: {DateTime.Now}");
             }
