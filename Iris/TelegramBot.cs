@@ -53,19 +53,21 @@ namespace Iris
             {
                 try
                 {
-                    var usersWatcher = new UpdatesWatcher(
-                        _loggerFactory.CreateLogger<UpdatesWatcher>(),
-                        provider,
-                        config);
+                    if (_validator.WasUpdateSent(update.Id, chatId))
+                    {
+                        _logger.LogInformation($"Update #{update.Id} was already sent to chat #{chatId}");
+                        return;
+                    }
 
-                    usersWatcher.Updates
-                        .Subscribe(OnProducerUpdate);
+                    await _client.SendTextMessageAsync(
+                        chatId,
+                        update.FormattedMessage,
+                        ParseMode.Markdown);
 
-                    _logger.LogInformation($"Subscribed to updates of the producer `{provider.GetType() .Name}`");
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Exception in RegisterProducers()");
+                    _validator.UpdateSent(update.Id, chatId);
+
+                    _logger.LogInformation(
+                        $"Sent new update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at: {DateTime.Now}");
                 }
             }
         }
