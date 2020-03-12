@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Updates.Api;
@@ -52,7 +53,10 @@ namespace Updates.Watcher
             {
                 IEnumerable<IUpdate> updates = await _provider.GetUpdates(authorId);
 
-                foreach (IUpdate update in updates)
+                IEnumerable<IUpdate> sortedUpdates = updates
+                    .OrderBy(u => u.CreatedAt);
+                
+                foreach (IUpdate update in sortedUpdates)
                 {
                     long updateId = update.Id;
                     
