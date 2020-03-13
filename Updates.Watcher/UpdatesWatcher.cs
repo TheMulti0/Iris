@@ -13,7 +13,7 @@ namespace Updates.Watcher
     {
         private readonly ILogger<IUpdatesWatcher> _logger;
         private readonly IUpdatesProvider _provider;
-        private readonly IEnumerable<long> _watchedUsersIds;
+        private readonly string[] _watchedUsers;
         private readonly TimeSpan _interval;
         private readonly Subject<Update> _updates;
 
@@ -27,7 +27,7 @@ namespace Updates.Watcher
             _logger = logger;
             _provider = provider;
 
-            _watchedUsersIds = config.WatchedUsersIds;
+            _watchedUsers = config.WatchedUsers;
             _interval = TimeSpan.FromSeconds(config.PollIntervalSeconds);
             
             _updates = new Subject<Update>();
@@ -55,11 +55,11 @@ namespace Updates.Watcher
 
         private async Task Watch()
         {
-            foreach (long userId in _watchedUsersIds)
+            foreach (string user in _watchedUsers)
             {
-                _logger.LogInformation($"Checking user #{userId}");
+                _logger.LogInformation($"Checking user #{user}");
                 
-                IEnumerable<Update> sortedUpdates = await GetUpdates(userId);
+                IEnumerable<Update> sortedUpdates = await GetUpdates(user);
 
                 foreach (Update update in sortedUpdates)
                 {
@@ -70,11 +70,11 @@ namespace Updates.Watcher
             }
         }
 
-        private async Task<IEnumerable<Update>> GetUpdates(long userId)
+        private async Task<IEnumerable<Update>> GetUpdates(string user)
         {
-            IEnumerable<Update> updates = await _provider.GetUpdates(userId);
+            IEnumerable<Update> updates = await _provider.GetUpdates(user);
 
-            _logger.LogInformation($"Received unvalidated updates for user #{userId}");
+            _logger.LogInformation($"Received unvalidated updates for user #{user}");
 
             return updates
                 .OrderBy(u => u.CreatedAt);

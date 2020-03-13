@@ -34,20 +34,20 @@ namespace Updates.Twitter
             _logger.LogInformation("Completed construction");
         }
         
-        public async Task<IEnumerable<Update>> GetUpdates(long authorId)
+        public async Task<IEnumerable<Update>> GetUpdates(string userName)
         {
-            _logger.LogInformation($"GetUpdates requested with author #{authorId} (maxResults = {_maxResults})");
+            _logger.LogInformation($"GetUpdates requested with author #{userName} (maxResults = {_maxResults})");
             
-            Tweetinvi.Models.IUser user = await _executer
-                .Execute(() => UserAsync.GetUserFromId(authorId));
-            
-            _logger.LogInformation($"Found user #{authorId}");
+            IUser user = await _executer
+                .Execute(() => UserAsync.GetUserFromScreenName(userName));
+
+            _logger.LogInformation($"Found user #{userName}");
 
             IEnumerable<ITweet> tweets = await _executer
                 .Execute(() => user.GetUserTimelineAsync(_maxResults));
             List<ITweet> tweetsList = tweets.ToList();
             
-            _logger.LogInformation($"Found {tweetsList.Count} tweets by #{authorId}");
+            _logger.LogInformation($"Found {tweetsList.Count} tweets by #{userName}");
 
             return tweetsList
                 .Select(UpdateFactory.ToUpdate);

@@ -2,7 +2,7 @@
 {
     public class TwitterConfig : IProviderConfig
     {
-        public long[] WatchedUsersIds { get; set; }
+        public string[] WatchedUsers { get; set; }
         
         public double PollIntervalSeconds { get; set; }
 

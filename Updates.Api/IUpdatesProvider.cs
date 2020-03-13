@@ -5,6 +5,6 @@ namespace Updates.Api
 {
     public interface IUpdatesProvider
     {
-        Task<IEnumerable<Update>> GetUpdates(long authorId);
+        Task<IEnumerable<Update>> GetUpdates(string userName);
     }
 }

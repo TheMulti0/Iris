@@ -22,12 +22,12 @@ namespace Updates.Watcher.Tests
             
             for (var i = 0; i < updates.Length; i++)
             {
-                long watchedUserId = config.WatchedUsersIds.ElementAtOrDefault(i);
-                long authorId = updates[i].Author.Id;
+                string watchedUser = config.WatchedUsers.ElementAtOrDefault(i) ?? config.WatchedUsers.LastOrDefault();
+                string author = updates[i].Author.Name;
                 
                 Assert.Equal(
-                    watchedUserId,
-                    authorId);
+                    watchedUser,
+                    author);
             }
         }
     }

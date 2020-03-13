@@ -7,7 +7,7 @@ namespace Updates.Watcher.Tests
 {
     internal class MockUpdatesProvider : IUpdatesProvider
     {
-        public Task<IEnumerable<Update>> GetUpdates(long authorId)
+        public Task<IEnumerable<Update>> GetUpdates(string userName)
         {
             IEnumerable<Update> updates = new[]
             {
@@ -15,8 +15,8 @@ namespace Updates.Watcher.Tests
                     0,
                     "",
                     new User(
-                        authorId,
-                        "",
+                        0,
+                        userName,
                         "",
                         ""),
                     DateTime.Now,
