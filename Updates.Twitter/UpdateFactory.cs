@@ -1,4 +1,8 @@
 using System;
+using System.Linq;
+using System.Text;
+using Microsoft.Extensions.Primitives;
+using Tweetinvi.Logic;
 using Tweetinvi.Models;
 using Updates.Api;
 
@@ -14,23 +18,36 @@ namespace Updates.Twitter
             DateTime createdAt = tweet.CreatedAt;
             string url = tweet.Url;
 
-            const string newPostPostedBy = "ציוץ חדש פורסם כעט מאת";
-            string formattedMessage =
-                $"*{newPostPostedBy}:*" +
-                "\n" +
-                $"*{author.DisplayName}* (@{author.Name})" +
-                "\n \n \n" +
-                $"`\"{message}\"`" +
-                "\n \n \n" +
-                $"{url}";
+            var formattedMessage = new StringBuilder("ציוץ חדש פורסם כעת מאת: \n")
+                .Append(GetTweetText(tweet));
+
+            if (tweet.QuotedTweet != null)
+            {
+                formattedMessage.Append(
+                    "\n הציוץ הזה הוא בתגובה לציוץ הבא מאת: \n" +
+                    GetTweetText(tweet.QuotedTweet));
+            }
             
+            formattedMessage.Append(
+                "\n \n \n \n" +
+                $"{url}");
+
             return new Update(
                 id,
                 message,
                 author,
                 createdAt,
                 url,
-                formattedMessage);
+                formattedMessage.ToString());
+        }
+
+        private static string GetTweetText(ITweet tweet)
+        {
+            IUser author = tweet.CreatedBy;
+            
+            return $"*{author.Name}* (@{author.ScreenName})" +
+                   "\n \n \n" +
+                   $"`\"{tweet.Text}\"`";
         }
     }
 }
