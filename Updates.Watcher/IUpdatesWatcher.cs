@@ -5,6 +5,6 @@ namespace Updates.Watcher
 {
     public interface IUpdatesWatcher
     {
-        IObservable<IUpdate> Updates { get; }
+        IObservable<Update> Updates { get; }
     }
 }

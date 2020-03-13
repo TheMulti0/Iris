@@ -18,7 +18,7 @@ namespace Updates.Watcher.Tests
                 new MockUpdatesProvider(),
                 config);
 
-            IUpdate[] updates = watcher.Updates.Take(10).ToEnumerable().ToArray();
+            Update[] updates = watcher.Updates.Take(10).ToEnumerable().ToArray();
             
             for (var i = 0; i < updates.Length; i++)
             {

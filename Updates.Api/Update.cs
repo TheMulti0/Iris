@@ -1,34 +1,35 @@
-using System;
-using Updates.Api;
+﻿using System;
 
-namespace Updates.Watcher.Tests
+namespace Updates.Api
 {
-    internal class MockUpdate : IUpdate
+    public class Update
     {
         public long Id { get; }
-        
+
         public string Message { get; }
-        
-        public IUser Author { get; }
-        
+
+        public User Author { get; }
+
         public DateTime CreatedAt { get; }
-        
+
         public string Url { get; }
         
-        public string FormattedMessage => Url;
-
-        public MockUpdate(
+        public string FormattedMessage { get; }
+        
+        public Update(
             long id,
             string message,
-            IUser author,
+            User author,
             DateTime createdAt,
-            string url)
+            string url,
+            string formattedMessage)
         {
             Id = id;
             Message = message;
             Author = author;
             CreatedAt = createdAt;
             Url = url;
+            FormattedMessage = formattedMessage;
         }
     }
 }

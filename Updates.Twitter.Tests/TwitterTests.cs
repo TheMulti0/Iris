@@ -18,8 +18,8 @@ namespace Updates.Twitter.Tests
                 File.ReadAllText("../../../appsettings.json"));
             
             var twitter = new Twitter(NullLogger<Twitter>.Instance, config);
-            IEnumerable<IUpdate> updates = await twitter.GetUpdates(25073877); // @realDonaldTrump
-            foreach (IUpdate update in updates)
+            IEnumerable<Update> updates = await twitter.GetUpdates(25073877); // @realDonaldTrump
+            foreach (Update update in updates)
             {
                 Assert.NotNull(update?.Id);
                 Assert.NotNull(update.Author?.Id);

@@ -70,7 +70,7 @@ namespace Iris
             }
         }
 
-        private async void OnProducerUpdate(IUpdate update)
+        private async void OnProducerUpdate(Update update)
         {
             _logger.LogInformation($"Caught new update: Id: {update.Id, -15}, Author: {update.Author.Name, -15}, Created at: {update.CreatedAt}");
             foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
@@ -79,7 +79,7 @@ namespace Iris
             }
         }
 
-        private async Task SendMessage(IUpdate update, long chatId)
+        private async Task SendMessage(Update update, long chatId)
         {
             try
             {

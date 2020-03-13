@@ -34,7 +34,7 @@ namespace Updates.Twitter
             _logger.LogInformation("Completed construction");
         }
         
-        public async Task<IEnumerable<IUpdate>> GetUpdates(long authorId)
+        public async Task<IEnumerable<Update>> GetUpdates(long authorId)
         {
             _logger.LogInformation($"GetUpdates requested with author #{authorId} (maxResults = {_maxResults})");
             
@@ -50,7 +50,7 @@ namespace Updates.Twitter
             _logger.LogInformation($"Found {tweetsList.Count} tweets by #{authorId}");
 
             return tweetsList
-                .Select(itweet => new Tweet(itweet));
+                .Select(UpdateFactory.ToUpdate);
         }
     }
 }

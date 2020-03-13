@@ -15,9 +15,9 @@ namespace Updates.Watcher
         private readonly IUpdatesProvider _provider;
         private readonly IEnumerable<long> _watchedUsersIds;
         private readonly TimeSpan _interval;
-        private readonly Subject<IUpdate> _updates;
+        private readonly Subject<Update> _updates;
 
-        public IObservable<IUpdate> Updates => _updates;
+        public IObservable<Update> Updates => _updates;
 
         public UpdatesWatcher(
             ILogger<UpdatesWatcher> logger,
@@ -30,7 +30,7 @@ namespace Updates.Watcher
             _watchedUsersIds = config.WatchedUsersIds;
             _interval = TimeSpan.FromSeconds(config.PollIntervalSeconds);
             
-            _updates = new Subject<IUpdate>();
+            _updates = new Subject<Update>();
 
             Task.Run(RepeatWatch);
             
@@ -59,9 +59,9 @@ namespace Updates.Watcher
             {
                 _logger.LogInformation($"Checking user #{userId}");
                 
-                IEnumerable<IUpdate> sortedUpdates = await GetUpdates(userId);
+                IEnumerable<Update> sortedUpdates = await GetUpdates(userId);
 
-                foreach (IUpdate update in sortedUpdates)
+                foreach (Update update in sortedUpdates)
                 {
                     _logger.LogInformation($"Pushing update #{update.Id}");
                     
@@ -70,9 +70,9 @@ namespace Updates.Watcher
             }
         }
 
-        private async Task<IEnumerable<IUpdate>> GetUpdates(long userId)
+        private async Task<IEnumerable<Update>> GetUpdates(long userId)
         {
-            IEnumerable<IUpdate> updates = await _provider.GetUpdates(userId);
+            IEnumerable<Update> updates = await _provider.GetUpdates(userId);
 
             _logger.LogInformation($"Received unvalidated updates for user #{userId}");
 
