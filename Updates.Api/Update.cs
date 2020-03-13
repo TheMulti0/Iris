@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Updates.Api
 {
@@ -6,30 +7,34 @@ namespace Updates.Api
     {
         public long Id { get; }
 
+        public User Author { get; }
+
         public string Message { get; }
 
-        public User Author { get; }
+        public string FormattedMessage { get; }
 
         public DateTime CreatedAt { get; }
 
         public string Url { get; }
-        
-        public string FormattedMessage { get; }
+
+        public IEnumerable<Media> Media { get; }
         
         public Update(
             long id,
-            string message,
             User author,
+            string message,
+            string formattedMessage,
             DateTime createdAt,
             string url,
-            string formattedMessage)
+            IEnumerable<Media> media)
         {
             Id = id;
-            Message = message;
             Author = author;
+            Message = message;
+            FormattedMessage = formattedMessage;
             CreatedAt = createdAt;
             Url = url;
-            FormattedMessage = formattedMessage;
+            Media = media;
         }
     }
 }

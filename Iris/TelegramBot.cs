@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Updates.Api;
 using Updates.Configs;
 using Updates.Twitter;
 using Updates.Watcher;
+using Update = Updates.Api.Update;
 
 namespace Iris
 {
@@ -88,11 +91,21 @@ namespace Iris
                     _logger.LogInformation($"Update #{update.Id} was already sent to chat #{chatId}");
                     return;
                 }
+                
+                Message[] previousMessages = null;
+                if (update.Media.Any())
+                {
+                    IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
+                        .Select(TelegramMediaFactory.ToTelegramMedia);
+                    
+                    previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
+                }
 
                 await _client.SendTextMessageAsync(
                     chatId,
                     update.FormattedMessage,
-                    ParseMode.Markdown);
+                    ParseMode.Markdown,
+                    replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0);
                 
                 _validator.UpdateSent(update.Id, chatId);
                 

@@ -13,15 +13,16 @@ namespace Updates.Watcher.Tests
             {
                 new Update(
                     0,
-                    "",
                     new User(
                         0,
                         userName,
                         "",
                         ""),
+                    "",
+                    "",
                     DateTime.Now,
                     "",
-                    "")
+                    new List<Media>())
             };
             
             return Task.FromResult(updates);

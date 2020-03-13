@@ -3,7 +3,7 @@ using Updates.Api;
 
 namespace Updates.Twitter
 {
-    public static class UserFactory
+    internal static class UserFactory
     {
         public static User ToUser(IUser user)
         {
