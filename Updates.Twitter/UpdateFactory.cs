@@ -15,7 +15,7 @@ namespace Updates.Twitter
         {
             long id = tweet.Id;
             var author = UserFactory.ToUser(tweet.CreatedBy);
-            string message = tweet.Text;
+            string message = tweet.FullText;
             string formattedMessage = GetFormattedMessage(tweet);
             DateTime createdAt = tweet.CreatedAt;
             string url = tweet.Url;
