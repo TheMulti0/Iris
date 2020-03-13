@@ -34,15 +34,26 @@ namespace Updates.Twitter
 
         private static string GetFormattedMessage(ITweet tweet)
         {
-            const string header = "ציוץ חדש פורסם כעת מאת";
-            StringBuilder builder = new StringBuilder($"{header}:\n")
-                .Append(GetTweetText(tweet));
-
-            if (tweet.QuotedTweet != null)
+            StringBuilder builder;
+            
+            if (tweet.IsRetweet)
             {
+                builder = new StringBuilder(FormatHeader("פורסם ציוץ מחדש כעת מעת"));
+                builder.Append($"{GetAuthorName(tweet.CreatedBy)} \n");
                 builder.Append(
-                    "\n הציוץ הזה הוא תגובה לציוץ הבא מאת: \n" +
-                    GetTweetText(tweet.QuotedTweet));
+                    "\n הציוץ המקורי מאת: \n" +
+                    GetTweetText(tweet.RetweetedTweet));
+            }
+            else
+            {
+                builder = new StringBuilder(FormatHeader("ציוץ חדש פורסם כעת מאת"));
+                
+                if (tweet.QuotedTweet != null)
+                {
+                    builder.Append(
+                        "\n הציוץ הזה הוא תגובה לציוץ הבא מאת: \n" +
+                        GetTweetText(tweet.QuotedTweet));
+                }
             }
 
             builder.Append(
@@ -52,13 +63,18 @@ namespace Updates.Twitter
             return builder.ToString();
         }
 
+        private static string FormatHeader(string header) 
+            => $"{header}:\n";
+
         private static string GetTweetText(ITweet tweet)
         {
             IUser author = tweet.CreatedBy;
             
-            return $"*{author.Name}* (@{author.ScreenName})" +
+            return GetAuthorName(author) +
                    "\n \n \n" +
                    $"`\"{tweet.Text}\"`";
         }
+
+        private static string GetAuthorName(IUser author) => $"*{author.Name}* (@{author.ScreenName})";
     }
 }
