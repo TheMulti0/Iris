@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Args;
+using Telegram.Bot.Types;
+using Tweetinvi.Core.Factories;
 using Updates.Api;
 using Updates.Configs;
 using Updates.Twitter;
@@ -17,12 +20,15 @@ namespace Iris.Bot
         private readonly ApplicationConfig _config;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<Bot> _logger;
-        private readonly Sender _sender;        
+        private readonly Sender _sender;
+        private readonly ChatsManager _chatsManager;
         private readonly IUpdatesValidator _validator;
+        private TelegramBotClient _client;
 
         public Bot(
             ApplicationConfig config,
             ILoggerFactory loggerFactory,
+            string chatsFile,
             IUpdatesValidator validator)
         {
             _config = config;
@@ -30,22 +36,55 @@ namespace Iris.Bot
             
             _logger = _loggerFactory.CreateLogger<Bot>();
 
-            var client = new TelegramBotClient(config.TelegramBotConfig.Token);
+            _client = new TelegramBotClient(config.TelegramBotConfig.Token);
             _sender = new Sender(
-                client,
+                _client,
                 loggerFactory.CreateLogger<Sender>());
-            
-            client.StartReceiving();
-            client.OnUpdate += (sender, args) =>
-            {
 
-            };
+            _client.StartReceiving();
+            _client.OnMessage += OnMessageReceived;
+            
+            _chatsManager = new ChatsManager(chatsFile);
+            _chatsManager.ChatIds.TryAdd(-1001422720138, -1001422720138);
             
             _validator = validator;
 
             RegisterProducers();
 
             _logger.LogInformation("Completed construction");
+        }
+
+        private async void OnMessageReceived(object _, MessageEventArgs args)
+        {
+            Message message = args.Message;
+            long chatId = message.Chat.Id;
+            bool containsKey = _chatsManager.ChatIds.ContainsKey(chatId);
+            
+            if (message.Text.Contains("start"))
+            {
+                if (containsKey)
+                {
+                    await _client.SendTextMessageAsync(chatId, "כבר רשום");
+                }
+                else
+                {
+                    _chatsManager.Add(chatId);
+                    await _client.SendTextMessageAsync(chatId, "עכשיו רשום");
+                }
+                
+            }
+            else if (message.Text.Contains("stop"))
+            {
+                if (containsKey)
+                {
+                    _chatsManager.Remove(chatId);
+                    await _client.SendTextMessageAsync(chatId, "מעכשיו לא רשום יותר");
+                }
+                else
+                {
+                    await _client.SendTextMessageAsync(chatId, "לא רשום בכלל");
+                }
+            }
         }
 
         private void RegisterProducers()
@@ -74,7 +113,7 @@ namespace Iris.Bot
         private async void OnProducerUpdate(Update update)
         {
             _logger.LogInformation($"Caught new update: Id: {update.Id, -15}, Author: {update.Author.Name, -15}, Created at: {update.CreatedAt}");
-            foreach (long chatId in _config.TelegramBotConfig.UpdateChatsIds)
+            foreach (long chatId in _chatsManager.ChatIds.Keys)
             {
                 await SendMessage(update, chatId);
             }
