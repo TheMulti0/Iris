@@ -47,6 +47,8 @@ namespace Updates.Twitter
             else
             {
                 builder = new StringBuilder(FormatHeader("ציוץ חדש פורסם כעת מאת"));
+                builder.Append(
+                    GetTweetText(tweet));
                 
                 if (tweet.QuotedTweet != null)
                 {
@@ -72,7 +74,7 @@ namespace Updates.Twitter
             
             return GetAuthorName(author) +
                    "\n \n \n" +
-                   $"`\"{tweet.Text}\"`";
+                   $"\"{tweet.Text}\"";
         }
 
         private static string GetAuthorName(IUser author) => $"*{author.Name}* (@{author.ScreenName})";
