@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Iris.Bot;
 using Iris.Config;
+using Iris.Logging;
 using Microsoft.Extensions.Logging;
 using Updates.Watcher;
 

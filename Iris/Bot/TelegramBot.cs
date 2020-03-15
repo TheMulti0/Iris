@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Updates.Api;
 using Updates.Configs;
 using Updates.Twitter;
 using Updates.Watcher;
 using Update = Updates.Api.Update;
 
-namespace Iris
+namespace Iris.Bot
 {
     internal class TelegramBot
     {
         private readonly ApplicationConfig _config;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
-        private readonly ITelegramBotClient _client;
+        private readonly TelegramSender _sender;        
         private readonly IUpdatesValidator _validator;
 
         public TelegramBot(
@@ -33,17 +30,18 @@ namespace Iris
             
             _logger = _loggerFactory.CreateLogger<TelegramBot>();
 
-            _client = new TelegramBotClient(config.TelegramBotConfig.Token);
-            _client.StartReceiving();
-
-            _client.OnUpdate += (sender, args) =>
+            var client = new TelegramBotClient(config.TelegramBotConfig.Token);
+            _sender = new TelegramSender(
+                client,
+                loggerFactory.CreateLogger<TelegramSender>());
+            
+            client.StartReceiving();
+            client.OnUpdate += (sender, args) =>
             {
 
             };
-
+            
             _validator = validator;
-
-            _logger.LogInformation("Starting to receive Telegram events");
 
             RegisterProducers();
 
@@ -91,21 +89,8 @@ namespace Iris
                     _logger.LogInformation($"Update #{update.Id} was already sent to chat #{chatId}");
                     return;
                 }
-                
-                Message[] previousMessages = null;
-                if (update.Media.Any())
-                {
-                    IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
-                        .Select(TelegramMediaFactory.ToTelegramMedia);
-                    
-                    previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
-                }
 
-                await _client.SendTextMessageAsync(
-                    chatId,
-                    update.FormattedMessage,
-                    ParseMode.Markdown,
-                    replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0);
+                await _sender.SendAsync(update, chatId);
                 
                 _validator.UpdateSent(update.Id, chatId);
                 

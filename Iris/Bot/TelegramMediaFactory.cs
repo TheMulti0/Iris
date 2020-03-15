@@ -1,7 +1,8 @@
+using System;
 using Telegram.Bot.Types;
 using Updates.Api;
 
-namespace Iris
+namespace Iris.Bot
 {
     internal static class TelegramMediaFactory
     {
@@ -12,9 +13,7 @@ namespace Iris
             return media.Type switch
             {
                 MediaType.Photo => new InputMediaPhoto(rawMedia),
-                
-                MediaType.Video => new InputMediaVideo(rawMedia), 
-                MediaType.AnimatedGif => new InputMediaVideo(rawMedia) 
+                _ => new InputMediaVideo(rawMedia)
             };
         }
     }

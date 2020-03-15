@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NetEscapades.Extensions.Logging.RollingFile.Internal;
 
-namespace Iris
+namespace Iris.Logging
 {
     [ProviderAlias("Console")]
     public class ConsoleLoggerProvider : BatchingLoggerProvider

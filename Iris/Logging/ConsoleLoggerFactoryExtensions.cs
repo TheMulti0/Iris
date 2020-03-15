@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Iris
+namespace Iris.Logging
 {
     public static class ConsoleLoggerFactoryExtensions
     {

@@ -1,0 +1,43 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Update = Updates.Api.Update;
+
+namespace Iris.Bot
+{
+    internal class TelegramSender
+    {
+        private ITelegramBotClient _client;
+        private ILogger<TelegramSender> _logger;
+
+        public TelegramSender(
+            ITelegramBotClient client,
+            ILogger<TelegramSender> logger)
+        {
+            _client = client;
+            _logger = logger;
+        }
+
+        public async Task SendAsync(Update update, long chatId)
+        {
+            Message[] previousMessages = null;
+            if (update.Media.Any())
+            {
+                IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
+                    .Select(TelegramMediaFactory.ToTelegramMedia);
+                    
+                previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
+            }
+
+            await _client.SendTextMessageAsync(
+                chatId,
+                update.FormattedMessage,
+                ParseMode.Markdown,
+                replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0);
+        }
+    }
+}
