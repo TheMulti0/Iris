@@ -39,9 +39,9 @@ namespace Updates.Twitter
             if (tweet.IsRetweet)
             {
                 builder = new StringBuilder(FormatHeader("פורסם ציוץ מחדש כעת מעת"));
-                builder.Append($"{GetAuthorName(tweet.CreatedBy)} \n");
+                builder.Append(GetTweetText(tweet));
                 builder.Append(
-                    "\n הציוץ המקורי מאת: \n" +
+                    "\n === \n הציוץ המקורי מאת: \n" +
                     GetTweetText(tweet.RetweetedTweet));
             }
             else
@@ -53,7 +53,7 @@ namespace Updates.Twitter
                 if (tweet.QuotedTweet != null)
                 {
                     builder.Append(
-                        "\n הציוץ הזה הוא תגובה לציוץ הבא מאת: \n" +
+                        "\n === \n הציוץ הזה הוא תגובה לציוץ הבא מאת: \n" +
                         GetTweetText(tweet.QuotedTweet));
                 }
             }
