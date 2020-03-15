@@ -9,14 +9,14 @@ using Update = Updates.Api.Update;
 
 namespace Iris.Bot
 {
-    internal class TelegramSender
+    internal class Sender
     {
         private ITelegramBotClient _client;
-        private ILogger<TelegramSender> _logger;
+        private ILogger<Sender> _logger;
 
-        public TelegramSender(
+        public Sender(
             ITelegramBotClient client,
-            ILogger<TelegramSender> logger)
+            ILogger<Sender> logger)
         {
             _client = client;
             _logger = logger;

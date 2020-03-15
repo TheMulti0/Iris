@@ -28,7 +28,7 @@ namespace Iris
                     .AddConsole()
                     .AddFile(options => options.LogDirectory = $"{rootDirectory}/logs"));
         
-            var telegramBot = new TelegramBot(
+            var telegramBot = new Bot.Bot(
                 config,
                 factory,
                 new JsonUpdateValidator($"{rootDirectory}/savedUpdates.json"));

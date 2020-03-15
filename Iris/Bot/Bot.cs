@@ -12,15 +12,15 @@ using Update = Updates.Api.Update;
 
 namespace Iris.Bot
 {
-    internal class TelegramBot
+    internal class Bot
     {
         private readonly ApplicationConfig _config;
         private readonly ILoggerFactory _loggerFactory;
-        private readonly ILogger<TelegramBot> _logger;
-        private readonly TelegramSender _sender;        
+        private readonly ILogger<Bot> _logger;
+        private readonly Sender _sender;        
         private readonly IUpdatesValidator _validator;
 
-        public TelegramBot(
+        public Bot(
             ApplicationConfig config,
             ILoggerFactory loggerFactory,
             IUpdatesValidator validator)
@@ -28,12 +28,12 @@ namespace Iris.Bot
             _config = config;
             _loggerFactory = loggerFactory;
             
-            _logger = _loggerFactory.CreateLogger<TelegramBot>();
+            _logger = _loggerFactory.CreateLogger<Bot>();
 
             var client = new TelegramBotClient(config.TelegramBotConfig.Token);
-            _sender = new TelegramSender(
+            _sender = new Sender(
                 client,
-                loggerFactory.CreateLogger<TelegramSender>());
+                loggerFactory.CreateLogger<Sender>());
             
             client.StartReceiving();
             client.OnUpdate += (sender, args) =>
