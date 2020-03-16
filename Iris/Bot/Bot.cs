@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using Tweetinvi.Core.Factories;
 using Updates.Api;
 using Updates.Configs;
@@ -20,10 +21,10 @@ namespace Iris.Bot
         private readonly ApplicationConfig _config;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<Bot> _logger;
+        private readonly TelegramBotClient _client;
         private readonly Sender _sender;
         private readonly ChatsManager _chatsManager;
         private readonly IUpdatesValidator _validator;
-        private TelegramBotClient _client;
 
         public Bot(
             ApplicationConfig config,
@@ -60,7 +61,7 @@ namespace Iris.Bot
             long chatId = message.Chat.Id;
             bool containsKey = _chatsManager.ChatIds.ContainsKey(chatId);
             
-            if (message.Text.Contains("start"))
+            if (message.Text.Contains("הירשם"))
             {
                 if (containsKey)
                 {
@@ -71,9 +72,8 @@ namespace Iris.Bot
                     _chatsManager.Add(chatId);
                     await _client.SendTextMessageAsync(chatId, "עכשיו רשום");
                 }
-                
             }
-            else if (message.Text.Contains("stop"))
+            else if (message.Text.Contains("הפסק הרשמה"))
             {
                 if (containsKey)
                 {
@@ -84,6 +84,15 @@ namespace Iris.Bot
                 {
                     await _client.SendTextMessageAsync(chatId, "לא רשום בכלל");
                 }
+            }
+            else
+            {
+                var keyboard = new ReplyKeyboardMarkup(new []
+                {
+                    new KeyboardButton("הירשם"), 
+                    new KeyboardButton("הפסק הרשמה"), 
+                });
+                await _client.SendTextMessageAsync(chatId, "בחר", replyMarkup: keyboard);
             }
         }
 
