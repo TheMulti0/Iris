@@ -46,7 +46,6 @@ namespace Iris.Bot
             _client.OnMessage += OnMessageReceived;
             
             _chatsManager = new ChatsManager(chatsFile);
-            _chatsManager.ChatIds.TryAdd(-1001422720138, -1001422720138);
             
             _validator = validator;
 
