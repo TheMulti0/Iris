@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Text.Json;
+using Updates.Configs;
 
 namespace Updates.Watcher
 {
@@ -47,18 +48,10 @@ namespace Updates.Watcher
 
         private Dictionary<long, List<long>> GetSavedUpdates()
         {
-            try
-            {
-                return JsonSerializer
-                    .Deserialize<Updates>(File.ReadAllText(_fileName))
-                    .Pairs
-                    .ToDictionary(pair => pair.UpdateId, pair => pair.ChatIds);
-            }
-            catch (Exception)
-            {
-                File.WriteAllText(_fileName, "{ }");
-                return new Dictionary<long, List<long>>();
-            }
+            return JsonExtensions.Read<Updates>(_fileName)
+                ?.Pairs
+                ?.ToDictionary(pair => pair.UpdateId, pair => pair.ChatIds)
+                ?? new Dictionary<long, List<long>>();
         }
 
         public bool WasUpdateSent(long updateId, long chatId)
@@ -73,7 +66,6 @@ namespace Updates.Watcher
 
             Add(updateId, chatId, _operatedPosts);
 
-            File.Delete(_fileName);
             var updates = new Updates
             {
                 Pairs = _operatedPosts.Select(pair => new UpdatePair
@@ -82,10 +74,10 @@ namespace Updates.Watcher
                     ChatIds = pair.Value
                 }) 
             };
-            File.WriteAllText(_fileName, JsonSerializer.Serialize(updates));
+            JsonExtensions.Write(updates, _fileName);
         }
 
-        private void Add(
+        private static void Add(
             long updateId,
             long chatId,
             IDictionary<long, List<long>> dictionary)
