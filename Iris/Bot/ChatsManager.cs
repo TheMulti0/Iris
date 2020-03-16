@@ -8,6 +8,7 @@ namespace Iris.Bot
     internal class ChatsManager
     {
         private readonly string _fileName;
+        private readonly object _fileLock = new object();
         public ConcurrentDictionary<long, long> ChatIds { get; }
 
         public ChatsManager(string fileName)
@@ -34,11 +35,14 @@ namespace Iris.Bot
                 Save();
             }
         }
-        
-        public void Save()
+
+        private void Save()
         {
             var chats = new Chats { ChatIds = ChatIds.Values.ToList() };
-            JsonExtensions.Write(chats, _fileName);
+            lock (_fileLock)
+            {
+                JsonExtensions.Write(chats, _fileName);
+            }
         }
     }
 }
