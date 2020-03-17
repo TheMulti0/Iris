@@ -16,7 +16,7 @@ namespace Iris
 #if DEBUG
             const string rootDirectory = "../../..";
 #else
-            const string rootDirectory = "data";
+            const string rootDirectory = "config";
 #endif
             
             var config = await JsonSerializer
@@ -26,7 +26,7 @@ namespace Iris
             ILoggerFactory factory = LoggerFactory
                 .Create(builder => builder
                     .AddConsole()
-                    .AddFile(options => options.LogDirectory = $"{rootDirectory}/logs"));
+                    .AddFile(options => options.LogDirectory = "logs"));
         
             var telegramBot = new Bot.Bot(
                 config,
