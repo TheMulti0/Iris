@@ -37,7 +37,7 @@ namespace Iris.Bot
             await _client.SendTextMessageAsync(
                 chatId,
                 update.FormattedMessage,
-                ParseMode.Markdown,
+                ParseMode.Html,
                 replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0);
         }
     }

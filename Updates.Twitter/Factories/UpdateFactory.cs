@@ -77,6 +77,6 @@ namespace Updates.Twitter
                    $"\"{tweet.Text}\"";
         }
 
-        private static string GetAuthorName(IUser author) => $"*{author.Name}* (@{author.ScreenName})";
+        private static string GetAuthorName(IUser author) => $"{author.Name} (@{author.ScreenName})";
     }
 }
