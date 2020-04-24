@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Updates.Facebook
 {
-    public class DateTimeConverter : JsonConverter<DateTime>
+    internal class DateTimeConverter : JsonConverter<DateTime>
     {
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) 
             => DateTime.Parse(reader.GetString());
