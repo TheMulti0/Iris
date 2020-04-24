@@ -171,7 +171,9 @@ namespace Iris.Bot
             if (facebookConfig.IsEnabled)
             {
                 providers.Add(
-                    new Facebook(facebookConfig),
+                    new Facebook(
+                        _loggerFactory.CreateLogger<Facebook>(),
+                        facebookConfig),
                     facebookConfig);
             }
 

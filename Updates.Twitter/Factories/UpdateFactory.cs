@@ -14,7 +14,7 @@ namespace Updates.Twitter
         public static Update ToUpdate(ITweet tweet)
         {
             long id = tweet.Id;
-            var author = UserFactory.ToUser(tweet.CreatedBy);
+            var author = UserFactory.ToUser(tweet.CreatedBy); // TODO; receive in parameter, therefore UserFactory will be called only once per request
             string message = tweet.FullText;
             string formattedMessage = GetFormattedMessage(tweet);
             DateTime createdAt = tweet.CreatedAt;

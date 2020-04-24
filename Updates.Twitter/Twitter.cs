@@ -47,7 +47,7 @@ namespace Updates.Twitter
                 .Execute(() => user.GetUserTimelineAsync(_maxResults));
             List<ITweet> tweetsList = tweets.ToList();
             
-            _logger.LogInformation($"Found {tweetsList.Count} tweets by #{userName}");
+            _logger.LogInformation($"Found {tweetsList.Count} tweets by {user.ScreenName}");
 
             return tweetsList
                 .Select(UpdateFactory.ToUpdate);
