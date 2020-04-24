@@ -14,7 +14,7 @@ namespace Updates.Watcher.Tests
                 new Update(
                     0,
                     new User(
-                        0,
+                        "0",
                         userName,
                         "",
                         ""),

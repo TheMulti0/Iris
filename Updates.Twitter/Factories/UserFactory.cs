@@ -13,7 +13,7 @@ namespace Updates.Twitter
             string url = user.Url;
             
             return new User(
-                id,
+                id.ToString(),
                 name,
                 displayName,
                 url);

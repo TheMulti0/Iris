@@ -2,7 +2,7 @@
 {
     public class User
     {
-        public long Id { get; }
+        public string Id { get; }
 
         public string Name { get; }
 
@@ -11,7 +11,7 @@
         public string Url { get; }
         
         public User(
-            long id,
+            string id,
             string name,
             string displayName,
             string url)

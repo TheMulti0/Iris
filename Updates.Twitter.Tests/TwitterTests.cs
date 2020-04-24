@@ -14,8 +14,7 @@ namespace Updates.Twitter.Tests
         [Fact]
         public async Task Test()
         {
-            var config = JsonSerializer.Deserialize<TwitterConfig>(
-                File.ReadAllText("../../../appsettings.json"));
+            var config = JsonExtensions.Read<TwitterConfig>("../../../appsettings.json");
             
             var twitter = new Twitter(NullLogger<Twitter>.Instance, config);
             IEnumerable<Update> updates = await twitter.GetUpdates("@realDonaldTrump");

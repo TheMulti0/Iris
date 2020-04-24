@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher.Tests", "Up
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Twitter.Tests", "Updates.Twitter.Tests\Updates.Twitter.Tests.csproj", "{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Facebook", "Updates.Facebook\Updates.Facebook.csproj", "{493FC534-EA5F-4ECA-9F27-9E632F64D554}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Facebook.Tests", "Updates.Facebook.Tests\Updates.Facebook.Tests.csproj", "{684A9C04-4F53-4BE1-A954-086537EF04AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
