@@ -40,9 +40,9 @@ namespace Updates.Facebook
             builder.Append(
                 GetPostText(post, author));
 
+            string postUrl = post.PostUrl.Replace("m.facebook", "facebook");
             builder.Append(
-                "\n \n \n \n" +
-                $"{post.PostUrl}");
+                $"\n \n \n \n {postUrl}");
 
             return builder.ToString();
         }
