@@ -10,6 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Tweetinvi.Core.Factories;
 using Updates.Api;
 using Updates.Configs;
+using Updates.Facebook;
 using Updates.Twitter;
 using Updates.Watcher;
 using Update = Updates.Api.Update;
@@ -154,16 +155,27 @@ namespace Iris.Bot
 
         private Dictionary<IUpdatesProvider, IProviderConfig> GetProviders()
         {
-            return new Dictionary<IUpdatesProvider, IProviderConfig>
+            var providers = new Dictionary<IUpdatesProvider, IProviderConfig>();
+
+            TwitterConfig twitterConfig = _config.TwitterConfig;
+            if (twitterConfig.IsEnabled)
             {
-                {
+                providers.Add(
                     new Twitter(
                         _loggerFactory.CreateLogger<Twitter>(),
-                        _config.TwitterConfig),
-                    
-                    _config.TwitterConfig
-                }
-            };
+                        twitterConfig),
+                    twitterConfig);
+            }
+
+            FacebookConfig facebookConfig = _config.FacebookConfig;
+            if (facebookConfig.IsEnabled)
+            {
+                providers.Add(
+                    new Facebook(facebookConfig),
+                    facebookConfig);
+            }
+
+            return providers;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Updates.Facebook
 
         private static string GetFormattedMessage(Post post, User author)
         {
-            var builder = new StringBuilder(FormatHeader("ציוץ חדש פורסם כעת מאת"));
+            var builder = new StringBuilder(FormatHeader("פוסט חדש פורסם כעת מאת"));
             builder.Append(
                 GetPostText(post, author));
 
