@@ -7,12 +7,12 @@ app = Flask(__name__)
 @app.route('/facebook', methods=['GET'])
 def get_facebook_posts():
     name = request.args['name']
-    pages = int(request.args['pages'])
+    pageCount = int(request.args['pageCount'])
 
     posts = list(
         get_posts(
             name,
-            pages=pages))
+            pages=pageCount))
 
     return jsonify(posts)
 
