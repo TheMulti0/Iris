@@ -1,14 +1,18 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-
 MAINTAINER TheMulti0 "multi@codeprecise.com"
 
-WORKDIR /source
+# Copy src code to /src
+WORKDIR /src
 COPY src .
 
-RUN dotnet restore 
-RUN dotnet publish -c release -o /app --no-restore
+# Build to output directory /app
+RUN dotnet publish -c Release -o /app
 
+# Build runtime image (copy compiled output to /app)
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1
+
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT ["./Iris"]
+
+# Run Iris. 'dotnet Iris.dll'
+ENTRYPOINT ["dotnet", "Iris.dll"]

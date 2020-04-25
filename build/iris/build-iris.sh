@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp -a ../../src/. src
+cp -a ../../src src
 
 docker image build -t iris-image .
 
