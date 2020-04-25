@@ -1,5 +1,8 @@
 #!/bin/bash
 
+rm -rf src
+echo "Removed 'src'"
+
 cp -a ../src src
 echo "Copied 'src'"
 
