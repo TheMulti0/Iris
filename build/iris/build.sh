@@ -1,9 +1,8 @@
 #!/bin/bash
 
-rm -rf src
-echo "Removed 'src'"
+./clean.sh
 
-cp -a ../src src
+cp -a ../../src src
 echo "Copied 'src'"
 
 docker image build -t iris-image .
