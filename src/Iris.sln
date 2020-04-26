@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook.Tests", "Iris
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter", "Iris.Twitter\Iris.Twitter.csproj", "{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter.Tests", "Iris.Twitter.Tests\Iris.Twitter.Tests.csproj", "{0BC34ADE-7585-448E-A077-E68652678C7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BC34ADE-7585-448E-A077-E68652678C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BC34ADE-7585-448E-A077-E68652678C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BC34ADE-7585-448E-A077-E68652678C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BC34ADE-7585-448E-A077-E68652678C7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
