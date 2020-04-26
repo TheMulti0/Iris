@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Api", "Iris.Api\Iris.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter", "Iris.Twitter\Iris.Twitter.csproj", "{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher", "Updates.Watcher\Updates.Watcher.csproj", "{5D841812-4A21-4824-8589-B0B6706965A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Watcher", "Iris.Watcher\Iris.Watcher.csproj", "{5D841812-4A21-4824-8589-B0B6706965A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher.Tests", "Updates.Watcher.Tests\Updates.Watcher.Tests.csproj", "{1873DB11-969A-42D6-ACE6-CF8947D04D52}"
 EndProject

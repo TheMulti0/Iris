@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Updates.Watcher\Updates.Watcher.csproj" />
+      <ProjectReference Include="..\Iris.Watcher\Iris.Watcher.csproj" />
     </ItemGroup>
 
 </Project>
