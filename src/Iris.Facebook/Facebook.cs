@@ -39,6 +39,14 @@ namespace Iris.Facebook
 
             Post[] posts = await DeserializePosts(json);
             
+            if (posts == null)
+            {
+                _logger.LogError("TWEETS IS NULL.");
+                StreamReader r = new StreamReader(json);
+                var stringg = await r.ReadToEndAsync();
+                _logger.LogError(stringg);
+            }
+            
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
             return posts

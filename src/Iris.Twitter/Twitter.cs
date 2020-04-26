@@ -39,6 +39,14 @@ namespace Iris.Twitter
             Stream json = await GetTwitterTweetsJson(user.Id, _pageCountPerUser);
 
             Tweet[] tweets = await DeserializeTweets(json);
+
+            if (tweets == null)
+            {
+                _logger.LogError("TWEETS IS NULL.");
+                StreamReader r = new StreamReader(json);
+                var stringg = await r.ReadToEndAsync();
+                _logger.LogError(stringg);
+            }
             
             _logger.LogInformation($"Found {tweets.Length} tweets by {user.Id}");
             
