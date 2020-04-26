@@ -1,6 +1,6 @@
 ﻿using Iris.Api;
 
-namespace Updates.Twitter
+namespace Iris.Twitter
 {
     public class TwitterConfig : IProviderConfig
     {

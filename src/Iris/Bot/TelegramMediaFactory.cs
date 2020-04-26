@@ -1,5 +1,5 @@
+using Iris.Api;
 using Telegram.Bot.Types;
-using Updates.Api;
 
 namespace Iris.Bot
 {

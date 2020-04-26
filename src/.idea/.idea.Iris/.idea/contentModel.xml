@@ -38,11 +38,10 @@
         </e>
         <e p="TelegramBotApplication.cs" t="Include" />
       </e>
-      <e p="Iris.sln" t="IncludeFlat" />
-      <e p="packages" t="ExcludeRecursive" />
-      <e p="Updates.Api" t="IncludeRecursive">
+      <e p="Iris.Api" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="IProviderConfig.cs" t="Include" />
+        <e p="Iris.Api.csproj" t="IncludeRecursive" />
         <e p="IUpdatesProvider.cs" t="Include" />
         <e p="JsonExtensions.cs" t="Include" />
         <e p="Media.cs" t="Include" />
@@ -50,15 +49,14 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.1" t="Include">
-              <e p="Updates.Api.AssemblyInfo.cs" t="Include" />
+              <e p="Iris.Api.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
         <e p="Update.cs" t="Include" />
-        <e p="Updates.Api.csproj" t="IncludeRecursive" />
         <e p="User.cs" t="Include" />
       </e>
-      <e p="Updates.Facebook" t="IncludeRecursive">
+      <e p="Iris.Facebook" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="DateTimeConverter.cs" t="Include" />
         <e p="Facebook.cs" t="Include" />
@@ -68,30 +66,31 @@
           <e p="UpdateFactory.cs" t="Include" />
           <e p="UserFactory.cs" t="Include" />
         </e>
+        <e p="Iris.Facebook.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.1" t="Include">
-              <e p="Updates.Facebook.AssemblyInfo.cs" t="Include" />
+              <e p="Iris.Facebook.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
         <e p="Post.cs" t="Include" />
         <e p="StringToLongConverter.cs" t="Include" />
-        <e p="Updates.Facebook.csproj" t="IncludeRecursive" />
       </e>
-      <e p="Updates.Facebook.Tests" t="IncludeRecursive">
+      <e p="Iris.Facebook.Tests" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="FacebookTests.cs" t="Include" />
+        <e p="Iris.Facebook.Tests.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
-              <e p="Updates.Facebook.Tests.AssemblyInfo.cs" t="Include" />
+              <e p="Iris.Facebook.Tests.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
-        <e p="Updates.Facebook.Tests.csproj" t="IncludeRecursive" />
       </e>
-      <e p="Updates.Twitter" t="IncludeRecursive">
+      <e p="Iris.sln" t="IncludeFlat" />
+      <e p="Iris.Twitter" t="IncludeRecursive">
         <e p="AsyncEnumerableExtensions.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="Factories" t="Include">
@@ -99,19 +98,20 @@
           <e p="UpdateFactory.cs" t="Include" />
           <e p="UserFactory.cs" t="Include" />
         </e>
+        <e p="Iris.Twitter.csproj" t="IncludeRecursive" />
+        <e p="Iris.Twitter.csproj.DotSettings" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.1" t="Include">
-              <e p="Updates.Twitter.AssemblyInfo.cs" t="Include" />
+              <e p="Iris.Twitter.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
         <e p="Twitter.cs" t="Include" />
         <e p="TwitterConfig.cs" t="Include" />
         <e p="TwitterExecuter.cs" t="Include" />
-        <e p="Updates.Twitter.csproj" t="IncludeRecursive" />
-        <e p="Updates.Twitter.csproj.DotSettings" t="Include" />
       </e>
+      <e p="packages" t="ExcludeRecursive" />
       <e p="Updates.Twitter.Tests" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">

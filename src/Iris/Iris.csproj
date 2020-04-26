@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Iris.Facebook\Iris.Facebook.csproj" />
-    <ProjectReference Include="..\Updates.Twitter\Updates.Twitter.csproj" />
+    <ProjectReference Include="..\Iris.Twitter\Iris.Twitter.csproj" />
     <ProjectReference Include="..\Updates.Watcher\Updates.Watcher.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 ﻿using Iris.Facebook;
-using Updates.Twitter;
+using Iris.Twitter;
 
 namespace Iris.Config
 {

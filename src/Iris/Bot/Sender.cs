@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Update = Updates.Api.Update;
+using Update = Iris.Api.Update;
 
 namespace Iris.Bot
 {

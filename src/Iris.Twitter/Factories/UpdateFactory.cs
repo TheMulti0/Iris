@@ -5,7 +5,7 @@ using System.Text;
 using Tweetinvi.Models;
 using Iris.Api;
 
-namespace Updates.Twitter
+namespace Iris.Twitter
 {
     internal static class UpdateFactory
     {

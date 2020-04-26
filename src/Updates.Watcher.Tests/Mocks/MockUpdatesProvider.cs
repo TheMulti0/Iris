@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Watcher.Tests
 {

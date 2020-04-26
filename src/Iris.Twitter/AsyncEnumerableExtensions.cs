@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Updates.Twitter
+namespace Iris.Twitter
 {
     public static class AsyncEnumerableExtensions
     {

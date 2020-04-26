@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Iris.Api;
+using Iris.Twitter;
 using Microsoft.Extensions.Logging.Abstractions;
-using Updates.Api;
 using Xunit;
 
 namespace Updates.Twitter.Tests
@@ -13,7 +14,7 @@ namespace Updates.Twitter.Tests
         {
             var config = JsonExtensions.Read<TwitterConfig>("../../../appsettings.json");
             
-            var twitter = new Twitter(NullLogger<Twitter>.Instance, config);
+            var twitter = new Iris.Twitter.Twitter(NullLogger<Iris.Twitter.Twitter>.Instance, config);
             IEnumerable<Update> updates = await twitter.GetUpdates("@realDonaldTrump");
             foreach (Update update in updates)
             {

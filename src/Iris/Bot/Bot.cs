@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Iris.Api;
 using Iris.Config;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using Updates.Api;
 using Iris.Facebook;
-using Updates.Twitter;
+using Iris.Twitter;
 using Updates.Watcher;
-using Update = Updates.Api.Update;
+using Update = Iris.Api.Update;
 
 namespace Iris.Bot
 {
@@ -159,8 +159,8 @@ namespace Iris.Bot
             if (twitterConfig.IsEnabled)
             {
                 providers.Add(
-                    new Twitter(
-                        _loggerFactory.CreateLogger<Twitter>(),
+                    new Twitter.Twitter(
+                        _loggerFactory.CreateLogger<Twitter.Twitter>(),
                         twitterConfig),
                     twitterConfig);
             }
@@ -169,8 +169,8 @@ namespace Iris.Bot
             if (facebookConfig.IsEnabled)
             {
                 providers.Add(
-                    new Facebook(
-                        _loggerFactory.CreateLogger<Facebook>(),
+                    new Facebook.Facebook(
+                        _loggerFactory.CreateLogger<Facebook.Facebook>(),
                         facebookConfig),
                     facebookConfig);
             }

@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Reactive.Linq;
+using Iris.Api;
 using Microsoft.Extensions.Logging.Abstractions;
-using Updates.Api;
 using Xunit;
 
 namespace Updates.Watcher.Tests

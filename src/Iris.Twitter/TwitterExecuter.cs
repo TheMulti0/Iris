@@ -2,7 +2,7 @@
 using Tweetinvi;
 using Tweetinvi.Models;
 
-namespace Updates.Twitter
+namespace Iris.Twitter
 {
     public class TwitterExecuter
     {

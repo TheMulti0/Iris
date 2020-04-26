@@ -20,8 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5c2b47e6-a124-46d1-8b61-3466be8def32" name="Default Changelist" comment="Added facebook to README sources">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/discord.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Iris.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Iris/Bot/Bot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/Bot.cs" afterDir="false" />
@@ -29,25 +29,21 @@
       <change beforePath="$PROJECT_DIR$/Iris/Bot/Sender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/Sender.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Iris/TelegramBotApplication.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/TelegramBotApplication.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Api/Updates.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/Updates.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Configs/FacebookConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Configs/IProviderConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/IProviderConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Configs/JsonExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/JsonExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Configs/TwitterConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Facebook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Facebook.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Post.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Post.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Updates.Facebook.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Updates.Facebook.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Iris.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Iris.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Twitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Twitter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/JsonUpdateValidatorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/JsonUpdateValidatorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter.Tests/Updates.Twitter.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter.Tests/Updates.Twitter.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/AsyncEnumerableExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/AsyncEnumerableExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Factories/MediaFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Factories/MediaFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Factories/UpdateFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Factories/UserFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Factories/UserFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Twitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Twitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/TwitterConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/TwitterExecuter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/TwitterExecuter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Iris.Twitter.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.Twitter/Iris.Twitter.csproj.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Watcher/Updates.Watcher.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/Updates.Watcher.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockUpdatesProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockUpdatesProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/UpdatesWatcherTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/UpdatesWatcherTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,29 +59,34 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Iris/TelegramBotApplication.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Api/Update.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Api/JsonExtensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Facebook.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Api/Media.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Api/User.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Api/Update.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Iris/Config/TelegramBotConfig.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///FacebookTests.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///UpdateFactory.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///TwitterTests.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Bot.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Api/IProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///MockProviderConfig.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Facebook/Facebook.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///JsonUpdateValidator.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Facebook/Facebook.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/Bot/ChatsManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Iris/Bot/Bot.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/Bot/Sender.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/TelegramBotApplication.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Facebook.Tests/FacebookTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Api/JsonExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockUpdatesProvider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Facebook/FacebookConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Api/IProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/Factories/UserFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/Factories/UpdateFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/Factories/MediaFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/AsyncEnumerableExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/TwitterConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/TwitterExecuter.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris.Twitter/Twitter.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher.Tests/UpdatesWatcherTests.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -99,6 +100,22 @@
         <option value="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" />
         <option value="$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" />
         <option value="$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/Factories/MediaFactory.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/Factories/UpdateFactory.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/Factories/UserFactory.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/AsyncEnumerableExtensions.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/Twitter.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/TwitterConfig.cs" />
+        <option value="$PROJECT_DIR$/Iris.Twitter/TwitterExecuter.cs" />
+        <option value="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockUpdatesProvider.cs" />
+        <option value="$PROJECT_DIR$/Updates.Watcher.Tests/UpdatesWatcherTests.cs" />
+        <option value="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" />
+        <option value="$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" />
+        <option value="$PROJECT_DIR$/Iris/Bot/Sender.cs" />
+        <option value="$PROJECT_DIR$/Iris/Bot/ChatsManager.cs" />
+        <option value="$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" />
+        <option value="$PROJECT_DIR$/Iris/Bot/Bot.cs" />
+        <option value="$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" />
       </list>
     </option>
   </component>
@@ -111,6 +128,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -157,6 +175,8 @@
       <workItem from="1587879239849" duration="896000" />
       <workItem from="1587880818423" duration="27000" />
       <workItem from="1587912330340" duration="229000" />
+      <workItem from="1587912569814" duration="1382000" />
+      <workItem from="1587914008712" duration="117000" />
     </task>
     <task id="LOCAL-00001" summary="Added facebook to README sources">
       <created>1587820871094</created>
@@ -165,7 +185,42 @@
       <option name="project" value="LOCAL" />
       <updated>1587820871094</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Removed Configs project">
+      <created>1587912703149</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1587912703149</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Updates.Api -&gt; Iris.Api">
+      <created>1587913200164</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1587913200164</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Updates.Facebook -&gt; Iris.Facebook">
+      <created>1587913302307</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1587913302307</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Updates.Facebook.Tests -&gt; Iris.Facebook.Tests">
+      <created>1587913328165</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1587913328165</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Updates.Twitter -&gt; Iris.Twitter">
+      <created>1587913513939</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1587913513939</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,7 +246,12 @@
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Added facebook to README sources" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added facebook to README sources" />
+    <MESSAGE value="Removed Configs project" />
+    <MESSAGE value="Updates.Api -&gt; Iris.Api" />
+    <MESSAGE value="Updates.Facebook -&gt; Iris.Facebook" />
+    <MESSAGE value="Updates.Facebook.Tests -&gt; Iris.Facebook.Tests" />
+    <MESSAGE value="Updates.Twitter -&gt; Iris.Twitter" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updates.Twitter -&gt; Iris.Twitter" />
   </component>
   <component name="WindowStateProjectService">
     <state x="606" y="242" key="SettingsEditor" timestamp="1587829884599">

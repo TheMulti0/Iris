@@ -1,7 +1,7 @@
 using Tweetinvi.Models.Entities;
 using Iris.Api;
 
-namespace Updates.Twitter
+namespace Iris.Twitter
 {
     internal static class MediaFactory
     {
