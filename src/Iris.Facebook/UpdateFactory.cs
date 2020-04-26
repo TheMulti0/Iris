@@ -7,7 +7,7 @@ namespace Iris.Facebook
 {
     internal static class UpdateFactory
     {
-        public static Update ToUpdate(Post post, User author)
+        public static Update ToUpdate(this Post post, User author)
         {
             long id = post.Id;
             string message = post.Text;
@@ -20,7 +20,7 @@ namespace Iris.Facebook
                 imageUrl != null
                 ? new List<Media>
                     {
-                        MediaFactory.ToMedia(imageUrl)
+                        imageUrl.ToMedia()
                     }
                 : new List<Media>();
 
@@ -32,6 +32,11 @@ namespace Iris.Facebook
                 createdAt,
                 url,
                 media);
+        }
+        
+        private static Media ToMedia(this string imageUrl)
+        {
+            return new Media(imageUrl, MediaType.Photo);
         }
 
         private static string GetFormattedMessage(Post post, User author)

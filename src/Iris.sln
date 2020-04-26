@@ -7,17 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris", "Iris\Iris.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Api", "Iris.Api\Iris.Api.csproj", "{AB19A0EE-2B53-4504-AD32-5CA0C095E6A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter", "Iris.Twitter\Iris.Twitter.csproj", "{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Watcher", "Iris.Watcher\Iris.Watcher.csproj", "{5D841812-4A21-4824-8589-B0B6706965A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Watcher.Tests", "Iris.Watcher.Tests\Iris.Watcher.Tests.csproj", "{1873DB11-969A-42D6-ACE6-CF8947D04D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter.Tests", "Iris.Twitter.Tests\Iris.Twitter.Tests.csproj", "{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook", "Iris.Facebook\Iris.Facebook.csproj", "{493FC534-EA5F-4ECA-9F27-9E632F64D554}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook.Tests", "Iris.Facebook.Tests\Iris.Facebook.Tests.csproj", "{684A9C04-4F53-4BE1-A954-086537EF04AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter", "Iris.Twitter\Iris.Twitter.csproj", "{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{AB19A0EE-2B53-4504-AD32-5CA0C095E6A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB19A0EE-2B53-4504-AD32-5CA0C095E6A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB19A0EE-2B53-4504-AD32-5CA0C095E6A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAAC895F-5DCF-4FE3-83EC-452BDB2CA779}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5D841812-4A21-4824-8589-B0B6706965A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D841812-4A21-4824-8589-B0B6706965A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D841812-4A21-4824-8589-B0B6706965A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,10 +39,6 @@ Global
 		{1873DB11-969A-42D6-ACE6-CF8947D04D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1873DB11-969A-42D6-ACE6-CF8947D04D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1873DB11-969A-42D6-ACE6-CF8947D04D52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{493FC534-EA5F-4ECA-9F27-9E632F64D554}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +47,10 @@ Global
 		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{684A9C04-4F53-4BE1-A954-086537EF04AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B2C46C-278B-4D54-8AF7-8CF1ABEE8538}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

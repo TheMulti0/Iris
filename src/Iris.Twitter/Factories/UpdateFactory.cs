@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Tweetinvi.Models;
 using Iris.Api;
 
-namespace Iris.Twitter
+namespace Iris.Twitter.Factories
 {
     internal static class UpdateFactory
     {
-        public static Update ToUpdate(ITweet tweet)
+        public static Update ToUpdate(this Tweet tweet, User author)
         {
+            string url = GetUrl(tweet, author);
+
             long id = tweet.Id;
-            var author = UserFactory.ToUser(tweet.CreatedBy); // TODO; receive in parameter, therefore UserFactory will be called only once per request
-            string message = tweet.FullText;
-            string formattedMessage = GetFormattedMessage(tweet);
-            DateTime createdAt = tweet.CreatedAt;
-            string url = tweet.Url;
-            IEnumerable<Media> media = tweet.Media?
-                .Select(MediaFactory.ToMedia) ?? new List<Media>();
+            string message = tweet.Text;
+            string formattedMessage = GetFormattedMessage(tweet, author, url);
+            DateTime createdAt = tweet.Date;
+            IEnumerable<Api.Media> media = tweet.Media.ToMedias();
 
             return new Update(
                 id,
@@ -30,51 +27,22 @@ namespace Iris.Twitter
                 media);
         }
 
-        private static string GetFormattedMessage(ITweet tweet)
+        private static IEnumerable<Api.Media> ToMedias(this Media media)
         {
-            StringBuilder builder;
-            
-            if (tweet.IsRetweet)
-            {
-                builder = new StringBuilder(FormatHeader("פורסם ציוץ מחדש כעת מעת"));
-                builder.Append(GetTweetText(tweet));
-                builder.Append(
-                    "\n === \n הציוץ המקורי מאת: \n" +
-                    GetTweetText(tweet.RetweetedTweet));
-            }
-            else
-            {
-                builder = new StringBuilder(FormatHeader("ציוץ חדש פורסם כעת מאת"));
-                builder.Append(
-                    GetTweetText(tweet));
-                
-                if (tweet.QuotedTweet != null)
-                {
-                    builder.Append(
-                        "\n === \n הציוץ הזה הוא תגובה לציוץ הבא מאת: \n" +
-                        GetTweetText(tweet.QuotedTweet));
-                }
-            }
-
-            builder.Append(
-                "\n \n \n \n" +
-                $"{tweet.Url}");
-            
-            return builder.ToString();
+            return media.Photos.Select(url => new Api.Media(url, MediaType.Photo));
         }
 
-        private static string FormatHeader(string header) 
-            => $"{header}:\n";
-
-        private static string GetTweetText(ITweet tweet)
+        private static string GetUrl(Tweet tweet, User author)
         {
-            IUser author = tweet.CreatedBy;
-            
-            return GetAuthorName(author) +
-                   "\n \n \n" +
-                   $"\"{tweet.Text}\"";
+            return $"https://twitter.com/{author.Id}/status/{tweet.Id}";
         }
 
-        private static string GetAuthorName(IUser author) => $"{author.Name} (@{author.ScreenName})";
+        private static string GetFormattedMessage(Tweet tweet, User author, string url)
+        {
+            string verb = author.Gender == Gender.Male ? "צייץ" : "צייצה";
+            string retweeted = tweet.IsRetweet ? "מחדש" : "";
+            
+            return $"{author.Name} {verb} {retweeted}:\n \n \n{tweet.Text}\n \n{url}";
+        }
     }
 }

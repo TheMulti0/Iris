@@ -1,4 +1,6 @@
-﻿namespace Iris.Api
+﻿using System.Text.Json.Serialization;
+
+namespace Iris.Api
 {
     public class User
     {
@@ -6,6 +8,7 @@
 
         public string Name { get; set; }
 
-        public string Url { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public Gender Gender { get; set; }
     }
 }

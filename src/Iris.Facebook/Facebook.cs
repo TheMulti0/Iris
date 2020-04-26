@@ -42,7 +42,7 @@ namespace Iris.Facebook
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Name}");
             
             return posts
-                .Select(post => UpdateFactory.ToUpdate(post, user));
+                .Select(post => post.ToUpdate(user));
         }
 
         private async Task<Stream> GetFacebookPostsJson(string userName, int pageCountPerUser)
