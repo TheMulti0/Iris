@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Updates.Facebook
+namespace Iris.Facebook
 {
     internal class StringToLongConverter : JsonConverter<long>
     {

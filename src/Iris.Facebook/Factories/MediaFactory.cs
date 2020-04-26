@@ -1,6 +1,6 @@
 using Iris.Api;
 
-namespace Updates.Facebook
+namespace Iris.Facebook
 {
     internal static class MediaFactory
     {

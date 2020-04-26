@@ -8,7 +8,7 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Updates.Api;
-using Updates.Facebook;
+using Iris.Facebook;
 using Updates.Twitter;
 using Updates.Watcher;
 using Update = Updates.Api.Update;

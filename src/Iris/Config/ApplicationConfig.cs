@@ -1,4 +1,4 @@
-﻿using Updates.Facebook;
+﻿using Iris.Facebook;
 using Updates.Twitter;
 
 namespace Iris.Config

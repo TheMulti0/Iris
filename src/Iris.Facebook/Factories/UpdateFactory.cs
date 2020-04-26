@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Iris.Api;
 
-namespace Updates.Facebook
+namespace Iris.Facebook
 {
     internal static class UpdateFactory
     {

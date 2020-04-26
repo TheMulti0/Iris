@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Iris.Api;
 
-namespace Updates.Facebook
+namespace Iris.Facebook
 {
     public class Facebook : IUpdatesProvider
     {

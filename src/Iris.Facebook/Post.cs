@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Updates.Facebook
+namespace Iris.Facebook
 {
     internal class Post
     {

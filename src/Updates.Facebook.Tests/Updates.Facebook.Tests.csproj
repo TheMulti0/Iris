@@ -15,7 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Iris.Api\Iris.Api.csproj" />
-      <ProjectReference Include="..\Updates.Facebook\Updates.Facebook.csproj" />
+      <ProjectReference Include="..\Iris.Facebook\Iris.Facebook.csproj" />
     </ItemGroup>
 
 </Project>
