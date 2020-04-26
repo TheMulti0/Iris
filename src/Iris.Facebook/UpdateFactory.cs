@@ -41,20 +41,10 @@ namespace Iris.Facebook
 
         private static string GetFormattedMessage(Post post, User author)
         {
-            var builder = new StringBuilder(FormatHeader("פוסט חדש פורסם כעת מאת"));
-            builder.Append(
-                GetPostText(post, author));
-
-            string postUrl = post.PostUrl.Replace("m.facebook", "facebook");
-            builder.Append(
-                $"\n \n \n \n {postUrl}");
-
-            return builder.ToString();
+            string verb = author.Gender == Gender.Male ? "פרסם" : "פרסמה";
+            const string postWord = "פוסט";
+            
+            return $"{author.Name} {verb} {postWord}:\n \n \n{post.Text}\n \n{post.PostUrl}";
         }
-
-        private static string FormatHeader(string header)
-            => $"{header}:\n";
-
-        private static string GetPostText(Post post, User author) => $"{author.Name} \n \n \n \"{post.Text}\"";
     }
 }
