@@ -33,13 +33,13 @@ namespace Iris.Facebook
 
         public async Task<IEnumerable<Update>> GetUpdates(User user)
         {
-            _logger.LogInformation($"GetUpdates requested with user {user.Name} (pageCount = {_pageCountPerUser})");
+            _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
             
             Stream json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
 
             Post[] posts = await DeserializePosts(json);
             
-            _logger.LogInformation($"Found {posts.Length} tweets by {user.Name}");
+            _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
             return posts
                 .Select(post => post.ToUpdate(user));

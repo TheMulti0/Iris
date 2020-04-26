@@ -34,13 +34,13 @@ namespace Iris.Twitter
 
         public async Task<IEnumerable<Update>> GetUpdates(User user)
         {
-            _logger.LogInformation($"GetUpdates requested with user {user.Name} (pageCount = {_pageCountPerUser})");
+            _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
             
             Stream json = await GetTwitterTweetsJson(user.Id, _pageCountPerUser);
 
             Tweet[] tweets = await DeserializeTweets(json);
             
-            _logger.LogInformation($"Found {tweets.Length} tweets by {user.Name}");
+            _logger.LogInformation($"Found {tweets.Length} tweets by {user.Id}");
             
             return tweets
                    .Select(tweet => tweet.ToUpdate(user));

@@ -119,7 +119,7 @@ namespace Iris.Bot
 
         private async void OnProducerUpdate(Update update)
         {
-            _logger.LogInformation($"Caught new update: Id: {update.Id, -15}, Author: {update.Author.Name, -15}, Created at: {update.CreatedAt}");
+            _logger.LogInformation($"Caught new update: Id: {update.Id, -15}, Author: {update.Author.Id, -15}, Created at: {update.CreatedAt}");
             foreach (long chatId in _chatsManager.ChatIds.Keys)
             {
                 await SendMessage(update, chatId);
@@ -141,13 +141,13 @@ namespace Iris.Bot
                 _validator.UpdateSent(update.Id, chatId);
                 
                 _logger.LogInformation(
-                    $"Sent new update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at: {DateTime.Now}");
+                    $"Sent new update: Id: {update.Id, -15}, ChatId: {update.Author.Id, -15}, Executed at: {DateTime.Now}");
             }
             catch (Exception e)
             {
                 _logger.LogInformation(
                     e,
-                    $"Failed to send update: Id: {update.Id, -15}, ChatId: {update.Author.Name, -15}, Executed at {DateTime.Now}");
+                    $"Failed to send update: Id: {update.Id, -15}, ChatId: {update.Author.Id, -15}, Executed at {DateTime.Now}");
             }
         }
 
