@@ -3,10 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Tweetinvi;
-using Tweetinvi.Logic.Model;
 using Tweetinvi.Models;
 using Updates.Api;
-using Updates.Configs;
 
 namespace Updates.Twitter
 {

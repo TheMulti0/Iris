@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Updates.Api;
-using Updates.Configs;
 
 namespace Updates.Facebook
 {

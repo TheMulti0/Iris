@@ -20,38 +20,90 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5c2b47e6-a124-46d1-8b61-3466be8def32" name="Default Changelist" comment="Added facebook to README sources">
-      <change beforePath="$PROJECT_DIR$/bashinto.sh" beforeDir="false" afterPath="$PROJECT_DIR$/bashinto.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stop.sh" beforeDir="false" afterPath="$PROJECT_DIR$/stop.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Iris/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Iris.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Bot/Bot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/Bot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Bot/ChatsManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/ChatsManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Bot/Sender.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/Sender.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Bot/TelegramMediaFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Iris/TelegramBotApplication.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Iris/TelegramBotApplication.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Api/Updates.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/Updates.Api.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Configs/FacebookConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Configs/IProviderConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/IProviderConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Configs/JsonExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Api/JsonExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Configs/TwitterConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Facebook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Facebook.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Post.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Post.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Facebook/Updates.Facebook.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Facebook/Updates.Facebook.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Twitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Twitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Twitter/Updates.Twitter.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/JsonUpdateValidatorTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/JsonUpdateValidatorTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher/Updates.Watcher.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/Updates.Watcher.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Iris/TelegramBotApplication.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Facebook/Facebook.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Configs/IProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Configs/TwitterConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Updates.Configs/FacebookConfig.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Iris/Bot/Bot.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Twitter/Factories/UpdateFactory.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Api/Update.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Facebook.Tests/FacebookTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Api/JsonExtensions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Facebook.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Iris/Config/TelegramBotConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/Config/ApplicationConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///FacebookTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///UpdateFactory.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///TwitterTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher.Tests/Mocks/MockProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Bot.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Twitter.Tests/TwitterTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Api/IProviderConfig.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///MockProviderConfig.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Facebook/Facebook.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///JsonUpdateValidator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Iris/Bot/Bot.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/Iris/TelegramBotApplication.cs" />
+        <option value="$PROJECT_DIR$/Updates.Api/JsonExtensions.cs" />
+        <option value="$PROJECT_DIR$/Updates.Api/IProviderConfig.cs" />
+        <option value="$PROJECT_DIR$/Updates.Facebook/Updates.Facebook.csproj" />
+        <option value="$PROJECT_DIR$/Updates.Watcher/Validator/JsonUpdateValidator.cs" />
+        <option value="$PROJECT_DIR$/Updates.Watcher/UpdatesWatcher.cs" />
+        <option value="$PROJECT_DIR$/Updates.Twitter/TwitterConfig.cs" />
+        <option value="$PROJECT_DIR$/Updates.Facebook/FacebookConfig.cs" />
       </list>
     </option>
   </component>
   <component name="ProjectId" id="1b2CWQxBqV2LSenc69ks1SIMuux" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -66,7 +118,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RunManager">
     <configuration name="Iris" type="DotNetProject" factoryName=".NET Project">
@@ -100,6 +152,11 @@
       <updated>1587820832445</updated>
       <workItem from="1587820839440" duration="398000" />
       <workItem from="1587821612726" duration="1550000" />
+      <workItem from="1587825778648" duration="2573000" />
+      <workItem from="1587829878854" duration="386000" />
+      <workItem from="1587879239849" duration="896000" />
+      <workItem from="1587880818423" duration="27000" />
+      <workItem from="1587912330340" duration="229000" />
     </task>
     <task id="LOCAL-00001" summary="Added facebook to README sources">
       <created>1587820871094</created>
@@ -129,8 +186,21 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Added facebook to README sources" />
     <option name="LAST_COMMIT_MESSAGE" value="Added facebook to README sources" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="606" y="242" key="SettingsEditor" timestamp="1587829884599">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state x="606" y="242" key="SettingsEditor/0.0.2194.1194/3840.776.1280.680@0.0.2194.1194" timestamp="1587829884599" />
+    <state x="93" y="93" width="2008" height="1008" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1587912558669">
+      <screen x="0" y="0" width="2194" height="1194" />
+    </state>
+    <state x="93" y="93" width="2008" height="1008" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.2194.1194/3840.776.1280.680@0.0.2194.1194" timestamp="1587912558669" />
   </component>
 </project>

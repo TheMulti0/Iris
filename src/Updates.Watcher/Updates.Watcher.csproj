@@ -6,7 +6,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Updates.Api\Updates.Api.csproj" />
-      <ProjectReference Include="..\Updates.Configs\Updates.Configs.csproj" />
     </ItemGroup>
 
     <ItemGroup>

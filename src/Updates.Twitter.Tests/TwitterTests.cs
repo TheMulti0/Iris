@@ -1,10 +1,7 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using Updates.Api;
-using Updates.Configs;
 using Xunit;
 
 namespace Updates.Twitter.Tests

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace Updates.Configs
+namespace Updates.Api
 {
     public static class JsonExtensions
     {

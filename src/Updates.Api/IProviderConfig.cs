@@ -1,4 +1,4 @@
-namespace Updates.Configs
+namespace Updates.Api
 {
     public interface IProviderConfig
     {

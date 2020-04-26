@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Text.Json;
-using Updates.Configs;
+using Updates.Api;
 
 namespace Updates.Watcher
 {

@@ -1,4 +1,4 @@
-using Updates.Configs;
+using Updates.Api;
 
 namespace Updates.Watcher.Tests
 {

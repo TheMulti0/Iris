@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Updates.Api\Updates.Api.csproj" />
-      <ProjectReference Include="..\Updates.Configs\Updates.Configs.csproj" />
       <ProjectReference Include="..\Updates.Facebook\Updates.Facebook.csproj" />
     </ItemGroup>
 
