@@ -2,10 +2,14 @@ namespace Iris.Api
 {
     public interface IProviderConfig
     {
-        public bool IsEnabled { get; set; }
+        bool IsEnabled { get; set; }
         
-        public User[] WatchedUsers { get; set; }
+        User[] WatchedUsers { get; set; }
         
-        public double PollIntervalSeconds { get; set; }
+        int PageCountPerUser { get; set; }
+        
+        double PollIntervalSeconds { get; set; }
+
+        string ScraperUrl { get; set; }
     }
 }
