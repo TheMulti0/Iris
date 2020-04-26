@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Tweetinvi;
 using Tweetinvi.Models;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Twitter
 {

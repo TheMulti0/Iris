@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace Updates.Api
+namespace Iris.Api
 {
     public static class JsonExtensions
     {

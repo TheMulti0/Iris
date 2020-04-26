@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Facebook
 {

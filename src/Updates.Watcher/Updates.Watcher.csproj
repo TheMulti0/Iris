@@ -5,13 +5,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Updates.Api\Updates.Api.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.2" />
       <PackageReference Include="System.Reactive" Version="4.3.2" />
       <PackageReference Include="System.Text.Json" Version="4.7.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Iris.Api\Iris.Api.csproj" />
     </ItemGroup>
 
 </Project>

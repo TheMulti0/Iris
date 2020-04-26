@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Tweetinvi.Models;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Twitter
 {

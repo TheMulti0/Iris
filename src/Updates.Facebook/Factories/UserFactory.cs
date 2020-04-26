@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Facebook
 {

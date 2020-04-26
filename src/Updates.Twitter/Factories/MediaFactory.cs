@@ -1,5 +1,5 @@
 using Tweetinvi.Models.Entities;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Twitter
 {

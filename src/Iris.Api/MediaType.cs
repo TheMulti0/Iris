@@ -1,4 +1,4 @@
-namespace Updates.Api
+namespace Iris.Api
 {
     public enum MediaType
     {

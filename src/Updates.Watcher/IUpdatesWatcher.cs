@@ -1,5 +1,5 @@
 ﻿using System;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Watcher
 {

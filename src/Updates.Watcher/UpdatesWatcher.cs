@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Watcher
 {

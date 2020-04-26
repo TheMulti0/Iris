@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Updates.Api
+namespace Iris.Api
 {
     public interface IUpdatesProvider
     {

@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Updates.Api;
+using Iris.Api;
 
 namespace Updates.Facebook
 {

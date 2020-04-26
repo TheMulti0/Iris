@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Updates.Api\Updates.Api.csproj" />
+      <ProjectReference Include="..\Iris.Api\Iris.Api.csproj" />
     </ItemGroup>
 
 </Project>

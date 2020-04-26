@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Updates.Api
+namespace Iris.Api
 {
     public class Update
     {
