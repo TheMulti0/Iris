@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher", "Updates.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher.Tests", "Updates.Watcher.Tests\Updates.Watcher.Tests.csproj", "{1873DB11-969A-42D6-ACE6-CF8947D04D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Twitter.Tests", "Updates.Twitter.Tests\Updates.Twitter.Tests.csproj", "{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter.Tests", "Iris.Twitter.Tests\Iris.Twitter.Tests.csproj", "{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook", "Iris.Facebook\Iris.Facebook.csproj", "{493FC534-EA5F-4ECA-9F27-9E632F64D554}"
 EndProject
