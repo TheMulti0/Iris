@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Iris.Api;
 using Xunit;
 
-namespace Updates.Facebook.Tests
+namespace Iris.Facebook.Tests
 {
     public class FacebookTests
     {

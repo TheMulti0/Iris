@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Twitter.Tests", "Up
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook", "Iris.Facebook\Iris.Facebook.csproj", "{493FC534-EA5F-4ECA-9F27-9E632F64D554}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Facebook.Tests", "Updates.Facebook.Tests\Updates.Facebook.Tests.csproj", "{684A9C04-4F53-4BE1-A954-086537EF04AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Facebook.Tests", "Iris.Facebook.Tests\Iris.Facebook.Tests.csproj", "{684A9C04-4F53-4BE1-A954-086537EF04AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
