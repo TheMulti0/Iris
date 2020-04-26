@@ -24,20 +24,21 @@ namespace Iris.Bot
 
         public async Task SendAsync(Update update, long chatId)
         {
-            Message[] previousMessages = null;
-            if (update.Media.Any())
-            {
-                IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
-                    .Select(TelegramMediaFactory.ToTelegramMedia);
-                    
-                previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
-            }
+            // Message[] previousMessages = null;
+            // if (update.Media.Any())
+            // {
+            //     IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
+            //         .Select(TelegramMediaFactory.ToTelegramMedia);
+            //         
+            //     previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
+            // }
 
             await _client.SendTextMessageAsync(
                 chatId,
                 update.FormattedMessage,
-                ParseMode.Html,
-                replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0);
+                ParseMode.Html
+            //    replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0
+                );
         }
     }
 }
