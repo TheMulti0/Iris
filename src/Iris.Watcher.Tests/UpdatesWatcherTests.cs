@@ -22,8 +22,8 @@ namespace Iris.Watcher.Tests
             
             for (var i = 0; i < updates.Length; i++)
             {
-                string watchedUser = config.WatchedUsers.ElementAtOrDefault(i) ?? config.WatchedUsers.LastOrDefault();
-                string author = updates[i].Author.Name;
+                var watchedUser = config.WatchedUsers.ElementAtOrDefault(i) ?? config.WatchedUsers.LastOrDefault();
+                var author = updates[i].Author;
                 
                 Assert.Equal(
                     watchedUser,

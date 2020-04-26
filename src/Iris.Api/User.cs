@@ -2,24 +2,10 @@
 {
     public class User
     {
-        public string Id { get; }
+        public string Id { get; set; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string DisplayName { get; }
-
-        public string Url { get; }
-        
-        public User(
-            string id,
-            string name,
-            string displayName,
-            string url)
-        {
-            Id = id;
-            Name = name;
-            DisplayName = displayName;
-            Url = url;
-        }
+        public string Url { get; set; }
     }
 }

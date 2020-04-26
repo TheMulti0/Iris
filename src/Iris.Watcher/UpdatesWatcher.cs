@@ -12,7 +12,7 @@ namespace Iris.Watcher
     {
         private readonly ILogger<IUpdatesWatcher> _logger;
         private readonly IUpdatesProvider _provider;
-        private readonly string[] _watchedUsers;
+        private readonly User[] _watchedUsers;
         private readonly TimeSpan _interval;
         private readonly Subject<Update> _updates;
 
@@ -54,7 +54,7 @@ namespace Iris.Watcher
 
         private async Task Watch()
         {
-            foreach (string user in _watchedUsers)
+            foreach (var user in _watchedUsers)
             {
                 _logger.LogInformation($"Checking user #{user}");
                 
@@ -69,7 +69,7 @@ namespace Iris.Watcher
             }
         }
 
-        private async Task<IEnumerable<Update>> GetUpdates(string user)
+        private async Task<IEnumerable<Update>> GetUpdates(User user)
         {
             IEnumerable<Update> updates = await _provider.GetUpdates(user);
 

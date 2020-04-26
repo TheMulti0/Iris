@@ -5,6 +5,6 @@ namespace Iris.Api
 {
     public interface IUpdatesProvider
     {
-        Task<IEnumerable<Update>> GetUpdates(string userName);
+        Task<IEnumerable<Update>> GetUpdates(User user);
     }
 }

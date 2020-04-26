@@ -50,6 +50,6 @@ namespace Iris.Facebook
         private static string FormatHeader(string header)
             => $"{header}:\n";
 
-        private static string GetPostText(Post post, User author) => $"{author.DisplayName} \n \n \n \"{post.Text}\"";
+        private static string GetPostText(Post post, User author) => $"{author.Name} \n \n \n \"{post.Text}\"";
     }
 }

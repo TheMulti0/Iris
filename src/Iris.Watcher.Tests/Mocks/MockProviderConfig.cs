@@ -6,7 +6,7 @@ namespace Iris.Watcher.Tests
     {
         public bool IsEnabled { get; set; } = true;
         
-        public string[] WatchedUsers { get; set; } = { "0" };
+        public User[] WatchedUsers { get; set; } = { new User() };
 
         public double PollIntervalSeconds { get; set; } = 0.1;
     }

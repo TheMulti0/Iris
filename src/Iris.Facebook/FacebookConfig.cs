@@ -6,7 +6,7 @@ namespace Iris.Facebook
     {
         public bool IsEnabled { get; set; }
         
-        public string[] WatchedUsers { get; set; }
+        public User[] WatchedUsers { get; set; }
         
         public int PageCountPerUser { get; set; }
         

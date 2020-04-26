@@ -7,17 +7,13 @@ namespace Iris.Watcher.Tests
 {
     internal class MockUpdatesProvider : IUpdatesProvider
     {
-        public Task<IEnumerable<Update>> GetUpdates(string userName)
+        public Task<IEnumerable<Update>> GetUpdates(User user)
         {
             IEnumerable<Update> updates = new[]
             {
                 new Update(
                     0,
-                    new User(
-                        "0",
-                        userName,
-                        "",
-                        ""),
+                    user,
                     "",
                     "",
                     DateTime.Now,

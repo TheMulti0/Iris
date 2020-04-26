@@ -31,17 +31,15 @@ namespace Iris.Facebook
             _logger.LogInformation("Completed construction");
         }
 
-        public async Task<IEnumerable<Update>> GetUpdates(string userTokens)
+        public async Task<IEnumerable<Update>> GetUpdates(User user)
         {
-            _logger.LogInformation($"GetUpdates requested with tokens {userTokens} (pageCount = {_pageCountPerUser})");
-            
-            var user = UserFactory.ToUser(userTokens);
+            _logger.LogInformation($"GetUpdates requested with user {user.Name} (pageCount = {_pageCountPerUser})");
             
             Stream json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
 
             Post[] posts = await DeserializePosts(json);
             
-            _logger.LogInformation($"Found {posts.Length} tweets by {user.DisplayName}");
+            _logger.LogInformation($"Found {posts.Length} tweets by {user.Name}");
             
             return posts
                 .Select(post => UpdateFactory.ToUpdate(post, user));
