@@ -1,3 +1,6 @@
 build/iris/src/
+build/facebookscraper/facebookscraper/
+build/twitterscraper/twitterscraper/
+
 run/iris/logs/
 run/iris/config/
