@@ -1,6 +1,6 @@
 using Iris.Api;
 
-namespace Updates.Watcher.Tests
+namespace Iris.Watcher.Tests
 {
     internal class MockProviderConfig : IProviderConfig
     {

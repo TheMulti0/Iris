@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Iris.Config;
 using Iris.Logging;
 using Microsoft.Extensions.Logging;
-using Updates.Watcher;
+using Iris.Watcher;
 
 namespace Iris
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Iris.Api;
 
-namespace Updates.Watcher
+namespace Iris.Watcher
 {
     public interface IUpdatesWatcher
     {

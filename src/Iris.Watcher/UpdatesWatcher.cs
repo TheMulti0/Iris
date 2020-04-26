@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Iris.Api;
 
-namespace Updates.Watcher
+namespace Iris.Watcher
 {
     public class UpdatesWatcher : IUpdatesWatcher
     {

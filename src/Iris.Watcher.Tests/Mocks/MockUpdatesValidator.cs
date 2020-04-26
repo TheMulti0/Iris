@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Subjects;
 
-namespace Updates.Watcher.Tests
+namespace Iris.Watcher.Tests
 {
     internal class MockUpdatesValidator : IUpdatesValidator
     {

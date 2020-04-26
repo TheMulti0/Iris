@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using Iris.Api;
 
-namespace Updates.Watcher
+namespace Iris.Watcher
 {
     internal class UpdatePair
     {

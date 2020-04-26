@@ -4,7 +4,7 @@ using Iris.Api;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Updates.Watcher.Tests
+namespace Iris.Watcher.Tests
 {
     public class UpdatesWatcherTests
     {

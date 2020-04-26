@@ -10,7 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Iris.Facebook;
 using Iris.Twitter;
-using Updates.Watcher;
+using Iris.Watcher;
 using Update = Iris.Api.Update;
 
 namespace Iris.Bot

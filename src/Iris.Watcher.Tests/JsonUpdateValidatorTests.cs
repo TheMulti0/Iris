@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Updates.Watcher.Tests
+namespace Iris.Watcher.Tests
 {
     public class JsonUpdateValidatorTests
     {

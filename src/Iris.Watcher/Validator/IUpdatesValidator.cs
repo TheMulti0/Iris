@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Updates.Watcher
+namespace Iris.Watcher
 {
     public interface IUpdatesValidator
     {

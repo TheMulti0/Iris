@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter", "Iris.Twitte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Watcher", "Iris.Watcher\Iris.Watcher.csproj", "{5D841812-4A21-4824-8589-B0B6706965A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updates.Watcher.Tests", "Updates.Watcher.Tests\Updates.Watcher.Tests.csproj", "{1873DB11-969A-42D6-ACE6-CF8947D04D52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Watcher.Tests", "Iris.Watcher.Tests\Iris.Watcher.Tests.csproj", "{1873DB11-969A-42D6-ACE6-CF8947D04D52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iris.Twitter.Tests", "Iris.Twitter.Tests\Iris.Twitter.Tests.csproj", "{BF3EDB30-2459-4BCA-A5F4-D266DA6F771B}"
 EndProject

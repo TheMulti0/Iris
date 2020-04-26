@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Iris.Api;
 
-namespace Updates.Watcher.Tests
+namespace Iris.Watcher.Tests
 {
     internal class MockUpdatesProvider : IUpdatesProvider
     {
