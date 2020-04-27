@@ -44,7 +44,7 @@ namespace Iris.Facebook
             
             _logger.LogError("And Posts from facebook are  \n \n \n \n" + json);
 
-            Post[] posts = DeserializePosts(json);
+            Post[] posts = DeserializePosts(mystring);
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
