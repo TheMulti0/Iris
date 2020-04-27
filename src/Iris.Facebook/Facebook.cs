@@ -35,18 +35,14 @@ namespace Iris.Facebook
         {
             _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
             
+            HttpResponseMessage response = await _client.GetAsync(
+                $"/facebook?name={user.Id}&pageCount={_pageCountPerUser}");
+            var mystring = await response.Content.ReadAsStreamAsync();
+            _logger.LogError("Posts from facebook are  \n \n \n \n" + mystring);
+            
             Stream json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
 
             Post[] posts = await DeserializePosts(json);
-
-            if (posts == null)
-            {
-                HttpResponseMessage response = await _client.GetAsync(
-                    $"/facebook?name={user.Id}&pageCount={_pageCountPerUser}");
-            
-                var mystring = await response.Content.ReadAsStreamAsync();
-                _logger.LogError("Posts from facebook are null \n \n \n \n" + mystring);
-            }
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
