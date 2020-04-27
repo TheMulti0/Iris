@@ -40,9 +40,11 @@ namespace Iris.Facebook
             var mystring = await response.Content.ReadAsStringAsync();
             _logger.LogError("Posts from facebook are  \n \n \n \n" + mystring);
             
-            Stream json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
+            string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
+            
+            _logger.LogError("And Posts from facebook are  \n \n \n \n" + json);
 
-            Post[] posts = await DeserializePosts(json);
+            Post[] posts = DeserializePosts(json);
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
@@ -50,18 +52,18 @@ namespace Iris.Facebook
                 .Select(post => post.ToUpdate(user));
         }
 
-        private async Task<Stream> GetFacebookPostsJson(string userName, int pageCountPerUser)
+        private async Task<string> GetFacebookPostsJson(string userName, int pageCountPerUser)
         {
             HttpResponseMessage response = await _client.GetAsync(
                 $"/facebook?name={userName}&pageCount={pageCountPerUser}");
             
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStringAsync();
         }
 
-        private static ValueTask<Post[]> DeserializePosts(Stream json)
+        private static Post[] DeserializePosts(string json)
         {
             return JsonSerializer
-                .DeserializeAsync<Post[]>(json);
+                .Deserialize<Post[]>(json);
         }
     }
 }
