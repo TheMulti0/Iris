@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;net45</TargetFrameworks>
     <VersionPrefix>15.5.1</VersionPrefix>
     <!--<VersionSuffix></VersionSuffix>-->
     <LangVersion>7.1</LangVersion>
@@ -16,6 +15,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/TelegramBots/telegram.bot/master/LICENSE.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/TelegramBots/telegram.bot.git</RepositoryUrl>
     <PackageTags>Telegram;Bot;Api;Payment;Inline;Games</PackageTags>
+    <TargetFramework>netstandard1.1</TargetFramework>
   </PropertyGroup>
   <!-- when building on AppVeyor -->
   <PropertyGroup Condition="'$(AppVeyor)' == 'True'">
