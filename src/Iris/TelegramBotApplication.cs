@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using Iris.Config;
+using Iris.Logging;
 using Iris.Watcher;
 using Microsoft.Extensions.Logging;
 
