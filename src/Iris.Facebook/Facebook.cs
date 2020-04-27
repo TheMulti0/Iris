@@ -60,10 +60,13 @@ namespace Iris.Facebook
             return await response.Content.ReadAsStringAsync();
         }
 
-        private static Post[] DeserializePosts(string json)
+        private Post[] DeserializePosts(string json)
         {
-            return JsonSerializer
+            _logger.LogError("Got to deserialize posts");
+            Post[] deserializePosts = JsonSerializer
                 .Deserialize<Post[]>(json);
+            _logger.LogError($"Finished deserialize posts \n {deserializePosts.Length}");
+            return deserializePosts;
         }
     }
 }
