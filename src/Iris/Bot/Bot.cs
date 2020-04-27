@@ -41,7 +41,7 @@ namespace Iris.Bot
                 _client,
                 loggerFactory.CreateLogger<Sender>());
 
-            // _client.StartReceiving();
+            _client.StartReceiving();
             _client.OnMessage += OnMessageReceived;
             
             _chatsManager = new ChatsManager(chatsFile);
