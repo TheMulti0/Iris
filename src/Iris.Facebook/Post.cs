@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Iris.Facebook
 {
-    internal class Post
+    public class Post
     {
         [JsonPropertyName("comments")]
         public int Comments { get; set; }
@@ -36,8 +36,7 @@ namespace Iris.Facebook
         [JsonPropertyName("text")]
         public string Text { get; set; }
 
-        [JsonPropertyName("time")]
-        [JsonConverter(typeof(DateTimeConverter))]
+        [JsonIgnore]
         public DateTime Date { get; set; }
     }
 }
