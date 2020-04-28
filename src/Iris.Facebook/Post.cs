@@ -1,42 +1,41 @@
 ﻿using System;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Iris.Facebook
 {
     public class Post
     {
-        [JsonPropertyName("comments")]
+        [JsonProperty("comments")]
         public int Comments { get; set; }
 
-        [JsonPropertyName("image")]
+        [JsonProperty("image")]
         public string ImageUrl { get; set; }
 
-        [JsonPropertyName("likes")]
+        [JsonProperty("likes")]
         public int Likes { get; set; }
 
-        [JsonPropertyName("link")]
+        [JsonProperty("link")]
         public string Link { get; set; }
 
-        [JsonPropertyName("post_id")]
-        [JsonConverter(typeof(StringToLongConverter))]
+        [JsonProperty("post_id")]
         public long Id { get; set; }
 
-        [JsonPropertyName("post_text")]
+        [JsonProperty("post_text")]
         public string PostText { get; set; }
 
-        [JsonPropertyName("post_url")]
+        [JsonProperty("post_url")]
         public string PostUrl { get; set; }
 
-        [JsonPropertyName("shared_text")]
+        [JsonProperty("shared_text")]
         public string SharedText { get; set; }
 
-        [JsonPropertyName("shares")]
+        [JsonProperty("shares")]
         public int Shares { get; set; }
 
-        [JsonPropertyName("text")]
+        [JsonProperty("text")]
         public string Text { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("time")]
         public DateTime Date { get; set; }
     }
 }
