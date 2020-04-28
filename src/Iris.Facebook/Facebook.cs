@@ -36,12 +36,10 @@ namespace Iris.Facebook
         {
             _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
             
-            HttpResponseMessage response = await _client.GetAsync(
-                $"/facebook?name={user.Id}&pageCount={_pageCountPerUser}");
-            var mystring = await response.Content.ReadAsStringAsync();
-            _logger.LogError("Posts from facebook are  \n \n \n \n" + mystring);
+            string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
+            _logger.LogError("Posts from facebook are  \n \n \n \n" + json);
             
-            Post[] posts = DeserializePosts(mystring);
+            Post[] posts = DeserializePosts(json);
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
             
@@ -57,12 +55,9 @@ namespace Iris.Facebook
             return await response.Content.ReadAsStringAsync();
         }
 
-        private Post[] DeserializePosts(string json)
+        private static Post[] DeserializePosts(string json)
         {
-            _logger.LogError("Got to deserialize posts");
-            var deserializePosts = JsonConvert.DeserializeObject<Post[]>(json);
-            _logger.LogError($"Finished deserialize posts \n {deserializePosts.Length}");
-            return deserializePosts;
+            return JsonConvert.DeserializeObject<Post[]>(json);
         }
     }
 }
