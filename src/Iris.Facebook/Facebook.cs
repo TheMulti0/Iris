@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -65,10 +66,11 @@ namespace Iris.Facebook
         private Post[] DeserializePosts(string json)
         {
             _logger.LogError("Got to deserialize posts");
+            var s = Encoding.UTF8.GetBytes(json);
             var deserializePosts = JsonSerializer
-                .Deserialize<List<object>>(json).ToArray();
+                .Deserialize<Post[]>(s);
             _logger.LogError($"Finished deserialize posts \n {deserializePosts.Length}");
-            return new Post[0];
+            return deserializePosts;
         }
     }
 }
