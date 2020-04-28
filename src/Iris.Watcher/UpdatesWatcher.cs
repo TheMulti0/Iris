@@ -10,7 +10,7 @@ namespace Iris.Watcher
 {
     public class UpdatesWatcher : IUpdatesWatcher
     {
-        private readonly ILogger<IUpdatesWatcher> _logger;
+        private readonly ILogger _logger;
         private readonly IUpdatesProvider _provider;
         private readonly User[] _watchedUsers;
         private readonly TimeSpan _interval;
@@ -19,7 +19,7 @@ namespace Iris.Watcher
         public IObservable<Update> Updates => _updates;
 
         public UpdatesWatcher(
-            ILogger<UpdatesWatcher> logger,
+            ILogger logger,
             IUpdatesProvider provider,
             IProviderConfig config)
         {
@@ -56,7 +56,7 @@ namespace Iris.Watcher
         {
             foreach (var user in _watchedUsers)
             {
-                _logger.LogInformation($"Checking user #{user}");
+                _logger.LogInformation($"Checking user #{user.Id}");
                 
                 IEnumerable<Update> sortedUpdates = await GetUpdates(user);
 
@@ -73,7 +73,7 @@ namespace Iris.Watcher
         {
             IEnumerable<Update> updates = await _provider.GetUpdates(user);
 
-            _logger.LogInformation($"Received unvalidated updates for user #{user}");
+            _logger.LogInformation($"Received unvalidated updates for user #{user.Id}");
 
             return updates
                 .OrderBy(u => u.CreatedAt);

@@ -101,7 +101,7 @@ namespace Iris.Bot
                 try
                 {
                     var usersWatcher = new UpdatesWatcher(
-                        _loggerFactory.CreateLogger<UpdatesWatcher>(),
+                        _loggerFactory.CreateLogger($"{provider.GetType().Name}-{nameof(UpdatesWatcher)}"),
                         provider,
                         config);
 
