@@ -24,6 +24,7 @@ namespace Iris.Facebook
             _logger = logger;
             
             _pageCountPerUser = config.PageCountPerUser;
+            _client.DefaultRequestHeaders.Add("charset", "utf-8");
             _client = new HttpClient
             {
                 BaseAddress = new Uri(config.ScraperUrl)
@@ -41,12 +42,6 @@ namespace Iris.Facebook
             var mystring = await response.Content.ReadAsStringAsync();
             _logger.LogError("Posts from facebook are  \n \n \n \n" + mystring);
             
-            string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
-            
-            _logger.LogError("And Posts from facebook are  \n \n \n \n" + json);
-
-            var myObject = JsonSerializer.Deserialize<Post>("{\"comments\": 10}");
-            _logger.LogError($"Comments: {myObject.Comments}");
             Post[] posts = DeserializePosts(mystring);
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
@@ -66,9 +61,7 @@ namespace Iris.Facebook
         private Post[] DeserializePosts(string json)
         {
             _logger.LogError("Got to deserialize posts");
-            var s = Encoding.UTF8.GetBytes(json);
-            var deserializePosts = JsonSerializer
-                .Deserialize<Post[]>(s);
+            var deserializePosts = JsonSerializer.Deserialize<Post[]>(json);
             _logger.LogError($"Finished deserialize posts \n {deserializePosts.Length}");
             return deserializePosts;
         }
