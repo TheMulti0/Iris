@@ -1,8 +1,3 @@
-**/logs/
-**/appsettings.json
-**/savedUpdates.json
-**/chats.json
-
 # Created by https://www.gitignore.io/api/venv,rider,flask,csharp,python,pycharm,jetbrains,visualstudio
 # Edit at https://www.gitignore.io/?templates=venv,rider,flask,csharp,python,pycharm,jetbrains,visualstudio
 
@@ -496,11 +491,11 @@ dmypy.json
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
 
 # CMake
 cmake-build-*/
