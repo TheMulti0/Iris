@@ -24,11 +24,11 @@ namespace Iris.Facebook
             _logger = logger;
             
             _pageCountPerUser = config.PageCountPerUser;
-            _client.DefaultRequestHeaders.Add("charset", "utf-8");
             _client = new HttpClient
             {
                 BaseAddress = new Uri(config.ScraperUrl)
             };
+            _client.DefaultRequestHeaders.Add("charset", "utf-8");
             
             _logger.LogInformation("Completed construction");
         }
