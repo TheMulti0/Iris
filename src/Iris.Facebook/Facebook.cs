@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Iris.Api;
@@ -16,6 +18,7 @@ namespace Iris.Facebook
         private readonly ILogger<Facebook> _logger;
         private readonly int _pageCountPerUser;
         private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _serializerOptions;
 
         public Facebook(
             ILogger<Facebook> logger,
@@ -27,6 +30,11 @@ namespace Iris.Facebook
             _client = new HttpClient
             {
                 BaseAddress = new Uri(config.ScraperUrl)
+            };
+            
+            _serializerOptions = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
             
             _logger.LogInformation("Completed construction");
@@ -55,9 +63,9 @@ namespace Iris.Facebook
             return await response.Content.ReadAsStringAsync();
         }
 
-        private static Post[] DeserializePosts(string json)
+        private Post[] DeserializePosts(string json)
         {
-            return JsonConvert.DeserializeObject<Post[]>(json);
+            return JsonSerializer.Deserialize<Post[]>(json, _serializerOptions);
         }
     }
 }
