@@ -43,8 +43,9 @@ namespace Iris.Facebook
             string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
             
             _logger.LogError("And Posts from facebook are  \n \n \n \n" + json);
-            File.WriteAllText("config/myjson.json", json);
 
+            var myObject = JsonSerializer.Deserialize<Post>("{\"comments\": 10}");
+            _logger.LogError($"Comments: {myObject.Comments}");
             Post[] posts = DeserializePosts(mystring);
             
             _logger.LogInformation($"Found {posts.Length} tweets by {user.Id}");
