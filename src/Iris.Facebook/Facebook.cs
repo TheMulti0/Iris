@@ -28,7 +28,6 @@ namespace Iris.Facebook
             {
                 BaseAddress = new Uri(config.ScraperUrl)
             };
-            _client.DefaultRequestHeaders.Add("Accept-Encoding", "utf-8");
             
             _logger.LogInformation("Completed construction");
         }
