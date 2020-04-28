@@ -1,6 +1,6 @@
-build/iris/src/
-build/facebookscraper/facebookscraper/
-build/twitterscraper/twitterscraper/
+deploy/iris/src/
+deploy/facebookscraper/facebookscraper/
+deploy/twitterscraper/twitterscraper/
 
-run/iris/logs/
-run/iris/config/
+deploy/iris/logs/
+deploy/iris/config/
