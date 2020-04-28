@@ -1,0 +1,36 @@
+2020-04-25 15:24:56.215 +00:00 [Information] Updates.Twitter.Twitter: Completed construction
+2020-04-25 15:24:56.215 +00:00 [Information] Updates.Facebook.Facebook: Completed construction
+2020-04-25 15:24:56.216 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Completed construction
+2020-04-25 15:24:56.218 +00:00 [Information] Iris.Bot.Bot: Subscribed to updates of the producer `Twitter`
+2020-04-25 15:24:56.218 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Began watch repeat task
+2020-04-25 15:24:56.218 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Beginning watch
+2020-04-25 15:24:56.218 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Completed construction
+2020-04-25 15:24:56.218 +00:00 [Information] Iris.Bot.Bot: Subscribed to updates of the producer `Facebook`
+2020-04-25 15:24:56.218 +00:00 [Information] Iris.Bot.Bot: Completed construction
+2020-04-25 15:24:56.218 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Began watch repeat task
+2020-04-25 15:24:56.218 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Beginning watch
+2020-04-25 15:24:56.220 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Checking user #@TheMulti0
+2020-04-25 15:24:56.220 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Checking user #Netanyahu:נתניהו
+2020-04-25 15:24:56.223 +00:00 [Information] Updates.Twitter.Twitter: GetUpdates requested with author #@TheMulti0 (maxResults = 1)
+2020-04-25 15:24:56.226 +00:00 [Information] Updates.Facebook.Facebook: GetUpdates requested with tokens Netanyahu:נתניהו (pageCount = 1)
+2020-04-25 15:41:50.230 +00:00 [Information] Updates.Twitter.Twitter: Completed construction
+2020-04-25 15:41:50.230 +00:00 [Information] Updates.Facebook.Facebook: Completed construction
+2020-04-25 15:41:50.231 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Completed construction
+2020-04-25 15:41:50.232 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Began watch repeat task
+2020-04-25 15:41:50.233 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Beginning watch
+2020-04-25 15:41:50.233 +00:00 [Information] Iris.Bot.Bot: Subscribed to updates of the producer `Twitter`
+2020-04-25 15:41:50.233 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Completed construction
+2020-04-25 15:41:50.233 +00:00 [Information] Iris.Bot.Bot: Subscribed to updates of the producer `Facebook`
+2020-04-25 15:41:50.233 +00:00 [Information] Iris.Bot.Bot: Completed construction
+2020-04-25 15:41:50.233 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Began watch repeat task
+2020-04-25 15:41:50.233 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Beginning watch
+2020-04-25 15:41:50.235 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Checking user #@TheMulti0
+2020-04-25 15:41:50.235 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Checking user #Netanyahu:נתניהו
+2020-04-25 15:41:50.236 +00:00 [Information] Updates.Facebook.Facebook: GetUpdates requested with tokens Netanyahu:נתניהו (pageCount = 1)
+2020-04-25 15:41:50.238 +00:00 [Information] Updates.Twitter.Twitter: GetUpdates requested with author #@TheMulti0 (maxResults = 1)
+2020-04-25 15:41:50.955 +00:00 [Information] Updates.Twitter.Twitter: Found user #@TheMulti0
+2020-04-25 15:41:51.399 +00:00 [Information] Updates.Twitter.Twitter: Found 1 tweets by TheMulti0
+2020-04-25 15:41:51.399 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Received unvalidated updates for user #@TheMulti0
+2020-04-25 15:41:51.403 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Pushing update #1254041139977555969
+2020-04-25 15:41:51.405 +00:00 [Information] Iris.Bot.Bot: Caught new update: Id: 1254041139977555969, Author: TheMulti0      , Created at: 04/25/2020 13:34:41
+2020-04-25 15:41:51.407 +00:00 [Information] Updates.Watcher.UpdatesWatcher: Beginning sleep
