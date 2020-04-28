@@ -56,7 +56,7 @@ namespace Iris.Facebook
         private static ValueTask<Post[]> DeserializePosts(Stream json)
         {
             return JsonSerializer
-                .DeserializeAsync<Post[]>(json, new JsonSerializerOptions{IgnoreNullValues = true});
+                .DeserializeAsync<Post[]>(json);
         }
     }
 }
