@@ -14,7 +14,7 @@ echo "Running the docker image for iris-image ..."
 
 set -x
 
-docker container run \
+docker container run -dit --restart always \
  --network="host" \
  -v $HOST_CONFIG_DIR:$CONTAINER_CONFIG_DIR \
  -v $HOST_LOGS_DIR:$CONTAINER_LOGS_DIR \

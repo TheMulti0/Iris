@@ -8,7 +8,7 @@ echo "Running the docker image for facebookscraper-image ..."
 
 set -x
 
-docker container run \
+docker container run -dit --restart always \
  --name facebookscraper \
  --publish 5000:5000 \
  facebookscraper-image

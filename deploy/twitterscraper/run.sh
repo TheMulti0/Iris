@@ -8,7 +8,7 @@ echo "Running the docker image for twitterscraper-image ..."
 
 set -x
 
-docker container run \
+docker container run -dit --restart always \
  --name twitterscraper \
  --publish 5001:5000 \
  twitterscraper-image
