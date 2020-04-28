@@ -63,8 +63,8 @@ namespace Iris.Facebook
         private Post[] DeserializePosts(string json)
         {
             _logger.LogError("Got to deserialize posts");
-            Post[] deserializePosts = JsonSerializer
-                .Deserialize<List<Post>>(json).ToArray();
+            var deserializePosts = JsonSerializer
+                .Deserialize<List<object>>(json).ToArray();
             _logger.LogError($"Finished deserialize posts \n {deserializePosts.Length}");
             return new Post[0];
         }
