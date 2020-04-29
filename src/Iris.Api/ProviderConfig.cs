@@ -1,8 +1,10 @@
 namespace Iris.Api
 {
-    public interface ProviderConfig
+    public class ProviderConfig
     {
         public bool IsEnabled { get; set; }
+        
+        public string SavedUpdatesFile { get; set; }
         
         public User[] WatchedUsers { get; set; }
         
