@@ -4,8 +4,6 @@ namespace Iris.Api
     {
         public bool IsEnabled { get; set; }
         
-        public string SavedUpdatesFile { get; set; }
-        
         public User[] WatchedUsers { get; set; }
         
         public int PageCountPerUser { get; set; }

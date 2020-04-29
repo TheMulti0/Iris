@@ -155,7 +155,7 @@ namespace Iris.Bot
         {
             var providers = new Dictionary<IUpdatesProvider, ProviderConfig>();
 
-            TwitterConfig twitterConfig = _config.TwitterConfig;
+            var twitterConfig = _config.TwitterConfig;
             if (twitterConfig.IsEnabled)
             {
                 providers.Add(
@@ -165,7 +165,7 @@ namespace Iris.Bot
                     twitterConfig);
             }
 
-            FacebookConfig facebookConfig = _config.FacebookConfig;
+            var facebookConfig = _config.FacebookConfig;
             if (facebookConfig.IsEnabled)
             {
                 providers.Add(
