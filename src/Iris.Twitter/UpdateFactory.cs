@@ -40,9 +40,16 @@ namespace Iris.Twitter.Factories
         private static string GetFormattedMessage(Tweet tweet, User author, string url)
         {
             string verb = author.Gender == Gender.Male ? "צייץ" : "צייצה";
-            string retweeted = tweet.IsRetweet ? "מחדש" : "";
+            const string retweetVerb = "מחדש";
+            string fullVerb = tweet.IsRetweet 
+                ? $"{verb} {retweetVerb}" 
+                : verb;
             
-            return $"{author.Name} {verb} {retweeted}:\n \n \n{tweet.Text}\n \n{url}";
+            return MessageFormatter.FormatMessage(
+                url,
+                author.Name,
+                fullVerb,
+                tweet.Text);
         }
     }
 }

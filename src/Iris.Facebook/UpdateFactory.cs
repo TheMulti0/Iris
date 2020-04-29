@@ -43,8 +43,13 @@ namespace Iris.Facebook
         {
             string verb = author.Gender == Gender.Male ? "פרסם" : "פרסמה";
             const string postWord = "פוסט";
+            string fullVerb = $"{verb} {postWord}";
             
-            return $"{author.Name} {verb} {postWord}:\n \n \n{post.Text}\n \n{post.PostUrl}";
+            return MessageFormatter.FormatMessage(
+                post.PostUrl,
+                author.Name,
+                fullVerb,
+                post.Text);
         }
     }
 }
