@@ -1,8 +1,6 @@
-﻿using Iris.Api;
-
-namespace Iris.Twitter
+namespace Iris.Api
 {
-    public class TwitterConfig : IProviderConfig
+    public interface ProviderConfig
     {
         public bool IsEnabled { get; set; }
         

@@ -21,7 +21,7 @@ namespace Iris.Watcher
         public UpdatesWatcher(
             ILogger logger,
             IUpdatesProvider provider,
-            IProviderConfig config)
+            ProviderConfig config)
         {
             _logger = logger;
             _provider = provider;

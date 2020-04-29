@@ -1,5 +1,4 @@
-﻿using Iris.Facebook;
-using Iris.Twitter;
+﻿using Iris.Api;
 
 namespace Iris.Config
 {
@@ -7,9 +6,9 @@ namespace Iris.Config
     {
         public TelegramBotConfig TelegramBotConfig { get; set; }
         
-        public TwitterConfig TwitterConfig { get; set; }
+        public ProviderConfig TwitterConfig { get; set; }
         
 
-        public FacebookConfig FacebookConfig { get; set; }
+        public ProviderConfig FacebookConfig { get; set; }
     }
 }

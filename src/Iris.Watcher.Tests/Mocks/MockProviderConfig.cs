@@ -2,7 +2,7 @@ using Iris.Api;
 
 namespace Iris.Watcher.Tests
 {
-    internal class MockProviderConfig : IProviderConfig
+    internal class MockProviderConfig : ProviderConfig
     {
         public bool IsEnabled { get; set; } = true;
         

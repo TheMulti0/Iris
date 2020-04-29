@@ -96,7 +96,7 @@ namespace Iris.Bot
 
         private void RegisterProducers()
         {
-            foreach ((IUpdatesProvider provider, IProviderConfig config) in GetProviders())
+            foreach ((IUpdatesProvider provider, ProviderConfig config) in GetProviders())
             {
                 try
                 {
@@ -151,9 +151,9 @@ namespace Iris.Bot
             }
         }
 
-        private Dictionary<IUpdatesProvider, IProviderConfig> GetProviders()
+        private Dictionary<IUpdatesProvider, ProviderConfig> GetProviders()
         {
-            var providers = new Dictionary<IUpdatesProvider, IProviderConfig>();
+            var providers = new Dictionary<IUpdatesProvider, ProviderConfig>();
 
             TwitterConfig twitterConfig = _config.TwitterConfig;
             if (twitterConfig.IsEnabled)

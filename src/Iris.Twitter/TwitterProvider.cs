@@ -19,7 +19,7 @@ namespace Iris.Twitter
 
         public TwitterProvider(
             ILogger<TwitterProvider> logger,
-            TwitterConfig config)
+            ProviderConfig config)
         {
             _logger = logger;
             

@@ -18,7 +18,7 @@ namespace Iris.Facebook
 
         public FacebookProvider(
             ILogger<FacebookProvider> logger,
-            FacebookConfig config)
+            ProviderConfig config)
         {
             _logger = logger;
             

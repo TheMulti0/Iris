@@ -11,7 +11,7 @@ namespace Iris.Facebook.Tests
         [Fact]
         public async Task Test()
         {
-            var config = JsonExtensions.Read<FacebookConfig>("../../../appsettings.json");
+            var config = JsonExtensions.Read<ProviderConfig>("../../../appsettings.json");
 
             var facebook = new FacebookProvider(NullLogger<FacebookProvider>.Instance, config);
             IEnumerable<Update> updates = await facebook.GetUpdates(config.WatchedUsers[0]);
