@@ -8,15 +8,7 @@ namespace Iris.Api
             string verb,
             string postText)
         {
-            return $"<a href=\"{postUrl}\"> {authorName} {verb}: </a>\n \n \n{postText.EncodeForHtml()}\n \n";
-        }
-
-        public static string EncodeForHtml(this string str)
-        {
-            return str
-                .Replace("<", "&lt;")
-                .Replace(">", "&gt;")
-                .Replace("&", "&amp;");
+            return $"<a href=\"{postUrl}\"> {authorName} {verb}: </a>\n \n \n{postText}\n \n";
         }
     }
 }
