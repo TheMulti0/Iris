@@ -159,8 +159,8 @@ namespace Iris.Bot
             if (twitterConfig.IsEnabled)
             {
                 providers.Add(
-                    new Twitter.Twitter(
-                        _loggerFactory.CreateLogger<Twitter.Twitter>(),
+                    new TwitterProvider(
+                        _loggerFactory.CreateLogger<TwitterProvider>(),
                         twitterConfig),
                     twitterConfig);
             }
@@ -169,8 +169,8 @@ namespace Iris.Bot
             if (facebookConfig.IsEnabled)
             {
                 providers.Add(
-                    new Facebook.Facebook(
-                        _loggerFactory.CreateLogger<Facebook.Facebook>(),
+                    new FacebookProvider(
+                        _loggerFactory.CreateLogger<FacebookProvider>(),
                         facebookConfig),
                     facebookConfig);
             }

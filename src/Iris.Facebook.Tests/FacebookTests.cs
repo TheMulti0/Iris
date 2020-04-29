@@ -13,7 +13,7 @@ namespace Iris.Facebook.Tests
         {
             var config = JsonExtensions.Read<FacebookConfig>("../../../appsettings.json");
 
-            var facebook = new Facebook(NullLogger<Facebook>.Instance, config);
+            var facebook = new FacebookProvider(NullLogger<FacebookProvider>.Instance, config);
             IEnumerable<Update> updates = await facebook.GetUpdates(config.WatchedUsers[0]);
             foreach (Update update in updates)
             {

@@ -11,14 +11,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Iris.Twitter
 {
-    public class Twitter : IUpdatesProvider
+    public class TwitterProvider : IUpdatesProvider
     {
-        private readonly ILogger<Twitter> _logger;
+        private readonly ILogger<TwitterProvider> _logger;
         private readonly int _pageCountPerUser;
         private readonly HttpClient _client;
 
-        public Twitter(
-            ILogger<Twitter> logger,
+        public TwitterProvider(
+            ILogger<TwitterProvider> logger,
             TwitterConfig config)
         {
             _logger = logger;

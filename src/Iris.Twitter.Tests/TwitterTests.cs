@@ -13,7 +13,7 @@ namespace Iris.Twitter.Tests
         {
             var config = JsonExtensions.Read<TwitterConfig>("../../../appsettings.json");
 
-            var facebook = new Twitter(NullLogger<Twitter>.Instance, config);
+            var facebook = new TwitterProvider(NullLogger<TwitterProvider>.Instance, config);
             IEnumerable<Update> updates = await facebook.GetUpdates(config.WatchedUsers[0]);
             foreach (Update update in updates)
             {

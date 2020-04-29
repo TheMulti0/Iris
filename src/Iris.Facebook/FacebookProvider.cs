@@ -10,14 +10,14 @@ using Iris.Api;
 
 namespace Iris.Facebook
 {
-    public class Facebook : IUpdatesProvider
+    public class FacebookProvider : IUpdatesProvider
     {
-        private readonly ILogger<Facebook> _logger;
+        private readonly ILogger<FacebookProvider> _logger;
         private readonly int _pageCountPerUser;
         private readonly HttpClient _client;
 
-        public Facebook(
-            ILogger<Facebook> logger,
+        public FacebookProvider(
+            ILogger<FacebookProvider> logger,
             FacebookConfig config)
         {
             _logger = logger;
