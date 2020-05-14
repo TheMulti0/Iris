@@ -11,3 +11,8 @@ Iris is built with .NET Core 3.1 (the libraries are targetted to .NET Standard 2
 Currently supported update sources:
  - [x] Twitter
  - [x] Facebook
+
+The system has 3 services, each running on its own container:
+ - `Iris`-  Manages the bot and gets updates from all of the sources.
+ - `twitterscraper` - Delivers tweets.
+ - `facebookscraper` - Delivers posts.
