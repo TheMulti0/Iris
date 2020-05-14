@@ -38,6 +38,8 @@ namespace Iris.Facebook
             _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
         
             string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
+            
+            _logger.LogInformation("Got Facebook json\n{}\n", json);
         
             Post[] posts = DeserializePosts(json);
         
