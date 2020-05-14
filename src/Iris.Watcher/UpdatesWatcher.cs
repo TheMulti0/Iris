@@ -82,7 +82,7 @@ namespace Iris.Watcher
             }
             catch (Exception e)
             {
-                _logger.LogError("Failed to GetUpdates", e);
+                _logger.LogError(e, "Failed to GetUpdates\n {}");
                 return new List<Update>();
             }
             
