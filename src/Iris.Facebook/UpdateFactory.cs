@@ -9,10 +9,10 @@ namespace Iris.Facebook
     {
         public static Update ToUpdate(this Post post, User author)
         {
-            long id = post.Id;
+            long id = post.Id ?? 0;
             string message = post.Text;
             string formattedMessage = GetFormattedMessage(post, author);
-            DateTime createdAt = post.Date;
+            DateTime createdAt = post.Date ?? new DateTime();
             string url = post.PostUrl;
             
             string imageUrl = post.ImageUrl;

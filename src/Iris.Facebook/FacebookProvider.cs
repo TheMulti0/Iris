@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.Extensions.Logging;
 using Iris.Api;
+using Newtonsoft.Json;
 
 namespace Iris.Facebook
 {
@@ -34,29 +36,28 @@ namespace Iris.Facebook
         public async Task<IEnumerable<Update>> GetUpdates(User user)
         {
             _logger.LogInformation($"GetUpdates requested with user {user.Id} (pageCount = {_pageCountPerUser})");
-            
-            Stream json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
-            
-            Post[] posts = await DeserializePosts(json);
-            
+        
+            string json = await GetFacebookPostsJson(user.Id, _pageCountPerUser);
+        
+            Post[] posts = DeserializePosts(json);
+        
             _logger.LogInformation($"Found {posts.Length} posts by {user.Id}");
-            
+        
             return posts
                 .Select(post => post.ToUpdate(user));
         }
 
-        private async Task<Stream> GetFacebookPostsJson(string userName, int pageCountPerUser)
+        private async Task<string> GetFacebookPostsJson(string userName, int pageCountPerUser)
         {
             HttpResponseMessage response = await _client.GetAsync(
                 $"/facebook?name={userName}&pageCount={pageCountPerUser}");
             
-            return await response.Content.ReadAsStreamAsync();
+            return await response.Content.ReadAsStringAsync();
         }
 
-        private static ValueTask<Post[]> DeserializePosts(Stream json)
+        private static Post[] DeserializePosts(string json)
         {
-            return JsonSerializer
-                .DeserializeAsync<Post[]>(json);
+            return JsonConvert.DeserializeObject<Post[]>(json);
         }
     }
 }

@@ -71,12 +71,21 @@ namespace Iris.Watcher
 
         private async Task<IEnumerable<Update>> GetUpdates(User user)
         {
-            IEnumerable<Update> updates = await _provider.GetUpdates(user);
+            try
+            {
+                IEnumerable<Update> updates = await _provider.GetUpdates(user);
 
-            _logger.LogInformation($"Received unvalidated updates for user #{user.Id}");
+                _logger.LogInformation($"Received unvalidated updates for user #{user.Id}");
 
-            return updates
-                .OrderBy(u => u.CreatedAt);
+                return updates
+                    .OrderBy(u => u.CreatedAt);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Failed to GetUpdates", e);
+                return new List<Update>();
+            }
+            
         }
     }
 }
