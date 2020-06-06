@@ -13,25 +13,27 @@ namespace Iris
         private static async Task Main(string[] args)
         {
 #if DEBUG
-            const string rootDirectory = "../../..";
+            const string configDirectory = "../../../config";
+            const string logsDirectory = "../../../logs";
 #else
-            const string rootDirectory = "config";
+            const string configDirectory = "config";
+            const string logsDirectory = "logs";
 #endif
             
             var config = await JsonSerializer
                 .DeserializeAsync<ApplicationConfig>(
-                    new FileStream($"{rootDirectory}/appsettings.json", FileMode.Open));
+                    new FileStream($"{configDirectory}/appsettings.json", FileMode.Open));
 
             ILoggerFactory factory = LoggerFactory
                 .Create(builder => builder
                     .AddConsole()
-                    .AddFile(options => options.LogDirectory = "logs"));
+                    .AddFile(options => options.LogDirectory = logsDirectory));
         
             var telegramBot = new Bot.Bot(
                 config,
                 factory,
-                $"{rootDirectory}/{config.TelegramBotConfig.ChatsFile}",
-                new JsonUpdateValidator($"{rootDirectory}/{config.TelegramBotConfig.SavedUpdatesFile}"));
+                $"{configDirectory}/{config.TelegramBotConfig.ChatsFile}",
+                new JsonUpdateValidator($"{configDirectory}/{config.TelegramBotConfig.SavedUpdatesFile}"));
 
             await Task.Delay(-1);
         }
