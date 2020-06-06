@@ -1,8 +1,6 @@
 FROM python:3.8
 
-MAINTAINER TheMulti0 "multi@codeprecise.com"
-
-COPY twitterscraper /app
+COPY . /app
 WORKDIR /app
 
 RUN pip install --upgrade pip
