@@ -1,8 +1,9 @@
 #
 # Build stage
 #
-
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+
+LABEL maintainer="multi@codeprecise.com"
 
 WORKDIR /source
 COPY . .

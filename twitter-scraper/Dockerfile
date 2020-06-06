@@ -1,5 +1,7 @@
 FROM python:3.8
 
+LABEL maintainer="multi@codeprecise.com"
+
 COPY . /app
 WORKDIR /app
 
