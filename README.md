@@ -13,6 +13,15 @@ Currently supported update sources:
  - [x] Facebook
 
 The system has 3 services, each running on its own container:
- - `Iris`-  Manages the bot and gets updates from all of the sources.
- - `twitterscraper` - Delivers tweets.
- - `facebookscraper` - Delivers posts.
+ - `Iris`-  Manages the bot and gets updates from all of the sources
+ - `twitter-scraper` - Delivers tweets
+ - `facebook-scraper` - Delivers posts
+
+> Make sure to fill `appsettings.json` and `chats.json` in `Iris/config/`
+
+The project is deployed using `docker-compose`:
+```bash
+~/Iris> docker-compose build
+~/Iris> docker-compose up
+```
+
