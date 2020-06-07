@@ -13,8 +13,8 @@ namespace Iris
         private static async Task Main(string[] args)
         {
 #if DEBUG
-            const string configDirectory = "../../../config";
-            const string logsDirectory = "../../../logs";
+            const string configDirectory = "../../../../config";
+            const string logsDirectory = "../../../../logs";
 #else
             const string configDirectory = "config";
             const string logsDirectory = "logs";
