@@ -23,7 +23,7 @@ namespace Iris.Logging
             {
                 foreach (LogMessage item in group)
                 {
-                    Console.WriteLine(item.Message);
+                    Console.Write(item.Message);
                 }
             }
             
