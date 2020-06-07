@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Iris.Api;
 
-namespace Iris.Twitter.Factories
+namespace Iris.Twitter
 {
     internal static class UpdateFactory
     {

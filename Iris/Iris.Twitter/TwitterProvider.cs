@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Iris.Api;
-using Iris.Twitter.Factories;
 using Microsoft.Extensions.Logging;
 
 namespace Iris.Twitter
