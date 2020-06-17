@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  twitter-scraper: 
+    build: ./twitter-scraper
+    image: themulti0/twitter-scraper:latest
+    container_name: twitter-scraper
+    ports:
+      - 5000:80
+
+  facebook-scraper: 
+    build: ./facebook-scraper
+    image: themulti0/facebook-scraper:latest
+    container_name: facebook-scraper
+    ports:
+      - 5001:80
