@@ -565,6 +565,7 @@ ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
+*.binlog
 
 # NVidia Nsight GPU debugger configuration file
 *.nvuser
@@ -582,4 +583,3 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,jetbrains+all,python,venv
-Iris/
