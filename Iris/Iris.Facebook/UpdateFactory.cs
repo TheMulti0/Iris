@@ -27,7 +27,6 @@ namespace Iris.Facebook
             return new Update(
                 id,
                 author,
-                message,
                 formattedMessage,
                 createdAt,
                 url,

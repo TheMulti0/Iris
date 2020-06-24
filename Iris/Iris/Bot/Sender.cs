@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Iris.Api;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -11,8 +12,11 @@ namespace Iris.Bot
 {
     internal class Sender
     {
-        private ITelegramBotClient _client;
-        private ILogger<Sender> _logger;
+        private const int MaxMediaCaptionSize = 1024;
+        private const ParseMode MessageParseMode = ParseMode.Html;
+        private readonly ITelegramBotClient _client;
+        private readonly ILogger<Sender> _logger;
+        private readonly object _messageBatchLock = new object();
 
         public Sender(
             ITelegramBotClient client,
@@ -22,23 +26,95 @@ namespace Iris.Bot
             _logger = logger;
         }
 
-        public async Task SendAsync(Update update, long chatId)
+        public Task SendAsync(Update update, long chatId)
         {
-            // Message[] previousMessages = null;
-            // if (update.Media.Any())
-            // {
-            //     IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
-            //         .Select(TelegramMediaFactory.ToTelegramMedia);
-            //         
-            //     previousMessages = await _client.SendMediaGroupAsync(telegramMedia, chatId);
-            // }
+            if (!update.Media.Any())
+            {
+                return SendTextMessage(update, chatId);
+            }
+            
+            if (update.FormattedMessage.Length <= MaxMediaCaptionSize)
+            {
+                return SendSingleMessage(update, chatId);
+            }
+            
+            SendMessageBatch(update, chatId);
+            return Task.CompletedTask;
+        }
 
-            await _client.SendTextMessageAsync(
+        private Task SendSingleMessage(Update update, long chatId)
+        {
+            _logger.LogInformation("Sending single message");
+            
+            List<Media> updateMedia = update.Media.ToList();
+            
+            return updateMedia.Any(media => media.Type == MediaType.Video) 
+                ? SendVideo(update, chatId, updateMedia) 
+                : SendPhoto(update, chatId, updateMedia);
+        }
+
+        private async Task SendPhoto(Update update, long chatId, List<Media> updateMedia)
+        {
+            _logger.LogInformation("Sending single photo message");
+            
+            Media photo = updateMedia.FirstOrDefault(media => media.Type == MediaType.Photo);
+
+            await _client.SendPhotoAsync(
+                chatId,
+                photo.ToInputOnlineFile(),
+                update.FormattedMessage,
+                MessageParseMode);
+        }
+
+        private async Task SendVideo(Update update, long chatId, List<Media> updateMedia)
+        {
+            _logger.LogInformation("Sending single video message");
+            
+            Media video = updateMedia
+                .FirstOrDefault(media => media.Type == MediaType.Video);
+
+            await _client.SendVideoAsync(
+                chatId,
+                video.ToInputOnlineFile(),
+                caption: update.FormattedMessage,
+                parseMode: MessageParseMode);
+        }
+
+        private void SendMessageBatch(Update update, long chatId)
+        {
+            lock (_messageBatchLock)
+            {
+                _logger.LogInformation("Sending media album batch");
+            
+                Message[] mediaMessages = SendMediaAlbum(update, chatId).Result;
+                int? firstMediaMessageId = mediaMessages?.FirstOrDefault()?.MessageId;
+
+                _logger.LogInformation("Sending corresponding message");
+            
+                SendTextMessage(update, chatId, firstMediaMessageId ?? 0).Wait();                
+            }
+        }
+
+        private Task SendTextMessage(Update update, long chatId, int replyMessageId = 0)
+        {
+            _logger.LogInformation("Sending text message");
+            
+            return _client.SendTextMessageAsync(
                 chatId,
                 update.FormattedMessage,
-                ParseMode.Html
-            //    replyToMessageId: previousMessages?.LastOrDefault()?.MessageId ?? 0
-                );
+                MessageParseMode,
+                replyToMessageId: replyMessageId
+            );
+        }
+
+        private async Task<Message[]> SendMediaAlbum(Update update, long chatId)
+        {
+            IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
+                .Select(media => media.ToAlbumInputMedia());
+            
+            _logger.LogInformation("Found media. Sending album");
+
+            return await _client.SendMediaGroupAsync(telegramMedia, chatId);
         }
     }
 }

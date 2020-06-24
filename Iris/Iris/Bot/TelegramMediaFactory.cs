@@ -1,11 +1,12 @@
 using Iris.Api;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 
 namespace Iris.Bot
 {
     internal static class TelegramMediaFactory
     {
-        public static IAlbumInputMedia ToTelegramMedia(Media media)
+        public static IAlbumInputMedia ToAlbumInputMedia(this Media media)
         {
             var rawMedia = new InputMedia(media.Url);
 
@@ -14,6 +15,11 @@ namespace Iris.Bot
                 MediaType.Photo => new InputMediaPhoto(rawMedia),
                 _ => new InputMediaVideo(rawMedia)
             };
+        }
+
+        public static InputOnlineFile ToInputOnlineFile(this Media media)
+        {
+            return new InputOnlineFile(media.Url);
         }
     }
 }

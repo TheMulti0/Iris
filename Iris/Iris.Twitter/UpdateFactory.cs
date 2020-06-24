@@ -20,7 +20,6 @@ namespace Iris.Twitter
             return new Update(
                 id,
                 author,
-                message,
                 formattedMessage,
                 createdAt,
                 url,

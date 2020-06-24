@@ -15,7 +15,6 @@ namespace Iris.Watcher.Tests
                     0,
                     user,
                     "",
-                    "",
                     DateTime.Now,
                     "",
                     new List<Media>())

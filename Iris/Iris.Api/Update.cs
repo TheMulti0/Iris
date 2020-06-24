@@ -9,8 +9,6 @@ namespace Iris.Api
 
         public User Author { get; }
 
-        public string Message { get; }
-
         public string FormattedMessage { get; }
 
         public DateTime CreatedAt { get; }
@@ -22,7 +20,6 @@ namespace Iris.Api
         public Update(
             long id,
             User author,
-            string message,
             string formattedMessage,
             DateTime createdAt,
             string url,
@@ -30,7 +27,6 @@ namespace Iris.Api
         {
             Id = id;
             Author = author;
-            Message = message;
             FormattedMessage = formattedMessage;
             CreatedAt = createdAt;
             Url = url;
