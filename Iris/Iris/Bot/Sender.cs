@@ -28,18 +28,13 @@ namespace Iris.Bot
 
         public Task SendAsync(Update update, long chatId)
         {
-            if (!update.Media.Any())
-            {
-                return SendTextMessage(update, chatId);
-            }
-            
             if (update.FormattedMessage.Length <= MaxMediaCaptionSize)
             {
                 return SendSingleMessage(update, chatId);
             }
             
-            SendMessageBatch(update, chatId);
-            return Task.CompletedTask;
+            // SendMessageBatch(update, chatId);
+            return SendTextMessage(update, chatId);
         }
 
         private Task SendSingleMessage(Update update, long chatId)
