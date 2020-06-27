@@ -6,3 +6,10 @@ services:
     build:
       context: .
       dockerfile: Consumer/Dockerfile
+
+  producer:
+    image: ${DOCKER_REGISTRY-}producer
+    build:
+      context: .
+      dockerfile: Producer/Dockerfile
+
