@@ -28,16 +28,34 @@ namespace Iris.Bot
 
         public Task SendAsync(Update update, long chatId)
         {
-            if (update.FormattedMessage.Length <= MaxMediaCaptionSize)
+            Task SendMultipleMediaMessagesAsync()
             {
-                return SendSingleMessage(update, chatId);
+                SendMultipleMediaMessages(update, chatId);
+                return Task.CompletedTask;
             }
-            
-            // SendMessageBatch(update, chatId);
-            return SendTextMessage(update, chatId);
+
+            var mediaCount = update.Media.Count();
+
+            switch (mediaCount)
+            {
+                case 0:
+                    return SendTextMessage(update, chatId);
+                
+                case 1:
+                    if (update.FormattedMessage.Length <= MaxMediaCaptionSize)
+                    {
+                        return SendSingleMediaMessage(update, chatId);
+                    }
+                    _logger.LogInformation(
+                        "Message with one media but more than 1024 characters detected. Sending multiple media messages");
+                    return SendMultipleMediaMessagesAsync();
+                
+                default:
+                    return SendMultipleMediaMessagesAsync();
+            }
         }
 
-        private Task SendSingleMessage(Update update, long chatId)
+        private Task SendSingleMediaMessage(Update update, long chatId)
         {
             _logger.LogInformation("Sending single message");
             
@@ -75,7 +93,7 @@ namespace Iris.Bot
                 parseMode: MessageParseMode);
         }
 
-        private void SendMessageBatch(Update update, long chatId)
+        private void SendMultipleMediaMessages(Update update, long chatId)
         {
             lock (_messageBatchLock)
             {
