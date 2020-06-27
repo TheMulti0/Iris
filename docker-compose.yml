@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  consumer:
+    image: ${DOCKER_REGISTRY-}consumer
+    build:
+      context: .
+      dockerfile: Consumer/Dockerfile
