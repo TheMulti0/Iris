@@ -48,7 +48,15 @@ namespace Consumer
         {
             var consumerConfig = config.Get<TopicConsumerConfig>();
 
-            services.AddSingleton(_ => new TopicConsumer<TKey, TValue>(consumerConfig));
+            services.AddSingleton<JsonDeserializer<TValue>>();
+            services.AddSingleton(s =>
+            {
+                var valueDeserializer = s.GetService<JsonDeserializer<TValue>>();
+                
+                return new TopicConsumer<TKey, TValue>(
+                    consumerConfig,
+                    valueDeserializer);
+            });
         }
 
         private static IConfigurationRoot ReadConfiguration()

@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Consumer.Tests
@@ -59,7 +60,11 @@ namespace Consumer.Tests
                 GroupId = "tests-consumers-group"
             };
 
-            var consumer = new TopicConsumer<Ignore, Update>(config);
+            var consumer = new TopicConsumer<Ignore, Update>(
+                config,
+                new JsonDeserializer<Update>(
+                    NullLogger<JsonDeserializer<Update>>.Instance));
+            
             return consumer.Messages;
         }
 

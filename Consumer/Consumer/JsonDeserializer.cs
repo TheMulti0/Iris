@@ -1,15 +1,19 @@
 using System;
+using System.Text;
 using System.Text.Json;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
     public class JsonDeserializer<T> : IDeserializer<T>
     {
+        private readonly ILogger<JsonDeserializer<T>> _logger;
         private readonly JsonSerializerOptions _options;
         
-        public JsonDeserializer()
+        public JsonDeserializer(ILogger<JsonDeserializer<T>> logger)
         {
+            _logger = logger;
             _options = new JsonSerializerOptions
             {
                 Converters =
@@ -30,7 +34,10 @@ namespace Consumer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e); //TODO use ILogger
+                _logger.LogError(
+                    e,
+                    "Failed to deserialize byte data to JSON: {}",
+                    Encoding.UTF8.GetString(data));
                 throw;
             }
         }

@@ -13,7 +13,9 @@ namespace Consumer
 
         public IObservable<ConsumeResult<TKey, TValue>> Messages { get; }
         
-        public TopicConsumer(TopicConsumerConfig config)
+        public TopicConsumer(
+            TopicConsumerConfig config,
+            IDeserializer<TValue> valueDeserializer)
         {
             var consumerConfig = new ConsumerConfig
             {
@@ -22,7 +24,7 @@ namespace Consumer
             };
             
             _consumer = new ConsumerBuilder<TKey, TValue>(consumerConfig)
-                .SetValueDeserializer(new JsonDeserializer<TValue>())
+                .SetValueDeserializer(valueDeserializer)
                 .Build();
             
             Messages = CreateTopicConsumer(
