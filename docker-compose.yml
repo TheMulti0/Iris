@@ -13,8 +13,8 @@ services:
       context: .
       dockerfile: Producer/Dockerfile
 
-  twitterprovider:
-    image: ${DOCKER_REGISTRY-}twitterprovider
+  twitterproducer:
+    image: ${DOCKER_REGISTRY-}twitterproducer
     build:
-      context: ./twitterprovider
+      context: ./twitterproducer
       dockerfile: Dockerfile
