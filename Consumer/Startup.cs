@@ -9,30 +9,51 @@ using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
+    internal class Update
+    {
+        public string Content { get; set; }
+    }
+    
     public class Startup
     {
-        public Task Main()
+        public static Task Main()
         {
             var services = BuildServices();
 
-            services.GetService<ReactiveKafkaConsumer<Ignore, Update>>();
+            services.GetService<TopicConsumer<Ignore, Update>>().Messages.Subscribe(
+                result =>
+                {
+                    Console.WriteLine(result.Message.Value.Content);
+                });
             
             return Task.Delay(-1);
         }
         
-        private static ServiceProvider BuildServices()
+        private static IServiceProvider BuildServices()
         {
             IConfigurationRoot config = ReadConfiguration();
 
-            return new ServiceCollection()
+            IServiceCollection services = new ServiceCollection()
                 .AddLogging(
                     builder => builder
                         .AddCustomConsole()
-                        .AddConfiguration(config))
-                .AddSingleton(
-                    config.GetSection("KafkaConsumer").Get<ConsumerConfig>())
-                .AddSingleton<ReactiveKafkaConsumer<Ignore, Update>>()
+                        .AddConfiguration(config));
+
+            AddTopicConsumer<Ignore, Update>(
+                services,
+                config.GetSection("UpdatesConsumer"));
+            
+            return services
                 .BuildServiceProvider();
+        }
+
+        private static void AddTopicConsumer<TKey, TValue>(
+            IServiceCollection services,
+            IConfiguration config)
+        {
+            var consumerConfig = config.Get<TopicConsumerConfig>();
+
+            services.AddSingleton(_ => new TopicConsumer<TKey, TValue>(consumerConfig));
         }
 
         private static IConfigurationRoot ReadConfiguration()
