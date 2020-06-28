@@ -43,7 +43,7 @@ class TweetsProducer:
         self.__config = config
 
         self.__producer = KafkaProducer(
-            bootstrap_servers=config.bootstrap_servers)
+            bootstrap_servers=config.bootstrap_servers,)
 
     def start(self):
         while True:
@@ -62,10 +62,15 @@ class TweetsProducer:
         for update in updates:
             self.send(update)
 
+    @staticmethod
+    def datetime_converter(dt: datetime):
+        if isinstance(dt, datetime):
+            return dt.__str__()
+
     def send(self, update):
-        update_bytes = bytes(update.__dict__)
+        dumps = json.dumps(update.__dict__, default=self.datetime_converter)
+        update_bytes = bytes(dumps, 'utf-8')
 
         self.__producer.send(
-            topic=self.__config.topic,
-            key=None,
-            value=update_bytes)
+            self.__config.topic,
+            update_bytes)
