@@ -4,7 +4,7 @@ using Confluent.Kafka;
 
 namespace Consumer
 {
-    internal class JsonDeserializer<T> : IDeserializer<T>
+    public class JsonDeserializer<T> : IDeserializer<T>
     {
         public T Deserialize(
             ReadOnlySpan<byte> data,

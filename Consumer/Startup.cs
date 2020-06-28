@@ -9,11 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
-    internal class Update
-    {
-        public string Content { get; set; }
-    }
-    
     public class Startup
     {
         public static Task Main()
