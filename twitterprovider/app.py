@@ -19,4 +19,6 @@ while True:
         'test-topic',
         bytes(msg, 'utf-8'))
 
+    print(f'sent message {msg}')
+
     time.sleep(5)
