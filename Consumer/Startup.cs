@@ -14,8 +14,8 @@ namespace Consumer
         public Task Main()
         {
             var services = BuildServices();
-            
-            services.GetService<>()
+
+            services.GetService<ReactiveKafkaConsumer<Ignore, Update>>();
             
             return Task.Delay(-1);
         }
@@ -31,7 +31,7 @@ namespace Consumer
                         .AddConfiguration(config))
                 .AddSingleton(
                     config.GetSection("KafkaConsumer").Get<ConsumerConfig>())
-                .AddSingleton<KafkaConsumer>()
+                .AddSingleton<ReactiveKafkaConsumer<Ignore, Update>>()
                 .BuildServiceProvider();
         }
 
