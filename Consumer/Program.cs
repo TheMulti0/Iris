@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json;
 using System.Threading;
 using Confluent.Kafka;
 
@@ -8,14 +7,6 @@ namespace Consumer
     class Update 
     {
         public string Content { get; set; }
-    }
-
-    class UpdateDeserializer : IDeserializer<Update>
-    {
-        public Update Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
-        {
-            return JsonSerializer.Deserialize<Update>(data);
-        }
     }
 
     class Program
@@ -29,7 +20,8 @@ namespace Consumer
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            using var c = new ConsumerBuilder<Ignore, Update>(conf).SetValueDeserializer(new UpdateDeserializer()).Build();
+            using var c = new ConsumerBuilder<Ignore, Update>(conf)
+                .SetValueDeserializer(new JsonDeserializer<Update>()).Build();
             c.Subscribe("test-topic");
 
             // Because Consume is a blocking call, we want to capture Ctrl+C and use a cancellation token to get out of our while loop and close the consumer gracefully.
