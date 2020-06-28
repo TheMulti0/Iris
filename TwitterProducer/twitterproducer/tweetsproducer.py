@@ -59,6 +59,11 @@ class TweetsProducer:
             UpdateFactory.to_update(tweet)
             for tweet in tweets
         ]
+        updates = sorted(
+            updates,
+            key=lambda update: update.creation_date,
+            reverse=True) # TODO Check newest date to supress duplicates
+
         for update in updates:
             self.send(update)
 
