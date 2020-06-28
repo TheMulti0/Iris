@@ -39,7 +39,7 @@ namespace Producer
                 {
                     Value = new Update 
                     {
-                        Content = $"Message #{++i}"
+                        Content = $"Message from C# #{++i}"
                     }
                 };
 
