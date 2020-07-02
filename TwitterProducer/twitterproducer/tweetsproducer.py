@@ -6,7 +6,7 @@ from time import sleep
 from kafka import KafkaProducer
 from twitter_scraper import get_tweets
 
-from twitterproducer.databaserepository import UserLatestUpdateTime, UserLatestUpdateTimeRepository
+from twitterproducer.userlatestupdatetimerepository import UserLatestUpdateTime, UserLatestUpdateTimeRepository
 from twitterproducer.topicproducerconfig import TopicProducerConfig
 from twitterproducer.update import Update
 
@@ -40,13 +40,16 @@ class UpdateFactory:
 
 
 class TweetsProducer:
-    def __init__(self, config: TopicProducerConfig):
+    def __init__(
+            self,
+            config: TopicProducerConfig,
+            repository: UserLatestUpdateTimeRepository):
         self.__config = config
 
         self.__producer = KafkaProducer(
             bootstrap_servers=config.bootstrap_servers)
 
-        self.__repository = UserLatestUpdateTimeRepository()
+        self.__repository = repository
 
     def start(self):
         while True:

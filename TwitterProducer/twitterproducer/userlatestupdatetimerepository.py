@@ -5,16 +5,18 @@ from typing import Optional
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
+from twitterproducer.mongodbconfig import MongoDbConfig
 
 UserLatestUpdateTime = namedtuple(
     'UserLatestUpdateTime',
     'user_id latest_update_time')
 
+
 class UserLatestUpdateTimeRepository:
     __update_times: Collection
 
-    def __init__(self):
-        client = MongoClient('localhost', 27017)
+    def __init__(self, config: MongoDbConfig):
+        client = MongoClient(config.connection_string)
         self.__update_times = client['twitterproducerdb']['userlatestupdatetimes']
 
     def get_user_latest_update_time(self, user_id):
