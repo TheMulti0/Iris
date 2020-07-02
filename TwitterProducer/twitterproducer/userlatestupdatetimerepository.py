@@ -1,5 +1,6 @@
 from collections import namedtuple
 from datetime import datetime
+from logging import Logger
 from typing import Optional
 
 from pymongo import MongoClient
@@ -7,17 +8,26 @@ from pymongo.collection import Collection
 
 from twitterproducer.mongodbconfig import MongoDbConfig
 
-UserLatestUpdateTime = namedtuple(
-    'UserLatestUpdateTime',
-    'user_id latest_update_time')
+
+class UserLatestUpdateTime:
+    user_id: str
+    latest_update_time: datetime
+
+    def __init__(
+            self,
+            user_id: str,
+            latest_update_time: datetime):
+        self.user_id = user_id
+        self.latest_update_time = latest_update_time
 
 
 class UserLatestUpdateTimeRepository:
     __update_times: Collection
 
-    def __init__(self, config: MongoDbConfig):
+    def __init__(self, config: MongoDbConfig, logger: Logger):
         client = MongoClient(config.connection_string)
         self.__update_times = client['twitterproducerdb']['userlatestupdatetimes']
+        self.__logger = logger
 
     def get_user_latest_update_time(self, user_id):
         update_time: Optional[UserLatestUpdateTime] = self.__update_times.find_one(
@@ -25,7 +35,7 @@ class UserLatestUpdateTimeRepository:
 
         if update_time is None:
             return self.insert_new_update_time(
-                UserLatestUpdateTime(user_id, datetime.min))
+                UserLatestUpdateTime(user_id, datetime.min).__dict__)
 
         return update_time
 
@@ -36,7 +46,7 @@ class UserLatestUpdateTimeRepository:
 
         if update_time is None:
             self.insert_new_update_time(
-                UserLatestUpdateTime(user_id, latest_update_time))
+                UserLatestUpdateTime(user_id, latest_update_time).__dict__)
 
     def insert_new_update_time(self, new_update_time):
         return self.__update_times.insert_one(new_update_time)

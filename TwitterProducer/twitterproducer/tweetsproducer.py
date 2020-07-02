@@ -1,6 +1,7 @@
 import json
 
 from datetime import datetime
+from logging import Logger
 from time import sleep
 
 from kafka import KafkaProducer
@@ -43,7 +44,8 @@ class TweetsProducer:
     def __init__(
             self,
             config: TopicProducerConfig,
-            repository: UserLatestUpdateTimeRepository):
+            repository: UserLatestUpdateTimeRepository,
+            logger: Logger):
         self.__config = config
 
         self.__producer = KafkaProducer(
@@ -51,18 +53,26 @@ class TweetsProducer:
 
         self.__repository = repository
 
+        self.__logger = logger
+
     def start(self):
         while True:
+            self.__logger.info('Updating all users')
             self.update()
-            sleep(self.__config.update_interval_seconds)
+
+            interval_seconds = self.__config.update_interval_seconds
+            self.__logger.info('Done updating. Sleeping for %s seconds', interval_seconds)
+            sleep(interval_seconds)
 
     def update(self):
         self.update_user('@realDonaldTrump')
 
     def update_user(self, user_id):
+        self.__logger.info('Updating user %s', user_id)
         tweets = self.get_tweets(user_id)
 
         new_updates = self.get_new_updates(tweets, user_id)
+        self.__logger.debug('Got new updates')
 
         for update in new_updates:
             self.send(update)
@@ -80,16 +90,16 @@ class TweetsProducer:
             UpdateFactory.to_update(tweet)
             for tweet in tweets
         ]
-        sorted_updates = list(sorted(
+        sorted_updates = sorted(
             updates,
-            key=lambda u: u.creation_date))
+            key=lambda u: u.creation_date)
 
         user_latest_update_time = self.__repository.get_user_latest_update_time(user_id)
 
-        return list(filter(
+        return filter(
             lambda u: u.creation_date > user_latest_update_time['latest_update_time'],
             sorted_updates
-        ))
+        )
 
     @staticmethod
     def datetime_converter(dt: datetime):
@@ -97,6 +107,8 @@ class TweetsProducer:
             return dt.__str__()
 
     def send(self, update):
+        self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
+
         dumps = json.dumps(update.__dict__, default=self.datetime_converter)
         update_bytes = bytes(dumps, 'utf-8')
 
