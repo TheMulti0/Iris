@@ -1,51 +1,40 @@
+from collections import namedtuple
 from datetime import datetime
+from typing import Optional
 
-from mongoengine import Document, connect, StringField, DateTimeField, DoesNotExist
+from pymongo import MongoClient
+from pymongo.collection import Collection
 
 
-class UserLatestUpdateTime(Document):
-    user_id: StringField
-    latest_update_time: DateTimeField
-
-    def __init__(self, user_id, *args, **values):
-        super().__init__(*args, **values)
-        self.user_id = user_id
-        self.latest_update_time = datetime.min
-
+UserLatestUpdateTime = namedtuple(
+    'UserLatestUpdateTime',
+    'user_id latest_update_time')
 
 class UserLatestUpdateTimeRepository:
+    __update_times: Collection
 
     def __init__(self):
-        connect(
-            db='twitterproducer',
-            host='localhost',
-            port=27017)
+        client = MongoClient('localhost', 27017)
+        self.__update_times = client['twitterproducerdb']['userlatestupdatetimes']
 
     def get_user_latest_update_time(self, user_id):
-        document = self.get_matching_document(user_id)
-        return document.latest_update_time
+        update_time: Optional[UserLatestUpdateTime] = self.__update_times.find_one(
+            {'user_id': user_id})
+
+        if update_time is None:
+            return self.insert_new_update_time(
+                UserLatestUpdateTime(user_id, datetime.min))
+
+        return update_time
 
     def set_user_latest_update_time(self, user_id, latest_update_time):
-        document = self.get_matching_document(user_id)
-        document.latest_update_time = latest_update_time
-        document.save()
+        update_time = self.__update_times.find_one_and_update(
+            filter={'user_id': user_id},
+            update={'$set': {'latest_update_time': latest_update_time}})
 
-    @staticmethod
-    def get_matching_document(user_id):
-        documents_count = UserLatestUpdateTime.objects.count()
+        if update_time is None:
+            self.insert_new_update_time(
+                UserLatestUpdateTime(user_id, latest_update_time))
 
-        new_document = UserLatestUpdateTimeRepository.create_matching_document(
-            user_id)
-
-        if documents_count == 0:
-            return new_document
-        else:
-            try:
-                return UserLatestUpdateTime.objects(
-                    __raw__={'user_id': user_id}).get(0)
-            except Exception:
-                return new_document
-
-    @staticmethod
-    def create_matching_document(user_id):
-        return UserLatestUpdateTime(user_id)
+    def insert_new_update_time(self, new_update_time):
+        return self.__update_times.insert_one(new_update_time)

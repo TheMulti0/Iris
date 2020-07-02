@@ -84,7 +84,7 @@ class TweetsProducer:
         user_latest_update_time = self.__repository.get_user_latest_update_time(user_id)
 
         return list(filter(
-            lambda u: u.creation_date > user_latest_update_time,
+            lambda u: u.creation_date > user_latest_update_time['latest_update_time'],
             sorted_updates
         ))
 
