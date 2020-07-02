@@ -5,12 +5,19 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+      
   kafka:
     image: wurstmeister/kafka
-    container_name: kafka
     ports:
       - "9092:9092"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "updates:1:1, tests:1:1"
+
+  mongodb: 
+    image: mongo:latest
+    volumes:
+      - ./mongodb:/data/db
+    ports:
+      - 27017:27017

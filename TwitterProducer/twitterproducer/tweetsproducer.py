@@ -6,6 +6,7 @@ from time import sleep
 from kafka import KafkaProducer
 from twitter_scraper import get_tweets
 
+from twitterproducer.databaserepository import UserLatestUpdateTime, UserLatestUpdateTimeRepository
 from twitterproducer.topicproducerconfig import TopicProducerConfig
 from twitterproducer.update import Update
 
@@ -43,7 +44,9 @@ class TweetsProducer:
         self.__config = config
 
         self.__producer = KafkaProducer(
-            bootstrap_servers=config.bootstrap_servers,)
+            bootstrap_servers=config.bootstrap_servers)
+
+        self.__repository = UserLatestUpdateTimeRepository()
 
     def start(self):
         while True:
@@ -51,21 +54,39 @@ class TweetsProducer:
             sleep(self.__config.update_interval_seconds)
 
     def update(self):
+        self.update_user('@realDonaldTrump')
+
+    def update_user(self, user_id):
+        tweets = self.get_tweets(user_id)
+
+        new_updates = self.get_new_updates(tweets, user_id)
+
+        for update in new_updates:
+            self.send(update)
+            self.__repository.set_user_latest_update_time(user_id, update.creation_date)
+
+    def get_tweets(self, user_id):
         tweets = [
             Tweet(tweet)
-            for tweet in get_tweets('@realDonaldTrump', pages=1)
+            for tweet in get_tweets(user_id, pages=1)
         ]
+        return tweets
+
+    def get_new_updates(self, tweets, user_id):
         updates = [
             UpdateFactory.to_update(tweet)
             for tweet in tweets
         ]
-        updates = sorted(
+        sorted_updates = list(sorted(
             updates,
-            key=lambda update: update.creation_date,
-            reverse=True) # TODO Check newest date to supress duplicates
+            key=lambda u: u.creation_date))
 
-        for update in updates:
-            self.send(update)
+        user_latest_update_time = self.__repository.get_user_latest_update_time(user_id)
+
+        return list(filter(
+            lambda u: u.creation_date > user_latest_update_time,
+            sorted_updates
+        ))
 
     @staticmethod
     def datetime_converter(dt: datetime):
