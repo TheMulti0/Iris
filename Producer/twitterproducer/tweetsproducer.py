@@ -7,9 +7,10 @@ from time import sleep
 from kafka import KafkaProducer
 from twitter_scraper import get_tweets
 
-from twitterproducer.userlatestupdatetimerepository import UserLatestUpdateTime, UserLatestUpdateTimeRepository
+from producer.update import Update
+from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+
 from twitterproducer.topicproducerconfig import TopicProducerConfig
-from twitterproducer.update import Update
 
 
 class Tweet:

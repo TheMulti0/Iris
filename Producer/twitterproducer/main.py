@@ -1,8 +1,9 @@
 import json
 import logging
 
-from twitterproducer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
-from twitterproducer.mongodbconfig import MongoDbConfig
+from producer.mongodbconfig import MongoDbConfig
+from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+
 from twitterproducer.tweetsproducer import TweetsProducer
 from twitterproducer.topicproducerconfig import TopicProducerConfig
 

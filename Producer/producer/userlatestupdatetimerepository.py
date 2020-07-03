@@ -1,4 +1,3 @@
-from collections import namedtuple
 from datetime import datetime
 from logging import Logger
 from typing import Optional
@@ -6,7 +5,7 @@ from typing import Optional
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
-from twitterproducer.mongodbconfig import MongoDbConfig
+from producer.mongodbconfig import MongoDbConfig
 
 
 class UserLatestUpdateTime:
@@ -24,9 +23,14 @@ class UserLatestUpdateTime:
 class UserLatestUpdateTimeRepository:
     __update_times: Collection
 
-    def __init__(self, config: MongoDbConfig, logger: Logger):
+    def __init__(
+            self,
+            config: MongoDbConfig,
+            logger: Logger):
+
         client = MongoClient(config.connection_string)
-        self.__update_times = client['twitterproducerdb']['userlatestupdatetimes']
+        self.__update_times = client[config.db]['userlatestupdatetimes']
+
         self.__logger = logger
         self.__logger.info('Connected to MongoDB')
 
