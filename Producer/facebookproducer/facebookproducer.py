@@ -20,7 +20,7 @@ repository = UserLatestUpdateTimeRepository(
 )
 
 posts_producer = PostsProducer(
-    TopicProducerConfig(appsettings['tweets_producer']),
+    TopicProducerConfig(appsettings['posts_producer']),
     repository,
     logging.getLogger('UserLatestUpdateTimeRepository'))
 
