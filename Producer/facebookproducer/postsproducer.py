@@ -5,7 +5,7 @@ from logging import Logger
 from time import sleep
 
 from kafka import KafkaProducer
-from twitter_scraper import get_tweets
+from facebook_scraper import get_posts
 
 from producer.update import Update
 from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
@@ -13,19 +13,16 @@ from producer.userlatestupdatetimerepository import UserLatestUpdateTimeReposito
 from producer.topicproducerconfig import TopicProducerConfig
 
 
-class Tweet:
-    tweetId: str
-    userId: str
-    username: str
-    tweetUrl: str
-    isRetweet: bool
-    isPinned: bool
-    time: datetime
+class Post:
+    post_id: str
     text: str
-    replies: int
-    retweets: int
+    time: datetime
+    image: str
     likes: int
-    entries: dict
+    comments: int
+    reactions: dict
+    post_url: str
+    link: str
 
     def __init__(self, original_dict):
         self.__dict__ = original_dict
@@ -33,15 +30,15 @@ class Tweet:
 
 class UpdateFactory:
     @staticmethod
-    def to_update(tweet: Tweet):
+    def to_update(post: Post):
         return Update(
-            content=tweet.text,
-            creation_date=tweet.time,
-            url=tweet.tweetUrl
+            content=post.text,
+            creation_date=post.time,
+            url=post.post_url
         )
 
 
-class TweetsProducer:
+class PostsProducer:
     def __init__(
             self,
             config: TopicProducerConfig,
@@ -66,29 +63,29 @@ class TweetsProducer:
             sleep(interval_seconds)
 
     def update(self):
-        self.update_user('@realDonaldTrump')
+        self.update_user('Netanyahu')
 
     def update_user(self, user_id):
         self.__logger.info('Updating user %s', user_id)
-        tweets = self.get_tweets(user_id)
+        posts = self.get_posts(user_id)
 
-        new_updates = self.get_new_updates(tweets, user_id)
+        new_updates = self.get_new_updates(posts, user_id)
         self.__logger.debug('Got new updates')
 
         for update in new_updates:
             self.send(update)
             self.__repository.set_user_latest_update_time(user_id, update.creation_date)
 
-    def get_tweets(self, user_id):
+    def get_posts(self, user_id):
         return [
-            Tweet(tweet)
-            for tweet in get_tweets(user_id, pages=1)
+            Post(post)
+            for post in get_posts(user_id, pages=1)
         ]
 
-    def get_new_updates(self, tweets, user_id):
+    def get_new_updates(self, posts, user_id):
         updates = [
-            UpdateFactory.to_update(tweet)
-            for tweet in tweets
+            UpdateFactory.to_update(post)
+            for post in posts
         ]
         sorted_updates = sorted(
             updates,

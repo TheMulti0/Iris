@@ -1,10 +1,10 @@
 import json
 import logging
 
+from facebookproducer.postsproducer import PostsProducer
 from producer.mongodbconfig import MongoDbConfig
 from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
 
-from twitterproducer.tweetsproducer import TweetsProducer
 from producer.topicproducerconfig import TopicProducerConfig
 
 logging.basicConfig(
@@ -19,9 +19,9 @@ repository = UserLatestUpdateTimeRepository(
     logging.getLogger('UserLatestUpdateTimeRepository')
 )
 
-tweets_producer = TweetsProducer(
+posts_producer = PostsProducer(
     TopicProducerConfig(appsettings['tweets_producer']),
     repository,
     logging.getLogger('UserLatestUpdateTimeRepository'))
 
-tweets_producer.start()
+posts_producer.start()

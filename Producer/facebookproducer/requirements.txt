@@ -1,0 +1,3 @@
+pymongo
+kafka-python==2.0.1
+facebook-scraper==0.2.3
