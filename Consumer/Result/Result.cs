@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Consumer
@@ -28,6 +29,9 @@ namespace Consumer
 
         public static Result<T> Failure(string error)
             => new Result<T>(false, default, error);
+        
+        public static Result<T> Failure(Exception exception)
+            => Result<T>.Failure(exception.Message);
 
         public override string ToString() => IsSuccess
             ? $"Success, Value = {Value}"

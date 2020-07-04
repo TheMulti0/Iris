@@ -69,7 +69,7 @@ namespace Consumer
             }
             catch (Exception e)
             {
-                return Result<Message<TKey, TValue>>.Failure(e.Message);
+                return Result<Message<TKey, TValue>>.Failure(e);
             }
         }
 
