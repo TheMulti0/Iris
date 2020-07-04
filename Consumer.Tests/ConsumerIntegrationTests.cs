@@ -18,7 +18,6 @@ namespace Consumer.Tests
     public class ConsumerIntegrationTests
     {
         private const string Topic = "tests";
-        private const double IntervalSeconds = 0.5;
         private const string UpdateContent = "This is a test!";
 
         private static Config _config;
@@ -45,7 +44,6 @@ namespace Consumer.Tests
                 {
                     Topic
                 },
-                PollIntervalSeconds = IntervalSeconds,
                 BrokersServers = _config.BrokersServers,
                 GroupId = "tests-consumers-group"
             };
@@ -81,6 +79,11 @@ namespace Consumer.Tests
         private class Config
         {
             public string BrokersServers { get; set; }
+        }
+
+        private class Update
+        {
+            public string Content { get; set; }
         }
 
         private class UpdateSerializer : ISerializer

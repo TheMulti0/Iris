@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Consumer
+namespace TelegramConsumer
 {
     public class Update
     {

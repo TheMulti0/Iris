@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "TelegramConsumer": {
+      "workingDirectory": "../../../",
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
