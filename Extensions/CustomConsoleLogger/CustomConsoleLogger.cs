@@ -7,10 +7,7 @@ namespace Extensions
     {
         private readonly string _name;
 
-        public CustomConsoleLogger(string name)
-        {
-            _name = name;
-        }
+        public CustomConsoleLogger(string name) => _name = name;
 
         public void Log<TState>(
             LogLevel logLevel,
@@ -34,9 +31,6 @@ namespace Extensions
 
         public bool IsEnabled(LogLevel logLevel) => true;
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return new EmptyDisposable();
-        }
+        public IDisposable BeginScope<TState>(TState state) => new EmptyDisposable();
     }
 }

@@ -7,17 +7,11 @@ namespace Extensions
     {
         private readonly ConcurrentDictionary<string, CustomConsoleLogger> _loggers =
             new ConcurrentDictionary<string, CustomConsoleLogger>();
-        
-        public ILogger CreateLogger(string categoryName)
-        {
-            return _loggers.GetOrAdd(
-                categoryName,
-                name => new CustomConsoleLogger(name));
-        }
 
-        public void Dispose()
-        {
-            _loggers.Clear();
-        }
+        public ILogger CreateLogger(string categoryName) => _loggers.GetOrAdd(
+            categoryName,
+            name => new CustomConsoleLogger(name));
+
+        public void Dispose() => _loggers.Clear();
     }
 }
