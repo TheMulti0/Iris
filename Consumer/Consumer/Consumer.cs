@@ -24,6 +24,7 @@ namespace Consumer
 
             Subscribe(config);
 
+            // TODO Use the built in automatic deserialization instead of manual 
             Messages = _cluster.Messages.Select(ToMessageResult);
         }
 
