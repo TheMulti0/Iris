@@ -30,23 +30,32 @@ namespace Consumer
 
         public void Dispose() => _cluster?.Dispose();
 
-        private static JsonSerializerOptions CreateJsonSerializerOptions() => new JsonSerializerOptions
+        private static JsonSerializerOptions CreateJsonSerializerOptions()
         {
-            Converters =
+            return new JsonSerializerOptions
             {
-                new DateTimeConverter()
-            }
-        };
+                Converters =
+                {
+                    new DateTimeConverter()
+                }
+            };
+        }
 
-        private static Configuration GetClusterConfig(ConsumerConfig config) => new Configuration
+        private static Configuration GetClusterConfig(ConsumerConfig config)
         {
-            Seeds = config.BrokersServers
-        };
+            return new Configuration
+            {
+                Seeds = config.BrokersServers
+            };
+        }
 
-        private void Subscribe(ConsumerConfig config) => _cluster.Subscribe(
-            config.GroupId,
-            config.Topics,
-            new ConsumerGroupConfiguration());
+        private void Subscribe(ConsumerConfig config)
+        {
+            _cluster.Subscribe(
+                config.GroupId,
+                config.Topics,
+                new ConsumerGroupConfiguration());
+        }
 
         private Result<Message<TKey, TValue>> ToMessageResult(RawKafkaRecord record)
         {
