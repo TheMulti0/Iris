@@ -1,13 +1,13 @@
 namespace Consumer
 {
-    public class TopicConsumerConfig
+    public class ConsumerConfig
     {
-        public string Topic { get; set; }
+        public string[] Topics { get; set; }
 
         public double PollIntervalSeconds { get; set; }
 
         public string GroupId { get; set; }
 
-        public string BootstrapServers { get; set; }
+        public string BrokersServers { get; set; }
     }
 }

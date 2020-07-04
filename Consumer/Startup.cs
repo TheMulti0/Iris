@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using System.Reactive;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,10 +15,10 @@ namespace Consumer
         {
             var services = BuildServices();
 
-            services.GetService<TopicConsumer<Ignore, Update>>().Messages.Subscribe(
+            services.GetService<Consumer<Unit, Update>>().Messages.Subscribe(
                 result =>
                 {
-                    Console.WriteLine(result.Message.Value.Content);
+                    Console.WriteLine(result);
                 });
             
             return Task.Delay(-1);
@@ -34,7 +34,7 @@ namespace Consumer
                         .AddCustomConsole()
                         .AddConfiguration(config));
 
-            AddTopicConsumer<Ignore, Update>(
+            AddTopicConsumer<Unit, Update>(
                 services,
                 config.GetSection("UpdatesConsumer"));
             
@@ -46,17 +46,9 @@ namespace Consumer
             IServiceCollection services,
             IConfiguration config)
         {
-            var consumerConfig = config.Get<TopicConsumerConfig>();
+            services.AddSingleton(config.Get<ConsumerConfig>());
 
-            services.AddSingleton<JsonDeserializer<TValue>>();
-            services.AddSingleton(s =>
-            {
-                var valueDeserializer = s.GetService<JsonDeserializer<TValue>>();
-                
-                return new TopicConsumer<TKey, TValue>(
-                    consumerConfig,
-                    valueDeserializer);
-            });
+            services.AddSingleton(s => new Consumer<TKey, TValue>(s.GetService<ConsumerConfig>()));
         }
 
         private static IConfigurationRoot ReadConfiguration()
