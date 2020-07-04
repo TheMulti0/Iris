@@ -28,27 +28,17 @@ namespace Consumer
         {
             IConfigurationRoot config = ReadConfiguration();
 
-            IServiceCollection services = new ServiceCollection()
+            var updatesConsumerConfig = config
+                .GetSection("UpdatesConsumer")
+                .Get<ConsumerConfig>();
+
+            return new ServiceCollection()
                 .AddLogging(
                     builder => builder
                         .AddCustomConsole()
-                        .AddConfiguration(config));
-
-            AddTopicConsumer<Unit, Update>(
-                services,
-                config.GetSection("UpdatesConsumer"));
-            
-            return services
+                        .AddConfiguration(config))
+                .AddConsumer<Unit, Update>(updatesConsumerConfig)
                 .BuildServiceProvider();
-        }
-
-        private static void AddTopicConsumer<TKey, TValue>(
-            IServiceCollection services,
-            IConfiguration config)
-        {
-            services.AddSingleton(config.Get<ConsumerConfig>());
-
-            services.AddSingleton(s => new Consumer<TKey, TValue>(s.GetService<ConsumerConfig>()));
         }
 
         private static IConfigurationRoot ReadConfiguration()
