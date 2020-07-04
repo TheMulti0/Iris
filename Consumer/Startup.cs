@@ -9,21 +9,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
-    public class Startup
+    public static class Startup
     {
         public static Task Main()
         {
-            var services = BuildServices();
+            IServiceProvider services = BuildServices();
 
-            services.GetService<Consumer<Unit, Update>>().Messages.Subscribe(
-                result =>
-                {
-                    Console.WriteLine(result);
-                });
-            
+            services.GetService<Consumer<Unit, Update>>()
+                .Messages.Subscribe(
+                    result => { Console.WriteLine(result); });
+
             return Task.Delay(-1);
         }
-        
+
         private static IServiceProvider BuildServices()
         {
             IConfigurationRoot config = ReadConfiguration();

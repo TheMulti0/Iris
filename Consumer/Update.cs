@@ -10,7 +10,7 @@ namespace Consumer
 
         [JsonPropertyName("creation_date")]
         public DateTime CreationDate { get; set; }
-        
+
         [JsonPropertyName("url")]
         public string Url { get; set; }
     }

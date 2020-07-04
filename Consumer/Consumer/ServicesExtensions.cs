@@ -6,10 +6,7 @@ namespace Consumer
     {
         public static IServiceCollection AddConsumer<TKey, TValue>(
             this IServiceCollection services,
-            ConsumerConfig config)
-        {
-            return services.AddSingleton(
+            ConsumerConfig config) => services.AddSingleton(
                 s => new Consumer<TKey, TValue>(config));
-        }
     }
 }

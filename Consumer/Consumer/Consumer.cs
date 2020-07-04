@@ -1,7 +1,5 @@
 using System;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
 using System.Text.Json;
 using Kafka.Public;
 using Kafka.Public.Loggers;
@@ -11,7 +9,7 @@ namespace Consumer
     public class Consumer<TKey, TValue> : IDisposable
     {
         private readonly ClusterClient _cluster;
-        private JsonSerializerOptions _options;
+        private readonly JsonSerializerOptions _options;
 
         public IObservable<Result<Message<TKey, TValue>>> Messages { get; }
 
@@ -25,36 +23,29 @@ namespace Consumer
                 new ConsoleLogger());
 
             Subscribe(config);
-            
+
             Messages = _cluster.Messages.Select(ToMessageResult);
         }
 
-        private static JsonSerializerOptions CreateJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new DateTimeConverter()
-                }
-            };
-        }
+        public void Dispose() => _cluster?.Dispose();
 
-        private static Configuration GetClusterConfig(ConsumerConfig config)
+        private static JsonSerializerOptions CreateJsonSerializerOptions() => new JsonSerializerOptions
         {
-            return new Configuration
+            Converters =
             {
-                Seeds = config.BrokersServers
-            };
-        }
+                new DateTimeConverter()
+            }
+        };
 
-        private void Subscribe(ConsumerConfig config)
+        private static Configuration GetClusterConfig(ConsumerConfig config) => new Configuration
         {
-            _cluster.Subscribe(
-                config.GroupId,
-                config.Topics,
-                new ConsumerGroupConfiguration());
-        }
+            Seeds = config.BrokersServers
+        };
+
+        private void Subscribe(ConsumerConfig config) => _cluster.Subscribe(
+            config.GroupId,
+            config.Topics,
+            new ConsumerGroupConfiguration());
 
         private Result<Message<TKey, TValue>> ToMessageResult(RawKafkaRecord record)
         {
@@ -66,7 +57,6 @@ namespace Consumer
             {
                 return Result<Message<TKey, TValue>>.Failure(e.Message);
             }
-            
         }
 
         private Result<Message<TKey, TValue>> SuccessMessageResult(RawKafkaRecord record)
@@ -90,9 +80,7 @@ namespace Consumer
             return Result<Message<TKey, TValue>>.Success(message);
         }
 
-        private T Deserialize<T>(object bytes) 
+        private T Deserialize<T>(object bytes)
             => JsonSerializer.Deserialize<T>(bytes as byte[], _options);
-
-        public void Dispose() => _cluster?.Dispose();
     }
 }

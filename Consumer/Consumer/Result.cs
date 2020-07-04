@@ -5,7 +5,7 @@ namespace Consumer
     public class Result<T>
     {
         public bool IsSuccess { get; }
-        
+
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool IsFailure => !IsSuccess;
 
@@ -22,18 +22,15 @@ namespace Consumer
             Value = value;
             Error = error;
         }
-        
+
         public static Result<T> Success(T value)
             => new Result<T>(true, value, string.Empty);
 
         public static Result<T> Failure(string error)
             => new Result<T>(false, default, error);
 
-        public override string ToString()
-        {
-            return IsSuccess
-                ? $"Success, Value = {Value}"
-                : $"Failure, Error = {Error}";
-        }
+        public override string ToString() => IsSuccess
+            ? $"Success, Value = {Value}"
+            : $"Failure, Error = {Error}";
     }
 }
