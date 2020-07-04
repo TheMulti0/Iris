@@ -2,7 +2,7 @@ using System;
 using System.Reactive.Linq;
 using System.Text.Json;
 using Kafka.Public;
-using Kafka.Public.Loggers;
+using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
@@ -14,13 +14,17 @@ namespace Consumer
         public IObservable<Result<Message<TKey, TValue>>> Messages { get; }
 
         public Consumer(
-            ConsumerConfig config)
+            ConsumerConfig config,
+            ILoggerFactory loggerFactory)
         {
             _options = CreateJsonSerializerOptions();
 
+            var logger = new KafkaSharpMicrosoftLogger(
+                loggerFactory.CreateLogger("kafka-sharp"));
+            
             _cluster = new ClusterClient(
                 GetClusterConfig(config),
-                new ConsoleLogger());
+                logger);
 
             Subscribe(config);
 

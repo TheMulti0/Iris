@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Kafka.Public;
 using Kafka.Public.Loggers;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Consumer.Tests
@@ -50,7 +51,8 @@ namespace Consumer.Tests
             };
 
             var consumer = new Consumer<Unit, Update>(
-                config);
+                config,
+                LoggerFactory.Create(builder => { }));
 
             return consumer.Messages;
         }

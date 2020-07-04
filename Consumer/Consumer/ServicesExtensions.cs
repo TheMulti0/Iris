@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Consumer
 {
@@ -6,7 +7,10 @@ namespace Consumer
     {
         public static IServiceCollection AddConsumer<TKey, TValue>(
             this IServiceCollection services,
-            ConsumerConfig config) => services.AddSingleton(
-                s => new Consumer<TKey, TValue>(config));
+            ConsumerConfig config)
+        {
+            return services.AddSingleton(
+                s => new Consumer<TKey, TValue>(config, s.GetService<ILoggerFactory>()));
+        }
     }
 }
