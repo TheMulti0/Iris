@@ -75,26 +75,26 @@ namespace Consumer
 
         private Result<Message<TKey, TValue>> SuccessMessageResult(RawKafkaRecord record)
         {
+            var key = record.Key;
+            var value = record.Value;
+           
             var message = new Message<TKey, TValue>
             {
-                Key = default,
-                Value = default,
+                Key = Deserialize<TKey>(key),
+                Value = Deserialize<TValue>(value),
                 Timestamp = record.Timestamp,
                 Topic = record.Topic
             };
-            if (record.Key != null)
-            {
-                message.Key = Deserialize<TKey>(record.Key);
-            }
-            if (record.Value != null)
-            {
-                message.Value = Deserialize<TValue>(record.Value);
-            }
-
+            
             return Result<Message<TKey, TValue>>.Success(message);
         }
 
-        private T Deserialize<T>(object bytes)
-            => JsonSerializer.Deserialize<T>(bytes as byte[], _options);
+        private Optional<T> Deserialize<T>(object bytes)
+        {
+            return bytes == null
+                ? Optional<T>.Empty()
+                : Optional<T>.WithValue(
+                    JsonSerializer.Deserialize<T>(bytes as byte[], _options));
+        }
     }
 }
