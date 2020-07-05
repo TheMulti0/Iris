@@ -7,6 +7,7 @@ namespace TelegramConsumer
 {
     public class TelegramSender : ISender
     {
+        private readonly TelegramConfig _config;
         private readonly TelegramBotClient _client;
         private readonly ILogger<TelegramSender> _logger;
 
@@ -14,6 +15,7 @@ namespace TelegramConsumer
             TelegramConfig config,
             ILogger<TelegramSender> logger)
         {
+            _config = config;
             _client = new TelegramBotClient(config.AccessToken);
             _logger = logger;
 
@@ -30,7 +32,7 @@ namespace TelegramConsumer
         public Task SendAsync(Update update)
         {
             _logger.LogInformation("Sending update {}", update);
-
+            
             return Task.CompletedTask;
         }
     }
