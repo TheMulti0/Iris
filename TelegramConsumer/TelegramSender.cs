@@ -1,14 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace TelegramConsumer
 {
-    public class TelegramConfig
-    {
-        public string AccessToken { get; set; }
-    }
-
     public class TelegramSender : ISender
     {
         private readonly TelegramBotClient _client;
@@ -21,7 +17,7 @@ namespace TelegramConsumer
             _client = new TelegramBotClient(config.AccessToken);
             _logger = logger;
 
-            var identity = _client.GetMeAsync().Result;
+            User identity = _client.GetMeAsync().Result;
 
             _logger.LogInformation(
                 "Registered as {} {} (Username = {}, Id = {})",
