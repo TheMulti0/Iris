@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Consumer
 {
@@ -15,13 +16,22 @@ namespace Consumer
 
             try
             {
-                TTarget value = valueGetter(result.Value);
+                var value = valueGetter(result.Value);
                 return Result<TTarget>.Success(value);
             }
             catch (Exception e)
             {
                 return Result<TTarget>.Failure(e.Message);
             }
+        }
+
+        public static Task DoAsync<T>(
+            this Result<T> result,
+            Func<T, Task> asyncFunc)
+        {
+            return result.IsSuccess
+                ? asyncFunc(result.Value) 
+                : Task.CompletedTask;
         }
     }
 }
