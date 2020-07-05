@@ -13,5 +13,10 @@ namespace TelegramConsumer
 
         [JsonPropertyName("url")]
         public string Url { get; set; }
+
+        public override string ToString()
+        {
+            return $"CreationDate = {CreationDate:f}, Url = ${Url}";
+        }
     }
 }
