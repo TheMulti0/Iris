@@ -37,6 +37,8 @@ namespace TelegramConsumer
                         .AddCustomConsole()
                         .AddConfiguration(config))
                 .AddConsumer<Unit, Update>(updatesConsumerConfig)
+                .AddSingleton<ISender, TelegramSender>()
+                .AddHostedService<UpdateConsumer>()
                 .BuildServiceProvider();
         }
 
