@@ -17,5 +17,14 @@ namespace Consumer
 
         public static Optional<T> Empty()
             => new Optional<T>(false, default);
+
+        public override string ToString()
+        {
+            string optional = $"Optional<{typeof(T)}>";
+
+            return HasValue 
+                ? $"{optional}: {Value}" 
+                : $"Empty {optional}";
+        }
     }
 }

@@ -14,7 +14,15 @@ namespace Consumer
 
         public override string ToString()
         {
-            return $"Key = {Key}, Value = {Value}, Timestamp = {Timestamp:f}, Topic = {Topic}";
+            string keyString = Key.HasValue 
+                ? $"Key = {Key}, " 
+                : string.Empty;
+            
+            string valueString = Value.HasValue 
+                ? $"Value = {Value}, " 
+                : string.Empty;
+
+            return $"{keyString}{valueString}Timestamp = {Timestamp:f}, Topic = {Topic}"; ;
         }
     }
 }
