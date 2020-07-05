@@ -6,6 +6,7 @@ using Consumer;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace TelegramConsumer
@@ -14,35 +15,14 @@ namespace TelegramConsumer
     {
         public static Task Main()
         {
-            IServiceProvider services = BuildServices();
-
-            services.GetService<Consumer<Unit, Update>>()
-                .Messages.Subscribe(
-                    result => { Console.WriteLine(result); });
-
-            return Task.Delay(-1);
+            return new HostBuilder()
+                .ConfigureAppConfiguration(ConfigureConfiguration)
+                .ConfigureLogging(ConfigureLogging)
+                .ConfigureServices(ConfigureServices)
+                .RunConsoleAsync();
         }
 
-        private static IServiceProvider BuildServices()
-        {
-            IConfigurationRoot config = ReadConfiguration();
-
-            var updatesConsumerConfig = config
-                .GetSection("UpdatesConsumer")
-                .Get<ConsumerConfig>();
-
-            return new ServiceCollection()
-                .AddLogging(
-                    builder => builder
-                        .AddCustomConsole()
-                        .AddConfiguration(config))
-                .AddConsumer<Unit, Update>(updatesConsumerConfig)
-                .AddSingleton<ISender, TelegramSender>()
-                .AddHostedService<UpdateConsumer>()
-                .BuildServiceProvider();
-        }
-
-        private static IConfigurationRoot ReadConfiguration()
+        private static void ConfigureConfiguration(IConfigurationBuilder builder)
         {
             string environmentName =
                 Environment.GetEnvironmentVariable("ENVIRONMENT");
@@ -50,11 +30,37 @@ namespace TelegramConsumer
             const string fileName = "appsettings";
             const string fileType = "json";
 
-            return new ConfigurationBuilder()
+            builder
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile($"{fileName}.{fileType}", false)
-                .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
-                .Build();
+                .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
+        }
+
+        private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
+        {
+            builder
+                .AddConfiguration(context.Configuration.GetSection("Logging"))
+                .AddCustomConsole();
+        }
+        
+        private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
+        {
+            IConfiguration rootConfig = hostContext.Configuration;
+            
+            var updatesConsumerConfig = rootConfig
+                .GetSection("UpdatesConsumer")
+                .Get<ConsumerConfig>();
+
+            var telegramConfig = rootConfig
+                .GetSection("Telegram")
+                .Get<TelegramConfig>();
+
+            services
+                .AddConsumer<Unit, Update>(updatesConsumerConfig)
+                .AddSingleton(telegramConfig)
+                .AddSingleton<ISender, TelegramSender>()
+                .AddHostedService<UpdateConsumer>()
+                .BuildServiceProvider();
         }
     }
 }

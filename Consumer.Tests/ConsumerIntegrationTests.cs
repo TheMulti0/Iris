@@ -33,7 +33,7 @@ namespace Consumer.Tests
             Result<Message<Unit, Update>> messages = await GetConsumedMessages()
                 .FirstOrDefaultAsync();
 
-            Assert.AreEqual(UpdateContent, messages?.Value?.Value.Content);
+            Assert.AreEqual(UpdateContent, messages?.Value?.Value.Value.Content);
         }
 
         private static IObservable<Result<Message<Unit, Update>>> GetConsumedMessages()
