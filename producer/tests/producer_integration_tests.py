@@ -28,7 +28,7 @@ class ProducerIntegrationTests(TestCase):
             self.__topic_producer_config,
             MockUpdatesRepository(),
             MockUpdatesProvider(),
-            logging.getLogger('UserLatestUpdateTimeRepository')
+            logging.getLogger(Producer.__name__)
         )
 
         producer.update()

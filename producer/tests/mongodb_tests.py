@@ -23,7 +23,7 @@ class MongoDbTests(TestCase):
     def test_updates_repository(self):
         repository = UpdatesRepository(
             self.__mongodb_config,
-            logging.getLogger('UserLatestUpdateTimeRepository')
+            logging.getLogger(UpdatesRepository.__name__)
         )
 
         user_id = 'test_user'

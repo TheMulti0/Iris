@@ -18,13 +18,13 @@ def main():
 
     repository = UpdatesRepository(
         MongoDbConfig(appsettings['mongodb']),
-        logging.getLogger('UserLatestUpdateTimeRepository')
+        logging.getLogger(UpdatesRepository.__name__)
     )
 
     posts_producer = PostsProducer(
         TopicProducerConfig(appsettings['posts_producer']),
         repository,
-        logging.getLogger('UserLatestUpdateTimeRepository'))
+        logging.getLogger(PostsProducer.__name__))
 
     posts_producer.start()
 

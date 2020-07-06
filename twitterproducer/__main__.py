@@ -19,14 +19,14 @@ def main():
 
     repository = UpdatesRepository(
         MongoDbConfig(appsettings['mongodb']),
-        logging.getLogger('UserLatestUpdateTimeRepository')
+        logging.getLogger(UpdatesRepository.__name__)
     )
 
     tweets_producer = Producer(
         TopicProducerConfig(appsettings['tweets_producer']),
         repository,
         TweetsProvider(),
-        logging.getLogger('UserLatestUpdateTimeRepository'))
+        logging.getLogger(Producer.__name__))
 
     tweets_producer.start()
 
