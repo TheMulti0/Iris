@@ -3,8 +3,7 @@ import logging
 import unittest
 from unittest import TestCase
 
-from kafka import SimpleConsumer, KafkaClient, SimpleClient, KafkaConsumer
-from kafka.consumer.base import Consumer
+from kafka import KafkaConsumer
 
 from producer.producer import Producer
 from producer.tests.mock_updates_provider import MockUpdatesProvider
@@ -24,7 +23,7 @@ class ProducerIntegrationTests(TestCase):
         appsettings = json.load(open('appsettings.json'))
         self.__topic_producer_config = TopicProducerConfig(appsettings['tests_producer'])
 
-    def test_something(self):
+    def test1(self):
         producer = Producer(
             self.__topic_producer_config,
             MockUpdatesRepository(),
