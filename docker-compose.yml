@@ -1,20 +1,27 @@
 version: '3.4'
 
 services:
-  consumer:
-    image: ${DOCKER_REGISTRY-}consumer
+  zookeeper:
+    image: wurstmeister/zookeeper
+
+  kafka:
+    image: wurstmeister/kafka
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 0.0.0.0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "updates:1:1, tests:1:1"
+    depends_on:
+      - zookeeper
+
+  mongodb: 
+    image: mongo:latest
+    volumes:
+      - ./mongodb:/data/db
+
+  telegramconsumer:
+    image: ${DOCKER_REGISTRY-}telegramconsumer
     build:
       context: .
-      dockerfile: Consumer/Dockerfile
-
-  producer:
-    image: ${DOCKER_REGISTRY-}producer
-    build:
-      context: .
-      dockerfile: Producer/Dockerfile
-
-  twitterproducer:
-    image: ${DOCKER_REGISTRY-}twitterproducer
-    build:
-      context: ./twitterproducer
-      dockerfile: Dockerfile
+      dockerfile: TelegramConsumer/Dockerfile
+    depends_on: 
+      - kafka
