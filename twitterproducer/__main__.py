@@ -6,7 +6,7 @@ from producer.producer import Producer
 from producer.updates_repository import UpdatesRepository
 
 from producer.topic_producer_config import TopicProducerConfig
-from twitterproducer.tweetsprovider import TweetsProvider
+from twitterproducer.tweets_provider import TweetsProvider
 
 
 def main():

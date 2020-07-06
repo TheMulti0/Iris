@@ -2,7 +2,7 @@ from twitter_scraper import get_tweets
 
 from producer.iupdates_provider import IUpdatesProvider
 from twitterproducer.tweet import Tweet
-from twitterproducer.updatefactory import UpdateFactory
+from twitterproducer.update_factory import UpdateFactory
 
 
 class TweetsProvider(IUpdatesProvider):
