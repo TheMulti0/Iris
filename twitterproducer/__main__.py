@@ -1,11 +1,11 @@
 import json
 import logging
 
-from producer.mongodbconfig import MongoDbConfig
+from producer.mongodb_config import MongoDbConfig
 from producer.producer import Producer
-from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+from producer.updates_repository import UpdatesRepository
 
-from producer.topicproducerconfig import TopicProducerConfig
+from producer.topic_producer_config import TopicProducerConfig
 from twitterproducer.tweetsprovider import TweetsProvider
 
 
@@ -17,7 +17,7 @@ def main():
 
     appsettings = json.load(open('appsettings.json'))
 
-    repository = UserLatestUpdateTimeRepository(
+    repository = UpdatesRepository(
         MongoDbConfig(appsettings['mongodb']),
         logging.getLogger('UserLatestUpdateTimeRepository')
     )

@@ -2,10 +2,10 @@ import json
 import logging
 
 from facebookproducer.postsproducer import PostsProducer
-from producer.mongodbconfig import MongoDbConfig
-from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+from producer.mongodb_config import MongoDbConfig
+from producer.updates_repository import UpdatesRepository
 
-from producer.topicproducerconfig import TopicProducerConfig
+from producer.topic_producer_config import TopicProducerConfig
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
 
     appsettings = json.load(open('appsettings.json'))
 
-    repository = UserLatestUpdateTimeRepository(
+    repository = UpdatesRepository(
         MongoDbConfig(appsettings['mongodb']),
         logging.getLogger('UserLatestUpdateTimeRepository')
     )

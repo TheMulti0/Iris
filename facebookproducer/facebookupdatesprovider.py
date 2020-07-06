@@ -3,7 +3,7 @@ from datetime import datetime
 from facebook_scraper import get_posts
 
 from producer.update import Update
-from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+from producer.updates_repository import UpdatesRepository
 
 
 class Post:
@@ -33,7 +33,7 @@ class UpdateFactory:
 
 class FacebookUpdatesProvider:
 
-    def __init__(self, repository: UserLatestUpdateTimeRepository):
+    def __init__(self, repository: UpdatesRepository):
         self.__repository = repository
 
     def get_updates(self, user_id: str):

@@ -7,9 +7,9 @@ from time import sleep
 from kafka import KafkaProducer
 
 from facebookproducer.facebookupdatesprovider import FacebookUpdatesProvider
-from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+from producer.updates_repository import UpdatesRepository
 
-from producer.topicproducerconfig import TopicProducerConfig
+from producer.topic_producer_config import TopicProducerConfig
 
 
 class PostsProducer:
@@ -17,7 +17,7 @@ class PostsProducer:
     def __init__(
             self,
             config: TopicProducerConfig,
-            repository: UserLatestUpdateTimeRepository,
+            repository: UpdatesRepository,
             logger: Logger):
 
         self.__config = config

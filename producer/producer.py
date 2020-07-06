@@ -6,18 +6,18 @@ from time import sleep
 
 from kafka import KafkaProducer
 
-from producer.updatesprovider import UpdatesProvider
-from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
+from producer.iupdates_provider import IUpdatesProvider
+from producer.iupdates_repository import IUpdatesRepository
 
-from producer.topicproducerconfig import TopicProducerConfig
+from producer.topic_producer_config import TopicProducerConfig
 
 
 class Producer:
     def __init__(
             self,
             config: TopicProducerConfig,
-            repository: UserLatestUpdateTimeRepository,
-            updates_provider: UpdatesProvider,
+            repository: IUpdatesRepository,
+            updates_provider: IUpdatesProvider,
             logger: Logger):
         self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
