@@ -2,10 +2,11 @@ import json
 import logging
 
 from producer.mongodbconfig import MongoDbConfig
+from producer.producer import Producer
 from producer.userlatestupdatetimerepository import UserLatestUpdateTimeRepository
 
-from twitterproducer.tweetsproducer import TweetsProducer
 from producer.topicproducerconfig import TopicProducerConfig
+from twitterproducer.tweetsprovider import TweetsProvider
 
 
 def main():
@@ -21,9 +22,10 @@ def main():
         logging.getLogger('UserLatestUpdateTimeRepository')
     )
 
-    tweets_producer = TweetsProducer(
+    tweets_producer = Producer(
         TopicProducerConfig(appsettings['tweets_producer']),
         repository,
+        TweetsProvider(),
         logging.getLogger('UserLatestUpdateTimeRepository'))
 
     tweets_producer.start()
