@@ -10,8 +10,7 @@ class Update:
             self,
             content: str,
             creation_date: datetime,
-            url: str
-    ):
+            url: str):
         self.content = content
         self.creation_date = creation_date
         self.url = url

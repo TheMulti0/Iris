@@ -35,21 +35,21 @@ class Producer:
             sleep(interval_seconds)
 
     def update(self):
-        self.update_user('@realDonaldTrump')
+        self._update_user('@realDonaldTrump')
 
-    def update_user(self, user_id):
+    def _update_user(self, user_id):
         self.__logger.info('Updating user %s', user_id)
 
-        new_updates = self.get_new_updates(user_id)
+        new_updates = self._get_new_updates(user_id)
         self.__logger.debug('Got new updates')
 
         for update in new_updates:
-            self.send(update)
+            self._send(update)
             self.__repository.set_user_latest_update_time(
                 user_id,
                 update.creation_date)
 
-    def get_new_updates(self, user_id):
+    def _get_new_updates(self, user_id):
         updates = self.__updates_provider.get_updates(user_id)
 
         sorted_updates = sorted(
@@ -64,14 +64,14 @@ class Producer:
         )
 
     @staticmethod
-    def datetime_converter(dt: datetime):
+    def _datetime_converter(dt: datetime):
         if isinstance(dt, datetime):
             return dt.__str__()
 
-    def send(self, update):
+    def _send(self, update):
         self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
 
-        json_str = json.dumps(update.__dict__, default=self.datetime_converter)
+        json_str = json.dumps(update.__dict__, default=self._datetime_converter)
         update_bytes = bytes(json_str, 'utf-8')
 
         self.__producer.send(

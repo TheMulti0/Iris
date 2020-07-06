@@ -13,4 +13,4 @@ class Post:
     link: str
 
     def __init__(self, original_dict):
-        self.__dict__ = original_dict
+        self.__dict__.update(original_dict)

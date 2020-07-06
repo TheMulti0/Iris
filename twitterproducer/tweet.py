@@ -16,4 +16,4 @@ class Tweet:
     entries: dict
 
     def __init__(self, original_dict):
-        self.__dict__ = original_dict
+        self.__dict__.update(original_dict)

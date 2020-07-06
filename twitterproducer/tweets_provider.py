@@ -9,11 +9,11 @@ class TweetsProvider(IUpdatesProvider):
     def get_updates(self, user_id: str):
         return [
             UpdateFactory.to_update(tweet)
-            for tweet in self.__get_tweets(user_id)
+            for tweet in self._get_tweets(user_id)
         ]
 
     @staticmethod
-    def __get_tweets(user_id):
+    def _get_tweets(user_id):
         return [
             Tweet(tweet)
             for tweet in get_tweets(user_id, pages=1)

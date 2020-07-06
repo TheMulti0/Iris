@@ -12,5 +12,5 @@ class UserLatestUpdateTime:
         self.user_id = user_id
         self.latest_update_time = latest_update_time
 
-    def __init__(self, d):
-        self.__dict__ = d
+    def __init__(self, original_dict):
+        self.__dict__.update(original_dict)
