@@ -77,4 +77,4 @@ class Producer:
         self.__producer.send(
             self.__config.topic,
             value=update_bytes,
-            timestamp_ms=datetime.now().timestamp())
+            timestamp_ms=int(datetime.now().timestamp()))

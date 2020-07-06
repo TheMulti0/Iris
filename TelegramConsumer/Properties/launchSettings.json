@@ -1,7 +1,7 @@
 {
   "profiles": {
     "TelegramConsumer": {
-      "workingDirectory": "../../../",
+      "workingDirectory": "./././",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       },
