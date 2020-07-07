@@ -18,7 +18,7 @@ class TweetsProviderTests(TestCase):
         user_id = '@Ayelet__Shaked'
 
         tweets = TweetsProvider(logging.getLogger(TweetsProvider.__name__)).get_updates(user_id)
-        self.assertFalse(len(tweets) == 0)
+        self.assertNotEqual(0, len(tweets))
 
 
 if __name__ == '__main__':
