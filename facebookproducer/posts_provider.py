@@ -16,5 +16,5 @@ class PostsProvider(IUpdatesProvider):
     def _get_posts(user_id):
         return [
             Post(post)
-            for post in get_posts(user_id, pages=1)
+            for post in get_posts(user_id, pages=1, youtube_dl=True)
         ]
