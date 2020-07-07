@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Consumer
+namespace Extensions
 {
     internal class DateTimeConverter : JsonConverter<DateTime>
     {

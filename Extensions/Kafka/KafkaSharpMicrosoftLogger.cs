@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace Consumer
+namespace Extensions
 {
     public class KafkaSharpMicrosoftLogger : Kafka.Public.ILogger
     {

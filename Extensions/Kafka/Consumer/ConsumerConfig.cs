@@ -1,4 +1,4 @@
-namespace Consumer
+namespace Extensions
 {
     public class ConsumerConfig
     {

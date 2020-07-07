@@ -9,7 +9,7 @@ using Kafka.Public.Loggers;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Consumer.Tests
+namespace Extensions.Tests
 {
     /// <summary>
     ///     Requires a Kafka broker running
@@ -30,7 +30,7 @@ namespace Consumer.Tests
         public async Task TestConsumerResponse()
         {
             ProduceOneMessage(UpdateContent);
-            Result<Message<Unit, Update>> messages = await GetConsumedMessages()
+            var messages = await GetConsumedMessages()
                 .FirstOrDefaultAsync();
 
             Assert.AreEqual(UpdateContent, messages?.Value?.Value.Value.Content);

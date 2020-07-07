@@ -4,7 +4,7 @@ using System.Text.Json;
 using Kafka.Public;
 using Microsoft.Extensions.Logging;
 
-namespace Consumer
+namespace Extensions
 {
     public class Consumer<TKey, TValue> : IDisposable
     {

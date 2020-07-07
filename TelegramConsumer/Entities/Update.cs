@@ -8,11 +8,17 @@ namespace TelegramConsumer
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
+        [JsonPropertyName("author_id")]
+        public string AuthorId { get; set; }
+
         [JsonPropertyName("creation_date")]
         public DateTime CreationDate { get; set; }
 
         [JsonPropertyName("url")]
         public string Url { get; set; }
+
+        [JsonPropertyName("media")]
+        public Media[] Media { get; set; }
 
         public override string ToString()
         {

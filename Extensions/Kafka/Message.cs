@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Consumer
+namespace Extensions
 {
     public class Message<TKey, TValue>
     {
@@ -14,12 +14,12 @@ namespace Consumer
 
         public override string ToString()
         {
-            string keyString = Key.HasValue 
-                ? $"Key = {Key}, " 
+            string keyString = Key.HasValue
+                ? $"Key = {Key}, "
                 : string.Empty;
-            
-            string valueString = Value.HasValue 
-                ? $"Value = {Value}, " 
+
+            string valueString = Value.HasValue
+                ? $"Value = {Value}, "
                 : string.Empty;
 
             return $"{keyString}{valueString}Timestamp = {Timestamp:f}, Topic = {Topic}"; ;

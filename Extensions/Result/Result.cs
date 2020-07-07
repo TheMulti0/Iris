@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Consumer
+namespace Extensions
 {
     public class Result<T>
     {

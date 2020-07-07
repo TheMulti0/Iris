@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Consumer
+namespace Extensions
 {
     public static class ServicesExtensions
     {

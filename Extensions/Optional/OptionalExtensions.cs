@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Consumer
+namespace Extensions
 {
     public static class OptionalExtensions
     {
