@@ -25,7 +25,7 @@ def main():
     tweets_producer = Producer(
         TopicProducerConfig(appsettings['tweets_producer']),
         repository,
-        TweetsProvider(),
+        TweetsProvider(logging.getLogger(TweetsProvider.__name__)),
         logging.getLogger(Producer.__name__))
 
     tweets_producer.start()

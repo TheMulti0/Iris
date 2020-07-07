@@ -1,3 +1,4 @@
 pymongo
 kafka-python==2.0.1
 twitter_scraper==0.4.2
+youtube-dl
