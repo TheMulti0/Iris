@@ -6,7 +6,8 @@ from producer.kafka.producer import Producer
 from producer.db.updates_repository import UpdatesRepository
 
 from producer.kafka.topic_producer_config import TopicProducerConfig
-from twitterproducer.tweets_provider import TweetsProvider
+from twitterproducer.tweets.tweets_provider import TweetsProvider
+from twitterproducer.updateapi.twitter_updates_provider import TwitterUpdatesProvider
 
 
 def main():
@@ -22,10 +23,15 @@ def main():
         logging.getLogger(UpdatesRepository.__name__)
     )
 
+    tweets_provider = TweetsProvider(
+        logging.getLogger(TwitterUpdatesProvider.__name__))
+
+    twitter_updates_provider = TwitterUpdatesProvider(tweets_provider)
+
     tweets_producer = Producer(
         TopicProducerConfig(appsettings['tweets_producer']),
         repository,
-        TweetsProvider(logging.getLogger(TweetsProvider.__name__)),
+        twitter_updates_provider,
         logging.getLogger(Producer.__name__))
 
     tweets_producer.start()

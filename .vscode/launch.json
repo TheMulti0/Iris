@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
+            // If you have changed target frameworks, make sure to updateapi the program path.
             "program": "${workspaceFolder}/Consumer/bin/Debug/netcoreapp3.1/Consumer.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Consumer",

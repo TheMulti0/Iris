@@ -1,4 +1,4 @@
-from producer.update.mediatype import MediaType
+from producer.updateapi.mediatype import MediaType
 
 
 class Media:

@@ -1,6 +1,6 @@
-from producer.update.media import Media
-from producer.update.mediatype import MediaType
-from twitterproducer.tweet import Tweet
+from producer.updateapi.media import Media
+from producer.updateapi.mediatype import MediaType
+from twitterproducer.tweets.tweet import Tweet
 
 
 class MediaFactory:

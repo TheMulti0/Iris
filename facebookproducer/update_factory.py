@@ -1,5 +1,5 @@
 from facebookproducer.post import Post
-from producer.update import Update
+from producer.updateapi import Update
 
 
 class UpdateFactory:

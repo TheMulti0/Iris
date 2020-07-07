@@ -69,7 +69,7 @@ class Producer:
             return dt.__str__()
 
     def _send(self, update):
-        self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
+        self.__logger.info('Sending updateapi %s to Kafka as JSON UTF-8 bytes', update.url)
 
         json_str = json.dumps(update.__dict__, default=self._datetime_converter)
         update_bytes = bytes(json_str, 'utf-8')

@@ -29,4 +29,7 @@ class Tweet:
         self.hashtags = self_dict['entries']['hashtags']
         self.urls = self_dict['entries']['urls']
         self.photos = self_dict['entries']['photos']
-        # videos will be later supplied string
+
+        videos = self_dict['entries']['videos']
+        if (len(videos) > 0):
+            self.video = videos

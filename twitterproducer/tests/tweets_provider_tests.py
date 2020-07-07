@@ -2,7 +2,7 @@ import logging
 import unittest
 from unittest import TestCase
 
-from twitterproducer.tweets_provider import TweetsProvider
+from twitterproducer.tweets.tweets_provider import TweetsProvider
 
 
 class TweetsProviderTests(TestCase):
@@ -15,9 +15,12 @@ class TweetsProviderTests(TestCase):
             level=logging.DEBUG)
 
     def test1(self):
-        user_id = '@Ayelet__Shaked'
+        user_id = '@mock_user'
 
-        tweets = TweetsProvider(logging.getLogger(TweetsProvider.__name__)).get_updates(user_id)
+        tweets = list(
+            TweetsProvider(logging.getLogger(TweetsProvider.__name__))
+                .get_tweets(user_id))
+
         self.assertNotEqual(0, len(tweets))
 
 

@@ -1,6 +1,6 @@
-from producer.update import Update
-from twitterproducer.media_factory import MediaFactory
-from twitterproducer.tweet import Tweet
+from producer.updateapi.update import Update
+from twitterproducer.updateapi.media_factory import MediaFactory
+from twitterproducer.tweets.tweet import Tweet
 
 
 class UpdateFactory:
