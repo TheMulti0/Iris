@@ -1,5 +1,5 @@
-from producer.media import Media
-from producer.mediatype import MediaType
+from producer.update.media import Media
+from producer.update.mediatype import MediaType
 from twitterproducer.tweet import Tweet
 
 

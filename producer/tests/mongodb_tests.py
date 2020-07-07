@@ -4,8 +4,8 @@ import unittest
 from datetime import datetime
 from unittest import TestCase
 
-from producer.mongodb_config import MongoDbConfig
-from producer.updates_repository import UpdatesRepository
+from producer.db.mongodb_config import MongoDbConfig
+from producer.db.updates_repository import UpdatesRepository
 
 
 class MongoDbTests(TestCase):

@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from producer.iupdates_repository import IUpdatesRepository
-from producer.user_latest_update_time import UserLatestUpdateTime
+from producer.db.iupdates_repository import IUpdatesRepository
+from producer.db.user_latest_update_time import UserLatestUpdateTime
 
 
 class MockUpdatesRepository(IUpdatesRepository):

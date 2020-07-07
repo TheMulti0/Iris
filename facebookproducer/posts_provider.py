@@ -2,7 +2,7 @@ from facebook_scraper import get_posts
 
 from facebookproducer.update_factory import UpdateFactory
 from facebookproducer.post import Post
-from producer.iupdates_provider import IUpdatesProvider
+from producer.kafka.iupdates_provider import IUpdatesProvider
 
 
 class PostsProvider(IUpdatesProvider):

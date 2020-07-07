@@ -2,11 +2,11 @@ import json
 import logging
 
 from facebookproducer.posts_provider import PostsProvider
-from producer.mongodb_config import MongoDbConfig
-from producer.producer import Producer
-from producer.updates_repository import UpdatesRepository
+from producer.db.mongodb_config import MongoDbConfig
+from producer.kafka.producer import Producer
+from producer.db.updates_repository import UpdatesRepository
 
-from producer.topic_producer_config import TopicProducerConfig
+from producer.kafka.topic_producer_config import TopicProducerConfig
 
 
 def main():

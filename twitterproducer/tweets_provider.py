@@ -2,7 +2,7 @@ from twitter_scraper import get_tweets
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import ExtractorError
 
-from producer.iupdates_provider import IUpdatesProvider
+from producer.kafka.iupdates_provider import IUpdatesProvider
 from twitterproducer.tweet import Tweet
 from twitterproducer.update_factory import UpdateFactory
 
