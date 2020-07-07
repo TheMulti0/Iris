@@ -15,7 +15,7 @@ class TweetsProviderTests(TestCase):
             level=logging.DEBUG)
 
     def test1(self):
-        user_id = '@mock_user'
+        user_id = '@realDonaldTrump'
 
         tweets = list(
             TweetsProvider(logging.getLogger(TweetsProvider.__name__))

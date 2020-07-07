@@ -31,5 +31,5 @@ class Tweet:
         self.photos = self_dict['entries']['photos']
 
         videos = self_dict['entries']['videos']
-        if (len(videos) > 0):
+        if len(videos) > 0:
             self.video = videos

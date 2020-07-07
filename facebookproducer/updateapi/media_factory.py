@@ -1,3 +1,4 @@
+from facebookproducer.posts.post import Post
 from producer.updateapi.media import Media
 from producer.updateapi.mediatype import MediaType
 from twitterproducer.tweets.tweet import Tweet
@@ -5,15 +6,14 @@ from twitterproducer.tweets.tweet import Tweet
 
 class MediaFactory:
     @staticmethod
-    def to_media(tweet: Tweet):
-        return MediaFactory.get_photos(tweet) + MediaFactory.get_videos(tweet)
+    def to_media(post: Post):
+        return MediaFactory.get_photos(post) + MediaFactory.get_videos(post)
 
     @staticmethod
-    def get_photos(tweet):
+    def get_photos(post):
         try:
             return [
-                Media(photo_url, MediaType.Photo)
-                for photo_url in tweet.photos
+                Media(post.image, MediaType.Photo)
             ]
         except AttributeError:
             return []
