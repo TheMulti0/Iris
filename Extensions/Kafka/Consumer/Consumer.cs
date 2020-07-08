@@ -1,5 +1,6 @@
 using System;
 using System.Reactive.Linq;
+using System.Text;
 using System.Text.Json;
 using Kafka.Public;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,6 @@ namespace Extensions
     public class Consumer<TKey, TValue> : IDisposable
     {
         private readonly ClusterClient _cluster;
-        private readonly JsonSerializerOptions _options;
 
         public IObservable<Result<Message<TKey, TValue>>> Messages { get; }
 
@@ -17,8 +17,6 @@ namespace Extensions
             ConsumerConfig config,
             ILoggerFactory loggerFactory)
         {
-            _options = CreateJsonSerializerOptions();
-
             var logger = new KafkaSharpMicrosoftLogger(
                 loggerFactory.CreateLogger("kafka-sharp"));
             
@@ -34,22 +32,18 @@ namespace Extensions
 
         public void Dispose() => _cluster?.Dispose();
 
-        private static JsonSerializerOptions CreateJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new DateTimeConverter()
-                }
-            };
-        }
-
         private static Configuration GetClusterConfig(ConsumerConfig config)
         {
+            var serializationConfig = new SerializationConfig();
+            
+            serializationConfig.SetDefaultDeserializers(
+                new KafkaJsonDeserializer<TKey>(), 
+                new KafkaJsonDeserializer<TValue>());
+            
             return new Configuration
             {
-                Seeds = config.BrokersServers
+                Seeds = config.BrokersServers,
+                SerializationConfig = serializationConfig
             };
         }
 
@@ -61,7 +55,7 @@ namespace Extensions
                 new ConsumerGroupConfiguration());
         }
 
-        private Result<Message<TKey, TValue>> ToMessageResult(RawKafkaRecord record)
+        private static Result<Message<TKey, TValue>> ToMessageResult(RawKafkaRecord record)
         {
             try
             {
@@ -73,28 +67,20 @@ namespace Extensions
             }
         }
 
-        private Result<Message<TKey, TValue>> SuccessMessageResult(RawKafkaRecord record)
+        private static Result<Message<TKey, TValue>> SuccessMessageResult(RawKafkaRecord record)
         {
-            var key = record.Key;
-            var value = record.Value;
+            object key = record.Key;
+            object value = record.Value;
            
             var message = new Message<TKey, TValue>
             {
-                Key = Deserialize<TKey>(key),
-                Value = Deserialize<TValue>(value),
+                Key = Optional<TKey>.CreateIfInstanceOf(key),
+                Value = Optional<TValue>.CreateIfInstanceOf(value),
                 Timestamp = record.Timestamp,
                 Topic = record.Topic
             };
             
             return Result<Message<TKey, TValue>>.Success(message);
-        }
-
-        private Optional<T> Deserialize<T>(object bytes)
-        {
-            return bytes == null
-                ? Optional<T>.Empty()
-                : Optional<T>.WithValue(
-                    JsonSerializer.Deserialize<T>(bytes as byte[], _options));
         }
     }
 }

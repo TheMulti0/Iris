@@ -18,6 +18,15 @@ namespace Extensions
         public static Optional<T> Empty()
             => new Optional<T>(false, default);
 
+        public static Optional<T> CreateIfInstanceOf(object obj)
+        {
+            if (obj is T tObj)
+            {
+                return WithValue(tObj);
+            }
+            return Empty();
+        }
+
         public override string ToString()
         {
             string optional = $"Optional<{typeof(T)}>";
