@@ -9,7 +9,7 @@ namespace Extensions
 {
     public class Consumer<TKey, TValue> : IDisposable
     {
-        private readonly ClusterClient _cluster;
+        private readonly IClusterClient _cluster;
 
         public IObservable<Result<Message<TKey, TValue>>> Messages { get; }
 
@@ -17,34 +17,27 @@ namespace Extensions
             ConsumerConfig config,
             ILoggerFactory loggerFactory)
         {
-            var logger = new KafkaSharpMicrosoftLogger(
-                loggerFactory.CreateLogger("kafka-sharp"));
-            
-            _cluster = new ClusterClient(
-                GetClusterConfig(config),
-                logger);
+            _cluster = ClusterClientFactory.CreateClusterClient(
+                config,
+                CreateSerializationConfig(),
+                loggerFactory);
 
             Subscribe(config);
 
-            // TODO Use the built in automatic deserialization instead of manual 
             Messages = _cluster.Messages.Select(ToMessageResult);
         }
 
         public void Dispose() => _cluster?.Dispose();
 
-        private static Configuration GetClusterConfig(ConsumerConfig config)
+        private static SerializationConfig CreateSerializationConfig()
         {
             var serializationConfig = new SerializationConfig();
-            
+
             serializationConfig.SetDefaultDeserializers(
-                new KafkaJsonDeserializer<TKey>(), 
+                new KafkaJsonDeserializer<TKey>(),
                 new KafkaJsonDeserializer<TValue>());
             
-            return new Configuration
-            {
-                Seeds = config.BrokersServers,
-                SerializationConfig = serializationConfig
-            };
+            return serializationConfig;
         }
 
         private void Subscribe(ConsumerConfig config)

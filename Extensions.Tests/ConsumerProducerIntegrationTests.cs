@@ -15,19 +15,25 @@ namespace Extensions.Tests
     ///     Requires a Kafka broker running
     /// </summary>
     [TestClass]
-    public class ConsumerIntegrationTests
+    public class ConsumerProducerIntegrationTests
     {
         private const string Topic = "tests";
         private const string UpdateContent = "This is a test!";
 
-        private static Config _config;
+        private static BaseKafkaConfig _config;
+        private static ILoggerFactory _loggerFactory;
 
         [ClassInitialize]
-        public static void Initialize(TestContext context) => _config = JsonSerializer.Deserialize<Config>(
-            File.ReadAllText("../../../appsettings.json"));
+        public static void Initialize(TestContext context)
+        {
+            _config = JsonSerializer.Deserialize<BaseKafkaConfig>(
+                File.ReadAllText("../../../appsettings.json"));
+            
+            _loggerFactory = LoggerFactory.Create(builder => builder.AddCustomConsole());
+        }
 
         [TestMethod]
-        public async Task TestConsumerResponse()
+        public async Task Test1()
         {
             ProduceOneMessage(UpdateContent);
             var messages = await GetConsumedMessages()
@@ -50,25 +56,18 @@ namespace Extensions.Tests
 
             var consumer = new Consumer<Unit, Update>(
                 config,
-                LoggerFactory.Create(builder => { }));
+                _loggerFactory);
 
             return consumer.Messages;
         }
 
         private static void ProduceOneMessage(string updateContent)
         {
-            var serializationConfig = new SerializationConfig();
-            serializationConfig.SetDefaultSerializers(
-                new UpdateSerializer(),
-                new UpdateSerializer());
-            var config = new Configuration
-            {
-                Seeds = _config.BrokersServers,
-                SerializationConfig = serializationConfig
-            };
-
-            var cluster = new ClusterClient(config, new ConsoleLogger());
-            cluster.Produce(
+            var producer = new Producer<Unit, Update>(
+                _config,
+                _loggerFactory);
+            
+            producer.Produce(
                 Topic,
                 new Update
                 {
@@ -76,24 +75,9 @@ namespace Extensions.Tests
                 });
         }
 
-        private class Config
-        {
-            public string BrokersServers { get; set; }
-        }
-
         private class Update
         {
             public string Content { get; set; }
-        }
-
-        private class UpdateSerializer : ISerializer
-        {
-            public int Serialize(object input, MemoryStream toStream)
-            {
-                byte[] data = JsonSerializer.SerializeToUtf8Bytes(input);
-                toStream.Write(data);
-                return data.Length;
-            }
         }
     }
 }
