@@ -2,7 +2,6 @@ using System;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
-using Consumer;
 using Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

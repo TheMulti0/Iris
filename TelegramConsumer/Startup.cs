@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
-using Consumer;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
