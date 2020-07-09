@@ -25,6 +25,16 @@ namespace Extensions
             }
         }
 
+        public static void Do<T>(
+            this Result<T> result,
+            Action<T> action)
+        {
+            if (result.IsSuccess)
+            {
+                action(result.Value);
+            }
+        }
+
         public static Task DoAsync<T>(
             this Result<T> result,
             Func<T, Task> asyncFunc)
