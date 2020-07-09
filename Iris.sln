@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramConsumer.Tests", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensions.Tests\Extensions.Tests.csproj", "{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigProducer", "ConfigProducer\ConfigProducer.csproj", "{9694CC16-6E53-4710-87B6-4653FEADA93D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9694CC16-6E53-4710-87B6-4653FEADA93D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9694CC16-6E53-4710-87B6-4653FEADA93D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9694CC16-6E53-4710-87B6-4653FEADA93D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9694CC16-6E53-4710-87B6-4653FEADA93D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
