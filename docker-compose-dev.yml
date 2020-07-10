@@ -2,7 +2,9 @@ version: '3.4'
 
 services:
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: zookeeper:3.5.6
+    environment:
+      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888;2181
     ports:
       - "2181:2181"
       
@@ -13,6 +15,7 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 0
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1, tests:1:1"
     depends_on:
       - zookeeper
@@ -21,11 +24,3 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
-
-  twitterproducer:
-    image: ${DOCKER_REGISTRY-}twitterproducer
-    build:
-      context: .
-      dockerfile: producer/Dockerfile
-      args:
-        PROJECT_DIR: 'twitterproducer'
