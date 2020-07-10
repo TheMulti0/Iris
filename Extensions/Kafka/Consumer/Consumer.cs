@@ -19,7 +19,7 @@ namespace Extensions
         {
             _cluster = ClusterClientFactory.CreateClusterClient(
                 config,
-                CreateSerializationConfig(),
+                CreateSerializationConfig(config),
                 loggerFactory);
 
             Subscribe(config);
@@ -29,13 +29,13 @@ namespace Extensions
 
         public void Dispose() => _cluster?.Dispose();
 
-        private static SerializationConfig CreateSerializationConfig()
+        private static SerializationConfig CreateSerializationConfig(BaseKafkaConfig config)
         {
             var serializationConfig = new SerializationConfig();
 
             serializationConfig.SetDefaultDeserializers(
-                new KafkaJsonDeserializer<TKey>(),
-                new KafkaJsonDeserializer<TValue>());
+                KafkaDeserializerFactory.CreateDeserializer<TKey>(config.KeySerializationType),
+                KafkaDeserializerFactory.CreateDeserializer<TValue>(config.ValueSerializationType));
             
             return serializationConfig;
         }

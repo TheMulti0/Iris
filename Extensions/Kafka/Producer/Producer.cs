@@ -15,13 +15,24 @@ namespace Extensions
         {
             _cluster = ClusterClientFactory.CreateClusterClient(
                 config,
-                CreateSerializationConfig(),
+                CreateSerializationConfig(config),
                 loggerFactory);
 
             _logger = loggerFactory.CreateLogger<Producer<TKey, TValue>>();
         }
 
         public void Dispose() => _cluster?.Dispose();
+
+        private static SerializationConfig CreateSerializationConfig(BaseKafkaConfig config)
+        {
+            var serializationConfig = new SerializationConfig();
+            
+            serializationConfig.SetDefaultSerializers(
+                KafkaSerializerFactory.CreateSerializer<TKey>(config.KeySerializationType),
+                KafkaSerializerFactory.CreateSerializer<TValue>(config.ValueSerializationType));
+            
+            return serializationConfig;
+        }
 
         public void Produce(
             string topic,
@@ -36,6 +47,7 @@ namespace Extensions
                 value,
                 actualTimestamp);
         }
+
 
         public void Produce(
             string topic,
@@ -57,17 +69,6 @@ namespace Extensions
                 key,
                 value,
                 actualTimestamp);
-        }
-
-        private static SerializationConfig CreateSerializationConfig()
-        {
-            var serializationConfig = new SerializationConfig();
-            
-            serializationConfig.SetDefaultSerializers(
-                new KafkaJsonSerializer<TKey>(), 
-                new KafkaJsonSerializer<TValue>());
-            
-            return serializationConfig;
         }
     }
 }

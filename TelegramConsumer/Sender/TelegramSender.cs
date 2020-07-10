@@ -33,7 +33,7 @@ namespace TelegramConsumer
 
         private static bool ConfigBelongsToTelegram(Result<Message<string, string>> result)
         {
-            return result.Value?.Value.ValueEqualsTo("Telegram") ?? false;
+            return result.Value?.Key.ValueEqualsTo("Telegram") ?? false;
         }
 
         private static Result<TelegramConfig> DeserializeConfig(Result<Message<string, string>> result)
