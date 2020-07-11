@@ -73,12 +73,11 @@ namespace Extensions.Tests
 
         private static void ProduceOneMessage(string updateContent)
         {
-            var producer = new Producer<Unit, Update>(
+            var producer = ProducerFactory.CreateProducer<string, Update>(
                 _config,
                 _loggerFactory);
             
             producer.Produce(
-                Topic,
                 new Update
                 {
                     Content = updateContent
