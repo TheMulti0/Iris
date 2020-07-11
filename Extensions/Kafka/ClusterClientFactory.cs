@@ -5,7 +5,7 @@ namespace Extensions
 {
     internal static class ClusterClientFactory
     {
-        public static IClusterClient CreateClusterClient(
+        public static IClusterClient Create(
             BaseKafkaConfig config,
             SerializationConfig serializationConfig,
             ILoggerFactory loggerFactory)

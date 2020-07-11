@@ -4,37 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Extensions
 {
-    public class ProducerFactory
-    {
-        public static KafkaProducer<TKey, TValue> CreateProducer<TKey, TValue>(
-            BaseKafkaConfig config,
-            ILoggerFactory loggerFactory)
-            where TKey : class 
-            where TValue : class
-        {
-            SerializationConfig serializationConfig = CreateSerializationConfig<TKey, TValue>(config);
-            
-            IClusterClient clusterClient = ClusterClientFactory.CreateClusterClient(
-                config,
-                serializationConfig,
-                loggerFactory);
-            
-            return new KafkaProducer<TKey, TValue>(config.Topic, clusterClient);
-        }
-        
-        private static SerializationConfig CreateSerializationConfig<TKey, TValue>(
-            BaseKafkaConfig config)
-        {
-            var serializationConfig = new SerializationConfig();
-            
-            serializationConfig.SetDefaultSerializers(
-                KafkaSerializerFactory.CreateSerializer<TKey>(config.KeySerializationType),
-                KafkaSerializerFactory.CreateSerializer<TValue>(config.ValueSerializationType));
-            
-            return serializationConfig;
-        }
-    } 
-    
     public class Producer<TKey, TValue> : IDisposable
     {
         private readonly IClusterClient _cluster;
@@ -44,7 +13,7 @@ namespace Extensions
             BaseKafkaConfig config,
             ILoggerFactory loggerFactory)
         {
-            _cluster = ClusterClientFactory.CreateClusterClient(
+            _cluster = ClusterClientFactory.Create(
                 config,
                 CreateSerializationConfig(config),
                 loggerFactory);

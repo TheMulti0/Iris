@@ -45,12 +45,12 @@ namespace Extensions.Tests
         public async Task TestProduceConsume()
         {
             ProduceOneMessage(UpdateContent);
-            Result<Message<Unit, Update>> firstMessage = await GetConsumedMessages().FirstOrDefaultAsync();
+            KafkaRecord<string, Update> firstMessage = await GetConsumedMessages().FirstOrDefaultAsync();
 
-            Assert.AreEqual(UpdateContent, firstMessage.Value.Value.Value.Content);
+            Assert.AreEqual(UpdateContent, firstMessage.Value.Content);
         }
 
-        private static IObservable<Result<Message<Unit, Update>>> GetConsumedMessages()
+        private static IObservable<KafkaRecord<string, Update>> GetConsumedMessages()
         {
             var config = new ConsumerConfig
             {
@@ -58,13 +58,14 @@ namespace Extensions.Tests
                 {
                     Topic
                 },
+                Topic = _config.Topic,
                 BrokersServers = _config.BrokersServers,
                 GroupId = "tests-consumers-group",
                 KeySerializationType = _config.KeySerializationType,
                 ValueSerializationType = _config.ValueSerializationType
             };
 
-            var consumer = new Consumer<Unit, Update>(
+            var consumer = KafkaConsumerFactory.Create<string, Update>(
                 config,
                 _loggerFactory);
 
@@ -73,7 +74,7 @@ namespace Extensions.Tests
 
         private static void ProduceOneMessage(string updateContent)
         {
-            var producer = ProducerFactory.CreateProducer<string, Update>(
+            var producer = KafkaProducerFactory.Create<string, Update>(
                 _config,
                 _loggerFactory);
             

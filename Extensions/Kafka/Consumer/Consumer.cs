@@ -17,7 +17,7 @@ namespace Extensions
             ConsumerConfig config,
             ILoggerFactory loggerFactory)
         {
-            _cluster = ClusterClientFactory.CreateClusterClient(
+            _cluster = ClusterClientFactory.Create(
                 config,
                 CreateSerializationConfig(config),
                 loggerFactory);
