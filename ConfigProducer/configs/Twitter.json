@@ -10,7 +10,7 @@
   "tweets_producer": {
     "topic": "updates",
     "bootstrap_servers": "localhost:9092",
-    "update_interval_seconds": 5,
+    "update_interval_seconds": 6,
     "watched_users": [
       "@realDonaldTrump"
     ]

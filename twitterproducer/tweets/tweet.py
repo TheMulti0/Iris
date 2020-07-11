@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 twitter_base_url = 'https://twitter.com'
 
@@ -15,9 +16,9 @@ class Tweet:
     replies: int
     retweets: int
     likes: int
-    hashtags: list
-    urls: list
-    photos: list
+    hashtags: List[str]
+    urls: List[str]
+    photos: List[str]
     video: str
 
     def __init__(self, original_dict):

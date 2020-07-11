@@ -6,6 +6,7 @@ from time import sleep
 
 from kafka import KafkaProducer
 
+from updatesproducer.kafka.cancellation_token import CancellationToken
 from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 
@@ -18,17 +19,22 @@ class Producer:
             config: TopicProducerConfig,
             repository: IUpdatesRepository,
             updates_provider: IUpdatesProvider,
+            cancellation_token: CancellationToken,
             logger: Logger):
         self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
         self.__repository = repository
         self.__updates_provider = updates_provider
+        self.__cancellation_token = cancellation_token
         self.__logger = logger
 
     def start(self):
         while True:
             self.__logger.info('Updating all users')
             self.update()
+
+            if self.__cancellation_token.cancelled:
+                return
 
             interval_seconds = self.__config.update_interval_seconds
             self.__logger.info('Done updating. Sleeping for %s seconds', interval_seconds)

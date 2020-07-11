@@ -1,4 +1,7 @@
 from datetime import datetime
+from typing import List
+
+from updatesproducer.updateapi.media import Media
 
 
 class Update:
@@ -6,7 +9,7 @@ class Update:
     author_id: str
     creation_date: datetime
     url: str
-    media: list
+    media: List[Media]
 
     def __init__(
             self,
