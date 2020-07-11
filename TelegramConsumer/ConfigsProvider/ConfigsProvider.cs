@@ -35,10 +35,10 @@ namespace TelegramConsumer
                 _configs.OnNext(Result<TelegramConfig>.Success(_defaultConfig));
             }
             
-            // _consumer.Messages
-            //     .Where(ConfigBelongsToTelegram)
-            //     .Select(DeserializeConfig)
-            //     .Subscribe(_configs.OnNext);
+            _consumer.Messages
+                .Where(ConfigBelongsToTelegram)
+                .Select(DeserializeConfig)
+                .Subscribe(_configs.OnNext);
         }
         
         private static bool ConfigBelongsToTelegram(Result<Message<string, string>> result)

@@ -29,7 +29,9 @@ namespace TelegramConsumer
 
         private Task HandleConfig(Result<TelegramConfig> result)
         {
-            return result.DoAsync(OnConfigReceivedAsync);
+            return result.DoAsync(
+                OnConfigReceivedAsync,
+                async () => _logger.LogInformation("Received empty config that will not be used"));
         }
 
         private async Task OnConfigReceivedAsync(TelegramConfig config)
