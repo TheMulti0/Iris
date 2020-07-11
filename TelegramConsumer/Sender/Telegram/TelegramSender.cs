@@ -4,23 +4,24 @@ using System.Threading.Tasks;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace TelegramConsumer
 {
     public class TelegramSender : ISender
     {
+        private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILogger<TelegramSender> _logger;
 
-        private TelegramConfig _config;
         private ITelegramBotClient _client;
 
         private CancellationTokenSource _sendCancellation;
 
         public TelegramSender(
             ConfigsProvider configsProvider,
+            ITelegramBotClientProvider clientProvider,
             ILogger<TelegramSender> logger)
         {
+            _clientProvider = clientProvider;
             _logger = logger;
             
             configsProvider.Configs
@@ -30,14 +31,16 @@ namespace TelegramConsumer
 
         private Task HandleConfig(Result<TelegramConfig> result)
         {
+            Task OnEmptyReceivedAsync()
+            {
+                _logger.LogInformation("Received empty config that will not be used");
+
+                return Task.CompletedTask;
+            }
+
             return result.DoAsync(
                 OnConfigReceivedAsync,
-                () =>
-                {
-                    _logger.LogInformation("Received empty config that will not be used");
-                    
-                    return Task.CompletedTask;
-                });
+                OnEmptyReceivedAsync);
         }
 
         private async Task OnConfigReceivedAsync(TelegramConfig config)
@@ -55,7 +58,7 @@ namespace TelegramConsumer
         {
             try
             {
-                _client = await CreateTelegramBotClient(config);
+                _client = await _clientProvider.CreateAsync(config);
             }
             catch (Exception e)
             {
@@ -77,22 +80,6 @@ namespace TelegramConsumer
             }
 
             _sendCancellation = new CancellationTokenSource();
-        }
-
-        private async Task<ITelegramBotClient> CreateTelegramBotClient(TelegramConfig config)
-        {
-            var client = new TelegramBotClient(config.AccessToken);
-
-            User identity = await client.GetMeAsync();
-
-            _logger.LogInformation(
-                "Registered as {} {} (Username = {}, Id = {})",
-                identity.FirstName,
-                identity.LastName,
-                identity.Username,
-                identity.Id);
-
-            return client;
         }
 
         public Task SendAsync(Update update)
