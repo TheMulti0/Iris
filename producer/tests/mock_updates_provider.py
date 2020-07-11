@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from producer.kafka.iupdates_provider import IUpdatesProvider
-from producer.updateapi import Update
+from producer.updateapi.update import Update
 
 
 class MockUpdatesProvider(IUpdatesProvider):
@@ -9,6 +9,8 @@ class MockUpdatesProvider(IUpdatesProvider):
         return [
             Update(
                 content='Mock updateapi',
+                author_id='Mock author',
                 creation_date=datetime.now(),
-                url='mockurl://updateapi.com')
+                url='mockurl://updateapi.com',
+                media=[])
         ]

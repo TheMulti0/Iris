@@ -1,6 +1,7 @@
 import json
 import logging
 
+from facebookproducer.posts.posts_provider import PostsProvider
 from facebookproducer.updateapi.facebook_updates_provider import FacebookUpdatesProvider
 from producer.db.mongodb_config import MongoDbConfig
 from producer.kafka.producer import Producer
@@ -25,7 +26,9 @@ def main():
     posts_producer = Producer(
         TopicProducerConfig(appsettings['posts_producer']),
         repository,
-        FacebookUpdatesProvider(),
+        FacebookUpdatesProvider(
+            PostsProvider()
+        ),
         logging.getLogger(Producer.__name__))
 
     posts_producer.start()
