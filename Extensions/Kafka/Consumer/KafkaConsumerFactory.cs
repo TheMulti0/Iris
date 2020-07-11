@@ -5,7 +5,7 @@ namespace Extensions
 {
     public static class KafkaConsumerFactory
     {
-        public static KafkaConsumer<TKey, TValue> Create<TKey, TValue>(
+        public static IKafkaConsumer<TKey, TValue> Create<TKey, TValue>(
             ConsumerConfig config,
             ILoggerFactory loggerFactory) 
             where TKey : class 
