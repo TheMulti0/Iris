@@ -5,10 +5,10 @@ from unittest import TestCase
 
 from kafka import KafkaConsumer
 
-from producer.kafka.producer import Producer
-from producer.tests.mock_updates_provider import MockUpdatesProvider
-from producer.tests.mock_updates_repository import MockUpdatesRepository
-from producer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.kafka.producer import Producer
+from updatesproducer.tests.mock_updates_provider import MockUpdatesProvider
+from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
+from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 
 
 class ProducerIntegrationTests(TestCase):

@@ -1,6 +1,6 @@
 from facebookproducer.posts.post import Post
 from facebookproducer.updateapi.media_factory import MediaFactory
-from producer.updateapi.update import Update
+from updatesproducer.updateapi.update import Update
 
 
 class UpdateFactory:

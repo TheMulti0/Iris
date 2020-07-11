@@ -1,6 +1,6 @@
 from facebookproducer.posts.iposts_provider import IPostsProvider
 from facebookproducer.updateapi.update_factory import UpdateFactory
-from producer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 
 
 class FacebookUpdatesProvider(IUpdatesProvider):

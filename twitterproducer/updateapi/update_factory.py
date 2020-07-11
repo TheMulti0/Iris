@@ -1,4 +1,4 @@
-from producer.updateapi.update import Update
+from updatesproducer.updateapi.update import Update
 from twitterproducer.updateapi.media_factory import MediaFactory
 from twitterproducer.tweets.tweet import Tweet
 

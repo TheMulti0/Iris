@@ -1,4 +1,4 @@
-from producer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from twitterproducer.tweets.itweets_provider import ITweetsProvider
 from twitterproducer.updateapi.update_factory import UpdateFactory
 

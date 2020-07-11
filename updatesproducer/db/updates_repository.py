@@ -5,9 +5,9 @@ from typing import Optional
 from pymongo import MongoClient
 from pymongo.collection import Collection
 
-from producer.db.iupdates_repository import IUpdatesRepository
-from producer.db.mongodb_config import MongoDbConfig
-from producer.db.user_latest_update_time import UserLatestUpdateTime
+from updatesproducer.db.iupdates_repository import IUpdatesRepository
+from updatesproducer.db.mongodb_config import MongoDbConfig
+from updatesproducer.db.user_latest_update_time import UserLatestUpdateTime
 
 
 class UpdatesRepository(IUpdatesRepository):

@@ -1,6 +1,6 @@
 from facebookproducer.posts.post import Post
-from producer.updateapi.media import Media
-from producer.updateapi.mediatype import MediaType
+from updatesproducer.updateapi.media import Media
+from updatesproducer.updateapi.mediatype import MediaType
 from twitterproducer.tweets.tweet import Tweet
 
 

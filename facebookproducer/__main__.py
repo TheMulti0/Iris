@@ -3,11 +3,11 @@ import logging
 
 from facebookproducer.posts.posts_provider import PostsProvider
 from facebookproducer.updateapi.facebook_updates_provider import FacebookUpdatesProvider
-from producer.db.mongodb_config import MongoDbConfig
-from producer.kafka.producer import Producer
-from producer.db.updates_repository import UpdatesRepository
+from updatesproducer.db.mongodb_config import MongoDbConfig
+from updatesproducer.kafka.producer import Producer
+from updatesproducer.db.updates_repository import UpdatesRepository
 
-from producer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 
 
 def main():

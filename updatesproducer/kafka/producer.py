@@ -6,10 +6,10 @@ from time import sleep
 
 from kafka import KafkaProducer
 
-from producer.kafka.iupdates_provider import IUpdatesProvider
-from producer.db.iupdates_repository import IUpdatesRepository
+from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.db.iupdates_repository import IUpdatesRepository
 
-from producer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 
 
 class Producer:

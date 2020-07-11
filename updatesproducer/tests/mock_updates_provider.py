@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from producer.kafka.iupdates_provider import IUpdatesProvider
-from producer.updateapi.update import Update
+from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.updateapi.update import Update
 
 
 class MockUpdatesProvider(IUpdatesProvider):
