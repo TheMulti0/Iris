@@ -3,13 +3,14 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text.Json;
 using Extensions;
+using Kafka.Public;
 using Microsoft.Extensions.Logging;
 
 namespace TelegramConsumer
 {
     public class ConfigsProvider
     {
-        private readonly Consumer<string, string> _consumer;
+        private readonly IKafkaConsumer<string, string> _consumer;
         private readonly TelegramConfig _defaultConfig;
         private readonly ILogger<ConfigsProvider> _logger;
         
@@ -17,7 +18,7 @@ namespace TelegramConsumer
         public IObservable<Result<TelegramConfig>> Configs => _configs;
 
         public ConfigsProvider(
-            Consumer<string, string> consumer,
+            IKafkaConsumer<string, string> consumer,
             TelegramConfig defaultConfig,
             ILogger<ConfigsProvider> logger)
         {
@@ -41,15 +42,22 @@ namespace TelegramConsumer
                 .Subscribe(_configs.OnNext);
         }
         
-        private static bool ConfigBelongsToTelegram(Result<Message<string, string>> result)
+        private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record)
         {
-            return result.Value?.Key.ValueEqualsTo("Telegram") ?? false;
+            return record.Key == "Telegram";
         }
 
-        private static Result<TelegramConfig> DeserializeConfig(Result<Message<string, string>> result)
+        private static Result<TelegramConfig> DeserializeConfig(KafkaRecord<string, string> record)
         {
-            return result.Map(
-                message => JsonSerializer.Deserialize<TelegramConfig>(message.Value.Value));
+            try
+            {
+                return Result<TelegramConfig>.Success(
+                    JsonSerializer.Deserialize<TelegramConfig>(record.Value));
+            }
+            catch (Exception e)
+            {
+                return Result<TelegramConfig>.Failure(e);
+            }
         }
     }
 }

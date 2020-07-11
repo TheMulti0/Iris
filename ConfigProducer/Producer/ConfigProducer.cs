@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Extensions;
+using Kafka.Public;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -8,22 +9,21 @@ namespace ConfigProducer
 {
     internal class ConfigProducer : BackgroundService
     {
-        private readonly KafkaConfig _config;
+        private readonly BaseKafkaConfig _config;
         private readonly ConfigReader _reader;
-        private readonly Producer<string, string> _producer;
+        private readonly IKafkaProducer<string, string> _producer;
         private readonly ILogger<ConfigProducer> _logger;
         
         public ConfigProducer(
-            KafkaConfig config,
+            BaseKafkaConfig config,
             ConfigReader reader,
+            IKafkaProducer<string, string> producer,
             ILoggerFactory loggerFactory)
         {
             _config = config;
             _reader = reader;
-            _producer = new Producer<string, string>(
-                config,
-                loggerFactory);
-            
+            _producer = producer;
+
             _logger = loggerFactory.CreateLogger<ConfigProducer>();
         }
         
@@ -33,7 +33,8 @@ namespace ConfigProducer
             
             foreach ((string fileName, string contents) in _reader.ReadAllConfigs())
             {
-                _producer.Produce(_config.ConfigsTopic, fileName, contents);
+                _logger.LogInformation("Sending {} : {}", fileName, contents);
+                _producer.Produce(fileName, contents);
             }
             
             _logger.LogInformation("Done sending configs");

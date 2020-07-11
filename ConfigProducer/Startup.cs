@@ -46,6 +46,7 @@ namespace ConfigProducer
             services.AddSingleton(GetConfigsReaderConfig)
                 .AddSingleton(GetKafkaConfig)
                 .AddSingleton<ConfigReader>()
+                .AddProducer<string, string>()
                 .AddHostedService<ConfigProducer>();
         }
         
@@ -55,10 +56,10 @@ namespace ConfigProducer
                 .Get<ConfigReaderConfig>();
         }
     
-        private static KafkaConfig GetKafkaConfig(IServiceProvider provider)
+        private static BaseKafkaConfig GetKafkaConfig(IServiceProvider provider)
         {
             return provider.GetService<IConfiguration>().GetSection("Kafka")
-                .Get<KafkaConfig>();
+                .Get<BaseKafkaConfig>();
         }
     }
 }

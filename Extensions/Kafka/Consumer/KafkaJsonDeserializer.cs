@@ -14,8 +14,9 @@ namespace Extensions
         {
             try
             {
+                var json = StringDeserializer.Deserialize(fromStream, length).ToString();
                 return JsonSerializer.Deserialize<T>(
-                    StringDeserializer.Deserialize(fromStream, length).ToString(),
+                    json,
                     Options);
             }
             catch (Exception)

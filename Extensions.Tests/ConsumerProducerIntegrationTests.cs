@@ -18,7 +18,6 @@ namespace Extensions.Tests
     [TestClass]
     public class ConsumerProducerIntegrationTests
     {
-        private const string Topic = "tests";
         private const string UpdateContent = "This is a test!";
 
         private static BaseKafkaConfig _config;
@@ -45,27 +44,27 @@ namespace Extensions.Tests
         public async Task TestProduceConsume()
         {
             ProduceOneMessage(UpdateContent);
-            KafkaRecord<string, Update> firstMessage = await GetConsumedMessages().FirstOrDefaultAsync();
+            KafkaRecord<Nothing, Update> firstMessage = await GetConsumedMessages().FirstOrDefaultAsync();
 
             Assert.AreEqual(UpdateContent, firstMessage.Value.Content);
         }
 
-        private static IObservable<KafkaRecord<string, Update>> GetConsumedMessages()
+        private static IObservable<KafkaRecord<Nothing, Update>> GetConsumedMessages()
         {
             var config = new ConsumerConfig
             {
-                Topics = new[]
+                SubscriptionTopics = new[]
                 {
-                    Topic
+                    _config.DefaultTopic
                 },
-                Topic = _config.Topic,
+                DefaultTopic = _config.DefaultTopic,
                 BrokersServers = _config.BrokersServers,
                 GroupId = "tests-consumers-group",
                 KeySerializationType = _config.KeySerializationType,
                 ValueSerializationType = _config.ValueSerializationType
             };
 
-            var consumer = KafkaConsumerFactory.Create<string, Update>(
+            var consumer = KafkaConsumerFactory.Create<Nothing, Update>(
                 config,
                 _loggerFactory);
 
@@ -74,7 +73,7 @@ namespace Extensions.Tests
 
         private static void ProduceOneMessage(string updateContent)
         {
-            var producer = KafkaProducerFactory.Create<string, Update>(
+            var producer = KafkaProducerFactory.Create<Nothing, Update>(
                 _config,
                 _loggerFactory);
             

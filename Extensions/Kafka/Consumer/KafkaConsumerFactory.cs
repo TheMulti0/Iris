@@ -19,10 +19,10 @@ namespace Extensions
                 loggerFactory);
 
             var consumer = new KafkaConsumer<TKey, TValue>(
-                config.Topic,
+                config.DefaultTopic,
                 clusterClient);
             
-            consumer.Subscribe(config.GroupId, config.Topics, new ConsumerGroupConfiguration());
+            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, new ConsumerGroupConfiguration());
 
             return consumer;
         }

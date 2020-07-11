@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensions;
@@ -12,7 +13,7 @@ namespace TelegramConsumer
         private readonly ILogger<TelegramSender> _logger;
 
         private TelegramConfig _config;
-        private TelegramBotClient _client;
+        private ITelegramBotClient _client;
 
         private CancellationTokenSource _sendCancellation;
 
@@ -31,20 +32,58 @@ namespace TelegramConsumer
         {
             return result.DoAsync(
                 OnConfigReceivedAsync,
-                async () => _logger.LogInformation("Received empty config that will not be used"));
+                () =>
+                {
+                    _logger.LogInformation("Received empty config that will not be used");
+                    
+                    return Task.CompletedTask;
+                });
         }
 
         private async Task OnConfigReceivedAsync(TelegramConfig config)
         {
-            _logger.LogInformation("Received new config. Cancelling send operations");
+            _logger.LogInformation(
+                "Received new config {}, trying to create new TelegramBotClient with it",
+                config);
             
-            _sendCancellation?.Cancel();
-            _sendCancellation = new CancellationTokenSource();
+            await ReplaceTelegramBotClient(config);
             
-            _config = config;
-            _client = new TelegramBotClient(config.AccessToken);
+            CancelSendOperations();
+        }
 
-            User identity = await _client.GetMeAsync();
+        private async Task ReplaceTelegramBotClient(TelegramConfig config)
+        {
+            try
+            {
+                _client = await CreateTelegramBotClient(config);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e, "Failed to create TelegramBotClient with new config");
+            }
+        }
+
+        private void CancelSendOperations()
+        {
+            _logger.LogInformation("Cancelling send operations");
+
+            try
+            {
+                _sendCancellation?.Cancel();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to cancel send operations");
+            }
+
+            _sendCancellation = new CancellationTokenSource();
+        }
+
+        private async Task<ITelegramBotClient> CreateTelegramBotClient(TelegramConfig config)
+        {
+            var client = new TelegramBotClient(config.AccessToken);
+
+            User identity = await client.GetMeAsync();
 
             _logger.LogInformation(
                 "Registered as {} {} (Username = {}, Id = {})",
@@ -52,6 +91,8 @@ namespace TelegramConsumer
                 identity.LastName,
                 identity.Username,
                 identity.Id);
+
+            return client;
         }
 
         public Task SendAsync(Update update)
