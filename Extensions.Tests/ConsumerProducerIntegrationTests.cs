@@ -3,6 +3,7 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Kafka.Public;
 using Kafka.Public.Loggers;
@@ -27,19 +28,26 @@ namespace Extensions.Tests
         public static void Initialize(TestContext context)
         {
             _config = JsonSerializer.Deserialize<BaseKafkaConfig>(
-                File.ReadAllText("../../../appsettings.json"));
+                File.ReadAllText("../../../appsettings.json"),
+                new JsonSerializerOptions
+                {
+                    Converters =
+                    {
+                        new JsonStringEnumConverter()
+                    }
+                });
             
-            _loggerFactory = LoggerFactory.Create(builder => builder.AddCustomConsole());
+            _loggerFactory = LoggerFactory.Create(
+                builder => builder.AddProvider(new TestsLoggerProvider(context)));
         }
 
         [TestMethod]
-        public async Task Test1()
+        public async Task TestProduceConsume()
         {
             ProduceOneMessage(UpdateContent);
-            var messages = await GetConsumedMessages()
-                .FirstOrDefaultAsync();
+            Result<Message<Unit, Update>> firstMessage = await GetConsumedMessages().FirstOrDefaultAsync();
 
-            Assert.AreEqual(UpdateContent, messages?.Value?.Value.Value.Content);
+            Assert.AreEqual(UpdateContent, firstMessage.Value.Value.Value.Content);
         }
 
         private static IObservable<Result<Message<Unit, Update>>> GetConsumedMessages()
@@ -51,7 +59,9 @@ namespace Extensions.Tests
                     Topic
                 },
                 BrokersServers = _config.BrokersServers,
-                GroupId = "tests-consumers-group"
+                GroupId = "tests-consumers-group",
+                KeySerializationType = _config.KeySerializationType,
+                ValueSerializationType = _config.ValueSerializationType
             };
 
             var consumer = new Consumer<Unit, Update>(

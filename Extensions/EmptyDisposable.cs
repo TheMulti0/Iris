@@ -2,7 +2,7 @@
 
 namespace Extensions
 {
-    internal class EmptyDisposable : IDisposable
+    public class EmptyDisposable : IDisposable
     {
         public void Dispose()
         {
