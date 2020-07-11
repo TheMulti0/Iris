@@ -1,57 +1,64 @@
 using System;
+using System.IO;
+using System.Threading.Tasks;
 using Extensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ConfigProducer
 {
     public class Startup
     {
-        private readonly IConfiguration _configuration;
+        public static Task Main()
+        {
+            return new HostBuilder()
+                .ConfigureAppConfiguration(ConfigureConfiguration)
+                .ConfigureLogging(ConfigureLogging)
+                .ConfigureServices(ConfigureServices)
+                .RunConsoleAsync();
+        }
 
-        public Startup(IConfiguration configuration) 
-            => _configuration = configuration;
+        private static void ConfigureConfiguration(IConfigurationBuilder builder)
+        {
+            string environmentName =
+                Environment.GetEnvironmentVariable("ENVIRONMENT");
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+            const string fileName = "appsettings";
+            const string fileType = "json";
+
+            builder
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"{fileName}.{fileType}", false)
+                .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
+        }
+
+        private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
+        {
+            builder
+                .AddConfiguration(context.Configuration.GetSection("Logging"))
+                .AddCustomConsole();
+        }
+        
+        private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(GetConfigsReaderConfig)
                 .AddSingleton(GetKafkaConfig)
                 .AddSingleton<ConfigReader>()
-                .AddHostedService<ConfigProducer>()
-                .AddControllers();
-        }
-
-        private ConfigReaderConfig GetConfigsReaderConfig(IServiceProvider provider)
-        {
-            return _configuration.GetSection("ConfigsReader")
-                .Get<ConfigReaderConfig>();
+                .AddHostedService<ConfigProducer>();
         }
         
-        private KafkaConfig GetKafkaConfig(IServiceProvider provider)
+        private static ConfigReaderConfig GetConfigsReaderConfig(IServiceProvider provider)
         {
-            return _configuration.GetSection("Kafka")
-                .Get<KafkaConfig>();
+            return provider.GetService<IConfiguration>().GetSection("ConfigsReader")
+                .Get<ConfigReaderConfig>();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    
+        private static KafkaConfig GetKafkaConfig(IServiceProvider provider)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            return provider.GetService<IConfiguration>().GetSection("Kafka")
+                .Get<KafkaConfig>();
         }
     }
 }
