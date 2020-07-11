@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Extensions.Tests
+namespace Extensions
 {
     public class TestsLogger : ILogger
     {

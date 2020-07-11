@@ -38,7 +38,7 @@ namespace Extensions.Tests
                 });
             
             _loggerFactory = LoggerFactory.Create(
-                builder => builder.AddProvider(new TestsLoggerProvider(context)));
+                builder => builder.AddTestsLogging(context));
         }
 
         [TestMethod]
