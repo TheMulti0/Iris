@@ -1,9 +1,10 @@
 ﻿{
-    "Logging": {
-        "LogLevel": {
-            "Default": "Debug",
-            "System": "Information",
-            "Microsoft": "Information"
+    "AccessToken": "1073759913:AAEHDxkcx3zOO7PFvWwgi7yIJn8IIYhc9pA",
+    "UsernamesChatIds": [
+        {
+            "@realDonaldTrump": [
+                -1001422720138
+            ]
         }
-    }
+    ]
 }

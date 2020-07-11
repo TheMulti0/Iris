@@ -1,11 +1,11 @@
 {
   "profiles": {
     "TelegramConsumer": {
+      "commandName": "Project",
       "workingDirectory": "../../../",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
-      },
-      "commandName": "Project"
+      }
     },
     "Docker": {
       "commandName": "Docker"

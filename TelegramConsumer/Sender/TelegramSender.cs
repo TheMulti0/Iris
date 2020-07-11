@@ -1,6 +1,3 @@
-using System;
-using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensions;
@@ -20,25 +17,14 @@ namespace TelegramConsumer
         private CancellationTokenSource _sendCancellation;
 
         public TelegramSender(
-            Consumer<string, string> consumer,
+            ConfigsProvider configsProvider,
             ILogger<TelegramSender> logger)
         {
             _logger = logger;
             
-            consumer.Messages
-                .Where(ConfigBelongsToTelegram)
-                .Select(DeserializeConfig)
+            configsProvider.Configs
                 .SubscribeAsync(HandleConfig);
-        }
-
-        private static bool ConfigBelongsToTelegram(Result<Message<string, string>> result)
-        {
-            return result.Value?.Key.ValueEqualsTo("Telegram") ?? false;
-        }
-
-        private static Result<TelegramConfig> DeserializeConfig(Result<Message<string, string>> result)
-        {
-            return result.Map(message => JsonSerializer.Deserialize<TelegramConfig>(message.Value.Value));
+            configsProvider.InitializeSubscriptions();
         }
 
         private Task HandleConfig(Result<TelegramConfig> result)

@@ -47,16 +47,22 @@ namespace TelegramConsumer
             IConfiguration rootConfig = hostContext.Configuration;
             
             var updatesConsumerConfig = rootConfig
-                .GetSection("UpdatesConsumer")
+                .GetSection("UpdatesConsumer")?
                 .Get<ConsumerConfig>();
             
             var configConsumerConfig = rootConfig
-                .GetSection("ConfigConsumer")
+                .GetSection("ConfigConsumer")?
                 .Get<ConsumerConfig>();
+            
+            var defaultTelegramConfig = rootConfig
+                .GetSection("DefaultTelegram")?
+                .Get<TelegramConfig>();
 
             services
                 .AddConsumer<Unit, Update>(updatesConsumerConfig)
                 .AddConsumer<string, string>(configConsumerConfig)
+                .AddSingleton(defaultTelegramConfig)
+                .AddSingleton<ConfigsProvider>()
                 .AddSingleton<ISender, TelegramSender>()
                 .AddHostedService<UpdateConsumer>()
                 .BuildServiceProvider();
