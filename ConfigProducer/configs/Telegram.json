@@ -1,10 +1,12 @@
 ﻿{
-    "AccessToken": "1073759913:AAEHDxkcx3zOO7PFvWwgi7yIJn8IIYhc9pA",
-    "UsernamesChatIds": [
-        {
-            "@realDonaldTrump": [
-                -1001422720138
-            ]
-        }
-    ]
+  "AccessToken": "1073759913:AAEHDxkcx3zOO7PFvWwgi7yIJn8IIYhc9pA",
+  "Users": [
+    {
+      "UserName": "realDonaldTrump",
+      "DisplayName": "טראמפ",
+      "ChatIds": [
+        -1001422720138
+      ]
+    }
+  ]
 }

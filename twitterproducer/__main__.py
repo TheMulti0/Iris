@@ -12,6 +12,7 @@ from updatesproducer.db.updates_repository import UpdatesRepository
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 from twitterproducer.tweets.tweets_provider import TweetsProvider
 from twitterproducer.updateapi.twitter_updates_provider import TwitterUpdatesProvider
+from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
 
 
 class Startup:
@@ -24,7 +25,7 @@ class Startup:
         logging.basicConfig(
             format='[%(asctime)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S %z',
-            level=logging.DEBUG)
+            level=logging.INFO)
 
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json'))
@@ -72,7 +73,7 @@ class Startup:
 
         return Producer(
             TopicProducerConfig(config['tweets_producer']),
-            repository,
+            MockUpdatesRepository(),
             twitter_updates_provider,
             self.__cancellation_token,
             logging.getLogger(Producer.__name__))

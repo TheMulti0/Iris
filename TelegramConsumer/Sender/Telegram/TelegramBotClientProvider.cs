@@ -18,7 +18,7 @@ namespace TelegramConsumer
         {
             var client = new TelegramBotClient(config.AccessToken);
 
-            User identity = await client.GetMeAsync();
+            Telegram.Bot.Types.User identity = await client.GetMeAsync();
 
             _logger.LogInformation(
                 "Registered as {} {} (Username = {}, Id = {})",

@@ -63,6 +63,8 @@ namespace TelegramConsumer
                 .AddConsumer<string, string>(configConsumerConfig)
                 .AddSingleton(defaultTelegramConfig)
                 .AddSingleton<ConfigsProvider>()
+                .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
+                .AddSingleton<MessageSender>()
                 .AddSingleton<ISender, TelegramSender>()
                 .AddHostedService<UpdateConsumer>()
                 .BuildServiceProvider();

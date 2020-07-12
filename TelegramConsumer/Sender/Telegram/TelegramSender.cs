@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensions;
@@ -10,21 +11,26 @@ namespace TelegramConsumer
     public class TelegramSender : ISender
     {
         private readonly ITelegramBotClientProvider _clientProvider;
+        private readonly MessageSender _sender;
         private readonly ILogger<TelegramSender> _logger;
 
         private ITelegramBotClient _client;
+        private TelegramConfig _config;
 
         private CancellationTokenSource _sendCancellation;
 
         public TelegramSender(
             ConfigsProvider configsProvider,
             ITelegramBotClientProvider clientProvider,
+            MessageSender sender,
             ILogger<TelegramSender> logger)
         {
             _clientProvider = clientProvider;
+            _sender = sender;
             _logger = logger;
             
             configsProvider.Configs
+            
                 .SubscribeAsync(HandleConfig);
             configsProvider.InitializeSubscriptions();
         }
@@ -50,6 +56,8 @@ namespace TelegramConsumer
                 config);
             
             await ReplaceTelegramBotClient(config);
+
+            _config = config;
             
             CancelSendOperations();
         }
@@ -82,11 +90,22 @@ namespace TelegramConsumer
             _sendCancellation = new CancellationTokenSource();
         }
 
-        public Task SendAsync(Update update)
+        public async Task SendAsync(Update update)
         {
+            if (_config == null)
+            {
+                _logger.LogError("Update request sent, but no config present. Leaving.");
+            }
+
             _logger.LogInformation("Sending update {}", update);
-            
-            return Task.CompletedTask;
+
+            var user = _config.Users.FirstOrDefault(user => user.UserName == update.AuthorId);
+            var updateMessage = UpdateMessageFactory.Create(update, user);
+
+            foreach (var chatId in user.ChatIds)
+            {
+                await _sender.SendAsync(_client, updateMessage, chatId);
+            }
         }
     }
 }

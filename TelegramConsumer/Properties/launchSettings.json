@@ -2,7 +2,7 @@
   "profiles": {
     "TelegramConsumer": {
       "commandName": "Project",
-      "workingDirectory": "../../../",
+      "workingDirectory": "./././",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

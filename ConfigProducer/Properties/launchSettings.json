@@ -2,7 +2,7 @@
   "profiles": {
     "ConfigProducer": {
       "commandName": "Project",
-      "workingDirectory": "../../../",
+      "workingDirectory": "./././",
       "environmentVariables": {
         "ENVIRONMENT": "Development"
       }

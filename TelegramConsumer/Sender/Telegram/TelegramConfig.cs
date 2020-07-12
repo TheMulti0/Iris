@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Telegram.Bot.Types;
 
 namespace TelegramConsumer
 {
@@ -7,6 +6,6 @@ namespace TelegramConsumer
     {
         public string AccessToken { get; set; }
 
-        public Dictionary<string, ChatId[]> UsernamesChatIds { get; set; }
+        public IEnumerable<User> Users { get; set; }
     }
 }
