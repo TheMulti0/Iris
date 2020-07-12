@@ -46,7 +46,7 @@ namespace TelegramConsumer
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Sending failed");
+                _logger.LogError(e, "Sending failed {} {}", e.Message, e.StackTrace);
             }
         }
 

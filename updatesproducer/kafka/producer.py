@@ -41,7 +41,8 @@ class Producer:
             sleep(interval_seconds)
 
     def update(self):
-        self._update_user('@realDonaldTrump')
+        for user in self.__config.watched_users:
+            self._update_user(user)
 
     def _update_user(self, user_id):
         self.__logger.info('Updating user %s', user_id)

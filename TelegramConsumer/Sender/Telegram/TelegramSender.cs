@@ -29,9 +29,7 @@ namespace TelegramConsumer
             _sender = sender;
             _logger = logger;
             
-            configsProvider.Configs
-            
-                .SubscribeAsync(HandleConfig);
+            configsProvider.Configs.SubscribeAsync(HandleConfig);
             configsProvider.InitializeSubscriptions();
         }
 

@@ -6,7 +6,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["TelegramConsumer/TelegramConsumer.csproj", "TelegramConsumer/"]
-COPY ["Consumer/Consumer.csproj", "Consumer/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 RUN dotnet restore "TelegramConsumer/TelegramConsumer.csproj"
 COPY . .

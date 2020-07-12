@@ -3,25 +3,61 @@ version: '3.4'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
+    container_name: iris_zookeeper
+    restart: always
+    networks:
+      - kafka_network
 
   kafka:
     image: wurstmeister/kafka
+    container_name: iris_kafka
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 0.0.0.0
+      KAFKA_BROKER_ID: 0
+      KAFKA_ADVERTISED_HOST_NAME: iris_kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "updates:1:1, tests:1:1"
+      KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
+    networks:
+      - kafka_network
     depends_on:
       - zookeeper
 
   mongodb: 
     image: mongo:latest
+    container_name: iris_mongodb
+    restart: always
+    networks:
+      - mongodb_network
     volumes:
       - ./mongodb:/data/db
 
   telegramconsumer:
-    image: ${DOCKER_REGISTRY-}telegramconsumer
+    image: iris/telegramconsumer
     build:
       context: .
       dockerfile: TelegramConsumer/Dockerfile
-    depends_on: 
+    container_name: iris_telegramconsumer
+    restart: always
+    networks:
+      - kafka_network
+    depends_on:
       - kafka
+
+  twitterproducer:
+    image: iris/twitterproducer
+    build:
+      context: .
+      dockerfile: updatesproducer/Dockerfile
+      args:
+        PROJECT_DIR: 'twitterproducer'
+    restart: always
+    container_name: iris_twitterproducer
+    networks:
+      - kafka_network
+      - mongodb_network
+    depends_on:
+      - kafka
+      - mongodb
+
+networks:
+  kafka_network:
+  mongodb_network:
