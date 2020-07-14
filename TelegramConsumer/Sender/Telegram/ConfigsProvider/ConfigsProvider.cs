@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TelegramConsumer
 {
-    public class ConfigsProvider
+    internal class ConfigsProvider : IConfigsProvider
     {
         private readonly IKafkaConsumer<string, string> _consumer;
         private readonly TelegramConfig _defaultConfig;

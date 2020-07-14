@@ -27,7 +27,7 @@ namespace TelegramConsumer
             UpdateMessage update,
             ChatId chatId)
         {
-            switch (update.Media.Length)
+            switch (update.Media?.Length ?? 0)
             {
                 case 0:
                     await SendTextMessage(client, update, chatId);

@@ -20,7 +20,7 @@ namespace TelegramConsumer
         private CancellationTokenSource _sendCancellation;
 
         public TelegramSender(
-            ConfigsProvider configsProvider,
+            IConfigsProvider configsProvider,
             ITelegramBotClientProvider clientProvider,
             MessageSender sender,
             ILogger<TelegramSender> logger)
@@ -97,10 +97,12 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending update {}", update);
 
-            var user = _config.Users.FirstOrDefault(user => user.UserName == update.AuthorId);
-            var updateMessage = UpdateMessageFactory.Create(update, user);
+            User user = _config?.Users.FirstOrDefault(u => u.UserName == update.AuthorId);
+            long[] userChatIds = user?.ChatIds ?? new long[0];
 
-            foreach (var chatId in user.ChatIds)
+            UpdateMessage updateMessage = UpdateMessageFactory.Create(update, user);
+
+            foreach (long chatId in userChatIds)
             {
                 await _sender.SendAsync(_client, updateMessage, chatId);
             }
