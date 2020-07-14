@@ -93,16 +93,16 @@ namespace TelegramConsumer
             if (_config == null)
             {
                 _logger.LogError("Update request sent, but no config present. Leaving.");
+                return;
             }
 
             _logger.LogInformation("Sending update {}", update);
 
-            User user = _config?.Users.FirstOrDefault(u => u.UserName == update.AuthorId);
-            long[] userChatIds = user?.ChatIds ?? new long[0];
+            User user = _config.Users.First(u => u.UserName == update.AuthorId);
 
             UpdateMessage updateMessage = UpdateMessageFactory.Create(update, user);
 
-            foreach (long chatId in userChatIds)
+            foreach (long chatId in user.ChatIds)
             {
                 await _sender.SendAsync(_client, updateMessage, chatId);
             }
