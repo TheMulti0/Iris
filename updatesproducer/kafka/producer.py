@@ -6,7 +6,7 @@ from time import sleep
 
 from kafka import KafkaProducer
 
-from updatesproducer.kafka.cancellation_token import CancellationToken
+from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 
