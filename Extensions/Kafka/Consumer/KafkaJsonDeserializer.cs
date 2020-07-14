@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Kafka.Public;
 
 namespace Extensions
@@ -31,7 +32,8 @@ namespace Extensions
             {
                 Converters =
                 {
-                    new DateTimeConverter()
+                    new DateTimeConverter(),
+                    new JsonStringEnumConverter()
                 }
             };
         }

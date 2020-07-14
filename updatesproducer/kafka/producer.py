@@ -11,6 +11,8 @@ from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.updateapi.media import Media
+from updatesproducer.updateapi.mediatype import MediaType
 
 
 class Producer:
@@ -71,14 +73,18 @@ class Producer:
         )
 
     @staticmethod
-    def _datetime_converter(dt: datetime):
-        if isinstance(dt, datetime):
-            return dt.__str__()
+    def _json_converter(obj):
+        if isinstance(obj, datetime):
+            return obj.__str__()
+        if isinstance(obj, Media):
+            return obj.__dict__
+        if isinstance(obj, MediaType):
+            return obj.value
 
     def _send(self, update):
         self.__logger.info('Sending updateapi %s to Kafka as JSON UTF-8 bytes', update.url)
 
-        json_str = json.dumps(update.__dict__, default=self._datetime_converter)
+        json_str = json.dumps(update.__dict__, default=self._json_converter)
         update_bytes = bytes(json_str, 'utf-8')
 
         self.__producer.send(

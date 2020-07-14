@@ -73,7 +73,7 @@ class Startup:
 
         return Producer(
             TopicProducerConfig(config['tweets_producer']),
-            MockUpdatesRepository(),
+            repository,
             twitter_updates_provider,
             self.__cancellation_token,
             logging.getLogger(Producer.__name__))
