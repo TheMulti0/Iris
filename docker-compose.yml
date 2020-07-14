@@ -51,6 +51,26 @@ services:
         PROJECT_DIR: 'twitterproducer'
     restart: always
     container_name: iris_twitterproducer
+    volumes:
+      - './twitterproducer/appsettings-prod.json:/app/appsettings.json'
+    networks:
+      - kafka_network
+      - mongodb_network
+    depends_on:
+      - kafka
+      - mongodb
+
+  facebookproducer:
+    image: iris/facebookproducer
+    build:
+      context: .
+      dockerfile: updatesproducer/Dockerfile
+      args:
+        PROJECT_DIR: 'facebookproducer'
+    restart: always
+    container_name: iris_facebookproducer
+    volumes:
+      - './facebookproducer/appsettings-prod.json:/app/appsettings.json'
     networks:
       - kafka_network
       - mongodb_network
