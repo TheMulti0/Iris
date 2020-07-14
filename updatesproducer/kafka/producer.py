@@ -52,11 +52,16 @@ class Producer:
         new_updates = self._get_new_updates(user_id)
         self.__logger.debug('Got new updates')
 
+        updates_count = 0
         for update in new_updates:
+            updates_count += 1
             self._send(update)
             self.__repository.set_user_latest_update_time(
                 user_id,
                 update.creation_date)
+
+        if updates_count == 0:
+            self.__logger.info('No new updates found')
 
     def _get_new_updates(self, user_id):
         updates = self.__updates_provider.get_updates(user_id)

@@ -8,31 +8,24 @@ from updatesproducer.kafka.producer import Producer
 from updatesproducer.db.updates_repository import UpdatesRepository
 
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.startup import Startup
 
 
-def main():
-    logging.basicConfig(
-        format='[%(asctime)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S %z',
-        level=logging.DEBUG)
-
-    appsettings = json.load(open('appsettings.json'))
-
+def create_producer(config, cancellation_token):
     repository = UpdatesRepository(
-        MongoDbConfig(appsettings['mongodb']),
+        MongoDbConfig(config['mongodb']),
         logging.getLogger(UpdatesRepository.__name__)
     )
 
-    posts_producer = Producer(
-        TopicProducerConfig(appsettings['posts_producer']),
+    return Producer(
+        TopicProducerConfig(config['posts_producer']),
         repository,
         FacebookUpdatesProvider(
             PostsProvider()
         ),
+        cancellation_token,
         logging.getLogger(Producer.__name__))
-
-    posts_producer.start()
 
 
 if __name__ == '__main__':
-    main()
+    Startup('Facebook', create_producer).start()
