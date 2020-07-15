@@ -37,6 +37,8 @@ services:
       context: .
       dockerfile: TelegramConsumer/Dockerfile
     container_name: iris_telegramconsumer
+    volumes:
+      - './TelegramConsumer/appsettings.json:/app/appsettings.json'
     restart: always
     networks:
       - kafka_network
