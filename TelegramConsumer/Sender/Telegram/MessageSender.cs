@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,9 @@ namespace TelegramConsumer
         {
             _logger = logger;
         }
+        
+        private static bool CanUpdateFitInOneMediaMessage(UpdateMessage update) 
+            => update.Message.Length <= MaxMediaCaptionSize;
 
         public async Task SendAsync(
             ITelegramBotClient client,
@@ -33,7 +37,7 @@ namespace TelegramConsumer
                     await SendTextMessage(client, update, chatId);
                     break;
 
-                case 1 when update.Message.Length <= MaxMediaCaptionSize:
+                case 1 when CanUpdateFitInOneMediaMessage(update):
                     await SendSingleMediaMessage(client, update, chatId);
                     break;
 
@@ -122,17 +126,46 @@ namespace TelegramConsumer
 
         }
 
-        private async Task SendMediaMessageBatchUnsafe(
+        private Task SendMediaMessageBatchUnsafe(
             ITelegramBotClient client,
             UpdateMessage update, 
             ChatId chatId)
         {
             _logger.LogInformation("Sending media album batch");
-            var mediaMessages = await SendMediaAlbum(client, update, chatId);
+
+            return CanUpdateFitInOneMediaMessage(update) 
+                ? SendMediaAlbumWithCaption(client, update, chatId) 
+                : SendMediaAlbumAndCorrespondingMessage(client, update, chatId);
+        }
+
+        private Task<Message[]> SendMediaAlbumWithCaption(
+            ITelegramBotClient client,
+            UpdateMessage update,
+            ChatId chatId)
+        {
+            IAlbumInputMedia ToAlbumInputMedia(Media media, int index)
+            {
+                return index > 0
+                    ? media.ToAlbumInputMedia()
+                    : media.ToAlbumInputMedia(update.Message, MessageParseMode);
+            }
+
+            IEnumerable<IAlbumInputMedia> telegramMedia = update.Media
+                .Select(ToAlbumInputMedia);
+
+            _logger.LogInformation("Sending media album with caption");
+
+            return client.SendMediaGroupAsync(telegramMedia, chatId);
+        }
+
+        private async Task SendMediaAlbumAndCorrespondingMessage(ITelegramBotClient client, UpdateMessage update, ChatId chatId)
+        {
+            Message[] mediaMessages = await SendMediaAlbum(client, update, chatId);
 
             if (update.Message.Any())
             {
-                var firstMediaMessageId = mediaMessages?.FirstOrDefault()?.MessageId;
+                int? firstMediaMessageId = mediaMessages?.FirstOrDefault()
+                    ?.MessageId;
 
                 _logger.LogInformation("Sending corresponding message");
 
