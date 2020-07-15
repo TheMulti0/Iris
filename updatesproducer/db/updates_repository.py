@@ -35,7 +35,7 @@ class UpdatesRepository(IUpdatesRepository):
         return update_time
 
     def set_user_latest_update_time(self, user_id, latest_update_time):
-        self.__logger.info('Updating %s latest updateapi time to %s', user_id, latest_update_time)
+        self.__logger.info('Updating %s latest update time to %s', user_id, latest_update_time)
         update_time = self.__update_times.find_one_and_update(
             filter={'user_id': user_id},
             update={'$set': {'latest_update_time': latest_update_time}})

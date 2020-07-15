@@ -1,7 +1,6 @@
 from facebookproducer.posts.post import Post
 from updatesproducer.updateapi.media import Media
 from updatesproducer.updateapi.mediatype import MediaType
-from twitterproducer.tweets.tweet import Tweet
 
 
 class MediaFactory:
@@ -12,17 +11,21 @@ class MediaFactory:
     @staticmethod
     def get_photos(post):
         try:
-            return [
-                Media(post.image, MediaType.Photo)
-            ]
+            if post.image is not None:
+                return [
+                    Media(post.image, MediaType.Photo)
+                ]
+            return []
         except AttributeError:
             return []
 
     @staticmethod
-    def get_videos(tweet):
+    def get_videos(post):
         try:
-            return [
-                Media(tweet.video, MediaType.Video)
-            ]
+            if post.video is not None:
+                return [
+                    Media(post.video, MediaType.Video)
+                ]
+            return []
         except AttributeError:
             return []
