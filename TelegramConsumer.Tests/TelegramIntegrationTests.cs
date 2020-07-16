@@ -56,7 +56,7 @@ namespace TelegramConsumer.Tests
             var content = "";
             for (int i = 0; i < 5000; i++)
             {
-                content += i + '\n';
+                content += $"{i} \n";
             }
 
             return _sender.SendAsync(
