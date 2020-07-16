@@ -49,6 +49,25 @@ namespace TelegramConsumer.Tests
         }
         
         [TestMethod]
+        public Task TestLongText()
+        {
+            User user = GetFirstConfiguredUser();
+
+            var content = "";
+            for (int i = 0; i < 5000; i++)
+            {
+                content += i + '\n';
+            }
+
+            return _sender.SendAsync(
+                new Update
+                {
+                    AuthorId = user.UserName,
+                    Content = content
+                });
+        }
+        
+        [TestMethod]
         public Task TestTextWithUrl()
         {
             User user = GetFirstConfiguredUser();

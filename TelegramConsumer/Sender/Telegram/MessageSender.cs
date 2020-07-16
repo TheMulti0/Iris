@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -51,6 +52,28 @@ namespace TelegramConsumer
             ChatId chatId,
             int replyMessageId = default)
         {
+            string text = update.Message;
+            if (text.Length > MaxTextMessageLength)
+            {
+                return SendMultipleTextMessages(
+                    client,
+                    update,
+                    chatId);
+            }
+
+            return SendSingleTextMessage(
+                client,
+                update,
+                chatId,
+                replyMessageId);
+        }
+        
+        private Task<Message> SendSingleTextMessage(
+            ITelegramBotClient client,
+            UpdateMessage update,
+            ChatId chatId,
+            int replyMessageId = default)
+        {
             _logger.LogInformation("Sending text message");
 
             return client.SendTextMessageAsync(
@@ -60,6 +83,85 @@ namespace TelegramConsumer
                 disableWebPagePreview: DisableWebPagePreview,
                 replyToMessageId: replyMessageId
             );
+        }
+
+        private async Task SendMultipleTextMessages(
+            ITelegramBotClient client,
+            UpdateMessage update,
+            ChatId chatId)
+        {
+            _logger.LogInformation("Sending text messages");
+
+            string text = update.Message;
+            int textLength = text.Length;
+            if (textLength > MaxTextMessageLength)
+            {
+                IEnumerable<string> messageChunks = ChunkifyText(
+                    text,
+                    MaxTextMessageLength,
+                    "\n>>>",
+                    '\n', ',', '.');
+
+                var lastMessageId = 0;
+                
+                foreach (string message in messageChunks)
+                {
+                    var newUpdateMessage = new UpdateMessage
+                    {
+                        Media = update.Media,
+                        Message = message
+                    };
+                    
+                    var lastMessage = await SendSingleTextMessage(
+                        client,
+                        newUpdateMessage,
+                        chatId,
+                        lastMessageId);
+
+                    lastMessageId = lastMessage.MessageId;
+                }
+            }
+        }
+        
+        private IEnumerable<string> ChunkifyText(
+            string bigString,
+            int maxLength,
+            string suffix,
+            params char[] punctuation)
+        {
+            var chunks = new List<string>();
+
+            int index = 0;
+            var startIndex = 0;
+
+            int bigStringLength = bigString.Length;
+            while (startIndex < bigStringLength)
+            {
+                if (index == bigStringLength - 1)
+                {
+                    suffix = "";
+                }
+                maxLength -= suffix.Length;
+
+                string chunk = startIndex + maxLength >= bigStringLength 
+                    ? bigString.Substring(startIndex) 
+                    : bigString.Substring(startIndex, maxLength);
+
+                int endIndex = chunk.LastIndexOfAny(punctuation);
+
+                if (endIndex < 0)
+                    endIndex = chunk.LastIndexOf(" ", StringComparison.Ordinal);
+
+                if (endIndex < 0)
+                    endIndex = Math.Min(maxLength - 1, chunk.Length - 1);
+
+                chunks.Add(chunk.Substring(0, endIndex + 1) + suffix);
+
+                index++;
+                startIndex += endIndex + 1;
+            }
+
+            return chunks;
         }
 
         private Task SendSingleMediaMessage(
