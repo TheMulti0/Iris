@@ -11,7 +11,8 @@ namespace TelegramConsumer
 {
     public class MessageSender
     {
-        private const int MaxMediaCaptionSize = 1024;
+        private const int MaxTextMessageLength = 4096;
+        private const int MaxMediaCaptionLength = 1024;
         private const ParseMode MessageParseMode = ParseMode.Html;
         private const bool DisableWebPagePreview = true;
 
@@ -22,11 +23,11 @@ namespace TelegramConsumer
         {
             _logger = logger;
         }
-        
-        private static bool CanUpdateFitInOneMediaMessage(UpdateMessage update) 
-            => update.Message.Length <= MaxMediaCaptionSize;
 
-        public async Task SendAsync(
+        private static bool CanUpdateFitInOneMediaMessage(UpdateMessage update)
+            => update.Message.Length <= MaxMediaCaptionLength;
+
+        public Task SendAsync(
             ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
@@ -34,22 +35,19 @@ namespace TelegramConsumer
             switch (update.Media?.Length ?? 0)
             {
                 case 0:
-                    await SendTextMessage(client, update, chatId);
-                    break;
+                    return SendTextMessage(client, update, chatId);
 
                 case 1 when CanUpdateFitInOneMediaMessage(update):
-                    await SendSingleMediaMessage(client, update, chatId);
-                    break;
+                    return SendSingleMediaMessage(client, update, chatId);
 
                 default:
-                    await SendMediaMessageBatch(client, update, chatId);
-                    break;
+                    return SendMediaMessageBatch(client, update, chatId);
             }
         }
 
         private Task SendTextMessage(
             ITelegramBotClient client,
-            UpdateMessage update, 
+            UpdateMessage update,
             ChatId chatId,
             int replyMessageId = default)
         {
@@ -76,7 +74,7 @@ namespace TelegramConsumer
 
         private Task SendPhoto(
             ITelegramBotClient client,
-            UpdateMessage update, 
+            UpdateMessage update,
             ChatId chatId)
         {
             _logger.LogInformation("Sending single photo message");
@@ -123,19 +121,23 @@ namespace TelegramConsumer
                 // Release the thread even if the operation fails (avoid a deadlock)
                 _messageBatchLock.Release();
             }
-
         }
 
         private Task SendMediaMessageBatchUnsafe(
             ITelegramBotClient client,
-            UpdateMessage update, 
+            UpdateMessage update,
             ChatId chatId)
         {
             _logger.LogInformation("Sending media album batch");
 
-            return CanUpdateFitInOneMediaMessage(update) 
-                ? SendMediaAlbumWithCaption(client, update, chatId) 
-                : SendMediaAlbumAndCorrespondingMessage(client, update, chatId);
+            if (CanUpdateFitInOneMediaMessage(update))
+            {
+                return SendMediaAlbumWithCaption(client, update, chatId);
+            }
+            else
+            {
+                return SendMediaAlbumAndCorrespondingMessage(client, update, chatId);
+            }
         }
 
         private Task<Message[]> SendMediaAlbumWithCaption(
@@ -158,7 +160,10 @@ namespace TelegramConsumer
             return client.SendMediaGroupAsync(telegramMedia, chatId);
         }
 
-        private async Task SendMediaAlbumAndCorrespondingMessage(ITelegramBotClient client, UpdateMessage update, ChatId chatId)
+        private async Task SendMediaAlbumAndCorrespondingMessage(
+            ITelegramBotClient client,
+            UpdateMessage update,
+            ChatId chatId)
         {
             Message[] mediaMessages = await SendMediaAlbum(client, update, chatId);
 

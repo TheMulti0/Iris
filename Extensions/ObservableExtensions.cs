@@ -11,8 +11,7 @@ namespace Extensions
             Func<T, Task> onNextAsync)
         {
             return source
-                .Select(value => Observable.FromAsync(() => onNextAsync(value)))
-                .Concat()
+                .SelectMany(value => Observable.FromAsync(() => onNextAsync(value)))
                 .Subscribe();
         }
     }
