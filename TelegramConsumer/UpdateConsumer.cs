@@ -42,6 +42,7 @@ namespace TelegramConsumer
 
             try
             {
+                await _updateConsumer.CommitAsync(record);
                 await _sender.SendAsync(record.Value);
             }
             catch (Exception e)

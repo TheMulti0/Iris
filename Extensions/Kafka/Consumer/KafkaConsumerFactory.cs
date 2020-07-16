@@ -22,7 +22,10 @@ namespace Extensions
                 config.DefaultTopic,
                 clusterClient);
             
-            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, new ConsumerGroupConfiguration());
+            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, new ConsumerGroupConfiguration
+            {
+                DefaultOffsetToReadFrom = Offset.Latest
+            });
 
             return consumer;
         }
