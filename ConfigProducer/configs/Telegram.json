@@ -1,11 +1,11 @@
 ﻿{
-  "AccessToken": "1073759913:AAEHDxkcx3zOO7PFvWwgi7yIJn8IIYhc9pA",
+  "AccessToken": "accesstoken",
   "Users": [
     {
-      "UserName": "realDonaldTrump",
-      "DisplayName": "טראמפ",
+      "UserName": "example-user",
+      "DisplayName": "Example User",
       "ChatIds": [
-        -1001422720138
+        0
       ]
     }
   ]

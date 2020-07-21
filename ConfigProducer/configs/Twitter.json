@@ -1,7 +1,7 @@
 {
   "config_consumer": {
     "topic": "configs",
-    "bootstrap_servers": "localhost:9092"
+    "bootstrap_servers": "iris_kafka:9092"
   },
   "mongodb": {
     "connection_string": "mongodb://localhost:27017/",
@@ -9,10 +9,10 @@
   },
   "tweets_producer": {
     "topic": "updates",
-    "bootstrap_servers": "localhost:9092",
-    "update_interval_seconds": 6,
+    "bootstrap_servers": "iris_kafka:9092",
+    "update_interval_seconds": 5,
     "watched_users": [
-      "@realDonaldTrump"
+      "example-user"
     ]
   }
 }

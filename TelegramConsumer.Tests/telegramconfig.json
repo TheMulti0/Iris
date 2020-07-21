@@ -1,11 +1,11 @@
 ﻿{
-  "AccessToken": "1073759913:AAEHDxkcx3zOO7PFvWwgi7yIJn8IIYhc9pA",
+  "AccessToken": "accesstoken",
   "Users": [
     {
-      "UserName": "mock-user",
-      "DisplayName": "Mock User",
+      "UserName": "example-user",
+      "DisplayName": "Example User",
       "ChatIds": [
-        -1001422720138
+        0
       ]
     }
   ]
