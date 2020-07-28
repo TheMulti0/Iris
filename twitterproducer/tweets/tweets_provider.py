@@ -15,7 +15,9 @@ class TweetsProvider(ITweetsProvider):
             tweet = Tweet(tweet_dict)
             # Downloads the first video only
             if len(tweet_dict['entries']['videos']) > 0:
-                tweet.video = self._download_video(tweet.tweetUrl)
+                video = self._download_video(tweet.tweetUrl)
+                if video is not None:
+                    tweet.video = video
 
             yield tweet
 
@@ -28,7 +30,7 @@ class TweetsProvider(ITweetsProvider):
             with YoutubeDL(ydl_opts) as ydl:
                 return ydl.extract_info(url, download=False)['url']
         except ExtractorError as ex:
-            self.__logger.error("Error extracting video with youtube-dl: %r", ex)
+            self.__logger.error("Error extracting video with youtube-dl, skipping video check: %r", ex)
         return None
 
 
