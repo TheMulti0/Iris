@@ -1,8 +1,8 @@
+import asyncio
 import json
 
 from datetime import datetime
 from logging import Logger
-from time import sleep
 
 from kafka import KafkaProducer
 
@@ -30,7 +30,7 @@ class Producer:
         self.__cancellation_token = cancellation_token
         self.__logger = logger
 
-    def start(self):
+    async def start(self):
         while True:
             self.__logger.info('Updating all users')
             self.update()
@@ -40,7 +40,7 @@ class Producer:
 
             interval_seconds = self.__config.update_interval_seconds
             self.__logger.info('Done updating. Sleeping for %s seconds', interval_seconds)
-            sleep(interval_seconds)
+            await asyncio.sleep(interval_seconds)
 
     def update(self):
         for user in self.__config.watched_users:

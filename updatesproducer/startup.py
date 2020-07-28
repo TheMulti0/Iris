@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from threading import Lock, Thread
@@ -26,29 +27,35 @@ class Startup:
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json'))
 
-        Thread(target=self.operate).start()
-
-        self.consume_configs()
-
-    @staticmethod
-    def create_consumer(config):
-        config_consumer_config = config['config_consumer']
-
-        return KafkaConsumer(
-            config_consumer_config['topic'],
-            bootstrap_servers=config_consumer_config['bootstrap_servers']
+        self.run_async(
+            self.aggregate(
+                self.produce(),
+                self.consume_configs()
+            )
         )
 
-    def operate(self):
+    @staticmethod
+    def run_async(future):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(future)
+
+    @staticmethod
+    async def aggregate(*coroutines):
+        await asyncio.gather(*coroutines)
+
+    async def produce(self):
         while True:
             with self.__config_lock:
                 producer = self.__create_producer(self.__config, self.__cancellation_token)
 
-            producer.start()
+            await producer.start()
 
-    def consume_configs(self):
+    async def consume_configs(self):
+        await asyncio.sleep(1)
+
         with self.__config_lock:
             consumer = self.create_consumer(self.__config)
+
         for record in consumer:
             if record.key != bytes(self.__service_name):
                 continue
@@ -58,3 +65,12 @@ class Startup:
 
             self.__cancellation_token.cancel()
             self.__cancellation_token = CancellationToken()
+
+    @staticmethod
+    def create_consumer(config):
+        config_consumer_config = config['config_consumer']
+
+        return KafkaConsumer(
+            config_consumer_config['topic'],
+            bootstrap_servers=config_consumer_config['bootstrap_servers']
+        )
