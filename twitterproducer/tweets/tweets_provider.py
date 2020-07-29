@@ -24,7 +24,7 @@ class TweetsProvider(ITweetsProvider):
     def _download_video(self, url):
         ydl_opts = {
             'format': 'best',
-            'quiet': True,
+            'quiet': False,
         }
         try:
             with YoutubeDL(ydl_opts) as ydl:
