@@ -30,7 +30,7 @@ class Startup:
         self.run_async(
             self.aggregate(
                 self.produce(),
-                self.consume_configs()
+                # self.consume_configs()
             )
         )
 
