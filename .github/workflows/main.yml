@@ -21,8 +21,8 @@ jobs:
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
         with:
-          username: $DOCKER_USERNAME
-          password: $DOCKER_PASSWORD
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
           repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
