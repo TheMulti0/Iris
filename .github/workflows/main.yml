@@ -16,7 +16,7 @@ jobs:
     steps:
       
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
 
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
@@ -26,7 +26,7 @@ jobs:
           repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: $GITHUB_WORKSPACE/TelegramConsumer/Dockerfile
+          dockerfile: TelegramConsumer/Dockerfile
           # Sets the target stage to build
           target: true
           
