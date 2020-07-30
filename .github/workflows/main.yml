@@ -17,6 +17,9 @@ jobs:
       
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        
+      - name: ls
+        run: ls
 
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
