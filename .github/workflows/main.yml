@@ -17,9 +17,6 @@ jobs:
       
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        
-      - name: ls
-        run: ls
 
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
@@ -29,7 +26,7 @@ jobs:
           repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: TelegramConsumer/Dockerfile
+          dockerfile: TelegramConsumer
           # Sets the target stage to build
           target: true
           
@@ -41,7 +38,7 @@ jobs:
           repository: themulti0/iris_twitterproducer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: updatesproducer/Dockerfile
+          dockerfile: updatesproducer
           build_args: PROJECT_DIR=twitterproducer
           # Sets the target stage to build
           target: true
@@ -54,7 +51,7 @@ jobs:
           repository: themulti0/iris_facebookproducer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: updatesproducer/Dockerfile
+          dockerfile: updatesproducer
           build_args: PROJECT_DIR=facebookproducer
           # Sets the target stage to build
           target: true
