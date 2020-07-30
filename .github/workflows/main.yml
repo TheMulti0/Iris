@@ -15,8 +15,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
@@ -26,7 +26,7 @@ jobs:
           repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: /github/workspace/TelegramConsumer/Dockerfile
+          dockerfile: $GITHUB_WORKSPACE/TelegramConsumer/Dockerfile
           # Sets the target stage to build
           target: true
           
