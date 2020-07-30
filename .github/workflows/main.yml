@@ -26,7 +26,7 @@ jobs:
           repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: TelegramConsumer
+          dockerfile: /github/workspace/TelegramConsumer/Dockerfile
           # Sets the target stage to build
           target: true
           
