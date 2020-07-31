@@ -36,7 +36,7 @@ jobs:
           repository: themulti0/iris_twitterproducer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: updatesproducer
+          dockerfile: updatesproducer/Dockerfile
           build_args: PROJECT_DIR=twitterproducer
 
       - name: Build and push Iris/facebookproducer image
@@ -47,5 +47,5 @@ jobs:
           repository: themulti0/iris_facebookproducer
           # Automatically tags the built image with the git short SHA as per the readme
           tag_with_sha: true
-          dockerfile: updatesproducer
+          dockerfile: updatesproducer/Dockerfile
           build_args: PROJECT_DIR=facebookproducer
