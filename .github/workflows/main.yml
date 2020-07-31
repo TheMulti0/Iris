@@ -22,7 +22,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
         # Automatically tags the built image with the git short SHA as per the readme
-        tags: $GITHUB_RUN_NUMBER
+        tags: ${{ github.sha }}
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
@@ -54,4 +54,4 @@ jobs:
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: VERSION=$GITHUB_RUN_NUMBER eval 'docker-compose -f ~/Iris/docker-compose.yml'
+        script: VERSION=${{ github.sha }} eval 'docker-compose -f ~/Iris/docker-compose.yml'
