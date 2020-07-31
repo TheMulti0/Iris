@@ -3,8 +3,6 @@ name: Build
 on: push
 
 jobs:
-  job_id:
-     
   build:
     env:
       VERSION: ${{ github.sha::8 }}
