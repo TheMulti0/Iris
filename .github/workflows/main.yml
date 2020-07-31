@@ -21,7 +21,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
         # Automatically tags the built image with the git short SHA as per the readme
-        tags: $VERSION
+        tags: ${{ VERSION }}
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
