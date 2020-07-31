@@ -51,4 +51,4 @@ jobs:
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: ls
+        script: VERSION=sha-${GITHUB_SHA:8} bash -c 'docker-compose -f Iris/docker-compose.yml down | docker-compose -f Iris/docker-compose.yml up -d'
