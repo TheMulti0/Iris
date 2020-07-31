@@ -1,12 +1,9 @@
-name: Build
+name: Continuous Integration
 
 on: push
 
 jobs:
   build:
-    env:
-      VERSION: sha-${GITHUB_SHA::8}
-
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +41,7 @@ jobs:
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
     
-    - name: Executing remote command
+    - name: Deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
