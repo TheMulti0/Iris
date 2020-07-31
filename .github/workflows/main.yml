@@ -1,15 +1,16 @@
 name: Build
 
-on: push    
+on: push
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
+  job_id:
+     
   build:
-    # The type of runner that the job will run on
+    env:
+      VERSION: ${{ github.sha::8 }}
+
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       
     - name: Checkout code
@@ -22,7 +23,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
         # Automatically tags the built image with the git short SHA as per the readme
-        tags: ${{ github.sha }}
+        tags: $VERSION
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
@@ -54,4 +55,4 @@ jobs:
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: VERSION=${{ github.sha }} eval 'docker-compose -f ~/Iris/docker-compose.yml'
+        script: ls
