@@ -32,7 +32,7 @@ services:
       - ./mongodb:/data/db
 
   telegramconsumer:
-    image: iris/telegramconsumer
+    image: themulti0/iris_telegramconsumer
     build:
       context: .
       dockerfile: TelegramConsumer/Dockerfile
@@ -46,7 +46,7 @@ services:
       - kafka
 
   twitterproducer:
-    image: iris/twitterproducer
+    image: themulti0/iris_twitterproducer
     build:
       context: .
       dockerfile: updatesproducer/Dockerfile
@@ -64,7 +64,7 @@ services:
       - mongodb
 
   facebookproducer:
-    image: iris/facebookproducer
+    image: themulti0/iris_facebookproducer
     build:
       context: .
       dockerfile: updatesproducer/Dockerfile
