@@ -28,7 +28,7 @@ jobs:
           # tag_with_sha: true
           dockerfile: TelegramConsumer/Dockerfile
           # Sets the target stage to build
-          target: true
+          # target: true
           
       - name: Build and push Iris/twitterproducer image
         uses: docker/build-push-action@v1.1.0
