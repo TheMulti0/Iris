@@ -5,7 +5,7 @@ on: push
 jobs:
   build:
     env:
-      VERSION: ${{ github.sha::8 }}
+      VERSION: sha-${{GITHUB_SHA::8}}
 
     runs-on: ubuntu-latest
 
