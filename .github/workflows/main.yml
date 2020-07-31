@@ -20,8 +20,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
-        # Automatically tags the built image with the git short SHA as per the readme
-        tags: ${{ VERSION }}
+        tag_with_sha: true
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
@@ -30,7 +29,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_twitterproducer
-        # Automatically tags the built image with the git short SHA as per the readme
         tag_with_sha: true
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=twitterproducer
