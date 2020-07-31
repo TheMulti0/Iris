@@ -16,7 +16,7 @@ jobs:
     steps:
       
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Build and push Iris/TelegramConsumer image
         uses: docker/build-push-action@v1.1.0
