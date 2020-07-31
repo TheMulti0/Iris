@@ -23,12 +23,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: iris_telegramconsumer
+          repository: themulti0/iris_telegramconsumer
           # Automatically tags the built image with the git short SHA as per the readme
-          # tag_with_sha: true
+          tag_with_sha: true
           dockerfile: TelegramConsumer/Dockerfile
-          # Sets the target stage to build
-          # target: true
           
       - name: Build and push Iris/twitterproducer image
         uses: docker/build-push-action@v1.1.0
@@ -40,8 +38,6 @@ jobs:
           tag_with_sha: true
           dockerfile: updatesproducer
           build_args: PROJECT_DIR=twitterproducer
-          # Sets the target stage to build
-          target: true
 
       - name: Build and push Iris/facebookproducer image
         uses: docker/build-push-action@v1.1.0
@@ -53,5 +49,3 @@ jobs:
           tag_with_sha: true
           dockerfile: updatesproducer
           build_args: PROJECT_DIR=facebookproducer
-          # Sets the target stage to build
-          target: true
