@@ -11,7 +11,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build and push Iris/TelegramConsumer image
+    - name: Build and push Iris/telegramconsumer image
       uses: docker/build-push-action@v1.1.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -48,4 +48,4 @@ jobs:
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: VERSION=sha-${GITHUB_SHA::8} bash -c '(docker-compose -f Iris/docker-compose.yml down; docker-compose -f Iris/docker-compose.yml build --pull; docker-compose -f Iris/docker-compose.yml up -d)'
+        script: VERSION=sha-${GITHUB_SHA::8} bash -c '(cd Iris; git pull; docker-compose down; docker-compose build --pull; docker-compose up -d)'
