@@ -124,6 +124,33 @@ namespace TelegramConsumer.Tests
         }
         
         [TestMethod]
+        public Task TestPhotoWithLongText()
+        {
+            User user = GetFirstConfiguredUser();
+
+            var content = "";
+            for (int i = 0; i < 5000; i++)
+            {
+                content += $"{i} \n";
+            }
+
+            return _sender.SendAsync(
+                new Update
+                {
+                    AuthorId = user.UserName,
+                    Content = content,
+                    Media = new []
+                    {
+                        new Media
+                        {
+                            Type = MediaType.Photo,
+                            Url = PhotoUrl
+                        }
+                    }
+                });
+        }
+        
+        [TestMethod]
         public Task TestVideo()
         {
             User user = GetFirstConfiguredUser();

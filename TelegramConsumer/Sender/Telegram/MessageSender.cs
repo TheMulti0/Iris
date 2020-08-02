@@ -25,49 +25,32 @@ namespace TelegramConsumer
             _logger = logger;
         }
 
-        private static bool CanUpdateFitInOneMediaMessage(UpdateMessage update)
-            => update.Message.Length <= MaxMediaCaptionLength;
-
         public Task SendAsync(
             ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
+            bool canUpdateFitInOneTextMessage = update.Message.Length <= MaxTextMessageLength;
+            bool canUpdateFitInOneMediaMessage = update.Message.Length <= MaxMediaCaptionLength;
+
             switch (update.Media?.Length ?? 0)
             {
-                case 0:
-                    return SendTextMessage(client, update, chatId);
+                // Only when there is no media in the update, and the update's content can fit in one Telegram message
+                case 0 when canUpdateFitInOneTextMessage:
+                    return SendSingleTextMessage(client, update, chatId);
 
-                case 1 when CanUpdateFitInOneMediaMessage(update):
+                // Only if there is 1 media item, and the update's content can fit as a media caption (in one Telegram message)
+                case 1 when canUpdateFitInOneMediaMessage:
                     return SendSingleMediaMessage(client, update, chatId);
 
+                // Either when:
+                // 1. When there is more than 1 media items,
+                // 2. When the update's content cannot fit in a single message (text message / single media message)
                 default:
-                    return SendMediaMessageBatch(client, update, chatId);
+                    return SendMessageBatch(client, update, chatId, canUpdateFitInOneMediaMessage);
             }
         }
 
-        private Task SendTextMessage(
-            ITelegramBotClient client,
-            UpdateMessage update,
-            ChatId chatId,
-            int replyMessageId = default)
-        {
-            string text = update.Message;
-            if (text.Length > MaxTextMessageLength)
-            {
-                return SendMultipleTextMessages(
-                    client,
-                    update,
-                    chatId);
-            }
-
-            return SendSingleTextMessage(
-                client,
-                update,
-                chatId,
-                replyMessageId);
-        }
-        
         private Task<Message> SendSingleTextMessage(
             ITelegramBotClient client,
             UpdateMessage update,
@@ -82,15 +65,16 @@ namespace TelegramConsumer
                 parseMode: MessageParseMode,
                 disableWebPagePreview: DisableWebPagePreview,
                 replyToMessageId: replyMessageId
-            );
+                );
         }
 
         private async Task SendMultipleTextMessages(
             ITelegramBotClient client,
             UpdateMessage update,
-            ChatId chatId)
+            ChatId chatId,
+            int firstReplyMessageId = default)
         {
-            _logger.LogInformation("Sending text messages");
+            _logger.LogInformation("Sending multiple text messages");
 
             string text = update.Message;
             int textLength = text.Length;
@@ -100,10 +84,12 @@ namespace TelegramConsumer
                     text,
                     MaxTextMessageLength,
                     "\n>>>",
-                    '\n', ',', '.');
+                    '\n',
+                    ',',
+                    '.');
 
-                var lastMessageId = 0;
-                
+                int lastMessageId = firstReplyMessageId;
+
                 foreach (string message in messageChunks)
                 {
                     var newUpdateMessage = new UpdateMessage
@@ -111,7 +97,7 @@ namespace TelegramConsumer
                         Media = update.Media,
                         Message = message
                     };
-                    
+
                     var lastMessage = await SendSingleTextMessage(
                         client,
                         newUpdateMessage,
@@ -122,7 +108,7 @@ namespace TelegramConsumer
                 }
             }
         }
-        
+
         private IEnumerable<string> ChunkifyText(
             string bigString,
             int maxLength,
@@ -143,8 +129,8 @@ namespace TelegramConsumer
                 }
                 maxLength -= suffix.Length;
 
-                string chunk = startIndex + maxLength >= bigStringLength 
-                    ? bigString.Substring(startIndex) 
+                string chunk = startIndex + maxLength >= bigStringLength
+                    ? bigString.Substring(startIndex)
                     : bigString.Substring(startIndex, maxLength);
 
                 int endIndex = chunk.LastIndexOfAny(punctuation);
@@ -206,17 +192,18 @@ namespace TelegramConsumer
                 parseMode: MessageParseMode);
         }
 
-        private async Task SendMediaMessageBatch(
+        private async Task SendMessageBatch(
             ITelegramBotClient client,
             UpdateMessage update,
-            ChatId chatId)
+            ChatId chatId,
+            bool canUpdateFitInOneMediaMessage)
         {
             // Make sure no other updates will be sent as message batches until this batch is complete sending
             await _messageBatchLock.WaitAsync();
 
             try
             {
-                await SendMediaMessageBatchUnsafe(client, update, chatId);
+                await SendMessageBatchUnsafe(client, update, chatId, canUpdateFitInOneMediaMessage);
             }
             finally
             {
@@ -225,20 +212,56 @@ namespace TelegramConsumer
             }
         }
 
-        private Task SendMediaMessageBatchUnsafe(
+        private async Task SendMessageBatchUnsafe(
             ITelegramBotClient client,
             UpdateMessage update,
-            ChatId chatId)
+            ChatId chatId,
+            bool canUpdateFitInOneMediaMessage)
         {
-            _logger.LogInformation("Sending media album batch");
-
-            if (CanUpdateFitInOneMediaMessage(update))
+            _logger.LogInformation("Sending message batch");
+            
+            if (canUpdateFitInOneMediaMessage)
             {
-                return SendMediaAlbumWithCaption(client, update, chatId);
+                await SendMediaAlbumWithCaption(client, update, chatId);
+                return;
             }
-            else
+
+            int firstMediaMessageId = await SendMediaAlbumIfAny(client, update, chatId);
+
+            await SendTextMessagesIfAny(
+                client,
+                update,
+                chatId,
+                firstMediaMessageId);
+        }
+
+        private async Task<int> SendMediaAlbumIfAny(ITelegramBotClient client, UpdateMessage update, ChatId chatId)
+        {
+            bool anyMedia = update.Media?.Any() ?? false;
+            if (!anyMedia)
             {
-                return SendMediaAlbumAndCorrespondingMessage(client, update, chatId);
+                return 0;
+            }
+            
+            Message[] mediaMessages = await SendMediaAlbum(client, update, chatId);
+            return mediaMessages.FirstOrDefault()?.MessageId ?? 0;
+        }
+
+        private async Task SendTextMessagesIfAny(
+            ITelegramBotClient client,
+            UpdateMessage update,
+            ChatId chatId,
+            int firstMediaMessageId)
+        {
+            if (update.Message.Any())
+            {
+                _logger.LogInformation("Sending corresponding messages");
+
+                await SendMultipleTextMessages(
+                    client,
+                    update,
+                    chatId,
+                    firstMediaMessageId);
             }
         }
 
@@ -260,24 +283,6 @@ namespace TelegramConsumer
             _logger.LogInformation("Sending media album with caption");
 
             return client.SendMediaGroupAsync(telegramMedia, chatId);
-        }
-
-        private async Task SendMediaAlbumAndCorrespondingMessage(
-            ITelegramBotClient client,
-            UpdateMessage update,
-            ChatId chatId)
-        {
-            Message[] mediaMessages = await SendMediaAlbum(client, update, chatId);
-
-            if (update.Message.Any())
-            {
-                int? firstMediaMessageId = mediaMessages?.FirstOrDefault()
-                    ?.MessageId;
-
-                _logger.LogInformation("Sending corresponding message");
-
-                await SendTextMessage(client, update, chatId, firstMediaMessageId ?? 0);
-            }
         }
 
         private Task<Message[]> SendMediaAlbum(
