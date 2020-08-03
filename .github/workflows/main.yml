@@ -58,4 +58,5 @@ jobs:
           docker pull themulti0/iris_telegramconsumer:$VERSION
           docker pull themulti0/iris_twitterproducer:$VERSION
           docker pull themulti0/iris_facebookproducer:$VERSION
+          export VERSION=$VERSION
           docker-compose up -d
