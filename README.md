@@ -1,3 +1,4 @@
+![Continuous Integration](https://github.com/TheMulti0/Iris/workflows/Continuous%20Integration/badge.svg)
 # Iris
 
 This is Iris - a scalable social media update manager.
