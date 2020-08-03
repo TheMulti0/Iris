@@ -44,7 +44,8 @@ jobs:
     - name: Deploy
       uses: appleboy/ssh-action@master
       env:
-        VERSION: "sha-${ github.sha::7 }"
+        SHA: ${{ github.sha::7 }}
+        VERSION: "sha-${{ SHA }}"
       with:
         host: ${{ secrets.VPS_HOST }}
         USERNAME: ${{ secrets.VPS_USERNAME }}
