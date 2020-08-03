@@ -42,8 +42,12 @@ jobs:
         tags: ${{ env.VERSION }}
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
-    
-    - name: Deploy
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Pull and run latest images on VPS (ssh)
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
