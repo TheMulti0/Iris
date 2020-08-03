@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
-        tags: VERSION
+        tags: ${{ VERSION }}
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
@@ -29,7 +29,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_twitterproducer
-        tags: VERSION
+        tags: ${{ VERSION }}
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=twitterproducer
 
@@ -39,7 +39,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_facebookproducer
-        tags: VERSION
+        tags: ${{ VERSION }}
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
     
