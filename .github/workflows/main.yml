@@ -3,7 +3,7 @@ name: Continuous Integration
 on: push
 
 env:
-  VERSION=${{ github.sha }}
+  VERSION: ${{ github.sha }}
 
 jobs:
   build:
@@ -39,7 +39,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_facebookproducer
-        # Automatically tags the built image with the git short SHA as per the readme
         tags: VERSION
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
