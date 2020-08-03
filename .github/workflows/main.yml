@@ -43,13 +43,15 @@ jobs:
     
     - name: Deploy
       uses: appleboy/ssh-action@master
+      env:
+        VERSION: "sha-${{ github.sha::7 }}"
       with:
         host: ${{ secrets.VPS_HOST }}
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
+        envs: VERSION
         script: |
-          export VERSION='sha-${GITHUB_SHA::7}'
           cd Iris
           git pull
           docker-compose down
