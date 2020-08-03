@@ -48,4 +48,12 @@ jobs:
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: VERSION=sha-${GITHUB_SHA::8} bash -c '(cd Iris; git pull; docker-compose down; docker-compose build --pull; docker-compose up -d)'
+        script: |
+          export VERSION=sha-${GITHUB_SHA::7} 
+          cd Iris
+          git pull
+          docker-compose down
+          docker pull themulti0/iris_telegramconsumer:$VERSION
+          docker pull themulti0/iris_twitterproducer:$VERSION
+          docker pull themulti0/iris_facebookproducer:$VERSION
+          docker-compose up -d
