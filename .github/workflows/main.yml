@@ -2,6 +2,9 @@ name: Continuous Integration
 
 on: push
 
+env:
+  VERSION: ${{ github.sha }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,13 +14,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build and push Iris/TelegramConsumer image
+    - name: Build and push Iris/telegramconsumer image
       uses: docker/build-push-action@v1.1.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_telegramconsumer
-        tag_with_sha: true
+        tags: ${{ env.VERSION }}
         dockerfile: TelegramConsumer/Dockerfile
 
     - name: Build and push Iris/twitterproducer image
@@ -26,7 +29,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_twitterproducer
-        tag_with_sha: true
+        tags: ${{ env.VERSION }}
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=twitterproducer
 
@@ -36,16 +39,28 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: themulti0/iris_facebookproducer
-        # Automatically tags the built image with the git short SHA as per the readme
-        tag_with_sha: true
+        tags: ${{ env.VERSION }}
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
-    
-    - name: Deploy
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Pull and run latest images on VPS (ssh)
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
         USERNAME: ${{ secrets.VPS_USERNAME }}
         PORT: ${{ secrets.VPS_PORT }}
         KEY: ${{ secrets.VPS_SSHKEY }}
-        script: VERSION=sha-${GITHUB_SHA::8} bash -c '(docker-compose -f Iris/docker-compose.yml down; docker-compose -f Iris/docker-compose.yml build --pull; docker-compose -f Iris/docker-compose.yml up -d)'
+        envs: VERSION
+        script: |
+          cd Iris
+          git pull
+          docker-compose down
+          docker pull themulti0/iris_telegramconsumer:$VERSION
+          docker pull themulti0/iris_twitterproducer:$VERSION
+          docker pull themulti0/iris_facebookproducer:$VERSION
+          export VERSION=$VERSION
+          docker-compose up -d
