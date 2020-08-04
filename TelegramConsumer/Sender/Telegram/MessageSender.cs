@@ -47,7 +47,7 @@ namespace TelegramConsumer
                 // 1. When there is more than 1 media items,
                 // 2. When the update's content cannot fit in a single message (text message / single media message)
                 default:
-                    return SendMessageBatch(client, update, chatId, canUpdateFitInOneMediaMessage);
+                    return SendMessageBatch(client, update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
             }
         }
 
@@ -196,6 +196,7 @@ namespace TelegramConsumer
             ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
+            bool canUpdateFitInOneTextMessage,
             bool canUpdateFitInOneMediaMessage)
         {
             // Make sure no other updates will be sent as message batches until this batch is complete sending
@@ -203,7 +204,7 @@ namespace TelegramConsumer
 
             try
             {
-                await SendMessageBatchUnsafe(client, update, chatId, canUpdateFitInOneMediaMessage);
+                await SendMessageBatchUnsafe(client, update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
             }
             finally
             {
@@ -216,6 +217,7 @@ namespace TelegramConsumer
             ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
+            bool canUpdateFitInOneTextMessage,
             bool canUpdateFitInOneMediaMessage)
         {
             _logger.LogInformation("Sending message batch");
@@ -232,13 +234,14 @@ namespace TelegramConsumer
                 client,
                 update,
                 chatId,
-                firstMediaMessageId);
+                firstMediaMessageId,
+                canUpdateFitInOneTextMessage);
         }
 
         private async Task<int> SendMediaAlbumIfAny(ITelegramBotClient client, UpdateMessage update, ChatId chatId)
         {
-            bool anyMedia = update.Media?.Any() ?? false;
-            if (!anyMedia)
+            bool hasMedia = update.Media?.Any() ?? false;
+            if (!hasMedia)
             {
                 return 0;
             }
@@ -251,17 +254,21 @@ namespace TelegramConsumer
             ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
-            int firstMediaMessageId)
+            int firstMediaMessageId,
+            bool canUpdateFitInOneTextMessage)
         {
             if (update.Message.Any())
             {
                 _logger.LogInformation("Sending corresponding messages");
 
-                await SendMultipleTextMessages(
-                    client,
-                    update,
-                    chatId,
-                    firstMediaMessageId);
+                if (canUpdateFitInOneTextMessage)
+                {
+                    await SendSingleTextMessage(client, update, chatId, firstMediaMessageId);
+                }
+                else
+                {
+                    await SendMultipleTextMessages(client, update, chatId, firstMediaMessageId);
+                }
             }
         }
 
