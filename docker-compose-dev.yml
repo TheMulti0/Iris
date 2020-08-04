@@ -3,22 +3,36 @@ version: '3.4'
 services:
   zookeeper:
     image: zookeeper:3.5.6
-    environment:
-      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888;2181
+    container_name: iris_zookeeper
     ports:
       - "2181:2181"
+    environment:
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181
       
   kafka:
     image: wurstmeister/kafka
+    container_name: iris_kafka
     ports:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 0
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: iris_kafka
+      KAFKA_ZOOKEEPER_CONNECT: iris_zookeeper:2181
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1, tests:1:1"
     depends_on:
       - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: iris_kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: iris_kafka:9092
+      JVM_OPTS: -Xms32M -Xmx64M
+      SERVER_SERVLET_CONTEXTPATH: /
+    depends_on:
+      - kafka
 
   mongodb: 
     image: mongo:latest

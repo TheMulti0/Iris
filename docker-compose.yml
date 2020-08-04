@@ -15,12 +15,26 @@ services:
       KAFKA_BROKER_ID: 0
       KAFKA_HEAP_OPTS: -Xmx256M -Xms128M
       KAFKA_ADVERTISED_HOST_NAME: iris_kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: iris_zookeeper:2181
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
     networks:
       - kafka_network
     depends_on:
       - zookeeper
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: iris_kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: iris_kafka:9092
+      JVM_OPTS: -Xms32M -Xmx64M
+      SERVER_SERVLET_CONTEXTPATH: /
+    networks:
+      - kafka_network
+    depends_on:
+      - kafka
 
   mongodb: 
     image: mongo:latest
