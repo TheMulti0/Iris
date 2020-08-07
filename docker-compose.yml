@@ -19,6 +19,8 @@ services:
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
     networks:
       - kafka_network
+    volumes:
+      - ./kafka:/kafka
     depends_on:
       - zookeeper
 
