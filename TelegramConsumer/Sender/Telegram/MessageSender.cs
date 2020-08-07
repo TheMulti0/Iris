@@ -33,10 +33,9 @@ namespace TelegramConsumer
             bool canUpdateFitInOneTextMessage = update.Message.Length <= MaxTextMessageLength;
             bool canUpdateFitInOneMediaMessage = update.Message.Length <= MaxMediaCaptionLength;
 
-            _logger.LogInformation(
-                "canUpdateFitInOneTextMessage: {}, canUpdateFitInOneMediaMessage: {}",
-                canUpdateFitInOneTextMessage,
-                canUpdateFitInOneMediaMessage);
+            _logger.LogWarning(
+                "Message length: {}",
+                update.Message.Length);
 
             switch (update.Media?.Length ?? 0)
             {
