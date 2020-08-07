@@ -21,11 +21,12 @@ namespace Extensions
             var consumer = new KafkaConsumer<TKey, TValue>(
                 config.DefaultTopic,
                 clusterClient);
-            
-            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, new ConsumerGroupConfiguration
+
+            var consumerGroupConfig = new ConsumerGroupConfiguration
             {
-                DefaultOffsetToReadFrom = Offset.Latest
-            });
+                DefaultOffsetToReadFrom = Offset.Earliest
+            };
+            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, consumerGroupConfig);
 
             return consumer;
         }

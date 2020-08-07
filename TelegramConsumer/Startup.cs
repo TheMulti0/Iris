@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace TelegramConsumer
 {
@@ -60,7 +61,7 @@ namespace TelegramConsumer
 
             services
                 .AddConsumer<Nothing, Update>(updatesConsumerConfig)
-                .AddConsumer<string, string>(configConsumerConfig)
+                .AddConsumer<string, string>(configConsumerConfig, NullLoggerFactory.Instance)
                 .AddSingleton(defaultTelegramConfig)
                 .AddSingleton<IConfigsProvider, ConfigsProvider>()
                 .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()

@@ -2,6 +2,7 @@ using System;
 using Kafka.Public;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Extensions
 {
@@ -49,24 +50,24 @@ namespace Extensions
                     provider.GetService<ILoggerFactory>());
             }
 
-            return services.AddSingleton(
-                CreateKafkaConsumer);
+            return services.AddSingleton(CreateKafkaConsumer);
         }
         
         public static IServiceCollection AddConsumer<TKey, TValue>(
-            this IServiceCollection services) 
+            this IServiceCollection services,
+            ConsumerConfig config,
+            ILoggerFactory loggerFactory)
             where TKey : class 
             where TValue : class
         {
-            static IKafkaConsumer<TKey, TValue> CreateKafkaConsumer(IServiceProvider provider)
+            IKafkaConsumer<TKey, TValue> CreateKafkaConsumer(IServiceProvider provider)
             {
                 return KafkaConsumerFactory.Create<TKey, TValue>(
-                    provider.GetService<ConsumerConfig>(),
-                    provider.GetService<ILoggerFactory>());
+                    config,
+                    loggerFactory);
             }
 
-            return services.AddSingleton(
-                CreateKafkaConsumer);
+            return services.AddSingleton(CreateKafkaConsumer);
         }
     }
 }
