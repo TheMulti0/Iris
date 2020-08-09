@@ -20,6 +20,9 @@ namespace TelegramConsumer
         [JsonPropertyName("media")]
         public Media[] Media { get; set; }
 
+        [JsonPropertyName("repost")]
+        public bool Repost { get; set; }
+
         public override string ToString()
         {
             return $"CreationDate = {CreationDate:f}, Url = ${Url}";

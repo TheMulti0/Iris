@@ -11,6 +11,6 @@ class TwitterUpdatesProvider(IUpdatesProvider):
 
     def get_updates(self, user_id: str):
         return [
-            UpdateFactory.to_update(tweet)
+            UpdateFactory.to_update(tweet, user_id)
             for tweet in self.__tweets_provider.get_tweets(user_id)
         ]

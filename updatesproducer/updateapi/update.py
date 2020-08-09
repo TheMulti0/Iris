@@ -10,6 +10,7 @@ class Update:
     creation_date: datetime
     url: str
     media: List[Media]
+    repost: bool
 
     def __init__(
             self,
@@ -17,9 +18,11 @@ class Update:
             author_id: str,
             creation_date: datetime,
             url: str,
-            media: list):
+            media: list,
+            repost: bool):
         self.content = content
         self.author_id = author_id
         self.creation_date = creation_date
         self.url = url
         self.media = media
+        self.repost = repost

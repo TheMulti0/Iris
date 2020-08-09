@@ -11,5 +11,6 @@ class UpdateFactory:
             author_id=post.author_id,
             creation_date=post.time,
             url=post.post_url,
-            media=MediaFactory.to_media(post)
+            media=MediaFactory.to_media(post),
+            repost=post.text == post.shared_text
         )
