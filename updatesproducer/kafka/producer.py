@@ -13,6 +13,7 @@ from updatesproducer.db.iupdates_repository import IUpdatesRepository
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 from updatesproducer.updateapi.media import Media
 from updatesproducer.updateapi.mediatype import MediaType
+from updatesproducer.updateapi.video_downloader import VideoDownloader
 
 
 class Producer:
@@ -21,12 +22,14 @@ class Producer:
             config: TopicProducerConfig,
             repository: IUpdatesRepository,
             updates_provider: IUpdatesProvider,
+            video_downloader: VideoDownloader,
             cancellation_token: CancellationToken,
             logger: Logger):
         self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
         self.__repository = repository
         self.__updates_provider = updates_provider
+        self.__video_downloader = video_downloader
         self.__cancellation_token = cancellation_token
         self.__logger = logger
 
@@ -55,7 +58,11 @@ class Producer:
         updates_count = 0
         for update in new_updates:
             updates_count += 1
+
+            self.__video_downloader.download_video(update)
+
             self._send(update)
+
             self.__repository.set_user_latest_update_time(
                 user_id,
                 update.creation_date)

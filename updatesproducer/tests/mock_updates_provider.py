@@ -12,5 +12,6 @@ class MockUpdatesProvider(IUpdatesProvider):
                 author_id='Mock author',
                 creation_date=datetime.now(),
                 url='mockurl://updateapi.com',
-                media=[])
+                media=[],
+                repost=False)
         ]

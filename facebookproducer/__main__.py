@@ -9,6 +9,7 @@ from updatesproducer.db.updates_repository import UpdatesRepository
 
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 from updatesproducer.startup import Startup
+from updatesproducer.updateapi.video_downloader import VideoDownloader
 
 
 def create_producer(config, cancellation_token):
@@ -23,6 +24,7 @@ def create_producer(config, cancellation_token):
         FacebookUpdatesProvider(
             PostsProvider()
         ),
+        VideoDownloader(logging.getLogger(VideoDownloader.__name__)),
         cancellation_token,
         logging.getLogger(Producer.__name__))
 

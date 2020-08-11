@@ -19,7 +19,7 @@ class Tweet:
     hashtags: List[str]
     urls: List[str]
     photos: List[str]
-    video: str
+    videos: List
 
     def __init__(self, original_dict):
         self_dict = self.__dict__
@@ -30,7 +30,4 @@ class Tweet:
         self.hashtags = self_dict['entries']['hashtags']
         self.urls = self_dict['entries']['urls']
         self.photos = self_dict['entries']['photos']
-
-        videos = self_dict['entries']['videos']
-        if len(videos) > 0:
-            self.video = videos
+        self.videos = self_dict['entries']['videos']

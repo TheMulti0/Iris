@@ -11,6 +11,5 @@ class PostsProvider(ABC):
             Post(post, user_id)
             for post in get_posts(
                 user_id,
-                pages=1,
-                youtube_dl=True)
+                pages=1)
         ]

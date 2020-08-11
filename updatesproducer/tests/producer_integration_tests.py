@@ -5,6 +5,7 @@ from unittest import TestCase
 
 from kafka import KafkaConsumer
 
+from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.kafka.producer import Producer
 from updatesproducer.tests.mock_updates_provider import MockUpdatesProvider
 from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
@@ -28,6 +29,7 @@ class ProducerIntegrationTests(TestCase):
             self.__topic_producer_config,
             MockUpdatesRepository(),
             MockUpdatesProvider(),
+            CancellationToken(),
             logging.getLogger(Producer.__name__)
         )
 
@@ -38,7 +40,9 @@ class ProducerIntegrationTests(TestCase):
             bootstrap_servers=self.__topic_producer_config.bootstrap_servers,
             auto_offset_reset='earliest')
 
-        self.assertIsNotNone(next(consumer))  # assert first message is not None
+        first_message = next(consumer)
+        print(f'first_message: {first_message}')
+        self.assertIsNotNone(first_message)  # assert first message is not None
 
 
 if __name__ == '__main__':

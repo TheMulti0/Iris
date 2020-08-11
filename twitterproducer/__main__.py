@@ -8,6 +8,7 @@ from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 from twitterproducer.tweets.tweets_provider import TweetsProvider
 from twitterproducer.updateapi.twitter_updates_provider import TwitterUpdatesProvider
 from updatesproducer.startup import Startup
+from updatesproducer.updateapi.video_downloader import VideoDownloader
 
 
 def create_producer(config, cancellation_token):
@@ -24,6 +25,7 @@ def create_producer(config, cancellation_token):
         TopicProducerConfig(config['tweets_producer']),
         repository,
         twitter_updates_provider,
+        VideoDownloader(logging.getLogger(VideoDownloader.__name__)),
         cancellation_token,
         logging.getLogger(Producer.__name__))
 

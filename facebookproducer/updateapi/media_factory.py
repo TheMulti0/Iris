@@ -6,6 +6,7 @@ from updatesproducer.updateapi.mediatype import MediaType
 class MediaFactory:
     @staticmethod
     def to_media(post: Post):
+        # Videos are downloaded later, if any
         return MediaFactory.get_photos(post) + MediaFactory.get_videos(post)
 
     @staticmethod
