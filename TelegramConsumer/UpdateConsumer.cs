@@ -30,7 +30,7 @@ namespace TelegramConsumer
         {
             _updateSubscription = _updateConsumer.Messages.SubscribeAsync(OnNext);
 
-            // If starting process is cancelled, dispose the update subscription
+            // Dispose the update subscription when service is stopped
             stoppingToken.Register(() => _updateSubscription?.Dispose());
 
             return Task.CompletedTask;
