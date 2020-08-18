@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TelegramConsumer
 {
-    public class UpdateConsumer : IHostedService
+    public class UpdateConsumer : BackgroundService
     {
         private readonly IKafkaConsumer<Nothing, Update> _updateConsumer;
         private readonly ISender _sender;
@@ -26,12 +26,12 @@ namespace TelegramConsumer
             _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _updateSubscription = _updateConsumer.Messages.SubscribeAsync(OnNext);
 
             // If starting process is cancelled, dispose the update subscription
-            cancellationToken.Register(() => _updateSubscription?.Dispose());
+            stoppingToken.Register(() => _updateSubscription?.Dispose());
 
             return Task.CompletedTask;
         }
@@ -48,13 +48,6 @@ namespace TelegramConsumer
             {
                 _logger.LogError(e, "Sending failed {} {}", e.Message, e.StackTrace);
             }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            _updateSubscription?.Dispose();
-
-            return Task.CompletedTask;
         }
     }
 }
