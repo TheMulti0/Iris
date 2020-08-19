@@ -15,7 +15,7 @@ namespace Extensions
                 serializationConfig);
             
             var logger = new KafkaSharpMicrosoftLogger(
-                loggerFactory.CreateLogger("kafka-sharp"));
+                loggerFactory.CreateLogger($"kafka-sharp - {config.DefaultTopic}"));
             
             return new ClusterClient(
                 clusterConfig,
