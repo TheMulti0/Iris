@@ -11,10 +11,11 @@ namespace TelegramConsumer
     public class TelegramSender : ISender
     {
         private readonly ITelegramBotClientProvider _clientProvider;
-        private readonly MessageSender _sender;
         private readonly ILogger<TelegramSender> _logger;
+        private readonly ILogger<MessageSender> _senderLogger;
 
         private ITelegramBotClient _client;
+        private MessageSender _sender;
         private TelegramConfig _config;
 
         private CancellationTokenSource _sendCancellation;
@@ -22,13 +23,13 @@ namespace TelegramConsumer
         public TelegramSender(
             IConfigsProvider configsProvider,
             ITelegramBotClientProvider clientProvider,
-            MessageSender sender,
-            ILogger<TelegramSender> logger)
+            ILogger<TelegramSender> logger,
+            ILogger<MessageSender> senderLogger)
         {
             _clientProvider = clientProvider;
-            _sender = sender;
             _logger = logger;
-            
+            _senderLogger = senderLogger;
+
             configsProvider.Configs.SubscribeAsync(HandleConfig);
             configsProvider.InitializeSubscriptions();
         }
@@ -53,22 +54,29 @@ namespace TelegramConsumer
                 "Received new config {}, trying to create new TelegramBotClient with it",
                 config);
             
-            await ReplaceTelegramBotClient(config);
-
-            _config = config;
+            Optional<ITelegramBotClient> client = await CreateNewTelegramBotClient(config);
             
-            CancelSendOperations();
+            if (client.HasValue)
+            {
+                CancelSendOperations();
+
+                _client = client.Value;
+                _sender = new MessageSender(_client, _senderLogger);
+                _config = config;
+            }
         }
 
-        private async Task ReplaceTelegramBotClient(TelegramConfig config)
+        private async Task<Optional<ITelegramBotClient>> CreateNewTelegramBotClient(TelegramConfig config)
         {
             try
             {
-                _client = await _clientProvider.CreateAsync(config);
+                return Optional<ITelegramBotClient>.WithValue(
+                    await _clientProvider.CreateAsync(config));
             }
             catch (Exception e)
             {
-                _logger.LogInformation(e, "Failed to create TelegramBotClient with new config");
+                _logger.LogError(e, "Failed to create TelegramBotClient with new config");
+                return Optional<ITelegramBotClient>.Empty();
             }
         }
 
@@ -104,7 +112,7 @@ namespace TelegramConsumer
 
             foreach (long chatId in user.ChatIds)
             {
-                await _sender.SendAsync(_client, updateMessage, chatId);
+                await _sender.SendAsync(updateMessage, chatId);
             }
         }
     }

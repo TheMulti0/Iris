@@ -17,16 +17,19 @@ namespace TelegramConsumer
         private const ParseMode MessageParseMode = ParseMode.Html;
         private const bool DisableWebPagePreview = true;
 
+        private readonly ITelegramBotClient _client;
         private readonly ILogger<MessageSender> _logger;
         private readonly SemaphoreSlim _messageBatchLock = new SemaphoreSlim(1, 1);
 
-        public MessageSender(ILogger<MessageSender> logger)
+        public MessageSender(
+            ITelegramBotClient client,
+            ILogger<MessageSender> logger)
         {
+            _client = client;
             _logger = logger;
         }
 
         public Task SendAsync(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
@@ -41,29 +44,28 @@ namespace TelegramConsumer
             {
                 // Only when there is no media in the update, and the update's content can fit in one Telegram message
                 case 0 when canUpdateFitInOneTextMessage:
-                    return SendSingleTextMessage(client, update, chatId);
+                    return SendSingleTextMessage(update, chatId);
 
                 // Only if there is 1 media item, and the update's content can fit as a media caption (in one Telegram message)
                 case 1 when canUpdateFitInOneMediaMessage:
-                    return SendSingleMediaMessage(client, update, chatId);
+                    return SendSingleMediaMessage(update, chatId);
 
                 // Either when:
                 // 1. When there is more than 1 media items,
                 // 2. When the update's content cannot fit in a single message (text message / single media message)
                 default:
-                    return SendMessageBatch(client, update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
+                    return SendMessageBatch(update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
             }
         }
 
         private Task<Message> SendSingleTextMessage(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
             int replyMessageId = default)
         {
             _logger.LogInformation("Sending text message");
 
-            return client.SendTextMessageAsync(
+            return _client.SendTextMessageAsync(
                 chatId: chatId,
                 text: update.Message,
                 parseMode: MessageParseMode,
@@ -73,7 +75,6 @@ namespace TelegramConsumer
         }
 
         private async Task SendMultipleTextMessages(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
             int firstReplyMessageId = default)
@@ -103,7 +104,6 @@ namespace TelegramConsumer
                     };
 
                     var lastMessage = await SendSingleTextMessage(
-                        client,
                         newUpdateMessage,
                         chatId,
                         lastMessageId);
@@ -155,17 +155,15 @@ namespace TelegramConsumer
         }
 
         private Task SendSingleMediaMessage(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
             return update.Media.Any(media => media.Type == MediaType.Video)
-                ? SendVideo(client, update, chatId)
-                : SendPhoto(client, update, chatId);
+                ? SendVideo(update, chatId)
+                : SendPhoto(update, chatId);
         }
 
         private Task SendPhoto(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
@@ -173,7 +171,7 @@ namespace TelegramConsumer
 
             var photo = update.Media.FirstOrDefault(media => media.Type == MediaType.Photo);
 
-            return client.SendPhotoAsync(
+            return _client.SendPhotoAsync(
                 chatId: chatId,
                 photo: photo.ToInputOnlineFile(),
                 caption: update.Message,
@@ -181,7 +179,6 @@ namespace TelegramConsumer
         }
 
         private Task SendVideo(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
@@ -189,7 +186,7 @@ namespace TelegramConsumer
 
             var video = update.Media.FirstOrDefault(media => media.Type == MediaType.Video);
 
-            return client.SendVideoAsync(
+            return _client.SendVideoAsync(
                 chatId: chatId,
                 video: video.ToInputOnlineFile(),
                 caption: update.Message,
@@ -197,7 +194,6 @@ namespace TelegramConsumer
         }
 
         private async Task SendMessageBatch(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
             bool canUpdateFitInOneTextMessage,
@@ -208,7 +204,7 @@ namespace TelegramConsumer
 
             try
             {
-                await SendMessageBatchUnsafe(client, update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
+                await SendMessageBatchUnsafe(update, chatId, canUpdateFitInOneTextMessage, canUpdateFitInOneMediaMessage);
             }
             finally
             {
@@ -218,7 +214,6 @@ namespace TelegramConsumer
         }
 
         private async Task SendMessageBatchUnsafe(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
             bool canUpdateFitInOneTextMessage,
@@ -228,21 +223,20 @@ namespace TelegramConsumer
             
             if (canUpdateFitInOneMediaMessage)
             {
-                await SendMediaAlbumWithCaption(client, update, chatId);
+                await SendMediaAlbumWithCaption(update, chatId);
                 return;
             }
 
-            int firstMediaMessageId = await SendMediaAlbumIfAny(client, update, chatId);
+            int firstMediaMessageId = await SendMediaAlbumIfAny(update, chatId);
 
             await SendTextMessagesIfAny(
-                client,
                 update,
                 chatId,
                 firstMediaMessageId,
                 canUpdateFitInOneTextMessage);
         }
 
-        private async Task<int> SendMediaAlbumIfAny(ITelegramBotClient client, UpdateMessage update, ChatId chatId)
+        private async Task<int> SendMediaAlbumIfAny(UpdateMessage update, ChatId chatId)
         {
             bool hasMedia = update.Media?.Any() ?? false;
             if (!hasMedia)
@@ -250,12 +244,11 @@ namespace TelegramConsumer
                 return 0;
             }
             
-            Message[] mediaMessages = await SendMediaAlbum(client, update, chatId);
+            Message[] mediaMessages = await SendMediaAlbum(update, chatId);
             return mediaMessages.FirstOrDefault()?.MessageId ?? 0;
         }
 
         private async Task SendTextMessagesIfAny(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId,
             int firstMediaMessageId,
@@ -267,17 +260,16 @@ namespace TelegramConsumer
 
                 if (canUpdateFitInOneTextMessage)
                 {
-                    await SendSingleTextMessage(client, update, chatId, firstMediaMessageId);
+                    await SendSingleTextMessage(update, chatId, firstMediaMessageId);
                 }
                 else
                 {
-                    await SendMultipleTextMessages(client, update, chatId, firstMediaMessageId);
+                    await SendMultipleTextMessages(update, chatId, firstMediaMessageId);
                 }
             }
         }
 
         private Task<Message[]> SendMediaAlbumWithCaption(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
@@ -293,11 +285,10 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending media album with caption");
 
-            return client.SendMediaGroupAsync(telegramMedia, chatId);
+            return _client.SendMediaGroupAsync(telegramMedia, chatId);
         }
 
         private Task<Message[]> SendMediaAlbum(
-            ITelegramBotClient client,
             UpdateMessage update,
             ChatId chatId)
         {
@@ -306,7 +297,7 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending media album");
 
-            return client.SendMediaGroupAsync(telegramMedia, chatId);
+            return _client.SendMediaGroupAsync(telegramMedia, chatId);
         }
     }
 }

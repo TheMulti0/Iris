@@ -14,7 +14,7 @@ namespace TelegramConsumer
         private readonly TelegramConfig _defaultConfig;
         private readonly ILogger<ConfigsProvider> _logger;
         
-        private readonly Subject<Result<TelegramConfig>> _configs;
+        private readonly BehaviorSubject<Result<TelegramConfig>> _configs;
         public IObservable<Result<TelegramConfig>> Configs => _configs;
 
         public ConfigsProvider(
@@ -25,17 +25,11 @@ namespace TelegramConsumer
             // _consumer = consumer;
             _defaultConfig = defaultConfig;
             _logger = logger;
-            _configs = new Subject<Result<TelegramConfig>>();
+            _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(_defaultConfig));
         }
 
         public void InitializeSubscriptions()
         {
-            if (_defaultConfig != null)
-            {
-                _logger.LogInformation("Found default Telegram config, sending..");
-                _configs.OnNext(Result<TelegramConfig>.Success(_defaultConfig));
-            }
-            
             // _consumer.Messages
             //     .Where(ConfigBelongsToTelegram)
             //     .Select(DeserializeConfig)

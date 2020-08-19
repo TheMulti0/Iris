@@ -28,9 +28,9 @@ namespace TelegramConsumer.Tests
 
             _sender = new TelegramSender(
                 configsProvider,
-                new TelegramBotClientProvider(loggerFactory.CreateLogger<TelegramBotClientProvider>()), 
-                new MessageSender(loggerFactory.CreateLogger<MessageSender>()),
-                loggerFactory.CreateLogger<TelegramSender>());
+                new TelegramBotClientProvider(loggerFactory.CreateLogger<TelegramBotClientProvider>()),
+                loggerFactory.CreateLogger<TelegramSender>(),
+                loggerFactory.CreateLogger<MessageSender>());
 
             return Task.Delay(500); // Wait for JSON config to be read
         }
