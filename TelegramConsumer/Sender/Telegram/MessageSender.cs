@@ -6,27 +6,48 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using static TelegramConsumer.TelegramConstants;
 
 namespace TelegramConsumer
 {
     internal class MessageInfo
     {
-        public UpdateMessage UpdateMessage { get; set; }
+        public string Message { get; }
 
-        public ChatId ChatId { get; set; }
+        public Media[] Media { get; }
+
+        public ChatId ChatId { get; }
 
         public bool FitsInOneTextMessage { get; }
 
         public bool FitsInOneMediaMessage { get; }
 
-        public int ReplyMessageId { get; set; }
+        public int ReplyMessageId { get; }
 
-        public MessageInfo()
+        public MessageInfo(
+            UpdateMessage updateMessage,
+            ChatId chatId,
+            int replyMessageId = 0
+            ) : this(updateMessage.Message,
+                     updateMessage.Media,
+                     chatId,
+                     replyMessageId)
         {
-            FitsInOneTextMessage = UpdateMessage.Message.Length <= MaxTextMessageLength;
-            FitsInOneMediaMessage = UpdateMessage.Message.Length <= MaxMediaCaptionLength;
+        }
+
+        public MessageInfo(
+            string message,
+            Media[] media,
+            ChatId chatId,
+            int replyMessageId = 0)
+        {
+            Message = message;
+            Media = media;
+            ChatId = chatId;
+            ReplyMessageId = replyMessageId;
+            
+            FitsInOneTextMessage = Message.Length <= MaxTextMessageLength;
+            FitsInOneMediaMessage = Message.Length <= MaxMediaCaptionLength;            
         }
     }
     
@@ -48,11 +69,7 @@ namespace TelegramConsumer
             UpdateMessage updateMessage,
             ChatId chatId)
         {
-            var info = new MessageInfo
-            {
-                UpdateMessage = updateMessage,
-                ChatId = chatId
-            };
+            var info = new MessageInfo(updateMessage, chatId);
 
             _logger.LogWarning(
                 "Message length: {}",
@@ -82,7 +99,7 @@ namespace TelegramConsumer
 
             return _client.SendTextMessageAsync(
                 chatId: info.ChatId,
-                text: info.UpdateMessage.Message,
+                text: info.Message,
                 parseMode: MessageParseMode,
                 disableWebPagePreview: DisableWebPagePreview,
                 replyToMessageId: info.ReplyMessageId
@@ -93,7 +110,7 @@ namespace TelegramConsumer
         {
             _logger.LogInformation("Sending multiple text messages");
 
-            string text = info.UpdateMessage.Message;
+            string text = info.Message;
             int textLength = text.Length;
             if (textLength > MaxTextMessageLength)
             {
@@ -109,18 +126,13 @@ namespace TelegramConsumer
 
                 foreach (string message in messageChunks)
                 {
-                    var newInfo = new MessageInfo
-                    {
-                        UpdateMessage = new UpdateMessage
-                        {
-                            Media = info.UpdateMessage.Media,
-                            Message = message
-                        },
-                        ChatId = info.ChatId,
-                        ReplyMessageId = lastMessageId
-                    };
+                    var newInfo = new MessageInfo(
+                        message,
+                        info.Media,
+                        info.ChatId,
+                        lastMessageId);
                     
-                    var lastMessage = await SendSingleTextMessage(newInfo);
+                    Message lastMessage = await SendSingleTextMessage(newInfo);
 
                     lastMessageId = lastMessage.MessageId;
                 }
@@ -170,7 +182,7 @@ namespace TelegramConsumer
 
         private Task SendSingleMediaMessage(MessageInfo info)
         {
-            return info.UpdateMessage.Media.Any(media => media.Type == MediaType.Video)
+            return info.Media.Any(media => media.Type == MediaType.Video)
                 ? SendVideo(info)
                 : SendPhoto(info);
         }
@@ -179,12 +191,12 @@ namespace TelegramConsumer
         {
             _logger.LogInformation("Sending single photo message");
 
-            var photo = info.UpdateMessage.Media.FirstOrDefault(media => media.Type == MediaType.Photo);
+            var photo = info.Media.FirstOrDefault(media => media.Type == MediaType.Photo);
 
             return _client.SendPhotoAsync(
                 chatId: info.ChatId,
                 photo: photo.ToInputOnlineFile(),
-                caption: info.UpdateMessage.Message,
+                caption: info.Message,
                 parseMode: MessageParseMode);
         }
 
@@ -192,12 +204,12 @@ namespace TelegramConsumer
         {
             _logger.LogInformation("Sending single video message");
 
-            var video = info.UpdateMessage.Media.FirstOrDefault(media => media.Type == MediaType.Video);
+            var video = info.Media.FirstOrDefault(media => media.Type == MediaType.Video);
 
             return _client.SendVideoAsync(
                 chatId: info.ChatId,
                 video: video.ToInputOnlineFile(),
-                caption: info.UpdateMessage.Message,
+                caption: info.Message,
                 parseMode: MessageParseMode);
         }
 
@@ -229,19 +241,15 @@ namespace TelegramConsumer
 
             int firstMediaMessageId = await SendMediaAlbumIfAny(info);
 
-            var newInfo = new MessageInfo
-            {
-                UpdateMessage = info.UpdateMessage,
-                ChatId = info.ChatId,
-                ReplyMessageId = firstMediaMessageId
-            };
-            
+            var newInfo = new MessageInfo(
+                info.Message, info.Media, info.ChatId, firstMediaMessageId);
+
             await SendTextMessagesIfAny(newInfo);
         }
 
         private async Task<int> SendMediaAlbumIfAny(MessageInfo info)
         {
-            bool hasMedia = info.UpdateMessage.Media?.Any() ?? false;
+            bool hasMedia = info.Media?.Any() ?? false;
             if (!hasMedia)
             {
                 return 0;
@@ -253,7 +261,7 @@ namespace TelegramConsumer
 
         private async Task SendTextMessagesIfAny(MessageInfo info)
         {
-            if (info.UpdateMessage.Message.Any())
+            if (info.Message.Any())
             {
                 _logger.LogInformation("Sending corresponding messages");
 
@@ -274,10 +282,10 @@ namespace TelegramConsumer
             {
                 return index > 0
                     ? media.ToAlbumInputMedia()
-                    : media.ToAlbumInputMedia(info.UpdateMessage.Message, MessageParseMode);
+                    : media.ToAlbumInputMedia(info.Message, MessageParseMode);
             }
 
-            IEnumerable<IAlbumInputMedia> telegramMedia = info.UpdateMessage.Media
+            IEnumerable<IAlbumInputMedia> telegramMedia = info.Media
                 .Select(ToAlbumInputMedia);
 
             _logger.LogInformation("Sending media album with caption");
@@ -287,7 +295,7 @@ namespace TelegramConsumer
 
         private Task<Message[]> SendMediaAlbum(MessageInfo info)
         {
-            var telegramMedia = info.UpdateMessage.Media
+            var telegramMedia = info.Media
                 .Select(media => media.ToAlbumInputMedia());
 
             _logger.LogInformation("Sending media album");
