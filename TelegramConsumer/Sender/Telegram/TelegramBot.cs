@@ -8,10 +8,10 @@ using Telegram.Bot;
 
 namespace TelegramConsumer
 {
-    public class TelegramSender : ISender
+    public class TelegramBot
     {
         private readonly ITelegramBotClientProvider _clientProvider;
-        private readonly ILogger<TelegramSender> _logger;
+        private readonly ILogger<TelegramBot> _logger;
         private readonly ILogger<MessageSender> _senderLogger;
 
         private ITelegramBotClient _client;
@@ -20,18 +20,17 @@ namespace TelegramConsumer
 
         private CancellationTokenSource _sendCancellation;
 
-        public TelegramSender(
-            IConfigsProvider configsProvider,
+        public TelegramBot(
+            IConfigProvider configProvider,
             ITelegramBotClientProvider clientProvider,
-            ILogger<TelegramSender> logger,
+            ILogger<TelegramBot> logger,
             ILogger<MessageSender> senderLogger)
         {
             _clientProvider = clientProvider;
             _logger = logger;
             _senderLogger = senderLogger;
 
-            configsProvider.Configs.SubscribeAsync(HandleConfig);
-            configsProvider.InitializeSubscriptions();
+            configProvider.Configs.SubscribeAsync(HandleConfig);
         }
 
         private Task HandleConfig(Result<TelegramConfig> result)

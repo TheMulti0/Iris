@@ -6,7 +6,7 @@ using Extensions;
 
 namespace TelegramConsumer.Tests
 {
-    internal class FileConfigsProvider : IConfigsProvider
+    internal class FileConfigProvider : IConfigProvider
     {
         private readonly Subject<Result<TelegramConfig>> _configs = new Subject<Result<TelegramConfig>>();
         public IObservable<Result<TelegramConfig>> Configs => _configs;

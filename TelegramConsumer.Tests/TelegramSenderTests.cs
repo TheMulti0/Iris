@@ -11,7 +11,7 @@ namespace TelegramConsumer.Tests
     public class TelegramSenderTests
     {
         private static Result<TelegramConfig> _config;
-        private static TelegramSender _sender;
+        private static TelegramBot _bot;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -21,13 +21,13 @@ namespace TelegramConsumer.Tests
 
             _config = Result<TelegramConfig>.Failure("Default config");
             
-            var configsProvider = new MockConfigsProvider();
+            var configsProvider = new MockConfigProvider();
             configsProvider.Configs.Subscribe(result => _config = result);
 
-            _sender = new TelegramSender(
+            _bot = new TelegramBot(
                 configsProvider,
                 new MockTelegramBotClientProvider(loggerFactory),
-                loggerFactory.CreateLogger<TelegramSender>(),
+                loggerFactory.CreateLogger<TelegramBot>(),
                 loggerFactory.CreateLogger<MessageSender>());
         }
         
@@ -36,7 +36,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -49,7 +49,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -63,7 +63,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -83,7 +83,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -105,7 +105,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -125,7 +125,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -147,7 +147,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            return _sender.SendAsync(
+            return _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,

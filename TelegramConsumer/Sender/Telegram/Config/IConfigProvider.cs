@@ -3,10 +3,8 @@ using Extensions;
 
 namespace TelegramConsumer
 {
-    public interface IConfigsProvider
+    public interface IConfigProvider
     {
         public IObservable<Result<TelegramConfig>> Configs { get; }
-
-        void InitializeSubscriptions();
     }
 }

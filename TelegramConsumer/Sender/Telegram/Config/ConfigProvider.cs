@@ -8,28 +8,25 @@ using Microsoft.Extensions.Logging;
 
 namespace TelegramConsumer
 {
-    internal class ConfigsProvider : IConfigsProvider
+    internal class ConfigProvider : IConfigProvider
     {
         // private readonly IKafkaConsumer<string, string> _consumer;
         private readonly TelegramConfig _defaultConfig;
-        private readonly ILogger<ConfigsProvider> _logger;
+        private readonly ILogger<ConfigProvider> _logger;
         
         private readonly BehaviorSubject<Result<TelegramConfig>> _configs;
         public IObservable<Result<TelegramConfig>> Configs => _configs;
 
-        public ConfigsProvider(
+        public ConfigProvider(
             // IKafkaConsumer<string, string> consumer,
             TelegramConfig defaultConfig,
-            ILogger<ConfigsProvider> logger)
+            ILogger<ConfigProvider> logger)
         {
             // _consumer = consumer;
             _defaultConfig = defaultConfig;
             _logger = logger;
             _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(_defaultConfig));
-        }
-
-        public void InitializeSubscriptions()
-        {
+            
             // _consumer.Messages
             //     .Where(ConfigBelongsToTelegram)
             //     .Select(DeserializeConfig)
