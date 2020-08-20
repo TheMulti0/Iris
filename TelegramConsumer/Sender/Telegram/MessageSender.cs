@@ -27,9 +27,10 @@ namespace TelegramConsumer
 
         public Task SendAsync(
             UpdateMessage updateMessage,
-            ChatId chatId)
+            ChatId chatId,
+            CancellationToken cancellationToken)
         {
-            var info = new MessageInfo(updateMessage.Message, updateMessage.Media, chatId);
+            var info = new MessageInfo(updateMessage.Message, updateMessage.Media, chatId, cancellationToken);
 
             _logger.LogWarning(
                 "Message length: {}",
@@ -62,7 +63,8 @@ namespace TelegramConsumer
                 text: info.Message,
                 parseMode: MessageParseMode,
                 disableWebPagePreview: DisableWebPagePreview,
-                replyToMessageId: info.ReplyMessageId
+                replyToMessageId: info.ReplyMessageId,
+                cancellationToken: info.CancellationToken
             );
         }
 
@@ -155,7 +157,8 @@ namespace TelegramConsumer
                 chatId: info.ChatId,
                 photo: photo.ToInputOnlineFile(),
                 caption: info.Message,
-                parseMode: MessageParseMode);
+                parseMode: MessageParseMode,
+                cancellationToken: info.CancellationToken);
         }
 
         private Task SendVideo(MessageInfo info)
@@ -168,7 +171,8 @@ namespace TelegramConsumer
                 chatId: info.ChatId,
                 video: video.ToInputOnlineFile(),
                 caption: info.Message,
-                parseMode: MessageParseMode);
+                parseMode: MessageParseMode,
+                cancellationToken: info.CancellationToken);
         }
 
         private async Task SendMessageBatch(MessageInfo info)
@@ -247,7 +251,10 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending media album with caption");
 
-            return _client.SendMediaGroupAsync(telegramMedia, info.ChatId);
+            return _client.SendMediaGroupAsync(
+                inputMedia: telegramMedia,
+                chatId: info.ChatId, 
+                cancellationToken: info.CancellationToken);
         }
 
         private Task<Message[]> SendMediaAlbum(MessageInfo info)
@@ -257,7 +264,10 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending media album");
 
-            return _client.SendMediaGroupAsync(telegramMedia, info.ChatId);
+            return _client.SendMediaGroupAsync(
+                inputMedia: telegramMedia,
+                chatId: info.ChatId,
+                cancellationToken: info.CancellationToken);
         }
     }
 }

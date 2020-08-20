@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TelegramConsumer.Tests
 {
     [TestClass]
-    public class TelegramSenderTests
+    public class MockTelegramBotTests
     {
         private static Result<TelegramConfig> _config;
         private static TelegramBot _bot;

@@ -119,7 +119,7 @@ namespace TelegramConsumer
                 
                 await chatIdLock.WaitAsync();
                 
-                await _sender.SendAsync(updateMessage, chatId);
+                await _sender.SendAsync(updateMessage, chatId, _sendCancellation.Token);
 
                 chatIdLock.Release();
             }
