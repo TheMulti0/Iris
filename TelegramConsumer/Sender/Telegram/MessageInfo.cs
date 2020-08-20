@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace TelegramConsumer
 {
-    internal class MessageInfo
+    public class MessageInfo
     {
         public string Message { get; }
 

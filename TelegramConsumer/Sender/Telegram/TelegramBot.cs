@@ -14,7 +14,7 @@ namespace TelegramConsumer
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ILogger<MessageSender> _senderLogger;
-        private readonly ConcurrentDictionary<long, SemaphoreSlim> _chatIdLocks;
+        private readonly ConcurrentDictionary<long, ChatSender> _chatSenders;
 
         private ITelegramBotClient _client;
         private MessageSender _sender;
@@ -31,7 +31,7 @@ namespace TelegramConsumer
             _clientProvider = clientProvider;
             _logger = logger;
             _senderLogger = senderLogger;
-            _chatIdLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+            _chatSenders = new ConcurrentDictionary<long, ChatSender>();
 
             configProvider.Configs.SubscribeAsync(HandleConfig);
         }
@@ -61,6 +61,13 @@ namespace TelegramConsumer
             if (client.HasValue)
             {
                 CancelSendOperations();
+                foreach ((long chatId, ChatSender chatSender) in _chatSenders)
+                {
+                    _logger.LogInformation("Stopping chat sender for chat id: {}", chatId);
+                    chatSender.Stop();
+                }
+                _chatSenders.Clear();
+                _logger.LogInformation("Cleared all chat senders");
 
                 _client = client.Value;
                 _sender = new MessageSender(_client, _senderLogger);
@@ -105,24 +112,32 @@ namespace TelegramConsumer
                 _logger.LogError("Update request sent, but no config present. Leaving.");
                 return;
             }
+            if (!TryGetUser(update.AuthorId, out User user))
+            {
+                _logger.LogError("User {} is not in config. Leaving.", update.AuthorId);
+                return;
+            }
 
             _logger.LogInformation("Sending update {}", update);
-
-            User user = _config.Users.First(u => u.UserName == update.AuthorId);
-
+            
             UpdateMessage updateMessage = UpdateMessageFactory.Create(update, user);
 
             foreach (long chatId in user.ChatIds)
             {
-                // Asynchronously lock each chatid, meaning only one message can be sent at a time in a single chat
-                SemaphoreSlim chatIdLock = _chatIdLocks.GetOrAdd(chatId, id => new SemaphoreSlim(1, 1));
-                
-                await chatIdLock.WaitAsync();
-                
-                await _sender.SendAsync(updateMessage, chatId, _sendCancellation.Token);
-
-                chatIdLock.Release();
+                ChatSender chatSender = _chatSenders.GetOrAdd(chatId, id => new ChatSender(_sender));
+                var messageInfo = new MessageInfo(
+                    updateMessage.Message,
+                    updateMessage.Media,
+                    chatId,
+                    _sendCancellation.Token);
+                await chatSender.AddMessageAsync(messageInfo);
             }
+        }
+
+        private bool TryGetUser(string authorId, out User user)
+        {
+            user = _config.Users.FirstOrDefault(u => u.UserName == authorId);
+            return user != null;
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TelegramConsumer.Tests
 {
     [TestClass]
-    public class TelegramBotIntegrationTests
+    public class TelegramIntegrationTests
     {
         private const string VideoUrl = "http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4";
         private const string PhotoUrl = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png";

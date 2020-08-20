@@ -25,18 +25,13 @@ namespace TelegramConsumer
             _logger = logger;
         }
 
-        public Task SendAsync(
-            UpdateMessage updateMessage,
-            ChatId chatId,
-            CancellationToken cancellationToken)
+        public Task SendAsync(MessageInfo info)
         {
-            var info = new MessageInfo(updateMessage.Message, updateMessage.Media, chatId, cancellationToken);
-
             _logger.LogWarning(
                 "Message length: {}",
-                updateMessage.Message.Length);
+                info.Message.Length);
 
-            switch (updateMessage.Media?.Length ?? 0)
+            switch (info.Media?.Length ?? 0)
             {
                 // Only when there is no media in the update, and the update's content can fit in one Telegram message
                 case 0 when info.FitsInOneTextMessage:

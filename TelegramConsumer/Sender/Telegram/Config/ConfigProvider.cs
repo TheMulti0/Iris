@@ -10,33 +10,23 @@ namespace TelegramConsumer
 {
     internal class ConfigProvider : IConfigProvider
     {
-        // private readonly IKafkaConsumer<string, string> _consumer;
-        private readonly TelegramConfig _defaultConfig;
-        private readonly ILogger<ConfigProvider> _logger;
-        
         private readonly BehaviorSubject<Result<TelegramConfig>> _configs;
         public IObservable<Result<TelegramConfig>> Configs => _configs;
 
         public ConfigProvider(
-            // IKafkaConsumer<string, string> consumer,
-            TelegramConfig defaultConfig,
-            ILogger<ConfigProvider> logger)
+            IKafkaConsumer<string, string> consumer,
+            TelegramConfig defaultConfig)
         {
-            // _consumer = consumer;
-            _defaultConfig = defaultConfig;
-            _logger = logger;
-            _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(_defaultConfig));
+            _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(defaultConfig));
             
-            // _consumer.Messages
-            //     .Where(ConfigBelongsToTelegram)
-            //     .Select(DeserializeConfig)
-            //     .Subscribe(_configs.OnNext);
+            consumer.Messages
+                .Where(ConfigBelongsToTelegram)
+                .Select(DeserializeConfig)
+                .Subscribe(_configs.OnNext);
         }
         
-        private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record)
-        {
-            return record.Key == "Telegram";
-        }
+        private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record) 
+            => record.Key == "Telegram";
 
         private static Result<TelegramConfig> DeserializeConfig(KafkaRecord<string, string> record)
         {
