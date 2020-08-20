@@ -4,53 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using static TelegramConsumer.TelegramConstants;
 
 namespace TelegramConsumer
 {
-    internal class MessageInfo
-    {
-        public string Message { get; }
-
-        public Media[] Media { get; }
-
-        public ChatId ChatId { get; }
-
-        public bool FitsInOneTextMessage { get; }
-
-        public bool FitsInOneMediaMessage { get; }
-
-        public int ReplyMessageId { get; }
-
-        public MessageInfo(
-            UpdateMessage updateMessage,
-            ChatId chatId,
-            int replyMessageId = 0
-            ) : this(updateMessage.Message,
-                     updateMessage.Media,
-                     chatId,
-                     replyMessageId)
-        {
-        }
-
-        public MessageInfo(
-            string message,
-            Media[] media,
-            ChatId chatId,
-            int replyMessageId = 0)
-        {
-            Message = message;
-            Media = media;
-            ChatId = chatId;
-            ReplyMessageId = replyMessageId;
-            
-            FitsInOneTextMessage = Message.Length <= MaxTextMessageLength;
-            FitsInOneMediaMessage = Message.Length <= MaxMediaCaptionLength;            
-        }
-    }
-    
     public class MessageSender
     {
         private readonly ITelegramBotClient _client;
@@ -69,7 +29,7 @@ namespace TelegramConsumer
             UpdateMessage updateMessage,
             ChatId chatId)
         {
-            var info = new MessageInfo(updateMessage, chatId);
+            var info = new MessageInfo(updateMessage.Message, updateMessage.Media, chatId);
 
             _logger.LogWarning(
                 "Message length: {}",
@@ -126,11 +86,9 @@ namespace TelegramConsumer
 
                 foreach (string message in messageChunks)
                 {
-                    var newInfo = new MessageInfo(
-                        message,
-                        info.Media,
-                        info.ChatId,
-                        lastMessageId);
+                    MessageInfo newInfo = info
+                        .Remute(i => i.Message, message)
+                        .Remute(i => i.ReplyMessageId, lastMessageId);
                     
                     Message lastMessage = await SendSingleTextMessage(newInfo);
 
@@ -241,8 +199,7 @@ namespace TelegramConsumer
 
             int firstMediaMessageId = await SendMediaAlbumIfAny(info);
 
-            var newInfo = new MessageInfo(
-                info.Message, info.Media, info.ChatId, firstMediaMessageId);
+            MessageInfo newInfo = info.Remute(i => i.ReplyMessageId, firstMediaMessageId);
 
             await SendTextMessagesIfAny(newInfo);
         }
