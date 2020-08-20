@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace TelegramConsumer
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ILogger<MessageSender> _senderLogger;
+        private readonly ConcurrentDictionary<long, SemaphoreSlim> _chatIdLocks;
 
         private ITelegramBotClient _client;
         private MessageSender _sender;
@@ -29,6 +31,7 @@ namespace TelegramConsumer
             _clientProvider = clientProvider;
             _logger = logger;
             _senderLogger = senderLogger;
+            _chatIdLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
             configProvider.Configs.SubscribeAsync(HandleConfig);
         }
@@ -111,7 +114,14 @@ namespace TelegramConsumer
 
             foreach (long chatId in user.ChatIds)
             {
+                // Asynchronously lock each chatid, meaning only one message can be sent at a time in a single chat
+                SemaphoreSlim chatIdLock = _chatIdLocks.GetOrAdd(chatId, id => new SemaphoreSlim(1, 1));
+                
+                await chatIdLock.WaitAsync();
+                
                 await _sender.SendAsync(updateMessage, chatId);
+
+                chatIdLock.Release();
             }
         }
     }
