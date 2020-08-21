@@ -38,8 +38,6 @@ namespace TelegramConsumer
 
         private async Task OnNext(KafkaRecord<Nothing, Update> record)
         {
-            _logger.LogInformation("Received result of update {}", record);
-
             try
             {
                 await _bot.SendAsync(record.Value);

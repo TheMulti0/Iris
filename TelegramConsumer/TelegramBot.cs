@@ -12,8 +12,8 @@ namespace TelegramConsumer
     public class TelegramBot
     {
         private readonly ITelegramBotClientProvider _clientProvider;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
-        private readonly ILogger<MessageSender> _senderLogger;
         private readonly ConcurrentDictionary<long, ChatSender> _chatSenders;
 
         private ITelegramBotClient _client;
@@ -25,12 +25,11 @@ namespace TelegramConsumer
         public TelegramBot(
             IConfigProvider configProvider,
             ITelegramBotClientProvider clientProvider,
-            ILogger<TelegramBot> logger,
-            ILogger<MessageSender> senderLogger)
+            ILoggerFactory loggerFactory)
         {
             _clientProvider = clientProvider;
-            _logger = logger;
-            _senderLogger = senderLogger;
+            _loggerFactory = loggerFactory;
+            _logger = _loggerFactory.CreateLogger<TelegramBot>();
             _chatSenders = new ConcurrentDictionary<long, ChatSender>();
 
             configProvider.Configs.SubscribeAsync(HandleConfig);
@@ -64,7 +63,7 @@ namespace TelegramConsumer
                 ClearChatSenders();
 
                 _client = client.Value;
-                _sender = new MessageSender(_client, _senderLogger);
+                _sender = new MessageSender(_client, _loggerFactory);
                 _config = config;
             }
         }
@@ -126,7 +125,7 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending update {}", update);
             
-            var updateMessage = MessageBuilder.Build(update, user);
+            string updateMessage = MessageBuilder.Build(update, user);
 
             foreach (long chatId in user.ChatIds)
             {

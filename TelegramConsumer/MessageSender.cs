@@ -16,58 +16,62 @@ namespace TelegramConsumer
         private readonly ITelegramBotClient _client;
         private readonly ILogger<MessageSender> _logger;
         private readonly SemaphoreSlim _messageBatchLock = new SemaphoreSlim(1, 1);
+        private readonly TextSender _textSender;
 
         public MessageSender(
             ITelegramBotClient client,
-            ILogger<MessageSender> logger)
+            ILoggerFactory loggerFactory)
         {
             _client = client;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<MessageSender>();
+            _textSender = new TextSender(
+                client,
+                loggerFactory.CreateLogger<TextSender>());
         }
 
-        public Task SendAsync(MessageInfo info)
+        public Task SendAsync(MessageInfo message)
         {
             _logger.LogWarning(
                 "Message length: {}",
-                info.Message.Length);
+                message.Message.Length);
 
-            switch (info.Media?.Length ?? 0)
+            switch (message.Media?.Length ?? 0)
             {
                 // Only when there is no media in the update, and the update's content can fit in one Telegram message
-                case 0 when info.FitsInOneTextMessage:
-                    return SendSingleTextMessage(info);
+                case 0:
+                    return _textSender.SendAsync(message);
 
                 // Only if there is 1 media item, and the update's content can fit as a media caption (in one Telegram message)
-                case 1 when info.FitsInOneMediaMessage:
-                    return SendSingleMediaMessage(info);
+                case 1 when message.FitsInOneMediaMessage:
+                    return SendSingleMediaMessage(message);
 
                 // Either when:
                 // 1. When there is more than 1 media items,
                 // 2. When the update's content cannot fit in a single message (text message / single media message)
                 default:
-                    return SendMessageBatch(info);
+                    return SendMessageBatch(message);
             }
         }
 
-        private Task<Message> SendSingleTextMessage(MessageInfo info)
+        private Task<Message> SendSingleTextMessage(MessageInfo message)
         {
             _logger.LogInformation("Sending text message");
 
             return _client.SendTextMessageAsync(
-                chatId: info.ChatId,
-                text: info.Message,
+                chatId: message.ChatId,
+                text: message.Message,
                 parseMode: MessageParseMode,
                 disableWebPagePreview: DisableWebPagePreview,
-                replyToMessageId: info.ReplyMessageId,
-                cancellationToken: info.CancellationToken
+                replyToMessageId: message.ReplyMessageId,
+                cancellationToken: message.CancellationToken
             );
         }
 
-        private async Task SendMultipleTextMessages(MessageInfo info)
+        private async Task SendMultipleTextMessages(MessageInfo message)
         {
             _logger.LogInformation("Sending multiple text messages");
 
-            string text = info.Message;
+            string text = message.Message;
             int textLength = text.Length;
             if (textLength > MaxTextMessageLength)
             {
@@ -79,12 +83,12 @@ namespace TelegramConsumer
                     ',',
                     '.');
 
-                int lastMessageId = info.ReplyMessageId;
+                int lastMessageId = message.ReplyMessageId;
 
-                foreach (string message in messageChunks)
+                foreach (string msg in messageChunks)
                 {
-                    MessageInfo newInfo = info
-                        .Remute(i => i.Message, message)
+                    MessageInfo newInfo = message
+                        .Remute(i => i.Message, msg)
                         .Remute(i => i.ReplyMessageId, lastMessageId);
                     
                     Message lastMessage = await SendSingleTextMessage(newInfo);
@@ -135,49 +139,49 @@ namespace TelegramConsumer
             return chunks;
         }
 
-        private Task SendSingleMediaMessage(MessageInfo info)
+        private Task SendSingleMediaMessage(MessageInfo message)
         {
-            return info.Media.Any(media => media.Type == MediaType.Video)
-                ? SendVideo(info)
-                : SendPhoto(info);
+            return message.Media.Any(media => media.Type == MediaType.Video)
+                ? SendVideo(message)
+                : SendPhoto(message);
         }
 
-        private Task SendPhoto(MessageInfo info)
+        private Task SendPhoto(MessageInfo message)
         {
             _logger.LogInformation("Sending single photo message");
 
-            var photo = info.Media.FirstOrDefault(media => media.Type == MediaType.Photo);
+            var photo = message.Media.FirstOrDefault(media => media.Type == MediaType.Photo);
 
             return _client.SendPhotoAsync(
-                chatId: info.ChatId,
+                chatId: message.ChatId,
                 photo: photo.ToInputOnlineFile(),
-                caption: info.Message,
+                caption: message.Message,
                 parseMode: MessageParseMode,
-                cancellationToken: info.CancellationToken);
+                cancellationToken: message.CancellationToken);
         }
 
-        private Task SendVideo(MessageInfo info)
+        private Task SendVideo(MessageInfo message)
         {
             _logger.LogInformation("Sending single video message");
 
-            var video = info.Media.FirstOrDefault(media => media.Type == MediaType.Video);
+            var video = message.Media.FirstOrDefault(media => media.Type == MediaType.Video);
 
             return _client.SendVideoAsync(
-                chatId: info.ChatId,
+                chatId: message.ChatId,
                 video: video.ToInputOnlineFile(),
-                caption: info.Message,
+                caption: message.Message,
                 parseMode: MessageParseMode,
-                cancellationToken: info.CancellationToken);
+                cancellationToken: message.CancellationToken);
         }
 
-        private async Task SendMessageBatch(MessageInfo info)
+        private async Task SendMessageBatch(MessageInfo message)
         {
             // Make sure no other updates will be sent as message batches until this batch is complete sending
             await _messageBatchLock.WaitAsync();
 
             try
             {
-                await SendMessageBatchUnsafe(info);
+                await SendMessageBatchUnsafe(message);
             }
             finally
             {
@@ -186,83 +190,86 @@ namespace TelegramConsumer
             }
         }
 
-        private async Task SendMessageBatchUnsafe(MessageInfo info)
+        private async Task SendMessageBatchUnsafe(MessageInfo message)
         {
             _logger.LogInformation("Sending message batch");
             
-            if (info.FitsInOneMediaMessage)
+            if (message.FitsInOneMediaMessage)
             {
-                await SendMediaAlbumWithCaption(info);
+                await SendMediaAlbumWithCaption(message);
                 return;
             }
 
-            int firstMediaMessageId = await SendMediaAlbumIfAny(info);
+            int firstMediaMessageId = await SendMediaAlbumIfAny(message);
 
-            MessageInfo newInfo = info.Remute(i => i.ReplyMessageId, firstMediaMessageId);
+            MessageInfo newInfo = message.Remute(i => i.ReplyMessageId, firstMediaMessageId);
 
-            await SendTextMessagesIfAny(newInfo);
+            if (newInfo.Message.Any())
+            {
+                await _textSender.SendAsync(newInfo);
+            }
         }
 
-        private async Task<int> SendMediaAlbumIfAny(MessageInfo info)
+        private async Task<int> SendMediaAlbumIfAny(MessageInfo message)
         {
-            bool hasMedia = info.Media?.Any() ?? false;
+            bool hasMedia = message.Media?.Any() ?? false;
             if (!hasMedia)
             {
                 return 0;
             }
             
-            Message[] mediaMessages = await SendMediaAlbum(info);
+            Message[] mediaMessages = await SendMediaAlbum(message);
             return mediaMessages.FirstOrDefault()?.MessageId ?? 0;
         }
 
-        private async Task SendTextMessagesIfAny(MessageInfo info)
+        private async Task SendTextMessagesIfAny(MessageInfo message)
         {
-            if (info.Message.Any())
+            if (message.Message.Any())
             {
                 _logger.LogInformation("Sending corresponding messages");
 
-                if (info.FitsInOneTextMessage)
+                if (message.FitsInOneTextMessage)
                 {
-                    await SendSingleTextMessage(info);
+                    await SendSingleTextMessage(message);
                 }
                 else
                 {
-                    await SendMultipleTextMessages(info);
+                    await SendMultipleTextMessages(message);
                 }
             }
         }
 
-        private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo info)
+        private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo message)
         {
             IAlbumInputMedia ToAlbumInputMedia(Media media, int index)
             {
                 return index > 0
                     ? media.ToAlbumInputMedia()
-                    : media.ToAlbumInputMedia(info.Message, MessageParseMode);
+                    : media.ToAlbumInputMedia(message.Message, MessageParseMode);
             }
 
-            IEnumerable<IAlbumInputMedia> telegramMedia = info.Media
+            IEnumerable<IAlbumInputMedia> telegramMedia = message.Media
                 .Select(ToAlbumInputMedia);
 
             _logger.LogInformation("Sending media album with caption");
 
             return _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,
-                chatId: info.ChatId, 
-                cancellationToken: info.CancellationToken);
+                chatId: message.ChatId, 
+                cancellationToken: message.CancellationToken);
         }
 
-        private Task<Message[]> SendMediaAlbum(MessageInfo info)
+        private Task<Message[]> SendMediaAlbum(MessageInfo message)
         {
-            var telegramMedia = info.Media
+            var telegramMedia = message.Media
                 .Select(media => media.ToAlbumInputMedia());
 
             _logger.LogInformation("Sending media album");
 
             return _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,
-                chatId: info.ChatId,
-                cancellationToken: info.CancellationToken);
+                chatId: message.ChatId,
+                cancellationToken: message.CancellationToken);
         }
     }
 }

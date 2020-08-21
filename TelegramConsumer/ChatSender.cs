@@ -20,7 +20,7 @@ namespace TelegramConsumer
             _messagesSubscription = _messages.Reader
                 .ReadAllAsync()
                 .ToObservable()
-                .SubscribeAsync(SendUpdateMessageAsync);
+                .SubscribeAsync(SendMessageAsync);
         }
 
         public Task AddMessageAsync(MessageInfo message)
@@ -28,7 +28,7 @@ namespace TelegramConsumer
             return _messages.Writer.WriteAsync(message).AsTask();
         }
 
-        private Task SendUpdateMessageAsync(MessageInfo message)
+        private Task SendMessageAsync(MessageInfo message)
         {
             return _messageSender.SendAsync(message);
         }
