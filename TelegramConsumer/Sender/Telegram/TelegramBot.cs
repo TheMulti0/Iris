@@ -61,18 +61,24 @@ namespace TelegramConsumer
             if (client.HasValue)
             {
                 CancelSendOperations();
-                foreach ((long chatId, ChatSender chatSender) in _chatSenders)
-                {
-                    _logger.LogInformation("Stopping chat sender for chat id: {}", chatId);
-                    chatSender.Stop();
-                }
-                _chatSenders.Clear();
-                _logger.LogInformation("Cleared all chat senders");
+                ClearChatSenders();
 
                 _client = client.Value;
                 _sender = new MessageSender(_client, _senderLogger);
                 _config = config;
             }
+        }
+
+        private void ClearChatSenders()
+        {
+            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
+            {
+                _logger.LogInformation("Disposing chat sender for chat id: {}", chatId);
+                chatSender.Dispose();
+            }
+            
+            _chatSenders.Clear();
+            _logger.LogInformation("Cleared all chat senders");
         }
 
         private async Task<Optional<ITelegramBotClient>> CreateNewTelegramBotClient(TelegramConfig config)
@@ -120,14 +126,14 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending update {}", update);
             
-            UpdateMessage updateMessage = UpdateMessageFactory.Create(update, user);
+            var updateMessage = MessageBuilder.Build(update, user);
 
             foreach (long chatId in user.ChatIds)
             {
                 ChatSender chatSender = _chatSenders.GetOrAdd(chatId, id => new ChatSender(_sender));
                 var messageInfo = new MessageInfo(
-                    updateMessage.Message,
-                    updateMessage.Media,
+                    updateMessage,
+                    update.Media,
                     chatId,
                     _sendCancellation.Token);
                 await chatSender.AddMessageAsync(messageInfo);
