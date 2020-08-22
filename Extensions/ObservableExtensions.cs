@@ -14,5 +14,15 @@ namespace Extensions
                 .SelectMany(value => Observable.FromAsync(() => onNextAsync(value)))
                 .Subscribe();
         }
+        
+        public static IDisposable SubscribeAsync<T>(
+            this IObservable<T> source,
+            Func<T, Task> onNextAsync,
+            Action onComplete)
+        {
+            return source
+                .SelectMany(value => Observable.FromAsync(() => onNextAsync(value)))
+                .Subscribe(_ => { }, onComplete);
+        }
     }
 }

@@ -45,6 +45,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Content = "Mock update"
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]

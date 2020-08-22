@@ -9,7 +9,7 @@ using Telegram.Bot;
 
 namespace TelegramConsumer
 {
-    public class TelegramBot : IDisposable
+    public class TelegramBot
     {
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
@@ -59,25 +59,12 @@ namespace TelegramConsumer
             
             if (client.HasValue)
             {
-                CancelSendOperations();
-                ClearChatSenders();
+                Cancel();
 
                 _client = client.Value;
                 _sender = new MessageSender(_client, _loggerFactory);
                 _config = config;
             }
-        }
-
-        private void ClearChatSenders()
-        {
-            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
-            {
-                _logger.LogInformation("Disposing chat sender for chat id: {}", chatId);
-                chatSender.Dispose();
-            }
-            
-            _chatSenders.Clear();
-            _logger.LogInformation("Cleared all chat senders");
         }
 
         private async Task<Optional<ITelegramBotClient>> CreateNewTelegramBotClient(TelegramConfig config)
@@ -108,6 +95,21 @@ namespace TelegramConsumer
             }
 
             _sendCancellation = new CancellationTokenSource();
+        }
+
+        private void ClearChatSenders()
+        {
+            _chatSenders.Clear();
+            _logger.LogInformation("Cleared all chat senders");
+        }
+
+        private void DisposeChatSenders()
+        {
+            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
+            {
+                _logger.LogInformation("Disposing chat sender for chat id: {}", chatId);
+                chatSender.Cancel();
+            }
         }
 
         public async Task SendAsync(Update update)
@@ -145,12 +147,21 @@ namespace TelegramConsumer
             return user != null;
         }
 
-        public void Dispose()
+        public async ValueTask WaitForCompleteAsync()
         {
-            _loggerFactory?.Dispose();
+            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
+            {
+                _logger.LogInformation("Joining chat sender for chat id: {}", chatId);
+                await chatSender.WaitForCompleteAsync();
+            }
             
-            _sendCancellation.Cancel();
-            _sendCancellation?.Dispose();
+            ClearChatSenders();
+        }
+
+        public void Cancel()
+        {
+            CancelSendOperations();
+            DisposeChatSenders();
             
             ClearChatSenders();
         }
