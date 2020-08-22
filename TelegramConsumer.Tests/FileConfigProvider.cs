@@ -8,15 +8,14 @@ namespace TelegramConsumer.Tests
 {
     internal class FileConfigProvider : IConfigProvider
     {
-        private readonly Subject<Result<TelegramConfig>> _configs = new Subject<Result<TelegramConfig>>();
+        private readonly BehaviorSubject<Result<TelegramConfig>> _configs;
         public IObservable<Result<TelegramConfig>> Configs => _configs;
-        
-        public void InitializeSubscriptions()
+
+        public FileConfigProvider()
         {
             var config = JsonSerializer.Deserialize<TelegramConfig>(
                 File.ReadAllText("../../../telegramconfig.json"));
-            
-            _configs.OnNext(Result<TelegramConfig>.Success(config));
+            _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(config));
         }
     }
 }

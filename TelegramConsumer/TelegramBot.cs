@@ -9,7 +9,7 @@ using Telegram.Bot;
 
 namespace TelegramConsumer
 {
-    public class TelegramBot
+    public class TelegramBot : IDisposable
     {
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
@@ -143,6 +143,16 @@ namespace TelegramConsumer
         {
             user = _config.Users.FirstOrDefault(u => u.UserName == authorId);
             return user != null;
+        }
+
+        public void Dispose()
+        {
+            _loggerFactory?.Dispose();
+            
+            _sendCancellation.Cancel();
+            _sendCancellation?.Dispose();
+            
+            ClearChatSenders();
         }
     }
 }

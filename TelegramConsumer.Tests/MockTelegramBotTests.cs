@@ -27,8 +27,7 @@ namespace TelegramConsumer.Tests
             _bot = new TelegramBot(
                 configsProvider,
                 new MockTelegramBotClientProvider(loggerFactory),
-                loggerFactory.CreateLogger<TelegramBot>(),
-                loggerFactory.CreateLogger<MessageSender>());
+                loggerFactory);
         }
         
         [TestMethod]

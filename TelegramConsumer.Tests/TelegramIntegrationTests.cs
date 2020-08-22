@@ -29,18 +29,17 @@ namespace TelegramConsumer.Tests
             _bot = new TelegramBot(
                 configsProvider,
                 new TelegramBotClientProvider(loggerFactory.CreateLogger<TelegramBotClientProvider>()),
-                loggerFactory.CreateLogger<TelegramBot>(),
-                loggerFactory.CreateLogger<MessageSender>());
+                loggerFactory);
 
-            return Task.Delay(500); // Wait for JSON config to be read
+            return Task.Delay(1000); // Wait for JSON config to be read
         }
         
         [TestMethod]
-        public Task TestText()
+        public async Task TestText()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
