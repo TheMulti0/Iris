@@ -1,11 +1,10 @@
-from abc import ABC
-
 from facebook_scraper import get_posts
 
+from facebookproducer.posts.iposts_provider import IPostsProvider
 from facebookproducer.posts.post import Post
 
 
-class PostsProvider(ABC):
+class PostsProvider(IPostsProvider):
     def get_posts(self, user_id):
         return [
             Post(post, user_id)

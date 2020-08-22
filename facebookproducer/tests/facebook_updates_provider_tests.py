@@ -9,9 +9,9 @@ class FacebookUpdatesProviderTests(TestCase):
     def test1(self):
         user_id = 'mock_user'
 
-        tweets = list(FacebookUpdatesProvider(
+        posts = list(FacebookUpdatesProvider(
             MockPostsProvider()).get_updates(user_id))
-        self.assertNotEqual(0, len(tweets))
+        self.assertNotEqual(0, len(posts))
 
 
 if __name__ == '__main__':
