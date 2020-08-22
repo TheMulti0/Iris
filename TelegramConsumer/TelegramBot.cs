@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Extensions;
@@ -15,13 +15,11 @@ namespace TelegramConsumer
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
-        private readonly ConcurrentDictionary<long, ActionBlock<MessageInfo>> _chatSenders;
-
-        private ITelegramBotClient _client;
+        private readonly ConcurrentDictionary<long, ActionBlock<Task>> _chatSenders;
+        
+        private readonly object _configLock = new object();
         private MessageSender _sender;
         private TelegramConfig _config;
-
-        private CancellationTokenSource _sendCancellation;
 
         public TelegramBot(
             IConfigProvider configProvider,
@@ -31,8 +29,8 @@ namespace TelegramConsumer
             _clientProvider = clientProvider;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<TelegramBot>();
-            _chatSenders = new ConcurrentDictionary<long, ActionBlock<MessageInfo>>();
-
+            _chatSenders = new ConcurrentDictionary<long, ActionBlock<Task>>();
+            
             configProvider.Configs.SubscribeAsync(HandleConfig);
         }
 
@@ -60,10 +58,7 @@ namespace TelegramConsumer
             
             if (client.HasValue)
             {
-                Cancel();
-
-                _client = client.Value;
-                _sender = new MessageSender(_client, _loggerFactory);
+                _sender = new MessageSender(client.Value, _loggerFactory);
                 _config = config;
             }
         }
@@ -82,44 +77,8 @@ namespace TelegramConsumer
             }
         }
 
-        private void CancelSendOperations()
-        {
-            _logger.LogInformation("Cancelling send operations");
-
-            try
-            {
-                _sendCancellation?.Cancel();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to cancel send operations");
-            }
-
-            _sendCancellation = new CancellationTokenSource();
-        }
-
-        private void ClearChatSenders()
-        {
-            _chatSenders.Clear();
-            _logger.LogInformation("Cleared all chat senders");
-        }
-
-        private void CompleteChatSenders()
-        {
-            foreach ((long chatId, ActionBlock<MessageInfo> chatSender) in _chatSenders)
-            {
-                _logger.LogInformation("Disposing chat sender for chat id: {}", chatId);
-                chatSender.Complete();
-            }
-        }
-
         public async Task SendAsync(Update update)
         {
-            if (_config == null)
-            {
-                _logger.LogError("Update request sent, but no config present. Leaving.");
-                return;
-            }
             if (!TryGetUser(update.AuthorId, out User user))
             {
                 _logger.LogError("User {} is not in config. Leaving.", update.AuthorId);
@@ -132,42 +91,57 @@ namespace TelegramConsumer
 
             foreach (long chatId in user.ChatIds)
             {
-                ActionBlock<MessageInfo> chatSender = _chatSenders
-                    .GetOrAdd(chatId, id => new ActionBlock<MessageInfo>(_sender.SendAsync));
-                
-                var messageInfo = new MessageInfo(
-                    updateMessage,
-                    update.Media,
-                    chatId,
-                    _sendCancellation.Token);
-                
-                await chatSender.SendAsync(messageInfo);
+                await SendChatUpdate(updateMessage, update.Media, chatId);
             }
+        }
+
+        private async Task SendChatUpdate(
+            string message,
+            Media[] media,
+            long chatId)
+        {
+            ActionBlock<Task> chatSender = _chatSenders
+                .GetOrAdd(chatId, id => new ActionBlock<Task>(task => task));
+
+            var messageInfo = new MessageInfo(
+                message,
+                media,
+                chatId);
+
+            await chatSender.SendAsync(
+                _sender.SendAsync(messageInfo));
         }
 
         private bool TryGetUser(string authorId, out User user)
         {
-            user = _config.Users.FirstOrDefault(u => u.UserName == authorId);
-            return user != null;
+            lock (_configLock)
+            {
+                if (_config == null)
+                {
+                    _logger.LogError("Update request received, but no config present");
+                }
+                
+                user = _config?.Users.FirstOrDefault(u => u.UserName == authorId);
+                return user != null;
+            }
         }
 
-        public async ValueTask WaitForCompleteAsync()
+        public async Task FlushAsync()
         {
-            Task[] completions = _chatSenders.Values
-                .Select(sender => sender.Completion)
+            Task[] completions = _chatSenders
+                .Select(CompleteAsync)
                 .ToArray();
 
             await Task.WhenAll(completions);
-            
-            ClearChatSenders();
         }
 
-        public void Cancel()
+        private Task CompleteAsync(KeyValuePair<long, ActionBlock<Task>> pair)
         {
-            CancelSendOperations();
-            CompleteChatSenders();
-            
-            ClearChatSenders();
+            (long chatId, ActionBlock<Task> chatSender) = pair;
+
+            _logger.LogInformation("Completing chat sender for chat id: {}", chatId);
+
+            return chatSender.CompleteAsync();
         }
     }
 }

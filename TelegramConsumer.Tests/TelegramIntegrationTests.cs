@@ -46,7 +46,7 @@ namespace TelegramConsumer.Tests
                     Content = "Mock update"
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -67,7 +67,7 @@ namespace TelegramConsumer.Tests
                     Content = content
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -83,7 +83,7 @@ namespace TelegramConsumer.Tests
                     Url = "https://mock-url.com"
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -105,7 +105,7 @@ namespace TelegramConsumer.Tests
                     }
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -129,7 +129,7 @@ namespace TelegramConsumer.Tests
                     Url = "https://mock-url.com"
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -158,7 +158,7 @@ namespace TelegramConsumer.Tests
                     }
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -180,7 +180,7 @@ namespace TelegramConsumer.Tests
                     }
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -204,7 +204,7 @@ namespace TelegramConsumer.Tests
                     Url = "https://mock-url.com"
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
         
         [TestMethod]
@@ -233,7 +233,7 @@ namespace TelegramConsumer.Tests
                     Url = "https://mock-url.com"
                 });
             
-            await _bot.WaitForCompleteAsync();
+            await _bot.FlushAsync();
         }
 
         private static User GetFirstConfiguredUser()

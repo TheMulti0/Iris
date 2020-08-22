@@ -13,17 +13,17 @@ namespace TelegramConsumer
         
         public CancellationToken CancellationToken { get; }
 
+        public int ReplyMessageId { get; }
+        
         public bool FitsInOneTextMessage { get; }
 
         public bool FitsInOneMediaMessage { get; }
-
-        public int ReplyMessageId { get; }
 
         public MessageInfo(
             string message,
             Media[] media,
             ChatId chatId,
-            CancellationToken cancellationToken,
+            CancellationToken cancellationToken = default,
             int replyMessageId = 0)
         {
             Message = message;

@@ -40,7 +40,7 @@ namespace TelegramConsumer
                 disableWebPagePreview: TelegramConstants.DisableWebPagePreview,
                 replyToMessageId: message.ReplyMessageId,
                 cancellationToken: message.CancellationToken
-                );
+            );
         }
 
         private async Task SendMultipleTextMessages(MessageInfo message)
