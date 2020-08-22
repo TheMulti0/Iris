@@ -15,7 +15,7 @@ class VideosProvider(IVideosProvider):
         search_response = self.__youtube.search().list(
             channelId=channel_id,
             part='id,snippet',
-            maxResults=10,
+            maxResults=1,
             type='video'
         ).execute()
 

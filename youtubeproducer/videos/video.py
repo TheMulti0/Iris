@@ -7,8 +7,8 @@ class Video:
     title: str
     description: str
     thumbnails: dict
-    publishedAt: datetime
-    publishTime: datetime
+    publishedAt: str
+    publishTime: str
     channelTitle: str
     liveBroadcastContent: str
 

@@ -9,6 +9,6 @@ class YouTubeUpdatesProvider(IUpdatesProvider):
 
     def get_updates(self, user_id: str):
         return [
-            UpdateFactory.to_update(post)
-            for post in self.__videos_provider.get_videos(user_id)
+            UpdateFactory.to_update(video)
+            for video in self.__videos_provider.get_videos(user_id)
         ]

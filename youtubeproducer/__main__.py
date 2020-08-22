@@ -7,15 +7,14 @@ from updatesproducer.db.updates_repository import UpdatesRepository
 
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
 from updatesproducer.startup import Startup
+from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 from youtubeproducer.updateapi.youtube_updates_provider import YouTubeUpdatesProvider
 from youtubeproducer.videos.videos_provider import VideosProvider
 
 
 def create_producer(config, cancellation_token):
-    repository = UpdatesRepository(
-        MongoDbConfig(config['mongodb']),
-        logging.getLogger(UpdatesRepository.__name__)
+    repository = MockUpdatesRepository(
     )
 
     return Producer(
