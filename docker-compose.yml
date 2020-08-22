@@ -14,7 +14,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 0
       KAFKA_HEAP_OPTS: -Xmx256M -Xms128M
-      KAFKA_ADVERTISED_HOST_NAME: iris_kafka
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
     networks:
