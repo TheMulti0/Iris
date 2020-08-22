@@ -50,7 +50,7 @@ namespace TelegramConsumer.Tests
         }
         
         [TestMethod]
-        public Task TestLongText()
+        public async Task TestLongText()
         {
             User user = GetFirstConfiguredUser();
 
@@ -60,34 +60,38 @@ namespace TelegramConsumer.Tests
                 content += $"{i} \n";
             }
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
                     Content = content
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestTextWithUrl()
+        public async Task TestTextWithUrl()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
                     Content = "Mock update",
                     Url = "https://mock-url.com"
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestPhoto()
+        public async Task TestPhoto()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -100,14 +104,16 @@ namespace TelegramConsumer.Tests
                         } 
                     }
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestPhotoWithDetails()
+        public async Task TestPhotoWithDetails()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -122,10 +128,12 @@ namespace TelegramConsumer.Tests
                     Content = "Mock photo",
                     Url = "https://mock-url.com"
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestPhotoWithLongText()
+        public async Task TestPhotoWithLongText()
         {
             User user = GetFirstConfiguredUser();
 
@@ -135,7 +143,7 @@ namespace TelegramConsumer.Tests
                 content += $"{i} \n";
             }
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -149,14 +157,16 @@ namespace TelegramConsumer.Tests
                         }
                     }
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestVideo()
+        public async Task TestVideo()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -169,14 +179,16 @@ namespace TelegramConsumer.Tests
                         } 
                     }
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestVideoWithDetails()
+        public async Task TestVideoWithDetails()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -191,14 +203,16 @@ namespace TelegramConsumer.Tests
                     Content = "Mock video",
                     Url = "https://mock-url.com"
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
         
         [TestMethod]
-        public Task TestMultipleMediaWithDetails()
+        public async Task TestMultipleMediaWithDetails()
         {
             User user = GetFirstConfiguredUser();
 
-            return _bot.SendAsync(
+            await _bot.SendAsync(
                 new Update
                 {
                     AuthorId = user.UserName,
@@ -218,6 +232,8 @@ namespace TelegramConsumer.Tests
                     Content = "Mock medias",
                     Url = "https://mock-url.com"
                 });
+            
+            await _bot.WaitForCompleteAsync();
         }
 
         private static User GetFirstConfiguredUser()

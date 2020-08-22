@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -14,7 +15,7 @@ namespace TelegramConsumer
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
-        private readonly ConcurrentDictionary<long, ChatSender> _chatSenders;
+        private readonly ConcurrentDictionary<long, ActionBlock<MessageInfo>> _chatSenders;
 
         private ITelegramBotClient _client;
         private MessageSender _sender;
@@ -30,7 +31,7 @@ namespace TelegramConsumer
             _clientProvider = clientProvider;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<TelegramBot>();
-            _chatSenders = new ConcurrentDictionary<long, ChatSender>();
+            _chatSenders = new ConcurrentDictionary<long, ActionBlock<MessageInfo>>();
 
             configProvider.Configs.SubscribeAsync(HandleConfig);
         }
@@ -103,12 +104,12 @@ namespace TelegramConsumer
             _logger.LogInformation("Cleared all chat senders");
         }
 
-        private void DisposeChatSenders()
+        private void CompleteChatSenders()
         {
-            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
+            foreach ((long chatId, ActionBlock<MessageInfo> chatSender) in _chatSenders)
             {
                 _logger.LogInformation("Disposing chat sender for chat id: {}", chatId);
-                chatSender.Cancel();
+                chatSender.Complete();
             }
         }
 
@@ -131,13 +132,16 @@ namespace TelegramConsumer
 
             foreach (long chatId in user.ChatIds)
             {
-                ChatSender chatSender = _chatSenders.GetOrAdd(chatId, id => new ChatSender(_sender));
+                ActionBlock<MessageInfo> chatSender = _chatSenders
+                    .GetOrAdd(chatId, id => new ActionBlock<MessageInfo>(_sender.SendAsync));
+                
                 var messageInfo = new MessageInfo(
                     updateMessage,
                     update.Media,
                     chatId,
                     _sendCancellation.Token);
-                await chatSender.AddMessageAsync(messageInfo);
+                
+                await chatSender.SendAsync(messageInfo);
             }
         }
 
@@ -149,11 +153,11 @@ namespace TelegramConsumer
 
         public async ValueTask WaitForCompleteAsync()
         {
-            foreach ((long chatId, ChatSender chatSender) in _chatSenders)
-            {
-                _logger.LogInformation("Joining chat sender for chat id: {}", chatId);
-                await chatSender.WaitForCompleteAsync();
-            }
+            Task[] completions = _chatSenders.Values
+                .Select(sender => sender.Completion)
+                .ToArray();
+
+            await Task.WhenAll(completions);
             
             ClearChatSenders();
         }
@@ -161,7 +165,7 @@ namespace TelegramConsumer
         public void Cancel()
         {
             CancelSendOperations();
-            DisposeChatSenders();
+            CompleteChatSenders();
             
             ClearChatSenders();
         }
