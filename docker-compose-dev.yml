@@ -3,7 +3,7 @@ version: '3.4'
 services:
   zookeeper:
     image: zookeeper:3.5.6
-    container_name: iris_zookeeper
+    container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
@@ -12,7 +12,7 @@ services:
       
   kafka:
     image: wurstmeister/kafka
-    container_name: iris_kafka
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -23,19 +23,8 @@ services:
     depends_on:
       - zookeeper
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    container_name: iris_kafdrop
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: iris_kafka:9092
-      JVM_OPTS: -Xms32M -Xmx64M
-      SERVER_SERVLET_CONTEXTPATH: /
-    depends_on:
-      - kafka
-
   mongodb: 
     image: mongo:latest
+    container_name: mongodb
     ports:
       - 27017:27017

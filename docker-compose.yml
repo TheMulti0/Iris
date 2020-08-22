@@ -3,14 +3,14 @@ version: '3.4'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
-    container_name: iris_zookeeper
+    container_name: zookeeper
     restart: always
     networks:
       - kafka_network
 
   kafka:
     image: wurstmeister/kafka
-    container_name: iris_kafka
+    container_name: kafka
     environment:
       KAFKA_BROKER_ID: 0
       KAFKA_HEAP_OPTS: -Xmx256M -Xms128M
@@ -24,23 +24,9 @@ services:
     depends_on:
       - zookeeper
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    container_name: iris_kafdrop
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: iris_kafka:9092
-      JVM_OPTS: -Xms32M -Xmx64M
-      SERVER_SERVLET_CONTEXTPATH: /
-    networks:
-      - kafka_network
-    depends_on:
-      - kafka
-
   mongodb: 
     image: mongo:latest
-    container_name: iris_mongodb
+    container_name: mongodb
     restart: always
     networks:
       - mongodb_network
@@ -52,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: TelegramConsumer/Dockerfile
-    container_name: iris_telegramconsumer
+    container_name: telegramconsumer
     volumes:
       - './TelegramConsumer/appsettings.json:/app/appsettings.json'
     restart: always
@@ -69,7 +55,7 @@ services:
       args:
         PROJECT_DIR: 'twitterproducer'
     restart: always
-    container_name: iris_twitterproducer
+    container_name: twitterproducer
     volumes:
       - './twitterproducer/appsettings-prod.json:/app/appsettings.json'
     networks:
@@ -87,7 +73,7 @@ services:
       args:
         PROJECT_DIR: 'facebookproducer'
     restart: always
-    container_name: iris_facebookproducer
+    container_name: facebookproducer
     volumes:
       - './facebookproducer/appsettings-prod.json:/app/appsettings.json'
     networks:
