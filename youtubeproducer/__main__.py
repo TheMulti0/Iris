@@ -14,7 +14,9 @@ from youtubeproducer.videos.videos_provider import VideosProvider
 
 
 def create_producer(config, cancellation_token):
-    repository = MockUpdatesRepository(
+    repository = UpdatesRepository(
+        MongoDbConfig(config['mongodb']),
+        logging.getLogger(UpdatesRepository.__name__)
     )
 
     return Producer(
