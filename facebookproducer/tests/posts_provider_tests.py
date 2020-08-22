@@ -17,10 +17,10 @@ class PostsProviderTests(TestCase):
     def test1(self):
         user_id = 'Netanyahu'
 
-        tweets = list(
+        posts = list(
             PostsProvider().get_posts(user_id))
 
-        self.assertNotEqual(0, len(tweets))
+        self.assertNotEqual(0, len(posts))
 
 
 if __name__ == '__main__':
