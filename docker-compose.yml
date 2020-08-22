@@ -83,6 +83,24 @@ services:
       - kafka
       - mongodb
 
+  youtubeproducer:
+    image: themulti0/iris_youtubeproducer:$VERSION
+    build:
+      context: .
+      dockerfile: updatesproducer/Dockerfile
+      args:
+        PROJECT_DIR: 'youtubeproducer'
+    restart: always
+    container_name: youtubeproducer
+    volumes:
+      - './youtubeproducer/appsettings-prod.json:/app/appsettings.json'
+    networks:
+      - kafka_network
+      - mongodb_network
+    depends_on:
+      - kafka
+      - mongodb
+
 networks:
   kafka_network:
   mongodb_network:
