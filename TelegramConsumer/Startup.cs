@@ -60,7 +60,7 @@ namespace TelegramConsumer
                 .Get<TelegramConfig>();
 
             services
-                .AddConsumer<Nothing, Update>(updatesConsumerConfig)
+                .AddConsumer<string, Update>(updatesConsumerConfig)
                 .AddConsumer<string, string>(configConsumerConfig)
                 .AddSingleton(defaultTelegramConfig)
                 .AddSingleton<IConfigProvider, ConfigProvider>()

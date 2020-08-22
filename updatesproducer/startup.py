@@ -25,7 +25,7 @@ class Startup:
     def start(self):
 
         with self.__config_lock:
-            self.__config = json.load(open('appsettings.json'))
+            self.__config = json.load(open('appsettings.json', encoding='utf-8'))
 
         self.run_async(
             self.aggregate(

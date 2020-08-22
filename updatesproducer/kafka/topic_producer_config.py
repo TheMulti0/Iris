@@ -3,6 +3,7 @@ from typing import List
 
 class TopicProducerConfig:
     topic: str
+    key: str
     bootstrap_servers: str
     update_interval_seconds: float
     watched_users: List[str]

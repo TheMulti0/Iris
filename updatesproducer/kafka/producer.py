@@ -97,9 +97,11 @@ class Producer:
         self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
 
         json_str = json.dumps(update.__dict__, default=self._json_converter)
+        key_bytes = bytes(self.__config.key, 'utf-8')
         update_bytes = bytes(json_str, 'utf-8')
 
         self.__producer.send(
             self.__config.topic,
+            key=key_bytes,
             value=update_bytes,
             timestamp_ms=int(datetime.now().timestamp()))

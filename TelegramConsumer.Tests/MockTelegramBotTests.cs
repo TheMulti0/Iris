@@ -40,7 +40,7 @@ namespace TelegramConsumer.Tests
                 {
                     AuthorId = user.UserName,
                     Content = "Mock update"
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }
@@ -56,7 +56,7 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Content = "Mock update",
                     Url = "https://mock-url.com"
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }
@@ -78,7 +78,7 @@ namespace TelegramConsumer.Tests
                             Url = "https://mock-photo-url.com"
                         } 
                     }
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }
@@ -102,7 +102,7 @@ namespace TelegramConsumer.Tests
                     },
                     Content = "Mock photo",
                     Url = "https://mock-url.com"
-                });
+                }, "test");
             
             
             await _bot.FlushAsync();
@@ -125,7 +125,7 @@ namespace TelegramConsumer.Tests
                             Url = "https://mock-video-url.com"
                         } 
                     }
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }
@@ -149,7 +149,7 @@ namespace TelegramConsumer.Tests
                     },
                     Content = "Mock video",
                     Url = "https://mock-url.com"
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }
@@ -178,7 +178,7 @@ namespace TelegramConsumer.Tests
                     },
                     Content = "Mock medias",
                     Url = "https://mock-url.com"
-                });
+                }, "test");
             
             await _bot.FlushAsync();
         }

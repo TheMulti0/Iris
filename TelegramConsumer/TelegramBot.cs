@@ -77,7 +77,7 @@ namespace TelegramConsumer
             }
         }
 
-        public async Task SendAsync(Update update)
+        public async Task SendAsync(Update update, string source)
         {
             if (!TryGetUser(update.AuthorId, out User user))
             {
@@ -87,7 +87,7 @@ namespace TelegramConsumer
 
             _logger.LogInformation("Sending update {}", update);
             
-            string updateMessage = MessageBuilder.Build(update, user);
+            string updateMessage = MessageBuilder.Build(update, source, user);
 
             foreach (long chatId in user.ChatIds)
             {

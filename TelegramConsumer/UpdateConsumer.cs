@@ -11,13 +11,13 @@ namespace TelegramConsumer
 {
     public class UpdateConsumer : BackgroundService
     {
-        private readonly IKafkaConsumer<Nothing, Update> _updateConsumer;
+        private readonly IKafkaConsumer<string, Update> _updateConsumer;
         private readonly TelegramBot _bot;
         private readonly ILogger<UpdateConsumer> _logger;
         private IDisposable _updateSubscription;
 
         public UpdateConsumer(
-            IKafkaConsumer<Nothing, Update> updateConsumer, 
+            IKafkaConsumer<string, Update> updateConsumer, 
             TelegramBot bot,
             ILogger<UpdateConsumer> logger)
         {
@@ -36,11 +36,11 @@ namespace TelegramConsumer
             return Task.CompletedTask;
         }
 
-        private async Task OnNext(KafkaRecord<Nothing, Update> record)
+        private async Task OnNext(KafkaRecord<string, Update> record)
         {
             try
             {
-                await _bot.SendAsync(record.Value);
+                await _bot.SendAsync(record.Value, record.Key);
             }
             catch (Exception e)
             {
