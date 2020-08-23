@@ -3,7 +3,7 @@
 
 This is Iris - a scalable social media update manager.
 
-The project consists of 4 components:
+The project consists of multiple components:
  - `ConfigProducer` (Currently not deployed) - Produces configuration to all components.
  - `twitterproducer` - Produces configured user's tweets as Updates.
  - `facebookproducer` - Produces configured user's posts as Updates.
