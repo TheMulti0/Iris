@@ -58,8 +58,11 @@ namespace TelegramConsumer
             
             if (client.HasValue)
             {
-                _sender = new MessageSender(client.Value, _loggerFactory);
-                _config = config;
+                lock (_configLock) 
+                {
+                    _sender = new MessageSender(client.Value, _loggerFactory);
+                    _config = config;
+                }
             }
         }
 
@@ -79,7 +82,9 @@ namespace TelegramConsumer
 
         public async Task SendAsync(Update update, string source)
         {
-            if (!TryGetUser(update.AuthorId, out User user))
+            (TelegramConfig config, MessageSender sender) = GetState();
+
+            if (!TryGetUser(config, update.AuthorId, out User user))
             {
                 _logger.LogError("User {} is not in config. Leaving.", update.AuthorId);
                 return;
@@ -91,11 +96,20 @@ namespace TelegramConsumer
 
             foreach (long chatId in user.ChatIds)
             {
-                await SendChatUpdate(updateMessage, update.Media, chatId);
+                await SendChatUpdate(sender, updateMessage, update.Media, chatId);
+            }
+        }
+
+        private (TelegramConfig config, MessageSender sender) GetState()
+        {
+            lock (_configLock)
+            {
+                return (_config, _sender);
             }
         }
 
         private async Task SendChatUpdate(
+            MessageSender sender,
             string message,
             Media[] media,
             long chatId)
@@ -109,21 +123,18 @@ namespace TelegramConsumer
                 chatId);
 
             await chatSender.SendAsync(
-                _sender.SendAsync(messageInfo));
+                sender.SendAsync(messageInfo));
         }
 
-        private bool TryGetUser(string authorId, out User user)
+        private bool TryGetUser(TelegramConfig config, string authorId, out User user)
         {
-            lock (_configLock)
+            if (config == null)
             {
-                if (_config == null)
-                {
-                    _logger.LogError("Update request received, but no config present");
-                }
-                
-                user = _config?.Users.FirstOrDefault(u => u.UserName == authorId);
-                return user != null;
+                _logger.LogError("Update request received, but no config present");
             }
+            
+            user = config?.Users.FirstOrDefault(u => u.UserName == authorId);
+            return user != null;
         }
 
         public async Task FlushAsync()
