@@ -1,4 +1,4 @@
 pymongo
 kafka-python
-twitter_scraper
+tweepy
 youtube-dl

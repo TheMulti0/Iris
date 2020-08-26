@@ -13,5 +13,6 @@ class MockUpdatesProvider(IUpdatesProvider):
                 creation_date=datetime.now(),
                 url='mockurl://updateapi.com',
                 media=[],
-                repost=False)
+                repost=False,
+                should_redownload_video=False)
         ]

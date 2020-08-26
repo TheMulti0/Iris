@@ -1,3 +1,4 @@
+import json
 import logging
 import unittest
 from unittest import TestCase
@@ -17,9 +18,10 @@ class TweetsProviderTests(TestCase):
     def test1(self):
         user_id = '@realDonaldTrump'
 
+        config = json.load(open('twitterconfig.json', encoding='utf-8'))
+
         tweets = list(
-            TweetsProvider(logging.getLogger(TweetsProvider.__name__))
-                .get_tweets(user_id))
+            TweetsProvider(config, logging.getLogger(TweetsProvider.__name__)).get_tweets(user_id))
 
         self.assertNotEqual(0, len(tweets))
 

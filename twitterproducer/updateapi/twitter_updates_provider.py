@@ -9,8 +9,8 @@ class TwitterUpdatesProvider(IUpdatesProvider):
     def __init__(self, tweets_provider):
         self.__tweets_provider = tweets_provider
 
-    def get_updates(self, user_id: str):
+    def get_updates(self, user_id):
         return [
-            UpdateFactory.to_update(tweet, user_id)
+            UpdateFactory.to_update(tweet)
             for tweet in self.__tweets_provider.get_tweets(user_id)
         ]

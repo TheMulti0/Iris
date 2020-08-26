@@ -12,5 +12,6 @@ class UpdateFactory:
             creation_date=post.time,
             url=post.post_url,
             media=MediaFactory.to_media(post),
-            repost=post.text == post.shared_text
+            repost=post.text == post.shared_text,
+            should_redownload_video=True
         )

@@ -10,16 +10,12 @@ class VideoDownloader:
     def __init__(self, logger):
         self.__logger = logger
 
-    def download_video(self, update: Update):
+    def download_video(self, update: Update, lowres_videos):
         # Try downloading the video of this update
         video = self._try_download_video(update.url)
 
         # If a video is found
         if video is not None:
-            # Find all of the old lowres videos that this update has (if any)
-            lowres_videos = list(filter(
-                lambda m: m.type == MediaType.Video,
-                update.media))
 
             # Remove all old lowres that were found
             for lowres_video in lowres_videos:

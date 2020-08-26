@@ -17,6 +17,7 @@ def create_producer(config, cancellation_token):
         logging.getLogger(UpdatesRepository.__name__))
 
     tweets_provider = TweetsProvider(
+        config['tweets_producer'],
         logging.getLogger(TwitterUpdatesProvider.__name__))
 
     twitter_updates_provider = TwitterUpdatesProvider(tweets_provider)

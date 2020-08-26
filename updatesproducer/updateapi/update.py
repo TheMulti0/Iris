@@ -11,6 +11,7 @@ class Update:
     url: str
     media: List[Media]
     repost: bool
+    should_redownload_video: bool
 
     def __init__(
             self,
@@ -19,10 +20,12 @@ class Update:
             creation_date: datetime,
             url: str,
             media: list,
-            repost: bool):
+            repost: bool,
+            should_redownload_video: bool):
         self.content = content
         self.author_id = author_id
         self.creation_date = creation_date
         self.url = url
         self.media = media
         self.repost = repost
+        self.should_redownload_video = should_redownload_video

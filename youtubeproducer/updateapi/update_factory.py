@@ -20,5 +20,6 @@ class UpdateFactory:
             media=[
                 Media(url, MediaType.Video)
             ],
-            repost=False
+            repost=False,
+            should_redownload_video=False
         )
