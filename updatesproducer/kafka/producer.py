@@ -78,7 +78,9 @@ class Producer:
             self.__logger.info('No new updates found')
 
     def _get_new_updates(self, user_id):
-        updates = self.__updates_provider.get_updates(user_id)
+        updates = filter(
+            lambda u: u.creation_date is not None,
+            self.__updates_provider.get_updates(user_id))
 
         sorted_updates = sorted(
             updates,
