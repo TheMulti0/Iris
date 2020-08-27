@@ -47,7 +47,10 @@ class Producer:
 
     def update(self):
         for user in self.__config.watched_users:
-            self._update_user(user)
+            try:
+                self._update_user(user)
+            except:
+                self.__logger.error(f'Failed to update user {user}', exc_info=1)
 
     def _update_user(self, user_id):
         self.__logger.info('Updating user %s', user_id)
