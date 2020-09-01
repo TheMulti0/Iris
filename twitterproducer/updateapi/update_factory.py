@@ -13,14 +13,20 @@ class UpdateFactory:
     def to_update(tweet: Status):
         user_id = tweet.user.screen_name
 
+        retweeted = tweet.retweeted
+        if retweeted:
+            text = tweet.retweeted_status.full_text
+        else:
+            text = tweet.full_text
+
         return Update(
             # Replace pic.twitter.com/232dssad links with nothing
-            content=UpdateFactory.sub([r'pic.twitter.com/\S+'], '', tweet.full_text),
+            content=UpdateFactory.sub([r'pic.twitter.com/\S+'], '', text),
             author_id=user_id,
             creation_date=tweet.created_at,
             url=f'{TWITTER_BASE_URL}/{user_id}/status/{tweet.id_str}',
             media=MediaFactory.to_media(tweet),
-            repost=tweet.retweeted,
+            repost=retweeted,
             should_redownload_video=False
         )
 
