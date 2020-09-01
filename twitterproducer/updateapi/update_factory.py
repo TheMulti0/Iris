@@ -15,7 +15,7 @@ class UpdateFactory:
 
         return Update(
             # Replace pic.twitter.com/232dssad links with nothing
-            content=UpdateFactory.sub([r'pic.twitter.com/\S+', r'https://t.co/\S+'], '', tweet.full_text),
+            content=UpdateFactory.sub([r'pic.twitter.com/\S+'], '', tweet.full_text),
             author_id=user_id,
             creation_date=tweet.created_at,
             url=f'{TWITTER_BASE_URL}/{user_id}/status/{tweet.id_str}',
