@@ -1,16 +1,21 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace TelegramConsumer
 {
     public class MediaSender
     {
+        private readonly HttpClient _httpClient;
         private readonly ITelegramBotClient _client;
         private readonly TextSender _textSender;
         private readonly ILogger<MediaSender> _logger;
@@ -21,6 +26,7 @@ namespace TelegramConsumer
             TextSender textSender,
             ILogger<MediaSender> logger)
         {
+            _httpClient = new HttpClient();
             _client = client;
             _textSender = textSender;
             _logger = logger;
@@ -33,11 +39,19 @@ namespace TelegramConsumer
 
             try
             {
-                Task sendTask = message.FitsInOneMediaMessage 
-                    ? SendMediaAlbumWithCaption(message) 
-                    : SendMediaAlbumWithAdditionalTextMessage(message);
-                
-                sendTask.Wait();
+                await SendUnsafeAsync(message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to send media {}", e);
+
+                if (!message.DownloadMedia)
+                {
+                    _logger.LogInformation("Retrying with DownloadMedia set to true");
+                    
+                    await SendUnsafeAsync(
+                        message.Remute(msg => msg.DownloadMedia, true));
+                }
             }
             finally
             {
@@ -46,19 +60,48 @@ namespace TelegramConsumer
             }
         }
 
-        private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo message)
+        private async Task SendUnsafeAsync(MessageInfo message)
         {
-            IAlbumInputMedia ToAlbumInputMedia(Media media, int index)
+            List<IAlbumInputMedia> telegramMedia = await message.Media
+                .ToAsyncEnumerable()
+                .SelectAwait(media => ToAlbumInputMediaAsync(message, media))
+                .ToListAsync(message.CancellationToken);
+
+            Task sendTask = message.FitsInOneMediaMessage
+                ? SendMediaAlbumWithCaption(message, telegramMedia)
+                : SendMediaAlbumWithAdditionalTextMessage(message, telegramMedia);
+
+            await sendTask;
+        }
+
+        private async ValueTask<IAlbumInputMedia> ToAlbumInputMediaAsync(MessageInfo message, Media media)
+        {
+            InputMedia inputMedia = await GetInputMediaAsync(message, media);
+
+            switch (media.Type)
             {
-                return index > 0
-                    ? media.ToAlbumInputMedia()
-                    : media.ToAlbumInputMedia(message.Message, TelegramConstants.MessageParseMode);
+                case MediaType.Video:
+                    return new InputMediaVideo(inputMedia);
+                default:
+                    return new InputMediaPhoto(inputMedia);
             }
+        }
 
+        private async Task<InputMedia> GetInputMediaAsync(MessageInfo message, Media media)
+        {
+            if (message.DownloadMedia)
+            {
+                return new InputMedia(
+                    await _httpClient.GetStreamAsync(media.Url),
+                    media.Type.ToString());
+            }
+            
+            return new InputMedia(media.Url);
+        }
+
+        private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
+        {
             _logger.LogInformation("Sending media album with caption");
-
-            IEnumerable<IAlbumInputMedia> telegramMedia = message.Media
-                .Select(ToAlbumInputMedia);
 
             return _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,
@@ -66,7 +109,7 @@ namespace TelegramConsumer
                 cancellationToken: message.CancellationToken);
         }
 
-        private async Task SendMediaAlbumWithAdditionalTextMessage(MessageInfo message)
+        private async Task SendMediaAlbumWithAdditionalTextMessage(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
             _logger.LogInformation("Sending media album with additional text message");
             
@@ -74,7 +117,7 @@ namespace TelegramConsumer
             
             if (message.Media.Any())
             {
-                firstMediaMessageId = await SendMediaAlbumIfAny(message);
+                firstMediaMessageId = await SendMediaAlbumIfAny(message, telegramMedia);
             }
 
             if (message.Message.Any())
@@ -86,12 +129,9 @@ namespace TelegramConsumer
             }
         }
 
-        private async Task<int> SendMediaAlbumIfAny(MessageInfo message)
+        private async Task<int> SendMediaAlbumIfAny(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
             _logger.LogInformation("Sending media album");
-
-            var telegramMedia = message.Media
-                .Select(media => media.ToAlbumInputMedia());
             
             Message[] mediaMessages = await _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,

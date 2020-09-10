@@ -15,6 +15,8 @@ namespace TelegramConsumer
 
         public int ReplyMessageId { get; }
         
+        public bool DownloadMedia { get; set; }
+
         public bool FitsInOneTextMessage { get; }
 
         public bool FitsInOneMediaMessage { get; }
@@ -24,13 +26,15 @@ namespace TelegramConsumer
             Media[] media,
             ChatId chatId,
             CancellationToken cancellationToken = default,
-            int replyMessageId = 0)
+            int replyMessageId = 0,
+            bool downloadMedia = false)
         {
             Message = message;
             Media = media;
             ChatId = chatId;
             CancellationToken = cancellationToken;
             ReplyMessageId = replyMessageId;
+            DownloadMedia = downloadMedia;
             
             FitsInOneTextMessage = Message.Length <= TelegramConstants.MaxTextMessageLength;
             FitsInOneMediaMessage = Message.Length <= TelegramConstants.MaxMediaCaptionLength;            
