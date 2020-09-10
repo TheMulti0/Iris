@@ -16,6 +16,7 @@ class VideosProvider(IVideosProvider):
             channelId=channel_id,
             part='id,snippet',
             maxResults=1,
+            order='date',
             type='video'
         ).execute()
 
