@@ -23,6 +23,10 @@ class UpdateFactory:
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
+            thumbnail = video.thumbnails.get('high')
+            if thumbnail is None:
+                thumbnail = video.thumbnails.get('default')
+
             return Update(
                 content=f'{video.title}\n{video.description}',
                 author_id=video.channelId,
@@ -31,9 +35,9 @@ class UpdateFactory:
                 media=[
                     # Downloaded later by VideoDownloader
                     Media(
-                        url,
+                        info['url'],
                         MediaType.Video,
-                        video.thumbnails.get('high').get('url'),
+                        thumbnail['url'],
                         info['duration'],
                         info['width'],
                         info['height']

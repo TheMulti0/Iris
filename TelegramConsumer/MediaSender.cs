@@ -81,7 +81,28 @@ namespace TelegramConsumer
             switch (media.Type)
             {
                 case MediaType.Video:
-                    return new InputMediaVideo(inputMedia);
+                    var video = new InputMediaVideo(inputMedia);
+
+                    if (media.ThumbnailUrl != null)
+                    {
+                        video.Thumb = new InputMedia(
+                            await _httpClient.GetStreamAsync(media.ThumbnailUrl),
+                            "Thumbnail");
+                    }
+                    if (media.DurationSeconds != 0)
+                    {
+                        video.Duration = media.DurationSeconds;
+                    }
+                    if (media.Width != 0)
+                    {
+                        video.Width = media.Width;
+                    }
+                    if (media.Height != 0)
+                    {
+                        video.Height = media.Height;
+                    }
+
+                    return video;
                 default:
                     return new InputMediaPhoto(inputMedia);
             }
@@ -102,6 +123,12 @@ namespace TelegramConsumer
         private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
             _logger.LogInformation("Sending media album with caption");
+
+            if (telegramMedia.FirstOrDefault() is InputMediaBase b)
+            {
+                b.Caption = message.Message;
+                b.ParseMode = TelegramConstants.MessageParseMode;
+            }
 
             return _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,
