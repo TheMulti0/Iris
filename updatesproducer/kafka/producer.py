@@ -62,12 +62,12 @@ class Producer:
         for update in new_updates:
             updates_count += 1
 
-            # Find all of the old lowres videos that this update has (if any)
-            lowres_videos = list(filter(
-                lambda m: m.type == MediaType.Video,
-                update.media))
-
             if update.should_redownload_video:
+                # Find all of the old lowres videos that this update has (if any)
+                lowres_videos = list(filter(
+                    lambda m: m.type == MediaType.Video,
+                    update.media))
+
                 if len(lowres_videos) != 0:
                     self.__video_downloader.download_video(update, lowres_videos)
 
