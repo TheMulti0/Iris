@@ -128,7 +128,12 @@ namespace TelegramConsumer.Tests
             int replyToMessageId = 0,
             IReplyMarkup replyMarkup = null,
             CancellationToken cancellationToken = new CancellationToken(),
-            InputMedia thumb = null) => throw new NotImplementedException();
+            InputMedia thumb = null)
+        {
+            _logger.LogInformation("Sending audio with url: {} and caption: {}", audio.Url, caption);
+            
+            return Task.FromResult(new Message());
+        }
 
         public Task<Message> SendDocumentAsync(
             ChatId chatId,

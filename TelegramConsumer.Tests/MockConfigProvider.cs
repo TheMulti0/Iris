@@ -6,26 +6,22 @@ namespace TelegramConsumer.Tests
 {
     internal class MockConfigProvider : IConfigProvider
     {
-        private readonly Subject<Result<TelegramConfig>> _configs = new Subject<Result<TelegramConfig>>();
-        public IObservable<Result<TelegramConfig>> Configs => _configs;
-        
-        public void InitializeSubscriptions()
+        private static readonly TelegramConfig _telegramConfig = new TelegramConfig
         {
-            var telegramConfig = new TelegramConfig
+            AccessToken = "",
+            Users = new []
             {
-                AccessToken = "",
-                Users = new []
+                new User
                 {
-                    new User
-                    {
-                        UserName = "mock-user",
-                        DisplayName = "Mock User",
-                        ChatIds = new long[] { 0 }
-                    }
+                    UserName = "mock-user",
+                    DisplayName = "Mock User",
+                    ChatIds = new long[] { 0 }
                 }
-            };
-            
-            _configs.OnNext(Result<TelegramConfig>.Success(telegramConfig));
-        }
+            }
+        };
+        
+        private readonly BehaviorSubject<Result<TelegramConfig>> _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(_telegramConfig));
+
+        public IObservable<Result<TelegramConfig>> Configs => _configs;
     }
 }

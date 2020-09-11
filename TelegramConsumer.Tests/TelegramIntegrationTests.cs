@@ -86,6 +86,32 @@ namespace TelegramConsumer.Tests
             await _bot.FlushAsync();
         }
         
+        
+        
+        [TestMethod]
+        public async Task TestAudio()
+        {
+            User user = GetFirstConfiguredUser();
+
+            await _bot.SendAsync(
+                new Update
+                {
+                    AuthorId = user.UserName,
+                    Media = new [] 
+                    {   
+                        new Audio
+                        {
+                            Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
+                            DurationSeconds = 297,
+                            Title = "Title",
+                            Artist = "Artist"
+                        } 
+                    }
+                }, "test");
+            
+            await _bot.FlushAsync();
+        }
+        
         [TestMethod]
         public async Task TestPhoto()
         {
