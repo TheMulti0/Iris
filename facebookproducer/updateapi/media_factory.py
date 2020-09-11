@@ -1,12 +1,12 @@
 from facebookproducer.posts.post import Post
-from updatesproducer.updateapi.media import Media
-from updatesproducer.updateapi.mediatype import MediaType
+
+from updatesproducer.updateapi.photo import Photo
+from updatesproducer.updateapi.video import Video
 
 
 class MediaFactory:
     @staticmethod
     def to_media(post: Post):
-        # Videos are downloaded later, if any
         return MediaFactory.get_photos(post) + MediaFactory.get_videos(post)
 
     @staticmethod
@@ -14,7 +14,7 @@ class MediaFactory:
         try:
             if post.image is not None:
                 return [
-                    Media(post.image, MediaType.Photo)
+                    Photo(post.image)
                 ]
             return []
         except AttributeError:
@@ -25,7 +25,7 @@ class MediaFactory:
         try:
             if post.video is not None:
                 return [
-                    Media(post.video, MediaType.Video)
+                    Video(post.video)
                 ]
             return []
         except AttributeError:

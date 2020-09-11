@@ -72,9 +72,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = "https://mock-photo-url.com"
                         } 
                     }
@@ -94,9 +93,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = "https://mock-photo-url.com"
                         } 
                     },
@@ -118,10 +116,9 @@ namespace TelegramConsumer.Tests
                 {
                     AuthorId = user.UserName,
                     Media = new [] 
-                    {   
-                        new Media
+                    {
+                        new Video()
                         {
-                            Type = MediaType.Video,
                             Url = "https://mock-video-url.com"
                         } 
                     }
@@ -141,9 +138,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Video,
                             Url = "https://mock-video-url.com"
                         } 
                     },
@@ -163,16 +159,14 @@ namespace TelegramConsumer.Tests
                 new Update
                 {
                     AuthorId = user.UserName,
-                    Media = new [] 
+                    Media = new IMedia[] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Video,
                             Url = "https://mock-video-url.com"
                         },
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = "https://mock-photo-url.com"
                         } 
                     },

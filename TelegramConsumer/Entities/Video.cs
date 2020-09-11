@@ -1,14 +1,11 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace TelegramConsumer
 {
-    public class Media
+    public class Video : IMedia
     {
         [JsonPropertyName("url")]
         public string Url { get; set; }
-
-        [JsonPropertyName("type")]
-        public MediaType Type { get; set; }
 
         [JsonPropertyName("thumbnail_url")]
         public string ThumbnailUrl { get; set; }

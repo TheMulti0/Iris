@@ -1,7 +1,4 @@
-from datetime import datetime
-
-
-class Video:
+class YouTubeVideo:
     video_id: str
     channelId: str
     title: str

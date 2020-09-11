@@ -1,7 +1,7 @@
 from googleapiclient.discovery import build
 
 from youtubeproducer.videos.ivideos_provider import IVideosProvider
-from youtubeproducer.videos.video import Video
+from youtubeproducer.videos.youtubevideo import YouTubeVideo
 
 
 class VideosProvider(IVideosProvider):
@@ -21,7 +21,7 @@ class VideosProvider(IVideosProvider):
         ).execute()
 
         return [
-            Video(video['snippet'], video['id']['videoId'])
+            YouTubeVideo(video['snippet'], video['id']['videoId'])
             for video in search_response.get('items', [])
             if video['id']['kind'] == 'youtube#video'
         ]

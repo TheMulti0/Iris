@@ -97,9 +97,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = PhotoUrl
                         } 
                     }
@@ -119,9 +118,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Photo,
                             Url = PhotoUrl
                         } 
                     },
@@ -150,9 +148,8 @@ namespace TelegramConsumer.Tests
                     Content = content,
                     Media = new []
                     {
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = PhotoUrl
                         }
                     }
@@ -172,9 +169,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Video,
                             Url = VideoUrl
                         } 
                     }
@@ -194,9 +190,8 @@ namespace TelegramConsumer.Tests
                     AuthorId = user.UserName,
                     Media = new [] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Video,
                             Url = VideoUrl
                         } 
                     },
@@ -216,16 +211,14 @@ namespace TelegramConsumer.Tests
                 new Update
                 {
                     AuthorId = user.UserName,
-                    Media = new [] 
+                    Media = new IMedia[] 
                     {   
-                        new Media
+                        new Video
                         {
-                            Type = MediaType.Video,
                             Url = VideoUrl
                         },
-                        new Media
+                        new Photo
                         {
-                            Type = MediaType.Photo,
                             Url = PhotoUrl
                         } 
                     },

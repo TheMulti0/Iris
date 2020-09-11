@@ -2,17 +2,16 @@ from datetime import datetime
 
 from youtube_dl import YoutubeDL
 
-from updatesproducer.updateapi.media import Media
-from updatesproducer.updateapi.mediatype import MediaType
 from updatesproducer.updateapi.update import Update
-from youtubeproducer.videos.video import Video
+from updatesproducer.updateapi.video import Video
+from youtubeproducer.videos.youtubevideo import YouTubeVideo
 
 YOUTUBE_BASE_URL = 'https://www.youtube.com'
 ISO8601 = datetime.now().replace(microsecond=0).isoformat()
 
 class UpdateFactory:
     @staticmethod
-    def to_update(video: Video):
+    def to_update(video: YouTubeVideo):
         url = f'{YOUTUBE_BASE_URL}/watch?v={video.video_id}'
 
         ydl_opts = {
@@ -33,10 +32,8 @@ class UpdateFactory:
                 creation_date=datetime.strptime(video.publishedAt, "%Y-%m-%dT%H:%M:%SZ"),
                 url=url,
                 media=[
-                    # Downloaded later by VideoDownloader
-                    Media(
+                    Video(
                         info['url'],
-                        MediaType.Video,
                         thumbnail['url'],
                         info['duration'],
                         info['width'],

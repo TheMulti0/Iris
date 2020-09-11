@@ -1,7 +1,7 @@
 from tweepy import Status
 
-from updatesproducer.updateapi.media import Media
-from updatesproducer.updateapi.mediatype import MediaType
+from updatesproducer.updateapi.photo import Photo
+from updatesproducer.updateapi.video import Video
 
 
 class MediaFactory:
@@ -14,9 +14,8 @@ class MediaFactory:
             if m.get('type') == 'photo':
                 https_url = m.get('media_url_https')
 
-                media.append(Media(
-                    https_url if https_url is not None else m.get('media_url'),
-                    MediaType.Photo
+                media.append(Photo(
+                    https_url if https_url is not None else m.get('media_url')
                 ))
             else:
                 variants = m.get('video_info').get('variants')
@@ -28,9 +27,8 @@ class MediaFactory:
                     key=lambda v: v.get('bitrate'),
                     reverse=True)[0]
 
-                media.append(Media(
+                media.append(Video(
                     video_with_highest_bitrate.get('url'),
-                    MediaType.Video
                 ))
 
         return media

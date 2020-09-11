@@ -7,7 +7,7 @@ namespace TelegramConsumer
     {
         public string Message { get; }
 
-        public Media[] Media { get; }
+        public IMedia[] Media { get; }
 
         public ChatId ChatId { get; }
         
@@ -23,7 +23,7 @@ namespace TelegramConsumer
 
         public MessageInfo(
             string message,
-            Media[] media,
+            IMedia[] media,
             ChatId chatId,
             CancellationToken cancellationToken = default,
             int replyMessageId = 0,

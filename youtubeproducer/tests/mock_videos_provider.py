@@ -1,13 +1,13 @@
 from datetime import datetime
 
 from youtubeproducer.videos.ivideos_provider import IVideosProvider
-from youtubeproducer.videos.video import Video
+from youtubeproducer.videos.youtubevideo import YouTubeVideo
 
 
 class MockVideosProvider(IVideosProvider):
     def get_videos(self, user_id):
         return [
-            Video({
+            YouTubeVideo({
                 'channelId': 'Mock channel id',
                 'title': 'Mock title',
                 'description': 'Mock description',

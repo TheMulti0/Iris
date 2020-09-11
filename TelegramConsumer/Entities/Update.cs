@@ -18,7 +18,7 @@ namespace TelegramConsumer
         public string Url { get; set; }
 
         [JsonPropertyName("media")] 
-        public Media[] Media { get; set; } = new Media[0];
+        public IMedia[] Media { get; set; } = new IMedia[0];
 
         [JsonPropertyName("repost")]
         public bool Repost { get; set; }

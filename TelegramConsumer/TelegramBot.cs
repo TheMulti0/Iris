@@ -111,7 +111,7 @@ namespace TelegramConsumer
         private async Task SendChatUpdate(
             MessageSender sender,
             string message,
-            Media[] media,
+            IMedia[] media,
             long chatId)
         {
             ActionBlock<Task> chatSender = _chatSenders

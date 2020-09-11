@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace TelegramConsumer
 {
@@ -74,47 +72,49 @@ namespace TelegramConsumer
             await sendTask;
         }
 
-        private async ValueTask<IAlbumInputMedia> ToAlbumInputMediaAsync(MessageInfo message, Media media)
+        private async ValueTask<IAlbumInputMedia> ToAlbumInputMediaAsync(MessageInfo message, IMedia media)
         {
             InputMedia inputMedia = await GetInputMediaAsync(message, media);
 
-            switch (media.Type)
+            switch (media)
             {
-                case MediaType.Video:
+                case Video v:
                     var video = new InputMediaVideo(inputMedia);
 
                     if (media.ThumbnailUrl != null)
                     {
                         video.Thumb = new InputMedia(
-                            await _httpClient.GetStreamAsync(media.ThumbnailUrl),
+                            await _httpClient.GetStreamAsync(media.ThumbnailUrl, message.CancellationToken),
                             "Thumbnail");
                     }
-                    if (media.DurationSeconds != 0)
+                    
+                    if (v.DurationSeconds != 0)
                     {
-                        video.Duration = media.DurationSeconds;
+                        video.Duration = v.DurationSeconds;
                     }
-                    if (media.Width != 0)
+                    if (v.Width != 0)
                     {
-                        video.Width = media.Width;
+                        video.Width = v.Width;
                     }
-                    if (media.Height != 0)
+                    if (v.Height != 0)
                     {
-                        video.Height = media.Height;
+                        video.Height = v.Height;
                     }
 
                     return video;
+                
                 default:
                     return new InputMediaPhoto(inputMedia);
             }
         }
 
-        private async Task<InputMedia> GetInputMediaAsync(MessageInfo message, Media media)
+        private async Task<InputMedia> GetInputMediaAsync(MessageInfo message, IMedia media)
         {
             if (message.DownloadMedia)
             {
                 return new InputMedia(
-                    await _httpClient.GetStreamAsync(media.Url),
-                    media.Type.ToString());
+                    await _httpClient.GetStreamAsync(media.Url, message.CancellationToken),
+                    media.GetType().Name);
             }
             
             return new InputMedia(media.Url);

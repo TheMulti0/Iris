@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from updatesproducer.updateapi.media import Media
+from updatesproducer.updateapi.imedia import IMedia
 
 
 class Update:
@@ -9,7 +9,7 @@ class Update:
     author_id: str
     creation_date: datetime
     url: str
-    media: List[Media]
+    media: List[IMedia]
     repost: bool
     should_redownload_video: bool
 

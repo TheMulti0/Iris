@@ -11,7 +11,7 @@ from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 
 from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
-from updatesproducer.updateapi.media import Media
+from updatesproducer.updateapi.imedia import IMedia
 from updatesproducer.updateapi.mediatype import MediaType
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 
@@ -65,7 +65,7 @@ class Producer:
             if update.should_redownload_video:
                 # Find all of the old lowres videos that this update has (if any)
                 lowres_videos = list(filter(
-                    lambda m: m.type == MediaType.Video,
+                    lambda m: m.type == MediaType.YouTubeVideo,
                     update.media))
 
                 if len(lowres_videos) != 0:
@@ -100,7 +100,7 @@ class Producer:
     def _json_converter(obj):
         if isinstance(obj, datetime):
             return obj.__str__()
-        if isinstance(obj, Media):
+        if isinstance(obj, IMedia):
             return obj.__dict__
         if isinstance(obj, MediaType):
             return obj.value
