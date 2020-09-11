@@ -1,9 +1,7 @@
 from youtube_dl import YoutubeDL
-from youtube_dl.utils import ExtractorError
 
-from updatesproducer.updateapi.imedia import IMedia
 from updatesproducer.updateapi.update import Update
-from updatesproducer.updateapi.mediatype import MediaType
+from updatesproducer.updateapi.video import Video
 
 
 class VideoDownloader:
@@ -22,7 +20,7 @@ class VideoDownloader:
                 update.media.remove(lowres_video)
 
             # Add new downloaded video
-            update.media.append(IMedia(video, MediaType.YouTubeVideo))
+            update.media.append(Video(video))
 
     def _try_download_video(self, url):
         ydl_opts = {
