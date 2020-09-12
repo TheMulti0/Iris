@@ -6,8 +6,8 @@ from updatesproducer.updateapi.video import Video
 
 class MediaFactory:
     @staticmethod
-    def to_media(tweet: Status):
-        tweet_media = MediaFactory.get_tweet_media(tweet)
+    def to_media(tweet: Status, retweeted: bool):
+        tweet_media = MediaFactory.get_tweet_media(tweet, retweeted)
 
         media = []
         for m in tweet_media:
@@ -34,11 +34,11 @@ class MediaFactory:
         return media
 
     @staticmethod
-    def get_tweet_media(tweet: Status):
+    def get_tweet_media(tweet: Status, retweeted: bool):
         try:
             tweet_media = tweet.extended_entities.get('media')
             if tweet_media is None:
-                if tweet.retweeted:
+                if retweeted:
                     tweet_media = tweet.retweeted_status.extended_entities.get('media')
                 else:
                     tweet_media = tweet.quoted_status.extended_entities.get('media')
