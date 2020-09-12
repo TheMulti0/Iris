@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Kafka.Public;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,12 @@ namespace Extensions
     {
         public static IKafkaProducer<TKey, TValue> Create<TKey, TValue>(
             BaseKafkaConfig config,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            JsonSerializerOptions options)
             where TKey : class 
             where TValue : class
         {
-            SerializationConfig serializationConfig = CreateSerializationConfig<TKey, TValue>(config);
+            SerializationConfig serializationConfig = CreateSerializationConfig(config, options);
             
             IClusterClient clusterClient = ClusterClientFactory.Create(
                 config,
@@ -21,14 +23,15 @@ namespace Extensions
             return new KafkaProducer<TKey, TValue>(config.DefaultTopic, clusterClient);
         }
         
-        private static SerializationConfig CreateSerializationConfig<TKey, TValue>(
-            BaseKafkaConfig config)
+        private static SerializationConfig CreateSerializationConfig(
+            BaseKafkaConfig config,
+            JsonSerializerOptions options)
         {
             var serializationConfig = new SerializationConfig();
             
             serializationConfig.SetDefaultSerializers(
-                KafkaSerializerFactory.CreateSerializer<TKey>(config.KeySerializationType),
-                KafkaSerializerFactory.CreateSerializer<TValue>(config.ValueSerializationType));
+                KafkaSerializerFactory.CreateSerializer(config.KeySerializationType, options),
+                KafkaSerializerFactory.CreateSerializer(config.ValueSerializationType, options));
             
             return serializationConfig;
         }

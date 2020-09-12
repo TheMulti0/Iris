@@ -15,7 +15,7 @@ class MediaFactory:
                 https_url = m.get('media_url_https')
 
                 media.append(Photo(
-                    https_url if https_url is not None else m.get('media_url')
+                    url=https_url if https_url is not None else m.get('media_url')
                 ))
             else:
                 variants = m.get('video_info').get('variants')
@@ -28,7 +28,7 @@ class MediaFactory:
                     reverse=True)[0]
 
                 media.append(Video(
-                    video_with_highest_bitrate.get('url'),
+                    url=video_with_highest_bitrate.get('url'),
                 ))
 
         return media

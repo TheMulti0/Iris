@@ -14,7 +14,7 @@ class MediaFactory:
         try:
             if post.image is not None:
                 return [
-                    Photo(post.image)
+                    Photo(url=post.image)
                 ]
             return []
         except AttributeError:
@@ -25,7 +25,7 @@ class MediaFactory:
         try:
             if post.video is not None:
                 return [
-                    Video(post.video)
+                    Video(url=post.video)
                 ]
             return []
         except AttributeError:

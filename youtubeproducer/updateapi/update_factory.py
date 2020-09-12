@@ -33,11 +33,11 @@ class UpdateFactory:
                 url=url,
                 media=[
                     Video(
-                        info['url'],
-                        thumbnail['url'],
-                        info['duration'],
-                        info['width'],
-                        info['height']
+                        url=info['url'],
+                        thumbnail_url=thumbnail['url'],
+                        duration_seconds=info['duration'],
+                        width=info['width'],
+                        height=info['height']
                     )
                 ],
                 repost=False,

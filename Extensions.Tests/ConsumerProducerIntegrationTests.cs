@@ -66,7 +66,8 @@ namespace Extensions.Tests
 
             var consumer = KafkaConsumerFactory.Create<Nothing, Update>(
                 config,
-                _loggerFactory);
+                _loggerFactory,
+                new JsonSerializerOptions());
 
             return consumer.Messages;
         }
@@ -75,7 +76,8 @@ namespace Extensions.Tests
         {
             var producer = KafkaProducerFactory.Create<Nothing, Update>(
                 _config,
-                _loggerFactory);
+                _loggerFactory,
+                new JsonSerializerOptions());
             
             producer.Produce(
                 new Update

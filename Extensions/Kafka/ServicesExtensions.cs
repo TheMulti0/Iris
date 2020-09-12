@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using Kafka.Public;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,20 +11,7 @@ namespace Extensions
     {
         public static IServiceCollection AddProducer<TKey, TValue>(
             this IServiceCollection services,
-            BaseKafkaConfig config) 
-            where TKey : class 
-            where TValue : class
-        {
-            IKafkaProducer<TKey, TValue> CreateKafkaProducer(IServiceProvider provider)
-            {
-                return KafkaProducerFactory.Create<TKey, TValue>(config, provider.GetService<ILoggerFactory>());
-            }
-
-            return services.AddSingleton(CreateKafkaProducer);
-        }
-        
-        public static IServiceCollection AddProducer<TKey, TValue>(
-            this IServiceCollection services) 
+            JsonSerializerOptions options = null) 
             where TKey : class 
             where TValue : class
         {
@@ -31,7 +19,8 @@ namespace Extensions
             {
                 return KafkaProducerFactory.Create<TKey, TValue>(
                     provider.GetService<BaseKafkaConfig>(),
-                    provider.GetService<ILoggerFactory>());
+                    provider.GetService<ILoggerFactory>(),
+                    options);
             }
 
             return services.AddSingleton(CreateKafkaProducer);
@@ -39,24 +28,8 @@ namespace Extensions
         
         public static IServiceCollection AddConsumer<TKey, TValue>(
             this IServiceCollection services,
-            ConsumerConfig config) 
-            where TKey : class 
-            where TValue : class
-        {
-            IKafkaConsumer<TKey, TValue> CreateKafkaConsumer(IServiceProvider provider)
-            {
-                return KafkaConsumerFactory.Create<TKey, TValue>(
-                    config,
-                    provider.GetService<ILoggerFactory>());
-            }
-
-            return services.AddSingleton(CreateKafkaConsumer);
-        }
-        
-        public static IServiceCollection AddConsumer<TKey, TValue>(
-            this IServiceCollection services,
             ConsumerConfig config,
-            ILoggerFactory loggerFactory)
+            JsonSerializerOptions options = null) 
             where TKey : class 
             where TValue : class
         {
@@ -64,7 +37,8 @@ namespace Extensions
             {
                 return KafkaConsumerFactory.Create<TKey, TValue>(
                     config,
-                    loggerFactory);
+                    provider.GetService<ILoggerFactory>(),
+                    options);
             }
 
             return services.AddSingleton(CreateKafkaConsumer);
