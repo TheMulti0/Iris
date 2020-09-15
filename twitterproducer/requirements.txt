@@ -2,3 +2,4 @@ pymongo
 kafka-python
 tweepy
 youtube-dl
+sentry-sdk

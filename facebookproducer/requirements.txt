@@ -2,3 +2,4 @@ pymongo
 kafka-python
 facebook-scraper
 youtube-dl
+sentry-sdk

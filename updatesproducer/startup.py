@@ -1,7 +1,9 @@
 import asyncio
 import json
 import logging
-from threading import Lock, Thread
+import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
+from threading import Lock
 
 from kafka import KafkaConsumer
 
@@ -17,6 +19,11 @@ class Startup:
         self.__cancellation_token = CancellationToken()
         self.__config_lock = Lock()
 
+        self.__sentry_logging = LoggingIntegration(
+            level=logging.INFO,  # Capture info and above as breadcrumbs
+            event_level=logging.ERROR  # Send errors as events
+        )
+
         logging.basicConfig(
             format='[%(asctime)s] [%(name)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S %z',
@@ -26,6 +33,10 @@ class Startup:
 
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json', encoding='utf-8'))
+            sentry_sdk.init(
+                dsn=self.__config['sentry']['dsn'],
+                integrations=[self.__sentry_logging]
+            )
 
         self.run_async(
             self.aggregate(
