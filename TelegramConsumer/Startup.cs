@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Sentry;
+using Sentry.Extensions.Logging;
+using Sentry.Protocol;
 
 namespace TelegramConsumer
 {
@@ -33,8 +36,9 @@ namespace TelegramConsumer
         }
 
         private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder) => builder
-            .AddConfiguration(context.Configuration.GetSection("Logging"))
-            .AddCustomConsole();
+            .AddConfiguration(context.Configuration)
+            .AddCustomConsole()
+            .AddSentry();
 
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
