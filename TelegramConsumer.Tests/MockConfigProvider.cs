@@ -13,9 +13,9 @@ namespace TelegramConsumer.Tests
             {
                 new User
                 {
-                    UserName = "mock-user",
+                    UserNames = new [] {"mock-user"},
                     DisplayName = "Mock User",
-                    ChatIds = new long[] { 0 }
+                    ChatIds = new[] { 0.ToString() }
                 }
             }
         };

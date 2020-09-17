@@ -7,6 +7,7 @@ using System.Threading.Tasks.Dataflow;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace TelegramConsumer
 {
@@ -15,7 +16,7 @@ namespace TelegramConsumer
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
-        private readonly ConcurrentDictionary<long, ActionBlock<Task>> _chatSenders;
+        private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
         
         private readonly object _configLock = new object();
         private MessageSender _sender;
@@ -29,7 +30,7 @@ namespace TelegramConsumer
             _clientProvider = clientProvider;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<TelegramBot>();
-            _chatSenders = new ConcurrentDictionary<long, ActionBlock<Task>>();
+            _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
             
             configProvider.Configs.SubscribeAsync(HandleConfig);
         }
@@ -94,7 +95,7 @@ namespace TelegramConsumer
             
             string updateMessage = MessageBuilder.Build(update, source, user);
 
-            foreach (long chatId in user.ChatIds)
+            foreach (ChatId chatId in user.ChatIds)
             {
                 await SendChatUpdate(sender, updateMessage, update.Media, chatId);
             }
@@ -112,7 +113,7 @@ namespace TelegramConsumer
             MessageSender sender,
             string message,
             IMedia[] media,
-            long chatId)
+            ChatId chatId)
         {
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatId, id => new ActionBlock<Task>(task => task));
@@ -133,7 +134,7 @@ namespace TelegramConsumer
                 _logger.LogError("Update request received, but no config present");
             }
             
-            user = config?.Users.FirstOrDefault(u => u.UserName == authorId);
+            user = config?.Users.FirstOrDefault(u => u.UserNames.Contains(authorId));
             return user != null;
         }
 
@@ -146,9 +147,9 @@ namespace TelegramConsumer
             await Task.WhenAll(completions);
         }
 
-        private Task CompleteAsync(KeyValuePair<long, ActionBlock<Task>> pair)
+        private Task CompleteAsync(KeyValuePair<ChatId, ActionBlock<Task>> pair)
         {
-            (long chatId, ActionBlock<Task> chatSender) = pair;
+            (ChatId chatId, ActionBlock<Task> chatSender) = pair;
 
             _logger.LogInformation("Completing chat sender for chat id: {}", chatId);
 

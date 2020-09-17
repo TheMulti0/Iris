@@ -2,10 +2,10 @@ namespace TelegramConsumer
 {
     public class User
     {
-        public string UserName { get; set; }
+        public string[] UserNames { get; set; }
 
         public string DisplayName { get; set; }
 
-        public long[] ChatIds { get; set; }
+        public string[] ChatIds { get; set; }
     }
 }
