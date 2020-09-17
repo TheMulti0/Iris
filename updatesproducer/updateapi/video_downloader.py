@@ -25,10 +25,7 @@ class VideoDownloader:
 
             # Add new downloaded video
             update.media.append(Video(
-                url=video['url'],
-                duration_seconds=video['duration'],
-                width=video['width'],
-                height=video['height']
+                url=video['url']
             ))
 
             # Remove old lowres that was found
