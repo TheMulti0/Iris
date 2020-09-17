@@ -69,7 +69,8 @@ class Producer:
                     update.media))
 
                 if len(lowres_videos) != 0:
-                    self.__video_downloader.download_video(update, lowres_videos)
+                    for lowres_video in lowres_videos:
+                        self.__video_downloader.download_video(update, lowres_video)
 
             self._send(update)
 
