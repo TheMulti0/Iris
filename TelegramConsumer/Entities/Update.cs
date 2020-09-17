@@ -25,7 +25,7 @@ namespace TelegramConsumer
 
         public override string ToString()
         {
-            return $"CreationDate = {CreationDate:f}, Url = ${Url}";
+            return $"Url: {Url} - Creation date: {CreationDate} - Media length: {Media.Length} - Repost: {Repost}";
         }
     }
 }

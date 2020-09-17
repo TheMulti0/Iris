@@ -42,7 +42,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Content = "Mock update"
                 }, "test");
             
@@ -63,7 +63,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Content = content
                 }, "test");
             
@@ -78,7 +78,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Content = "Mock update",
                     Url = "https://mock-url.com"
                 }, "test");
@@ -96,7 +96,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new [] 
                     {   
                         new Audio
@@ -120,7 +120,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new [] 
                     {   
                         new Photo
@@ -141,7 +141,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new [] 
                     {   
                         new Video
@@ -170,7 +170,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Content = content,
                     Media = new []
                     {
@@ -192,7 +192,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new [] 
                     {   
                         new Video
@@ -213,7 +213,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new [] 
                     {   
                         new Video
@@ -236,7 +236,7 @@ namespace TelegramConsumer.Tests
             await _bot.SendAsync(
                 new Update
                 {
-                    AuthorId = user.UserName,
+                    AuthorId = user.UserNames[0],
                     Media = new IMedia[] 
                     {   
                         new Video

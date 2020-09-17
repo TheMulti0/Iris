@@ -115,6 +115,8 @@ namespace TelegramConsumer
             IMedia[] media,
             ChatId chatId)
         {
+            _logger.LogInformation("Sending update to chat id {}", chatId.Username ?? chatId.Identifier.ToString());
+            
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatId, id => new ActionBlock<Task>(task => task));
 
