@@ -43,26 +43,27 @@ jobs:
         dockerfile: updatesproducer/Dockerfile
         build_args: PROJECT_DIR=facebookproducer
 
-#   deploy:
-#     needs: build
+  deploy:
+    needs: build
     
-#     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Pull and run latest images on VPS (ssh)
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.VPS_HOST }}
-#         USERNAME: ${{ secrets.VPS_USERNAME }}
-#         PORT: ${{ secrets.VPS_PORT }}
-#         KEY: ${{ secrets.VPS_SSHKEY }}
-#         envs: VERSION
-#         script: |
-#           cd Iris
-#           git pull
-#           docker-compose down
-#           docker pull themulti0/iris_telegramconsumer:$VERSION
-#           docker pull themulti0/iris_twitterproducer:$VERSION
-#           docker pull themulti0/iris_facebookproducer:$VERSION
-#           export VERSION=$VERSION
-#           docker-compose up -d
+    steps:
+    - name: Pull and run latest images on VPS (ssh)
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        USERNAME: ${{ secrets.VPS_USERNAME }}
+        PORT: ${{ secrets.VPS_PORT }}
+        KEY: ${{ secrets.VPS_SSHKEY }}
+        envs: VERSION
+        script: |
+          cd Iris
+          git pull
+          docker-compose down
+          docker pull themulti0/iris_telegramconsumer:$VERSION
+          docker pull themulti0/iris_twitterproducer:$VERSION
+          docker pull themulti0/iris_facebookproducer:$VERSION
+          docker pull themulti0/iris_youtubeproducer:$VERSION
+          export VERSION=$VERSION
+          docker-compose up -d
