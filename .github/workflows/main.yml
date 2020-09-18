@@ -6,74 +6,74 @@ env:
   VERSION: ${{ github.sha }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
+#     steps:
       
-    - name: Checkout code
-      uses: actions/checkout@v2
+#     - name: Checkout code
+#       uses: actions/checkout@v2
 
-    - name: Build and push Iris/telegramconsumer image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: themulti0/iris_telegramconsumer
-        tags: ${{ env.VERSION }}
-        dockerfile: TelegramConsumer/Dockerfile
+#     - name: Build and push Iris/telegramconsumer image
+#       uses: docker/build-push-action@v1.1.0
+#       with:
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         repository: themulti0/iris_telegramconsumer
+#         tags: ${{ env.VERSION }}
+#         dockerfile: TelegramConsumer/Dockerfile
 
-    - name: Build and push Iris/twitterproducer image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: themulti0/iris_twitterproducer
-        tags: ${{ env.VERSION }}
-        dockerfile: updatesproducer/Dockerfile
-        build_args: PROJECT_DIR=twitterproducer
+#     - name: Build and push Iris/twitterproducer image
+#       uses: docker/build-push-action@v1.1.0
+#       with:
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         repository: themulti0/iris_twitterproducer
+#         tags: ${{ env.VERSION }}
+#         dockerfile: updatesproducer/Dockerfile
+#         build_args: PROJECT_DIR=twitterproducer
 
-    - name: Build and push Iris/facebookproducer image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: themulti0/iris_facebookproducer
-        tags: ${{ env.VERSION }}
-        dockerfile: updatesproducer/Dockerfile
-        build_args: PROJECT_DIR=facebookproducer
+#     - name: Build and push Iris/facebookproducer image
+#       uses: docker/build-push-action@v1.1.0
+#       with:
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         repository: themulti0/iris_facebookproducer
+#         tags: ${{ env.VERSION }}
+#         dockerfile: updatesproducer/Dockerfile
+#         build_args: PROJECT_DIR=facebookproducer
         
-    - name: Build and push Iris/youtubeproducer image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: themulti0/iris_youtubeproducer
-        tags: ${{ env.VERSION }}
-        dockerfile: updatesproducer/Dockerfile
-        build_args: PROJECT_DIR=youtubeproducer  
+#     - name: Build and push Iris/youtubeproducer image
+#       uses: docker/build-push-action@v1.1.0
+#       with:
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         repository: themulti0/iris_youtubeproducer
+#         tags: ${{ env.VERSION }}
+#         dockerfile: updatesproducer/Dockerfile
+#         build_args: PROJECT_DIR=youtubeproducer  
 
-  deploy:
-    needs: build
+#   deploy:
+#     needs: build
     
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Pull and run latest images on VPS (ssh)
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        USERNAME: ${{ secrets.VPS_USERNAME }}
-        PORT: ${{ secrets.VPS_PORT }}
-        KEY: ${{ secrets.VPS_SSHKEY }}
-        envs: VERSION
-        script: |
-          cd Iris
-          git pull
-          docker-compose down
-          docker pull themulti0/iris_telegramconsumer:$VERSION
-          docker pull themulti0/iris_twitterproducer:$VERSION
-          docker pull themulti0/iris_facebookproducer:$VERSION
-          docker pull themulti0/iris_youtubeproducer:$VERSION
-          export VERSION=$VERSION
-          docker-compose up -d
+#     steps:
+#     - name: Pull and run latest images on VPS (ssh)
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.VPS_HOST }}
+#         USERNAME: ${{ secrets.VPS_USERNAME }}
+#         PORT: ${{ secrets.VPS_PORT }}
+#         KEY: ${{ secrets.VPS_SSHKEY }}
+#         envs: VERSION
+#         script: |
+#           cd Iris
+#           git pull
+#           docker-compose down
+#           docker pull themulti0/iris_telegramconsumer:$VERSION
+#           docker pull themulti0/iris_twitterproducer:$VERSION
+#           docker pull themulti0/iris_facebookproducer:$VERSION
+#           docker pull themulti0/iris_youtubeproducer:$VERSION
+#           export VERSION=$VERSION
+#           docker-compose up -d
