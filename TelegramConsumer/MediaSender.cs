@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace TelegramConsumer
         private readonly TextSender _textSender;
         private readonly ILogger<MediaSender> _logger;
         private readonly SemaphoreSlim _messageBatchLock = new SemaphoreSlim(1, 1);
+        private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions { WriteIndented = true };
 
         public MediaSender(
             ITelegramBotClient client,
@@ -41,11 +43,17 @@ namespace TelegramConsumer
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to send media {}", e);
+                _logger.LogError(
+                    e,
+                    "Failed to send media \n {} \n {}",
+                    JsonSerializer.Serialize(message.Media, _serializerOptions),
+                    e);
 
                 if (!message.DownloadMedia)
                 {
                     _logger.LogInformation("Retrying with DownloadMedia set to true");
+                    
+                    // Send media as stream (upload) instead of sending the url of the media
                     
                     await SendUnsafeAsync(
                         message.Remute(msg => msg.DownloadMedia, true));
