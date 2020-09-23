@@ -24,12 +24,12 @@ def create_pipe(config, cancellation_token):
     updates_provider = YouTubeUpdatesProvider(videos_provider)
 
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config['updates_producer']),
+        UpdatesProducerConfig(config['videos_producer']),
         VideoDownloader(logging.getLogger(VideoDownloader.__name__)),
         logging.getLogger(UpdatesProducer.__name__))
 
     return UpdatesPoller(
-        UpdatesPollerConfig(config['updates_poller']),
+        UpdatesPollerConfig(config['videos_producer']),
         producer,
         repository,
         updates_provider,

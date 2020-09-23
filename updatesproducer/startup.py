@@ -33,10 +33,10 @@ class Startup:
 
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json', encoding='utf-8'))
-            # sentry_sdk.init(
-            #     dsn=self.__config['sentry']['dsn'],
-            #     integrations=[self.__sentry_logging]
-            # )
+            sentry_sdk.init(
+                dsn=self.__config['sentry']['dsn'],
+                integrations=[self.__sentry_logging]
+            )
 
         self.run_async(
             self.aggregate(

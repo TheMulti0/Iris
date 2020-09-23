@@ -24,12 +24,12 @@ def create_pipe(config, cancellation_token):
     updates_provider = FacebookUpdatesProvider(posts_provider)
 
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config['updates_producer']),
+        UpdatesProducerConfig(config['posts_producer']),
         cancellation_token,
         logging.getLogger(UpdatesProducer.__name__))
 
     return UpdatesPoller(
-        UpdatesPollerConfig(config['updates_poller']),
+        UpdatesPollerConfig(config['posts_producer']),
         producer,
         repository,
         updates_provider,

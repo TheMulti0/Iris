@@ -1,6 +1,6 @@
-from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
 from twitterproducer.tweets.itweets_provider import ITweetsProvider
 from twitterproducer.updateapi.update_factory import UpdateFactory
+from updatesproducer.iupdates_provider import IUpdatesProvider
 
 
 class TwitterUpdatesProvider(IUpdatesProvider):
