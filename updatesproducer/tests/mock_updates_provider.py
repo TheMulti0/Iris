@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.iupdates_provider import IUpdatesProvider
 from updatesproducer.updateapi.update import Update
 
 

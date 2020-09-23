@@ -1,5 +1,5 @@
 from youtubeproducer.updateapi.update_factory import UpdateFactory
-from updatesproducer.kafka.iupdates_provider import IUpdatesProvider
+from updatesproducer.iupdates_provider import IUpdatesProvider
 from youtubeproducer.videos.ivideos_provider import IVideosProvider
 
 

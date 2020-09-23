@@ -11,9 +11,9 @@ from updatesproducer.cancellation_token import CancellationToken
 
 
 class Startup:
-    def __init__(self, service_name, create_producer):
+    def __init__(self, service_name, create_pipe):
         self.__service_name = service_name
-        self.__create_producer = create_producer
+        self.__create_pipe = create_pipe
 
         self.__config = {}
         self.__cancellation_token = CancellationToken()
@@ -33,14 +33,14 @@ class Startup:
 
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json', encoding='utf-8'))
-            sentry_sdk.init(
-                dsn=self.__config['sentry']['dsn'],
-                integrations=[self.__sentry_logging]
-            )
+            # sentry_sdk.init(
+            #     dsn=self.__config['sentry']['dsn'],
+            #     integrations=[self.__sentry_logging]
+            # )
 
         self.run_async(
             self.aggregate(
-                self.produce(),
+                self.start_pipe(),
                 # self.consume_configs()
             )
         )
@@ -54,12 +54,11 @@ class Startup:
     async def aggregate(*coroutines):
         await asyncio.gather(*coroutines)
 
-    async def produce(self):
-        while True:
-            with self.__config_lock:
-                producer = self.__create_producer(self.__config, self.__cancellation_token)
+    async def start_pipe(self):
+        with self.__config_lock:
+            pipe = self.__create_pipe(self.__config, self.__cancellation_token)
 
-            await producer.start()
+        await pipe.start()
 
     async def consume_configs(self):
         await asyncio.sleep(1)

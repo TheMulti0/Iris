@@ -6,10 +6,10 @@ from unittest import TestCase
 from kafka import KafkaConsumer
 
 from updatesproducer.cancellation_token import CancellationToken
-from updatesproducer.kafka.producer import Producer
+from updatesproducer.updates_poller import UpdatesPoller
 from updatesproducer.tests.mock_updates_provider import MockUpdatesProvider
 from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
-from updatesproducer.kafka.topic_producer_config import TopicProducerConfig
+from updatesproducer.updates_producer_config import UpdatesProducerConfig
 
 
 class ProducerIntegrationTests(TestCase):
@@ -22,18 +22,18 @@ class ProducerIntegrationTests(TestCase):
             level=logging.DEBUG)
 
         appsettings = json.load(open('appsettings.json'))
-        self.__topic_producer_config = TopicProducerConfig(appsettings['tests_producer'])
+        self.__topic_producer_config = UpdatesProducerConfig(appsettings['tests_producer'])
 
     def test1(self):
-        producer = Producer(
+        producer = UpdatesPoller(
             self.__topic_producer_config,
             MockUpdatesRepository(),
             MockUpdatesProvider(),
             CancellationToken(),
-            logging.getLogger(Producer.__name__)
+            logging.getLogger(UpdatesPoller.__name__)
         )
 
-        producer.update()
+        producer.poll()
 
         consumer = KafkaConsumer(
             'updates',

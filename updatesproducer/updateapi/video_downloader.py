@@ -32,4 +32,4 @@ class VideoDownloader:
             update.media.remove(lowres_video)
 
         except:
-            self.__logger.error(f'Failed to download video {lowres_video}', exc_info=1)
+            self.__logger.exception(f'Failed to download video %s', lowres_video)
