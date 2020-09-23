@@ -36,16 +36,13 @@ class MediaFactory:
     @staticmethod
     def get_tweet_media(tweet: Status, retweeted: bool):
         try:
-            tweet_media = tweet.extended_entities.get('media')
-            if tweet_media is None:
-                if retweeted:
-                    tweet_media = tweet.retweeted_status.extended_entities.get('media')
-                else:
-                    tweet_media = tweet.quoted_status.extended_entities.get('media')
-                # If no media is still found then return an empty list
-                if tweet_media is None:
-                    tweet_media = []
-
-            return tweet_media
+            return tweet.extended_entities['media']
         except AttributeError:
-            return []
+            try:
+                if retweeted:
+                    return tweet.retweeted_status.extended_entities['media']
+                else:
+                    return tweet.quoted_status.extended_entities['media']
+            except:
+                # If no media is still found then return an empty list
+                return []
