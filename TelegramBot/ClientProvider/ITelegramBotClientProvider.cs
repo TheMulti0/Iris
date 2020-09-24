@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Telegram.Bot;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public interface ITelegramBotClientProvider
     {

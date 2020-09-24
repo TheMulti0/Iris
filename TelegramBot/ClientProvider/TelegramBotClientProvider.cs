@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class TelegramBotClientProvider : ITelegramBotClientProvider
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UpdatesConsumer;
 
-namespace TelegramConsumer.Tests
+namespace TelegramBot.Tests
 {
     [TestClass]
     public class MockTelegramBotTests

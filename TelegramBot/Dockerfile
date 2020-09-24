@@ -5,17 +5,18 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["TelegramConsumer/TelegramConsumer.csproj", "TelegramConsumer/"]
+COPY ["TelegramBot/TelegramBot.csproj", "TelegramBot/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
-RUN dotnet restore "TelegramConsumer/TelegramConsumer.csproj"
+COPY ["UpdatesConsumer/UpdatesConsumer.csproj", "UpdatesConsumer/"]
+RUN dotnet restore "TelegramBot/TelegramBot.csproj"
 COPY . .
-WORKDIR "/src/TelegramConsumer"
-RUN dotnet build "TelegramConsumer.csproj" -c Release -o /app/build
+WORKDIR "/src/TelegramBot"
+RUN dotnet build "TelegramBot.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TelegramConsumer.csproj" -c Release -o /app/publish
+RUN dotnet publish "TelegramBot.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TelegramConsumer.dll"]
+ENTRYPOINT ["dotnet", "TelegramBot.dll"]

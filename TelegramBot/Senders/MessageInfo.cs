@@ -2,7 +2,7 @@
 using Telegram.Bot.Types;
 using UpdatesConsumer;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class MessageInfo
     {

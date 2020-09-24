@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 using UpdatesConsumer;
 using Update = UpdatesConsumer.Update;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class TelegramBot : IUpdateConsumer
     {

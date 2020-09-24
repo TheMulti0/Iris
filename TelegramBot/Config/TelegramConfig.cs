@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class TelegramConfig
     {

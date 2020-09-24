@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using UpdatesConsumer;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class MessageSender
     {

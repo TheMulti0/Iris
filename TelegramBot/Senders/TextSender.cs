@@ -7,7 +7,7 @@ using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class TextSender
     {

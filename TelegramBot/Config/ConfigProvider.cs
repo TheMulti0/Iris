@@ -6,7 +6,7 @@ using Extensions;
 using Kafka.Public;
 using Microsoft.Extensions.Logging;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     internal class ConfigProvider : IConfigProvider
     {

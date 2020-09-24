@@ -12,7 +12,7 @@ using Telegram.Bot.Types;
 using UpdatesConsumer;
 using Video = UpdatesConsumer.Video;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class MediaSender
     {

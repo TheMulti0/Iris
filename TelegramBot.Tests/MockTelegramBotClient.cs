@@ -16,7 +16,7 @@ using Telegram.Bot.Types.Payments;
 using Telegram.Bot.Types.ReplyMarkups;
 using File = Telegram.Bot.Types.File;
 
-namespace TelegramConsumer.Tests
+namespace TelegramBot.Tests
 {
     internal class MockTelegramBotClient : ITelegramBotClient
     {

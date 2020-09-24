@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Audio = UpdatesConsumer.Audio;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class AudioSender
     {

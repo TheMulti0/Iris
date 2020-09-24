@@ -2,7 +2,7 @@
 using System.Reactive.Subjects;
 using Extensions;
 
-namespace TelegramConsumer.Tests
+namespace TelegramBot.Tests
 {
     internal class MockConfigProvider : IConfigProvider
     {

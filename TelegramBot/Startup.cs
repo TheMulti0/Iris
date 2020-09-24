@@ -12,7 +12,7 @@ using Sentry.Extensions.Logging;
 using Sentry.Protocol;
 using UpdatesConsumer;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public static class Startup
     {

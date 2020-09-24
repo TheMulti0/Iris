@@ -1,7 +1,7 @@
 ﻿using System;
 using Extensions;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public interface IConfigProvider
     {

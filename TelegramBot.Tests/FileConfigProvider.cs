@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 using System.Text.Json;
 using Extensions;
 
-namespace TelegramConsumer.Tests
+namespace TelegramBot.Tests
 {
     internal class FileConfigProvider : IConfigProvider
     {

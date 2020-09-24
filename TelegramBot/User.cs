@@ -1,4 +1,4 @@
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public class User
     {

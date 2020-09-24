@@ -1,6 +1,6 @@
 using UpdatesConsumer;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     internal static class MessageBuilder
     {

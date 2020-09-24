@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 
-namespace TelegramConsumer.Tests
+namespace TelegramBot.Tests
 {
     internal class MockTelegramBotClientProvider : ITelegramBotClientProvider
     {

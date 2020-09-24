@@ -1,6 +1,6 @@
 using Telegram.Bot.Types.Enums;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public static class TelegramConstants
     {

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-namespace TelegramConsumer
+namespace TelegramBot
 {
     public static class DataFlowBlockExtensions
     {
