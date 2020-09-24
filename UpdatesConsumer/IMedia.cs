@@ -1,4 +1,4 @@
-namespace TelegramConsumer
+namespace UpdatesConsumer
 {
     public interface IMedia
     {

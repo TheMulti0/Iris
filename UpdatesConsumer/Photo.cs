@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TelegramConsumer
+namespace UpdatesConsumer
 {
     public class Photo : IMedia
     {

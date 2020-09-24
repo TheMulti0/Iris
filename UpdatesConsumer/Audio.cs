@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TelegramConsumer
+namespace UpdatesConsumer
 {
-    public class Video : IMedia
+    public class Audio : IMedia
     {
         [JsonPropertyName("url")]
         public string Url { get; set; }
@@ -12,11 +12,11 @@ namespace TelegramConsumer
         
         [JsonPropertyName("duration_seconds")]
         public int DurationSeconds { get; set; }
+        
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
 
-        [JsonPropertyName("width")]
-        public int Width { get; set; }
-
-        [JsonPropertyName("height")]
-        public int Height { get; set; }
+        [JsonPropertyName("artist")]
+        public string Artist { get; set; }
     }
 }

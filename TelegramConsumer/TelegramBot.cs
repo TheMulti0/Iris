@@ -8,10 +8,12 @@ using Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using UpdatesConsumer;
+using Update = UpdatesConsumer.Update;
 
 namespace TelegramConsumer
 {
-    public class TelegramBot
+    public class TelegramBot : IUpdateConsumer
     {
         private readonly ITelegramBotClientProvider _clientProvider;
         private readonly ILoggerFactory _loggerFactory;
@@ -81,7 +83,7 @@ namespace TelegramConsumer
             }
         }
 
-        public async Task SendAsync(Update update, string source)
+        public async Task OnUpdateAsync(Update update, string source)
         {
             (TelegramConfig config, MessageSender sender) = GetState();
 

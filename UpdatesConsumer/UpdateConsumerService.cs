@@ -1,5 +1,4 @@
 using System;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensions;
@@ -7,22 +6,22 @@ using Kafka.Public;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace TelegramConsumer
+namespace UpdatesConsumer
 {
-    public class UpdateConsumer : BackgroundService
+    public class UpdateConsumerService : BackgroundService
     {
         private readonly IKafkaConsumer<string, Update> _updateConsumer;
-        private readonly TelegramBot _bot;
-        private readonly ILogger<UpdateConsumer> _logger;
+        private readonly IUpdateConsumer _consumer;
+        private readonly ILogger<UpdateConsumerService> _logger;
         private IDisposable _updateSubscription;
 
-        public UpdateConsumer(
+        public UpdateConsumerService(
             IKafkaConsumer<string, Update> updateConsumer, 
-            TelegramBot bot,
-            ILogger<UpdateConsumer> logger)
+            IUpdateConsumer consumer,
+            ILogger<UpdateConsumerService> logger)
         {
             _updateConsumer = updateConsumer;
-            _bot = bot;
+            _consumer = consumer;
             _logger = logger;
         }
 
@@ -40,11 +39,11 @@ namespace TelegramConsumer
         {
             try
             {
-                await _bot.SendAsync(record.Value, record.Key);
+                await _consumer.OnUpdateAsync(record.Value, record.Key);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Sending failed {} {}", e.Message, e.StackTrace);
+                _logger.LogError(e, "");
             }
         }
     }

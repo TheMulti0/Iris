@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UpdatesConsumer;
 
 namespace TelegramConsumer.Tests
 {
@@ -39,7 +40,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -60,7 +61,7 @@ namespace TelegramConsumer.Tests
                 content += $"{i} \n";
             }
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -75,7 +76,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -93,7 +94,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -117,7 +118,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -138,7 +139,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -167,7 +168,7 @@ namespace TelegramConsumer.Tests
                 content += $"{i} \n";
             }
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -189,7 +190,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -210,7 +211,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],
@@ -233,7 +234,7 @@ namespace TelegramConsumer.Tests
         {
             User user = GetFirstConfiguredUser();
 
-            await _bot.SendAsync(
+            await _bot.OnUpdateAsync(
                 new Update
                 {
                     AuthorId = user.UserNames[0],

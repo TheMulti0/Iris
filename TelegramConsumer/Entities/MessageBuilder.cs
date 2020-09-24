@@ -1,3 +1,5 @@
+using UpdatesConsumer;
+
 namespace TelegramConsumer
 {
     internal static class MessageBuilder

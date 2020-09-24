@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Sentry;
 using Sentry.Extensions.Logging;
 using Sentry.Protocol;
+using UpdatesConsumer;
 
 namespace TelegramConsumer
 {
@@ -71,8 +72,8 @@ namespace TelegramConsumer
                 .AddSingleton(defaultTelegramConfig)
                 .AddSingleton<IConfigProvider, ConfigProvider>()
                 .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
-                .AddSingleton<TelegramBot>()
-                .AddHostedService<UpdateConsumer>()
+                .AddSingleton<IUpdateConsumer, TelegramBot>()
+                .AddHostedService<UpdateConsumerService>()
                 .BuildServiceProvider();
         }
     }

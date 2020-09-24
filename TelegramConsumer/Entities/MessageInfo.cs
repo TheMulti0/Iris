@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Telegram.Bot.Types;
+using UpdatesConsumer;
 
 namespace TelegramConsumer
 {

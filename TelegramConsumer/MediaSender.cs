@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using UpdatesConsumer;
+using Video = UpdatesConsumer.Video;
 
 namespace TelegramConsumer
 {
