@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace UpdatesConsumer
+namespace MockUpdatesProducer
 {
-    public class Update
+    internal class InternalUpdate
     {
         [JsonPropertyName("content")]
         public string Content { get; set; }
@@ -19,7 +19,7 @@ namespace UpdatesConsumer
         public string Url { get; set; }
 
         [JsonPropertyName("media")] 
-        public List<IMedia> Media { get; set; }
+        public virtual List<InternalMedia> Media { get; set; }
 
         [JsonPropertyName("repost")]
         public bool Repost { get; set; }

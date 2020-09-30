@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Extensions;
@@ -71,7 +72,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new [] 
+                    Media = new List<IMedia> 
                     {   
                         new Audio
                         {
@@ -95,7 +96,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new [] 
+                    Media = new List<IMedia>
                     {   
                         new Photo
                         {
@@ -116,7 +117,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new [] 
+                    Media = new List<IMedia>
                     {   
                         new Photo
                         {
@@ -140,7 +141,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new [] 
+                    Media = new List<IMedia>
                     {
                         new Video
                         {
@@ -161,7 +162,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new [] 
+                    Media = new List<IMedia>
                     {   
                         new Video
                         {
@@ -184,7 +185,7 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new IMedia[] 
+                    Media = new List<IMedia> 
                     {   
                         new Video
                         {

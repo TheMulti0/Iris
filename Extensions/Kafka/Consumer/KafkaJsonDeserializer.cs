@@ -20,16 +20,13 @@ namespace Extensions
             }
             
             _options = options;
+
+            _options.IgnoreNullValues = true;
             
             if (_options.Converters.All(
                     converter => converter.GetType() != typeof(DateTimeConverter)))
             {
                 _options.Converters.Add(new DateTimeConverter());
-            }
-            if (_options.Converters.All(
-                    converter => converter.GetType() != typeof(JsonStringEnumConverter)))
-            {
-                _options.Converters.Add(new JsonStringEnumConverter());
             }
         }
 

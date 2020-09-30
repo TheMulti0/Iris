@@ -46,7 +46,7 @@ namespace TelegramBot
                     (Audio) message.Media.FirstOrDefault(media => media is Audio));
             }
 
-            return message.Media.Length switch 
+            return message.Media.Count() switch 
             {
                 0 => _textSender.SendAsync(message),
                 _ => _mediaSender.SendAsync(message)

@@ -114,7 +114,7 @@ namespace TelegramBot
         private async Task SendChatUpdate(
             MessageSender sender,
             string message,
-            IMedia[] media,
+            IEnumerable<IMedia> media,
             ChatId chatId)
         {
             _logger.LogInformation("Sending update to chat id {}", chatId.Username ?? chatId.Identifier.ToString());

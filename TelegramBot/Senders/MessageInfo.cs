@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Telegram.Bot.Types;
 using UpdatesConsumer;
 
@@ -8,7 +9,7 @@ namespace TelegramBot
     {
         public string Message { get; }
 
-        public IMedia[] Media { get; }
+        public IEnumerable<IMedia> Media { get; }
 
         public ChatId ChatId { get; }
         
@@ -24,7 +25,7 @@ namespace TelegramBot
 
         public MessageInfo(
             string message,
-            IMedia[] media,
+            IEnumerable<IMedia> media,
             ChatId chatId,
             CancellationToken cancellationToken = default,
             int replyMessageId = 0,
