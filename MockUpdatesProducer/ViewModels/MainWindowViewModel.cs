@@ -34,6 +34,18 @@ namespace MockUpdatesProducer
             } 
         }
 
+        private string _name = "Mock";
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }
+
         private readonly IKafkaProducer<string, InternalUpdate> _producer;
         private readonly Dictionary<UpdateType, InternalUpdate> _updates;
 
@@ -256,7 +268,7 @@ namespace MockUpdatesProducer
         {
             var type = (UpdateType) o;
 
-            _producer.Produce("Mock", _updates[type]);
+            _producer.Produce(Name, _updates[type]);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
