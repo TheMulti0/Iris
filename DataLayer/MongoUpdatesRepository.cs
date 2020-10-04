@@ -9,12 +9,12 @@ namespace DataLayer
     {
         private readonly IMongoCollection<Update> _updates;
 
-        public MongoUpdatesRepository(string connectionString, string databaseName, string collection)
+        public MongoUpdatesRepository(MongoSettings settings)
         {
-            var client = new MongoClient(connectionString);
-            IMongoDatabase database = client.GetDatabase(databaseName);
+            var client = new MongoClient(settings.ConnectionString);
+            IMongoDatabase database = client.GetDatabase(settings.DatabaseName);
 
-            _updates = database.GetCollection<Update>(collection);
+            _updates = database.GetCollection<Update>(settings.CollectionName);
         }
 
         public async Task<IEnumerable<Update>> GetAsync()
