@@ -3,14 +3,16 @@
 
 This is Iris - a scalable social media update manager.
 
-The project consists of multiple components:
- - `ConfigProducer` (Currently not deployed) - Produces configuration to all components.
- - `twitterproducer` - Produces configured user's tweets as Updates.
- - `facebookproducer` - Produces configured user's posts as Updates.
- - `youtubeproducer` - Produces configured user's videos as Updates.
- - `TelegramConsumer` - Consumes updates and sends to configured Telegram chatid.
-
 The producers use MongoDB to save each configured user's last update time, that is used to make sure no update will be sent twice.
+
+Supported producers sources:
+ - [x] YouTube
+ - [x] Twitter
+ - [x] Facebook
+ 
+Supported Consumers sources:
+ - [x] Telegram
+ - [ ] Web dashboard
 
 All of the components use Apache Kafka for communication (The `/updates` topic for all updates, `/configs` topic for configurations).
 
