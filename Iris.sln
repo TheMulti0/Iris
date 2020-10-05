@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "Mock
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{940DAB63-458B-4668-A832-9115B285ED12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dashboard", "Dashboard\Dashboard.csproj", "{AA780AC0-D1F9-431F-AB9B-826C64CFA01D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{940DAB63-458B-4668-A832-9115B285ED12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940DAB63-458B-4668-A832-9115B285ED12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940DAB63-458B-4668-A832-9115B285ED12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA780AC0-D1F9-431F-AB9B-826C64CFA01D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA780AC0-D1F9-431F-AB9B-826C64CFA01D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA780AC0-D1F9-431F-AB9B-826C64CFA01D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA780AC0-D1F9-431F-AB9B-826C64CFA01D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

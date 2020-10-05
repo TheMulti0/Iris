@@ -7,15 +7,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using UpdatesConsumer;
 
 namespace Dashboard.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
+        public DbSet<Update> Updates { get; set; }
+        
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
+            Database.EnsureCreated();
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<Update>(
+                builder =>
+                {
+                    builder.HasKey(u => u.Idd);
+                    builder.Ignore(u => u.Media);
+                });
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Dashboard.Controllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,9 +10,11 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Dashboard.Data;
 using Dashboard.Models;
+using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using UpdatesConsumer;
 
 namespace Dashboard
 {
@@ -39,6 +43,22 @@ namespace Dashboard
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            var updatesConsumerConfig = Configuration
+                .GetSection("UpdatesConsumer").Get<ConsumerConfig>();
+            
+            services.AddConsumer<string, Update>(
+                updatesConsumerConfig,
+                new JsonSerializerOptions
+                {
+                    Converters =
+                    {
+                        new MediaJsonSerializer()
+                    }
+                })
+                .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
+                .AddHostedService<UpdatesConsumerService>();
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
             // In production, the Angular files will be served from this directory

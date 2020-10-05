@@ -11,6 +11,8 @@ namespace UpdatesConsumer
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+
+        public long Idd { get; set; }
         
         [JsonPropertyName("content")]
         public string Content { get; set; }

@@ -6,18 +6,41 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './fetch-data.component.html'
 })
 export class FetchDataComponent {
-  public forecasts: WeatherForecast[];
+  public updates: Update[];
 
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<WeatherForecast[]>(baseUrl + 'weatherforecast').subscribe(result => {
-      this.forecasts = result;
+    http.get<Update[]>(baseUrl + 'updates').subscribe(result => {
+      this.updates = result;
     }, error => console.error(error));
   }
 }
 
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
+export interface Update {
+  content: string
+  author_id: string
+  creation_date: string
+  url: string
+  media: Media[]
+  repost: boolean
+}
+
+export type Media = Photo | Video | Audio;
+
+export interface IMedia {
+  url: string
+  thumbnail_url: string
+}
+
+export interface Photo extends IMedia { }
+
+export interface Video extends IMedia {
+  duration_seconds: number;
+  width: number;
+  height: number;
+}
+
+export interface Audio {
+  duration_seconds: number;
+  title: string
+  artist: string
 }
