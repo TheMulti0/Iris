@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutComponent } from './components/layout/layout.component';
 import { MaterialModule } from './material.module';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 
 @NgModule({
@@ -14,15 +15,17 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
     LayoutComponent,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
-  ],
-  imports: [
-    CommonModule,
-    MaterialModule,
-    RouterModule,
-    FormsModule,
     ReactiveFormsModule,
-    ApiAuthorizationModule
-  ]
+    FlexLayoutModule
+  ],
+    imports: [
+        CommonModule,
+        MaterialModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ApiAuthorizationModule,
+        FlexLayoutModule
+    ]
 })
 export class SharedModule { }
