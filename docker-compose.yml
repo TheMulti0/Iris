@@ -32,7 +32,7 @@ services:
       - ./mongodb:/data/db
 
   telegrambot:
-    image: themulti0/iris_telegrambot:$VERSION
+    image: themulti0/iris_telegrambot:latest
     build:
       context: .
       dockerfile: TelegramBot/Dockerfile
