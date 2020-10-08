@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Dashboard.Controllers
+namespace DashboardBackend.Controllers
 {
     public class OidcConfigurationController : Controller
     {

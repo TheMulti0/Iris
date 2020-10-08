@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Dashboard.Data.Migrations
+namespace DashboardBackend.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

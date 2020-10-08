@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Dashboard.Controllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,15 +7,16 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
-using Dashboard.Data;
-using Dashboard.Models;
+using DashboardBackend.Controllers;
+using DashboardBackend.Data;
+using DashboardBackend.Models;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UpdatesConsumer;
 
-namespace Dashboard
+namespace DashboardBackend
 {
     public class Startup
     {

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Dashboard.Data;
+using DashboardBackend.Data;
 using Microsoft.Extensions.DependencyInjection;
 using UpdatesConsumer;
 
-namespace Dashboard.Controllers
+namespace DashboardBackend.Controllers
 {
     public class UpdatesDataLayerAppender : IUpdateConsumer
     {
