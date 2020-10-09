@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay } from 'rxjs/operators';
-import { AuthorizeService } from 'src/api-authorization/services/authorize.service';
+import { AccountService } from 'src/api-authorization/services/account.service';
 
 @Component({
   selector: 'mt-layout',
@@ -37,11 +37,15 @@ export class LayoutComponent implements OnInit {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private authorizeService: AuthorizeService
+    private accountService: AccountService
   ) { }
 
   ngOnInit() {
-    this.isAuthenticated$ = this.authorizeService.isAuthenticated();
-    this.userName$ = this.authorizeService.getUser().pipe(map(u => u && u.name));
+    this.isAuthenticated$ = this.accountService.isUserAuthenticated$;
+    this.userName$ = this.accountService.getName();
+  }
+
+  login() {
+    this.accountService.login();
   }
 }

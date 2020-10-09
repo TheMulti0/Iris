@@ -4,27 +4,27 @@ import { Observable } from 'rxjs';
 import { AuthorizeService } from './authorize.service';
 import { tap } from 'rxjs/operators';
 import { ApplicationPaths, QueryParameterNames } from '../api-authorization.constants';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorizeGuard implements CanActivate {
-  constructor(private authorize: AuthorizeService, private router: Router) {
-  }
+
+  constructor(
+    private accountService: AccountService) { }
+
   canActivate(
     _next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-      return this.authorize.isAuthenticated()
-        .pipe(tap(isAuthenticated => this.handleAuthorization(isAuthenticated, state)));
+    _state: RouterStateSnapshot
+  ): Observable<boolean> | Promise<boolean> | boolean {
+      return this.accountService.isUserAuthenticated$
+        .pipe(tap(isAuthenticated => this.handleAuthorization(isAuthenticated)));
   }
 
-  private handleAuthorization(isAuthenticated: boolean, state: RouterStateSnapshot) {
+  private handleAuthorization(isAuthenticated: boolean) {
     if (!isAuthenticated) {
-      this.router.navigate(ApplicationPaths.LoginPathComponents, {
-        queryParams: {
-          [QueryParameterNames.ReturnUrl]: state.url
-        }
-      });
+      this.accountService.login();
     }
   }
 }

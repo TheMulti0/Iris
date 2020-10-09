@@ -1,17 +1,18 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoginComponent } from './components/login/login.component';
-import { LogoutComponent } from './components/logout/logout.component';
-import { HttpClientModule } from '@angular/common/http';
-import { ApiAuthorizationRoutingModule } from './api-authorization-routing.module';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AccountService } from './services/account.service';
+import { checkIfUserIsAuthenticated } from './services/check-login-intializer';
+import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
 
 @NgModule({
   imports: [
     CommonModule,
-    HttpClientModule,
-    ApiAuthorizationRoutingModule
+    HttpClientModule
   ],
-  declarations: [LoginComponent, LogoutComponent],
-  exports: [LoginComponent, LogoutComponent]
+  providers: [
+    { provide: APP_INITIALIZER, useFactory: checkIfUserIsAuthenticated, multi: true, deps: [AccountService] },
+    { provide: HTTP_INTERCEPTORS, useClass: NotAuthenticatedInterceptor, multi: true }
+  ],
 })
 export class ApiAuthorizationModule { }

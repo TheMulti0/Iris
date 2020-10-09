@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,8 @@ using DashboardBackend.Controllers;
 using DashboardBackend.Data;
 using DashboardBackend.Models;
 using Extensions;
+using Microsoft.AspNetCore.Authentication.Twitter;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,14 +34,26 @@ namespace DashboardBackend
                     options.UseSqlite(
                         Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
+            services.AddAuthentication(IdentityConstants.ApplicationScheme)
+                .AddTwitter(
+                    options =>
+                    {
+                        options.Events = new TwitterEvents
+                        {
+                            OnRemoteFailure = (RemoteFailureContext context) =>
+                            {                        
+                                context.Response.Redirect("/home/denied");
+                                context.HandleResponse();
+                                return Task.CompletedTask;
+                            }
+                        };
+                        
+                        options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
+                        options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+                    });
 
             var updatesConsumerConfig = Configuration
                 .GetSection("UpdatesConsumer").Get<ConsumerConfig>();
@@ -78,7 +93,6 @@ namespace DashboardBackend
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
             app.UseEndpoints(
                 endpoints =>

@@ -1,0 +1,6 @@
+{
+    "/authentication/*": {
+        "target": "http://localhost:5000",
+        "logLevel": "info"
+    }
+}

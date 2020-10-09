@@ -33,14 +33,14 @@ services:
     volumes:
       - ./mongodb:/data/db
 
-  telegramconsumer:
+  telegrambot:
     image: themulti0/iris_telegrambot:$VERSION
     build:
       context: .
       dockerfile: TelegramBot/Dockerfile
     container_name: telegrambot
     volumes:
-      - './TelegramConsumer/appsettings.json:/app/appsettings.json'
+      - './TelegramBot/appsettings.json:/app/appsettings.json'
     restart: always
     networks:
       - kafka_network
