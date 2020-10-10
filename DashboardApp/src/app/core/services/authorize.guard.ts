@@ -22,7 +22,7 @@ export class AuthorizeGuard implements CanActivate {
 
   private handleAuthorization(isAuthenticated: boolean) {
     if (!isAuthenticated) {
-      this.accountService.login();
+      window.alert("You do not have permission to view this page");
     }
   }
 }

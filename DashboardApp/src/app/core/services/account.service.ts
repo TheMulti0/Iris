@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
+import { User } from 'src/app/models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +18,10 @@ export class AccountService {
     private document: Document,
     private httpClient: HttpClient) { }
 
-  login() {
+  login(provider: string) {
     this.document.location.href = this.buildUrl(
       '/account/login',
-      { provider: 'Twitter', returnUrl: this.document.location.href });
+      { provider: provider, returnUrl: this.document.location.href });
   }
 
   updateUserAuthenticationStatus() {
@@ -33,8 +34,8 @@ export class AccountService {
     this._isAuthenticated$.next(false);
   }
 
-  getName() {
-    return this.httpClient.get<string>(`/account/name`, { withCredentials: true });
+  me() {
+    return this.httpClient.get<User>(`/account/me`, { withCredentials: true });
   }
 
   logout() {

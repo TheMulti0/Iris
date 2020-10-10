@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DashboardBackend.Data;
 using DashboardBackend.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Tweetinvi;
+using Tweetinvi.Models;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace DashboardBackend.Controllers 
@@ -16,15 +18,18 @@ namespace DashboardBackend.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TwitterSettings _twitterSettings;
 
         public AccountController(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager)
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            TwitterSettings twitterSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _twitterSettings = twitterSettings;
         }
         
         [HttpGet("login")]
@@ -52,7 +57,7 @@ namespace DashboardBackend.Controllers
                                     
             if (!result.Succeeded) // User does not exist yet
             {
-                IdentityUser newUser = CreateUser(info);
+                ApplicationUser newUser = await CreateUserAsync(info);
 
                 IdentityResult createResult = await _userManager.CreateAsync(newUser);
                 if (!createResult.Succeeded)
@@ -76,17 +81,38 @@ namespace DashboardBackend.Controllers
             return Redirect(returnUrl);                        
         }
 
-        private static IdentityUser CreateUser(ExternalLoginInfo info)
+        private async Task<ApplicationUser> CreateUserAsync(ExternalLoginInfo info)
         {
             string name = info.Principal.FindFirstValue(ClaimTypes.Name);
             string email = info.Principal.FindFirstValue(ClaimTypes.Email);
             
-            return new IdentityUser
+            return new ApplicationUser
             {
                 UserName = name,
                 Email = email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                ProfilePicture = await GetProfilePicture(info)
             };
+        }
+
+        private async Task<string> GetProfilePicture(ExternalLoginInfo info)
+        {
+            switch (info.LoginProvider)
+            {
+                case "Twitter":
+                    var twitterClient = new TwitterClient(
+                        _twitterSettings.ConsumerKey,
+                        _twitterSettings.ConsumerSecret,
+                        info.AuthenticationTokens.FirstOrDefault(token => token.Name == "access_token")?.Value,
+                        info.AuthenticationTokens.LastOrDefault(token => token.Name == "access_token_secret")?.Value);
+
+                    IAuthenticatedUser user = await twitterClient.Users.GetAuthenticatedUserAsync();
+                    
+                    return user.ProfileImageUrl;
+
+                default:
+                    return "";
+            }
         }
         
         [HttpGet("isAuthenticated")]
@@ -95,12 +121,11 @@ namespace DashboardBackend.Controllers
             return new ObjectResult(User.Identity.IsAuthenticated);
         }
 
-        [HttpGet("name")]
+        [HttpGet("me")]
         [Authorize]
-        public JsonResult Name()
+        public Task<ApplicationUser> Me()
         {
-            string givenName = User.FindFirst(ClaimTypes.Name).Value;
-            return Json(givenName);
+            return _userManager.GetUserAsync(User);
         }
 
         [HttpGet("logout")]

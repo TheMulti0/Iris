@@ -30,9 +30,11 @@
 
       <ng-container *ngIf="isAuthenticated$ | async else logoutTemplate">
 
-        <span [matMenuTriggerFor]="menu">
-          Hello {{ userName$ | async }}
-        </span>
+        <ngx-avatar [src]="(user$ | async).profilePicture"
+                    [name]="(user$ | async).userName"
+                    [matTooltip]="(user$ | async).userName"
+                    [matMenuTriggerFor]="menu">
+        </ngx-avatar>
 
         <mat-menu #menu="matMenu">
 
@@ -53,7 +55,7 @@
 
         <mat-menu #menu="matMenu">
 
-          <button mat-menu-item (click)="login()">
+          <button mat-menu-item (click)="loginWithTwitter()">
             Login in with Twitter
           </button>
 

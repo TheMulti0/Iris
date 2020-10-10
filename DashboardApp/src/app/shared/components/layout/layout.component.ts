@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { AccountService } from 'src/app/core/services/account.service';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'mt-layout',
@@ -18,7 +19,7 @@ export class LayoutComponent implements OnInit {
     );
 
   isAuthenticated$: Observable<boolean>;
-  userName$: Observable<string>;
+  user$: Observable<User>;
 
   pages: { path: string, name: string }[] = [
     {
@@ -42,11 +43,11 @@ export class LayoutComponent implements OnInit {
 
   ngOnInit() {
     this.isAuthenticated$ = this.accountService.isAuthenticated$;
-    this.userName$ = this.accountService.getName();
+    this.user$ = this.accountService.me();
   }
 
-  login() {
-    this.accountService.login();
+  loginWithTwitter() {
+    this.accountService.login('Twitter');
   }
 
   logout() {

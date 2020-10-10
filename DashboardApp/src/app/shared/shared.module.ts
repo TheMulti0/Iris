@@ -7,7 +7,7 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { MaterialModule } from './material.module';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CoreModule } from '../core/core.module';
-
+import { AvatarModule } from 'ngx-avatar';
 
 @NgModule({
   declarations: [LayoutComponent],
@@ -19,6 +19,7 @@ import { CoreModule } from '../core/core.module';
     FlexLayoutModule
   ],
   imports: [
+    AvatarModule,
     CoreModule,
     CommonModule,
     MaterialModule,
