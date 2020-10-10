@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AppActions } from './app.constants';
 import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
+import { UpdatesComponent } from './updates/updates.component';
 
 const routes: Routes = [
   {
@@ -11,17 +12,17 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {
-        path: '',
+        path: AppActions.Home,
         component: HomeComponent,
         pathMatch: 'full' 
       },
       {
-        path: 'counter',
+        path: AppActions.Counter,
         component: CounterComponent
       },
       { 
-        path: 'fetch-data',
-        component: FetchDataComponent 
+        path: AppActions.Updates,
+        component: UpdatesComponent 
       }
     ]
   }
