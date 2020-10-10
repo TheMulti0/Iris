@@ -5,6 +5,7 @@ import { AccountService } from './services/account.service';
 import { checkIfUserIsAuthenticated } from './services/check-login-intializer';
 import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -15,4 +16,5 @@ import { NotAuthenticatedInterceptor } from './services/not-authenticated.interc
     { provide: HTTP_INTERCEPTORS, useClass: NotAuthenticatedInterceptor, multi: true }
   ],
 })
-export class ApiAuthorizationModule { }
+export class CoreModule {
+}

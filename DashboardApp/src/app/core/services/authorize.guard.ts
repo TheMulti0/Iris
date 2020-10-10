@@ -16,7 +16,7 @@ export class AuthorizeGuard implements CanActivate {
     _next: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-      return this.accountService.isUserAuthenticated$
+      return this.accountService.isAuthenticated$
         .pipe(tap(isAuthenticated => this.handleAuthorization(isAuthenticated)));
   }
 

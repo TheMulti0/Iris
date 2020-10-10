@@ -7,8 +7,7 @@ import { AccountService } from './account.service';
 export function checkIfUserIsAuthenticated(accountService: AccountService) {
     return () => {
         return accountService.updateUserAuthenticationStatus().pipe(catchError(error => {
-            console.error('Error trying to validate if the user is authenticated. The most probable cause is that the ASP.NET Core project isn\'t running');
-            console.log(error)
+            console.error('Error trying to validate if the user is authenticated');
             return of(null);
         })).toPromise();                    
     };

@@ -1,18 +1,16 @@
 import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { tap } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
-import { url } from 'inspector';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
 
-  private _isUserAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  isUserAuthenticated$: Observable<boolean> = this._isUserAuthenticatedSubject.asObservable();
+  private _isAuthenticated$ = new BehaviorSubject<boolean>(false);
+  isAuthenticated$: Observable<boolean> = this._isAuthenticated$.asObservable();
 
   constructor(
     @Inject(DOCUMENT) 
@@ -27,12 +25,12 @@ export class AccountService {
 
   updateUserAuthenticationStatus() {
     return this.httpClient.get<boolean>(`/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
-      this._isUserAuthenticatedSubject.next(isAuthenticated);
+      this._isAuthenticated$.next(isAuthenticated);
     }));
   }
 
   setUserAsNotAuthenticated() {
-    this._isUserAuthenticatedSubject.next(false);
+    this._isAuthenticated$.next(false);
   }
 
   getName() {

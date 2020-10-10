@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
-import { AccountService } from 'src/api-authorization/services/account.service';
+import { AccountService } from 'src/app/core/services/account.service';
 
 @Component({
   selector: 'mt-layout',
@@ -41,7 +41,7 @@ export class LayoutComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.isAuthenticated$ = this.accountService.isUserAuthenticated$;
+    this.isAuthenticated$ = this.accountService.isAuthenticated$;
     this.userName$ = this.accountService.getName();
   }
 
@@ -50,7 +50,6 @@ export class LayoutComponent implements OnInit {
   }
 
   logout() {
-    console.log('poop')
     this.accountService.logout();
   }
 }
