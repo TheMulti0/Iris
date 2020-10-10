@@ -36,11 +36,6 @@
 
         <mat-menu #menu="matMenu">
 
-          <button mat-menu-item [routerLink]='["/authentication/profile"]'>
-            <mat-icon>account_circle</mat-icon>
-            <span>Profile</span>
-          </button>
-
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>Logout</span>
@@ -51,14 +46,26 @@
       </ng-container>
 
       <ng-template #logoutTemplate>
-        <button mat-raised-button (click)="login()">
-          Login
+
+        <button mat-icon-button matTooltip="Login" [matMenuTriggerFor]="menu">
+          <mat-icon>login</mat-icon>
         </button>
+
+        <mat-menu #menu="matMenu">
+
+          <button mat-menu-item (click)="login()">
+            Login in with Twitter
+          </button>
+
+        </mat-menu>
+
       </ng-template>
 
     </mat-toolbar>
 
-    <router-outlet></router-outlet>
+    <div class="m-1">
+      <router-outlet></router-outlet>
+    </div>
 
   </mat-sidenav-content>
 
