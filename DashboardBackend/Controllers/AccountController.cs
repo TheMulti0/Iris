@@ -97,10 +97,10 @@ namespace DashboardBackend.Controllers
 
         [HttpGet("name")]
         [Authorize]
-        public IActionResult Name()
+        public JsonResult Name()
         {
             string givenName = User.FindFirst(ClaimTypes.Name).Value;
-            return Ok(givenName);
+            return Json(givenName);
         }
 
         [HttpGet("logout")]

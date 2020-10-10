@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { AccountService } from 'src/api-authorization/services/account.service';
 
 @Component({
@@ -47,5 +47,10 @@ export class LayoutComponent implements OnInit {
 
   login() {
     this.accountService.login();
+  }
+
+  logout() {
+    console.log('poop')
+    this.accountService.logout();
   }
 }

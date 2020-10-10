@@ -69,8 +69,18 @@ namespace DashboardBackend
                 })
                 .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
                 .AddHostedService<UpdatesConsumerService>();
-            
-            services.AddControllersWithViews();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,6 +100,8 @@ namespace DashboardBackend
 
             app.UseHttpsRedirection();
 
+            app.UseCors("CorsPolicy");
+            
             app.UseRouting();
 
             app.UseAuthentication();
@@ -100,7 +112,6 @@ namespace DashboardBackend
                     endpoints.MapControllerRoute(
                         name: "default",
                         pattern: "{controller}/{action=Index}/{id?}");
-                    endpoints.MapRazorPages();
                 });
         }
     }

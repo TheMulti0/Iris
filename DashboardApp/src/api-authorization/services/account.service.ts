@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { tap } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
+import { url } from 'inspector';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +20,13 @@ export class AccountService {
     private httpClient: HttpClient) { }
 
   login() {
-    const returnUrl = "http://localhost:4200";
-    this.document.location.href = `http://localhost:5000/account/login?provider=Twitter&returnUrl=${returnUrl}`;
+    this.document.location.href = this.buildUrl(
+      '/account/login',
+      { provider: 'Twitter', returnUrl: this.document.location.href });
   }
 
   updateUserAuthenticationStatus() {
-    return this.httpClient.get<boolean>(`${environment.apiUrl}/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
+    return this.httpClient.get<boolean>(`/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
       this._isUserAuthenticatedSubject.next(isAuthenticated);
     }));
   }
@@ -34,12 +36,21 @@ export class AccountService {
   }
 
   getName() {
-    console.log('name')
-    return this.httpClient.get<string>(`${environment.apiUrl}/account/name`, { withCredentials: true });
+    return this.httpClient.get<string>(`/account/name`, { withCredentials: true });
   }
 
   logout() {
-    this.document.location.href = "http://localhost:5000/account/logout";
+    this.document.location.href = this.buildUrl(
+      '/account/logout',
+      { returnUrl: this.document.location.href });
+  }
+
+  private buildUrl(baseUrl: string, params: any): string {
+    const queryString = Object.keys(params)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join('&');
+
+    return `${baseUrl}?${queryString}`;
   }
 
 }

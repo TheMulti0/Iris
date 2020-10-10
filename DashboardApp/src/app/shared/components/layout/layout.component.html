@@ -30,6 +30,10 @@
 
       <ng-container *ngIf="isAuthenticated$ | async else logoutTemplate">
 
+        <span [matMenuTriggerFor]="menu">
+          Hello {{ userName$ | async }}
+        </span>
+
         <mat-menu #menu="matMenu">
 
           <button mat-menu-item [routerLink]='["/authentication/profile"]'>
@@ -37,7 +41,7 @@
             <span>Profile</span>
           </button>
 
-          <button mat-menu-item [routerLink]='["/authentication/logout"]'>
+          <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             <span>Logout</span>
           </button>
