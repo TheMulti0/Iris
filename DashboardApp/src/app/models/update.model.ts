@@ -1,4 +1,5 @@
 export interface Update {
+    idd: number;
     content: string;
     author_id: string;
     creation_date: string;

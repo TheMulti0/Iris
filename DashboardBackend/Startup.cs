@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Driver;
 using UpdatesConsumer;
 
 namespace DashboardBackend
@@ -37,34 +38,32 @@ namespace DashboardBackend
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddSingleton(
-                Configuration.GetSection("Authentication:Twitter")
-                    .Get<TwitterSettings>());
-
+            var twitter = Configuration.GetSection("Authentication:Twitter").Get<TwitterSettings>();
+            services.AddSingleton(twitter);
             services.AddAuthentication(IdentityConstants.ApplicationScheme)
                 .AddTwitter(
                     options =>
                     {
                         options.SaveTokens = true;
                         
-                        options.ConsumerKey = Configuration["Authentication:Twitter:ConsumerKey"];
-                        options.ConsumerSecret = Configuration["Authentication:Twitter:ConsumerSecret"];
+                        options.ConsumerKey = twitter.ConsumerKey;
+                        options.ConsumerSecret = twitter.ConsumerSecret;
                     });
 
             var updatesConsumerConfig = Configuration
                 .GetSection("UpdatesConsumer").Get<ConsumerConfig>();
             
-            // services.AddConsumer<string, Update>(
-            //     updatesConsumerConfig,
-            //     new JsonSerializerOptions
-            //     {
-            //         Converters =
-            //         {
-            //             new MediaJsonSerializer()
-            //         }
-            //     })
-            //     .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
-            //     .AddHostedService<UpdatesConsumerService>();
+            services.AddConsumer<string, Update>(
+                updatesConsumerConfig,
+                new JsonSerializerOptions
+                {
+                    Converters =
+                    {
+                        new MediaJsonSerializer()
+                    }
+                })
+                .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
+                .AddHostedService<UpdatesConsumerService>();
 
             services.AddCors(options =>
             {

@@ -1,7 +1,10 @@
 {
-    "/account/*": {
+    "/api/*": {
         "target": "http://localhost:5000",
         "secure": false,
-        "logLevel": "info"
+        "logLevel": "info",
+        "pathRewrite": {
+            "^/api": ""
+        }
     }
 }

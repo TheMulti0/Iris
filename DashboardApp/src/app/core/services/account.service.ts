@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
 import { User } from 'src/app/models/user.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,12 @@ export class AccountService {
 
   login(provider: string) {
     this.document.location.href = this.buildUrl(
-      '/account/login',
+      `${environment.apiUrl}/account/login`,
       { provider: provider, returnUrl: this.document.location.href });
   }
 
   updateUserAuthenticationStatus() {
-    return this.httpClient.get<boolean>(`/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
+    return this.httpClient.get<boolean>(`${environment.apiUrl}/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
       this._isAuthenticated$.next(isAuthenticated);
     }));
   }
@@ -35,12 +36,12 @@ export class AccountService {
   }
 
   me() {
-    return this.httpClient.get<User>(`/account/me`, { withCredentials: true });
+    return this.httpClient.get<User>(`${environment.apiUrl}/account/me`, { withCredentials: true });
   }
 
   logout() {
     this.document.location.href = this.buildUrl(
-      '/account/logout',
+      `${environment.apiUrl}/account/logout`,
       { returnUrl: this.document.location.href });
   }
 
