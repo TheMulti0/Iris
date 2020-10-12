@@ -14,11 +14,15 @@ export class UpdatesService {
     private httpClient: HttpClient) { }
 
   getUpdates(): Observable<Update[]> {
-    return this.httpClient.get<Update[]>(`${environment.apiUrl}/updates`, { withCredentials: true });
+    return this.httpClient.get<Update[]>(
+      `${environment.apiUrl}/updates`,
+      { withCredentials: true });
   }
 
   removeUpdate(id: number): Observable<Object> {
-    return this.httpClient.delete(`${environment.apiUrl}/updates`, { withCredentials: true, params: { id: id.toString() } })
+    return this.httpClient.delete(
+      `${environment.apiUrl}/updates/${id}`,
+      { withCredentials: true });
   }
 
 }

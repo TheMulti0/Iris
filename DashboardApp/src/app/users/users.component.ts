@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { AccountService } from '../core/services/account.service';
+import { AuthenticationService } from '../core/services/authentication.service';
+import { UsersService } from '../core/services/users.service';
 import { Update } from '../models/update.model';
 import { User } from '../models/user.model';
 import { UpdatesService } from '../services/updates.service';
@@ -19,11 +20,11 @@ export class UsersComponent implements OnInit {
   ];
 
   constructor(
-    private accountService: AccountService
+    private usersService: UsersService
   ) { }
 
   async ngOnInit() {
-    this.users = await this.accountService.getUsers().toPromise();
+    this.users = await this.usersService.getUsers().toPromise();
 
     this.dataSource = new MatTableDataSource(this.users);
   }

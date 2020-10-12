@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AccountService } from './services/account.service';
+import { AuthenticationService } from './services/authentication.service';
 import { checkIfUserIsAuthenticated } from './services/check-login-intializer';
 import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
 
@@ -12,7 +12,7 @@ import { NotAuthenticatedInterceptor } from './services/not-authenticated.interc
     HttpClientModule
   ],
   providers: [
-    { provide: APP_INITIALIZER, useFactory: checkIfUserIsAuthenticated, multi: true, deps: [AccountService] },
+    { provide: APP_INITIALIZER, useFactory: checkIfUserIsAuthenticated, multi: true, deps: [AuthenticationService] },
     { provide: HTTP_INTERCEPTORS, useClass: NotAuthenticatedInterceptor, multi: true }
   ],
 })

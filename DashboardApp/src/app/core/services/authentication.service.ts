@@ -1,15 +1,16 @@
 import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
-import { User } from 'src/app/models/user.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService {
+export class AuthenticationService {
+
+  private prefix = 'authentication'
 
   private _isAuthenticated$ = new BehaviorSubject<boolean>(false);
   isAuthenticated$: Observable<boolean> = this._isAuthenticated$.asObservable();
@@ -21,31 +22,27 @@ export class AccountService {
 
   login(provider: string) {
     this.document.location.href = this.buildUrl(
-      `${environment.apiUrl}/account/login`,
+      `${environment.apiUrl}/${this.prefix}/login`,
       { provider: provider, returnUrl: this.document.location.href });
   }
 
-  updateUserAuthenticationStatus() {
-    return this.httpClient.get<boolean>(`${environment.apiUrl}/account/isAuthenticated`, { withCredentials: true }).pipe(tap(isAuthenticated => {
-      this._isAuthenticated$.next(isAuthenticated);
-    }));
+  updateAuthenticationStatus(): Observable<void> {
+    return this.isAuthenticated().pipe(map(isAuthenticated => this._isAuthenticated$.next(isAuthenticated)));
   }
 
-  setUserAsNotAuthenticated() {
+  isAuthenticated(): Observable<boolean> {
+    return this.httpClient.get<boolean>(
+      `${environment.apiUrl}/${this.prefix}/isAuthenticated`,
+      { withCredentials: true });
+  }
+
+  notAuthenticated() {
     this._isAuthenticated$.next(false);
-  }
-
-  me() {
-    return this.httpClient.get<User>(`${environment.apiUrl}/account/me`, { withCredentials: true });
-  }
-
-  getUsers() {
-    return this.httpClient.get<User[]>(`${environment.apiUrl}/account/users`, { withCredentials: true });
   }
 
   logout() {
     this.document.location.href = this.buildUrl(
-      `${environment.apiUrl}/account/logout`,
+      `${environment.apiUrl}/${this.prefix}/logout`,
       { returnUrl: this.document.location.href });
   }
 

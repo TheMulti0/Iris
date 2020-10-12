@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay, tap } from 'rxjs/operators';
-import { AccountService } from 'src/app/core/services/account.service';
+import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { User } from 'src/app/models/user.model';
 import { AppActions } from 'src/app/app.constants';
+import { MeService } from 'src/app/core/services/me.service';
 
 @Component({
   selector: 'mt-layout',
@@ -26,21 +27,20 @@ export class LayoutComponent implements OnInit {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private accountService: AccountService
+    private accountService: AuthenticationService,
+    private meService: MeService
   ) {
-
     this.pages = Object.keys(AppActions).map(name => {
       return {
         path: AppActions[name],
         name
       }
     })
-
   }
 
   ngOnInit() {
     this.isAuthenticated$ = this.accountService.isAuthenticated$;
-    this.user$ = this.accountService.me();
+    this.user$ = this.meService.getMe();
   }
 
   loginWithTwitter() {

@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -82,7 +83,7 @@ namespace DashboardBackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -111,6 +112,15 @@ namespace DashboardBackend
                         name: "default",
                         pattern: "{controller}/{action=Index}/{id?}");
                 });
+
+            CreateRoles(serviceProvider).Wait();
+        }
+
+        private static async Task CreateRoles(IServiceProvider provider)
+        {
+            var roleManager = provider.GetService<RoleManager<IdentityRole>>();
+            
+            await roleManager.CreateAsync(new IdentityRole(RoleNames.SuperUser));
         }
     }
 }

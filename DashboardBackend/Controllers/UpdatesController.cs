@@ -27,7 +27,7 @@ namespace DashboardBackend.Controllers
             return _repository.Updates.ToListAsync();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
             Update update = await _repository.Updates.FindAsync(id);

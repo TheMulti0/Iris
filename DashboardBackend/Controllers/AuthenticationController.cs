@@ -16,17 +16,16 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 namespace DashboardBackend.Controllers 
 {
     [Route("[controller]")]
-    public class AccountController : Controller
+    public class AuthenticationController : Controller
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RolesSettings _rolesSettings;
         private readonly TwitterSettings _twitterSettings;
 
-        public AccountController(
+        public AuthenticationController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
             RolesSettings rolesSettings,
             TwitterSettings twitterSettings)
         {
@@ -34,8 +33,6 @@ namespace DashboardBackend.Controllers
             _userManager = userManager;
             _rolesSettings = rolesSettings;
             _twitterSettings = twitterSettings;
-
-            roleManager.CreateAsync(new IdentityRole(RoleNames.SuperUser));
         }    
         
         [HttpGet("login")]
@@ -129,29 +126,6 @@ namespace DashboardBackend.Controllers
         public IActionResult IsAuthenticated()
         {
             return new ObjectResult(User.Identity.IsAuthenticated);
-        }
-
-        [HttpGet("me")]
-        [Authorize]
-        public Task<ApplicationUser> Me()
-        {
-            return _userManager.GetUserAsync(User);
-        }
-
-        [HttpGet("users")]
-        [Authorize(Roles = RoleNames.SuperUser)]
-        public IQueryable<ApplicationUser> Users()
-        {
-            return _userManager.Users;
-        }
-
-        [HttpGet("me/roles")]
-        [Authorize]
-        public async Task<IList<string>> Roles()
-        {
-            ApplicationUser applicationUser = await Me();
-            
-            return await _userManager.GetRolesAsync(applicationUser);
         }
         
         [HttpGet("[action]")]
