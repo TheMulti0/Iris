@@ -35,7 +35,7 @@ namespace DashboardBackend
                     options.UseSqlite(
                         Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             var twitter = Configuration.GetSection("Authentication:Twitter").Get<TwitterSettings>();
@@ -74,6 +74,9 @@ namespace DashboardBackend
                         .AllowAnyHeader()
                         .AllowCredentials());
             });
+
+            services.AddSingleton(
+                Configuration.GetSection("Roles").Get<RolesSettings>());
 
             services.AddControllers();
         }

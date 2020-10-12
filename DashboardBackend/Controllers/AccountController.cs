@@ -20,17 +20,23 @@ namespace DashboardBackend.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RolesSettings _rolesSettings;
         private readonly TwitterSettings _twitterSettings;
 
         public AccountController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            RolesSettings rolesSettings,
             TwitterSettings twitterSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _rolesSettings = rolesSettings;
             _twitterSettings = twitterSettings;
-        }
+
+            roleManager.CreateAsync(new IdentityRole(RoleNames.SuperUser));
+        }    
         
         [HttpGet("login")]
         public IActionResult SignInWithExternalProvider(string provider, string returnUrl)
@@ -70,6 +76,10 @@ namespace DashboardBackend.Controllers
                 IEnumerable<Claim> newUserClaims = info.Principal.Claims.Append(new Claim("userId", newUser.Id)); // Generated UUID
                 
                 await _userManager.AddClaimsAsync(newUser, newUserClaims);
+
+                if (_rolesSettings.SuperUsersUserNames.Contains(newUser.UserName)) {
+                    await _userManager.AddToRoleAsync(newUser, "SuperUser");
+                }
                 
                 // Sign in with ApplicationScheme / cookies (with the new user information).
                 // The cookie expires after browser is closed (not persistent).
@@ -115,7 +125,7 @@ namespace DashboardBackend.Controllers
             }
         }
         
-        [HttpGet("isAuthenticated")]
+        [HttpGet("[action]")]
         public IActionResult IsAuthenticated()
         {
             return new ObjectResult(User.Identity.IsAuthenticated);
@@ -128,7 +138,23 @@ namespace DashboardBackend.Controllers
             return _userManager.GetUserAsync(User);
         }
 
-        [HttpGet("logout")]
+        [HttpGet("users")]
+        [Authorize(Roles = RoleNames.SuperUser)]
+        public IQueryable<ApplicationUser> Users()
+        {
+            return _userManager.Users;
+        }
+
+        [HttpGet("me/roles")]
+        [Authorize]
+        public async Task<IList<string>> Roles()
+        {
+            ApplicationUser applicationUser = await Me();
+            
+            return await _userManager.GetRolesAsync(applicationUser);
+        }
+        
+        [HttpGet("[action]")]
         public async Task<IActionResult> Logout(string returnUrl) 
         {
             // Sign out of ApplicationScheme (cookies).

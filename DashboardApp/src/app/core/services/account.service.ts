@@ -39,6 +39,10 @@ export class AccountService {
     return this.httpClient.get<User>(`${environment.apiUrl}/account/me`, { withCredentials: true });
   }
 
+  getUsers() {
+    return this.httpClient.get<User[]>(`${environment.apiUrl}/account/users`, { withCredentials: true });
+  }
+
   logout() {
     this.document.location.href = this.buildUrl(
       `${environment.apiUrl}/account/logout`,
