@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -9,7 +10,9 @@ using DashboardBackend.Controllers;
 using DashboardBackend.Data;
 using DashboardBackend.Models;
 using Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Twitter;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,16 +44,23 @@ namespace DashboardBackend
 
             var twitter = Configuration.GetSection("Authentication:Twitter").Get<TwitterSettings>();
             services.AddSingleton(twitter);
-            services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            services.AddAuthentication()
                 .AddTwitter(
                     options =>
                     {
                         options.SaveTokens = true;
-                        
+
                         options.ConsumerKey = twitter.ConsumerKey;
                         options.ConsumerSecret = twitter.ConsumerSecret;
                     });
 
+            services.ConfigureApplicationCookie(
+                options =>
+                {
+                    options.Events.OnRedirectToAccessDenied = UnauthorizedResponse;
+                    options.Events.OnRedirectToLogin = UnauthorizedResponse;
+                });
+            
             var updatesConsumerConfig = Configuration
                 .GetSection("UpdatesConsumer").Get<ConsumerConfig>();
             
@@ -81,6 +91,12 @@ namespace DashboardBackend
 
             services.AddControllers();
         }
+        
+        internal static Task UnauthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+            return Task.CompletedTask;
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
@@ -102,7 +118,7 @@ namespace DashboardBackend
             app.UseCors("CorsPolicy");
             
             app.UseRouting();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(
