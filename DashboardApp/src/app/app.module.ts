@@ -4,7 +4,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
@@ -15,7 +14,6 @@ import { UsersComponent } from './users/users.component';
   declarations: [
     AppComponent,
     HomeComponent,
-    CounterComponent,
     UpdatesComponent,
     UsersComponent
   ],
