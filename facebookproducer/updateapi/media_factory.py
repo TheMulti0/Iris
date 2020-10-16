@@ -12,11 +12,10 @@ class MediaFactory:
     @staticmethod
     def get_photos(post):
         try:
-            if post.image is not None:
-                return [
-                    Photo(url=post.image)
-                ]
-            return []
+            return [
+                Photo(url=image)
+                for image in post.images
+            ]
         except AttributeError:
             return []
 
