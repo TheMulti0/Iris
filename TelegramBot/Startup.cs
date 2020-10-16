@@ -73,7 +73,7 @@ namespace TelegramBot
                 .AddSingleton<IConfigProvider, ConfigProvider>()
                 .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
                 .AddSingleton<IUpdateConsumer, TelegramBot>()
-                .AddHostedService<UpdateConsumerService>()
+                .AddHostedService<UpdatesConsumerService>()
                 .BuildServiceProvider();
         }
     }

@@ -8,17 +8,17 @@ using Microsoft.Extensions.Logging;
 
 namespace UpdatesConsumer
 {
-    public class UpdateConsumerService : BackgroundService
+    public class UpdatesConsumerService : BackgroundService
     {
         private readonly IKafkaConsumer<string, Update> _updateConsumer;
         private readonly IUpdateConsumer _consumer;
-        private readonly ILogger<UpdateConsumerService> _logger;
+        private readonly ILogger<UpdatesConsumerService> _logger;
         private IDisposable _updateSubscription;
 
-        public UpdateConsumerService(
+        public UpdatesConsumerService(
             IKafkaConsumer<string, Update> updateConsumer, 
             IUpdateConsumer consumer,
-            ILogger<UpdateConsumerService> logger)
+            ILogger<UpdatesConsumerService> logger)
         {
             _updateConsumer = updateConsumer;
             _consumer = consumer;

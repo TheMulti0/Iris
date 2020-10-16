@@ -21,8 +21,6 @@ namespace MockUpdatesProducer
         public MainWindow()
         {
             InitializeComponent();
-            
-            
         }
     }
 }
