@@ -30,8 +30,8 @@
 
       <ng-container *ngIf="isAuthenticated$ | async else logoutTemplate">
 
-        <ngx-avatar [src]="(user$ | async).profilePicture" [name]="(user$ | async).userName"
-          [matTooltip]="(user$ | async).userName" [matMenuTriggerFor]="menu">
+        <ngx-avatar *ngIf="user" [src]="user.profilePicture" [name]="user.userName"
+          [matTooltip]="user.userName" [matMenuTriggerFor]="menu">
         </ngx-avatar>
 
         <mat-menu #menu="matMenu">

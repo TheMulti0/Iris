@@ -3,3 +3,7 @@ export interface User {
     email: string;
     profilePicture: string;
 }
+
+export enum Role {
+    SuperUser = "SuperUser"
+}

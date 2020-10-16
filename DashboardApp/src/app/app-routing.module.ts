@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppActions } from './app.constants';
+import { AuthorizeGuard } from './core/services/authorize.guard';
+import { SuperUserGuard } from './core/services/superuser.guard';
 import { CounterComponent } from './counter/counter.component';
 import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
@@ -23,10 +25,12 @@ const routes: Routes = [
       },
       { 
         path: AppActions.Updates,
+        canActivate: [ AuthorizeGuard ],
         component: UpdatesComponent 
       },
       {
         path: AppActions.Users,
+        canActivate: [ SuperUserGuard ],
         component: UsersComponent
       }
     ]

@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpEvent, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
-import { tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class NotAuthenticatedInterceptor implements HttpInterceptor {
 
-  constructor(private accountService: AuthenticationService) { }
+  constructor(private authenticationService: AuthenticationService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    return next.handle(req).pipe(tap(null,
-      (error: HttpErrorResponse) => {        
-        if (error.status === 401)
-          this.accountService.notAuthenticated();
-      }));
+    return next.handle(req).pipe(
+      catchError(e => {
+        if (e.status === 401) {
+          this.authenticationService.notAuthenticated();
+        }
+        return of(null);
+      })
+    );
   }
 }
