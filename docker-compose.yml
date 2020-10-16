@@ -19,8 +19,6 @@ services:
       KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
     networks:
       - kafka_network
-    volumes:
-      - ./kafka:/kafka
     depends_on:
       - zookeeper
 
@@ -34,7 +32,7 @@ services:
       - ./mongodb:/data/db
 
   telegrambot:
-    image: themulti0/iris_telegrambot:$VERSION
+    image: themulti0/iris_telegrambot:latest
     build:
       context: .
       dockerfile: TelegramBot/Dockerfile
@@ -48,7 +46,7 @@ services:
       - kafka
 
   twitterproducer:
-    image: themulti0/iris_twitterproducer:$VERSION
+    image: themulti0/iris_twitterproducer:latest
     build:
       context: .
       dockerfile: updatesproducer/Dockerfile
@@ -66,7 +64,7 @@ services:
       - mongodb
 
   facebookproducer:
-    image: themulti0/iris_facebookproducer:$VERSION
+    image: themulti0/iris_facebookproducer:latest
     build:
       context: .
       dockerfile: updatesproducer/Dockerfile
@@ -84,7 +82,7 @@ services:
       - mongodb
 
   youtubeproducer:
-    image: themulti0/iris_youtubeproducer:$VERSION
+    image: themulti0/iris_youtubeproducer:latest
     build:
       context: .
       dockerfile: updatesproducer/Dockerfile
