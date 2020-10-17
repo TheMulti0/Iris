@@ -23,13 +23,20 @@ def create_pipe(config, cancellation_token):
 
     updates_provider = FacebookUpdatesProvider(posts_provider)
 
+    posts_producer_config = config['posts_producer']
+
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config['posts_producer']),
-        cancellation_token,
+        UpdatesProducerConfig(posts_producer_config),
+        VideoDownloader(
+            logging.getLogger(VideoDownloader.__name__), {
+                'username': posts_producer_config['username'],
+                'password': posts_producer_config['password']
+            }
+        ),
         logging.getLogger(UpdatesProducer.__name__))
 
     return UpdatesPoller(
-        UpdatesPollerConfig(config['posts_producer']),
+        UpdatesPollerConfig(posts_producer_config),
         producer,
         repository,
         updates_provider,
