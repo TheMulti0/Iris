@@ -10,6 +10,7 @@ Supported producers sources:
  - [x] Twitter
  - [x] Facebook
  - [ ] Instagram
+ - [ ] Soundcloud
  - [ ] Interviews
  
 Supported Consumers sources:
