@@ -11,6 +11,7 @@ Supported producers sources:
  - [x] Facebook
  - [ ] Instagram
  - [ ] Soundcloud
+ - [ ] Interviews
  
 Supported Consumers sources:
  - [x] Telegram
