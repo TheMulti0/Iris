@@ -23,10 +23,17 @@ namespace Extensions
 
             var formattedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
             var formattedLevel = logLevel.ToString();
-            string formattedMessage = formatter(state, exception);
+            string formattedMessage = Format(state, exception);
 
             Console.WriteLine(
                 $"[{formattedDate}] [{formattedLevel}] [{_name}] {formattedMessage}");
+        }
+
+        private static string Format<TState>(TState state, Exception exception)
+        {
+            return exception != null 
+                ? $"{state}\n{exception}" 
+                : state.ToString();
         }
 
         public bool IsEnabled(LogLevel logLevel) => true;
