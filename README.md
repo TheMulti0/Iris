@@ -9,6 +9,9 @@ Supported producers sources:
  - [x] YouTube
  - [x] Twitter
  - [x] Facebook
+ - [ ] Instagram
+ - [ ] Soundcloud
+ - [ ] Interviews
  
 Supported Consumers sources:
  - [x] Telegram
