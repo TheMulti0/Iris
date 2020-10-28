@@ -93,7 +93,7 @@ namespace TelegramBot
                 return;
             }
 
-            _logger.LogInformation("Sending update {}", update);
+            _logger.LogInformation("Got update {}", update);
             
             string updateMessage = MessageBuilder.Build(update, source, user);
 
@@ -118,7 +118,7 @@ namespace TelegramBot
             IEnumerable<IMedia> media,
             ChatId chatId)
         {
-            _logger.LogInformation("Sending update {} to chat id {}", originalUpdate.Url, chatId.Username ?? chatId.Identifier.ToString());
+            _logger.LogInformation("Sending update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
             
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatId, id => new ActionBlock<Task>(task => task));
@@ -131,7 +131,7 @@ namespace TelegramBot
             await chatSender.SendAsync(
                 sender.SendAsync(messageInfo));
                 
-            _logger.LogInformation("Successfully sent update {} to chat id {}", originalUpdate.Url, chatId.Username ?? chatId.Identifier.ToString());
+            _logger.LogInformation("Successfully sent update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
         }
 
         private bool TryGetUser(TelegramConfig config, string authorId, out User user)

@@ -35,10 +35,6 @@ namespace TelegramBot
 
         public Task SendAsync(MessageInfo message)
         {
-            _logger.LogWarning(
-                "Message length: {}",
-                message.Message.Length);
-
             if (message.Media.Any(media => media is Audio))
             {
                 return _audioSender.SendAsync(
