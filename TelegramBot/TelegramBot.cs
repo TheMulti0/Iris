@@ -16,6 +16,7 @@ namespace TelegramBot
     public class TelegramBot : IUpdateConsumer
     {
         private readonly ITelegramBotClientProvider _clientProvider;
+        private readonly MessageBuilder _messageBuilder;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<TelegramBot> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
@@ -26,10 +27,12 @@ namespace TelegramBot
 
         public TelegramBot(
             IConfigProvider configProvider,
+            MessageBuilder messageBuilder,
             ITelegramBotClientProvider clientProvider,
             ILoggerFactory loggerFactory)
         {
             _clientProvider = clientProvider;
+            _messageBuilder = messageBuilder;
             _loggerFactory = loggerFactory;
             _logger = _loggerFactory.CreateLogger<TelegramBot>();
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
@@ -95,11 +98,11 @@ namespace TelegramBot
 
             _logger.LogInformation("Got update {}", update);
             
-            string updateMessage = MessageBuilder.Build(update, source, user);
-
             foreach (ChatId chatId in user.ChatIds)
             {
-                await SendChatUpdate(update, sender, updateMessage, update.Media, chatId);
+                MessageInfo messageInfo = _messageBuilder.Build(update, source, user, chatId);
+
+                await SendChatUpdate(update, sender, messageInfo, chatId);
             }
         }
 
@@ -114,8 +117,7 @@ namespace TelegramBot
         private async Task SendChatUpdate(
             Update originalUpdate,
             MessageSender sender,
-            string message,
-            IEnumerable<IMedia> media,
+            MessageInfo message,
             ChatId chatId)
         {
             _logger.LogInformation("Sending update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
@@ -123,13 +125,8 @@ namespace TelegramBot
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatId, id => new ActionBlock<Task>(task => task));
 
-            var messageInfo = new MessageInfo(
-                message,
-                media,
-                chatId);
-
             await chatSender.SendAsync(
-                sender.SendAsync(messageInfo));
+                sender.SendAsync(message));
                 
             _logger.LogInformation("Successfully sent update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
         }

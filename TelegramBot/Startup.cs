@@ -72,6 +72,7 @@ namespace TelegramBot
                 .AddSingleton(defaultTelegramConfig)
                 .AddSingleton<IConfigProvider, ConfigProvider>()
                 .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
+                .AddSingleton<MessageBuilder>()
                 .AddSingleton<IUpdateConsumer, TelegramBot>()
                 .AddHostedService<UpdatesConsumerService>()
                 .BuildServiceProvider();

@@ -28,6 +28,7 @@ namespace TelegramBot.Tests
 
             _bot = new TelegramBot(
                 configsProvider,
+                new MessageBuilder(new TelegramConfig()),
                 new MockTelegramBotClientProvider(loggerFactory),
                 loggerFactory);
         }

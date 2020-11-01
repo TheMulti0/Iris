@@ -7,5 +7,7 @@ namespace TelegramBot
         public string AccessToken { get; set; }
 
         public IEnumerable<User> Users { get; set; }
+
+        public IEnumerable<FilterRule> FilterRules { get; set; }
     }
 }

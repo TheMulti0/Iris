@@ -30,6 +30,7 @@ namespace TelegramBot.Tests
 
             _bot = new TelegramBot(
                 configsProvider,
+                new MessageBuilder(new TelegramConfig()),
                 new TelegramBotClientProvider(loggerFactory.CreateLogger<TelegramBotClientProvider>()),
                 loggerFactory);
 
