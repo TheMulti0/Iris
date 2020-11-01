@@ -12,7 +12,7 @@ namespace TelegramBot
 
         public MessageBuilder(TelegramConfig config)
         {
-            _filterRules = config.FilterRules;
+            _filterRules = config.FilterRules ?? new List<FilterRule>();
         }
 
         public MessageInfo Build(Update update, string source, User user, ChatId chatId)
