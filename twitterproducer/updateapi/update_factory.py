@@ -27,7 +27,7 @@ class UpdateFactory:
             author_id=user_id,
             creation_date=tweet.created_at,
             url=f'{TWITTER_BASE_URL}/{user_id}/status/{tweet.id_str}',
-            media=MediaFactory.to_media(tweet, retweeted),
+            media=MediaFactory.to_media(tweet),
             repost=retweeted,
             should_redownload_video=False
         )
