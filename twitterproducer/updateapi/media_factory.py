@@ -11,14 +11,16 @@ class MediaFactory:
 
         media = []
         for m in tweet_media:
-            if m.get('type') == 'photo':
-                https_url = m.get('media_url_https')
+            media_url = None if m.get('media_url_https') is None else m.get('media_url')
 
+            if m.get('type') == 'photo':
                 media.append(Photo(
-                    url=https_url if https_url is not None else m.get('media_url')
+                    url=media_url
                 ))
+
             else:
-                variants = m.get('video_info').get('variants')
+                video_info = m.get('video_info')
+                variants = video_info.get('variants')
 
                 video_with_highest_bitrate = sorted(
                     filter(
@@ -27,9 +29,28 @@ class MediaFactory:
                     key=lambda v: v.get('bitrate'),
                     reverse=True)[0]
 
-                media.append(Video(
-                    url=video_with_highest_bitrate.get('url'),
-                ))
+                sizes = m.get('sizes')
+
+                try:
+                    best_video_size = list(filter(
+                        lambda s: s is not None,
+                        [
+                            sizes.get('large'),
+                            sizes.get('medium'),
+                            sizes.get('small')
+                        ]))[0]
+
+                    media.append(Video(
+                        url=video_with_highest_bitrate.get('url'),
+                        thumbnail_url=media_url,
+                        duration_seconds=video_info.get('duration_millis') / 1000,
+                        width=best_video_size.get('w'),
+                        height=best_video_size.get('h')
+                    ))
+                except:
+                    media.append(Video(
+                        url=video_with_highest_bitrate.get('url')
+                    ))
 
         return media
 
@@ -38,5 +59,5 @@ class MediaFactory:
         try:
             return tweet.extended_entities['media']
         except AttributeError:
-                # If no media is then return an empty list
-                return []
+            # If no media is then return an empty list
+            return []
