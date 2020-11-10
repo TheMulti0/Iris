@@ -12,6 +12,7 @@ from updatesproducer.db.user_latest_update_time import UserLatestUpdateTime
 
 class UpdatesRepository(IUpdatesRepository):
     __update_times: Collection
+    __sent_updates: Collection
 
     def __init__(
             self,
@@ -20,6 +21,12 @@ class UpdatesRepository(IUpdatesRepository):
 
         client = MongoClient(config.connection_string)
         self.__update_times = client[config.db]['userlatestupdatetimes']
+        self.__sent_updates = client[config.db]['sentupdates']
+
+        seconds_in_24_hours = 24 * 60 * 60
+        self.__sent_updates.create_index(
+            'createdAt',
+            expireAfterSeconds=seconds_in_24_hours)
 
         self.__logger = logger
         self.__logger.info('Connected to MongoDB')
@@ -47,3 +54,19 @@ class UpdatesRepository(IUpdatesRepository):
     def _insert_new_update_time(self, new_update_time):
         self.__update_times.insert_one(new_update_time)
         return new_update_time
+
+    def was_update_sent(self, url):
+        sent_update = self.__sent_updates.find_one(
+            {'url': url})
+
+        return sent_update is not None
+
+    def update_sent(self, url):
+        now = datetime.now()
+        self.__logger.info('Updating update with url %s as sent and created at %s (will be removed from db after 24 '
+                           'hours)', url, now)
+
+        self.__sent_updates.insert_one({
+            'createdAt': now,
+            'url': url
+        })

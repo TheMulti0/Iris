@@ -62,6 +62,9 @@ class UpdatesPoller(IUpdatesPipe):
                 user_id,
                 update.creation_date)
 
+            if self.__config.store_sent_updates:
+                self.__repository.update_sent(update.url)
+
         if updates_count == 0:
             self.__logger.info('No new updates found')
 
@@ -76,7 +79,20 @@ class UpdatesPoller(IUpdatesPipe):
 
         user_latest_update_time = self.__repository.get_user_latest_update_time(user_id)
 
+        def should_send_update(u):
+            is_new = u.creation_date > user_latest_update_time['latest_update_time']
+
+            if self.__config.store_sent_updates:
+                sent = self.__repository.was_update_sent(u.url)
+            else:
+                sent = False
+
+            # Both the user's latest post time and the updates are stored because only
+            # updates that are less than 24 hour old are stored (because of Facebook's relative time specification
+            # that can change between request to request)
+            return is_new and not sent
+
         return filter(
-            lambda u: u.creation_date > user_latest_update_time['latest_update_time'],
+            should_send_update,
             sorted_updates
         )

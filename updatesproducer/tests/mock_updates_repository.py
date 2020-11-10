@@ -13,3 +13,9 @@ class MockUpdatesRepository(IUpdatesRepository):
 
     def set_user_latest_update_time(self, user_id, latest_update_time):
         pass
+
+    def was_update_sent(self, url):
+        return False
+
+    def update_sent(self, url):
+        pass
