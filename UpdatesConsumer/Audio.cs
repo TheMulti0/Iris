@@ -11,7 +11,7 @@ namespace UpdatesConsumer
         public string ThumbnailUrl { get; set; }
         
         [JsonPropertyName("duration_seconds")]
-        public int DurationSeconds { get; set; }
+        public int? DurationSeconds { get; set; }
         
         [JsonPropertyName("title")]
         public string Title { get; set; }

@@ -98,9 +98,9 @@ namespace TelegramBot
                             "Thumbnail");
                     }
                     
-                    if (v.DurationSeconds != 0)
+                    if (v.DurationSeconds != null || v.DurationSeconds != 0)
                     {
-                        video.Duration = v.DurationSeconds;
+                        video.Duration = v.DurationSeconds ?? default;
                     }
                     if (v.Width != 0)
                     {

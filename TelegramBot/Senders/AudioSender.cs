@@ -34,7 +34,7 @@ namespace TelegramBot
             await _client.SendAudioAsync(
                 chatId: message.ChatId,
                 audio: inputOnlineFile,
-                duration: audio.DurationSeconds,
+                duration: audio.DurationSeconds ?? default,
                 performer: audio.Artist,
                 title: audio.Title,
                 parseMode: TelegramConstants.MessageParseMode,
