@@ -32,15 +32,19 @@ namespace Extensions
 
         public object Deserialize(MemoryStream fromStream, int length)
         {
+            string json = "";
             try
             {
-                var json = StringDeserializer.Deserialize(fromStream, length).ToString();
+                json = StringDeserializer.Deserialize(fromStream, length).ToString();
                 return JsonSerializer.Deserialize<T>(
                     json,
                     _options);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine($"Failed to deserialize Kafka message, this is the string message (might be null):\n{json}" +
+                                  "\n" +
+                                  $"{e}");
                 return null;
             }
         }
