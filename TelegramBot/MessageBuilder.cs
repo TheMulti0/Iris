@@ -33,6 +33,11 @@ namespace TelegramBot
 
             FilterRule filterRule = _filterRules.FirstOrDefault(FindFilterRule);
 
+            if (filterRule?.SkipReposts == true && update.Repost)
+            {
+                throw new FilterRuleSkipException();
+            }
+
             string message;
             if (filterRule?.HideMessagePrefix == true)
             {

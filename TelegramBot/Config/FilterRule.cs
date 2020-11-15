@@ -9,5 +9,7 @@
         public bool HideMessagePrefix { get; set; } = false;
 
         public bool DisableMedia { get; set; } = false;
+
+        public bool SkipReposts { get; set; } = false;
     }
 }

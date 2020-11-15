@@ -100,9 +100,17 @@ namespace TelegramBot
             
             foreach (ChatId chatId in user.ChatIds)
             {
-                MessageInfo messageInfo = _messageBuilder.Build(update, source, user, chatId);
+                try
+                {
+                    MessageInfo messageInfo = _messageBuilder.Build(update, source, user, chatId);
 
-                await SendChatUpdate(update, sender, messageInfo, chatId);
+                    await SendChatUpdate(update, sender, messageInfo, chatId);
+                }
+                catch (FilterRuleSkipException)
+                {
+                    _logger.LogInformation("Skipping update because of filter skip rule");
+                }
+                
             }
         }
 
