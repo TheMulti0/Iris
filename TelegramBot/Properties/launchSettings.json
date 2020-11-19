@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "TelegramConsumer": {
+    "TelegramBot": {
       "commandName": "Project",
       "workingDirectory": "../../../",
       "environmentVariables": {

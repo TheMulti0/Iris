@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Remutable.Extensions;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using UpdatesConsumer;
 using Video = UpdatesConsumer.Video;
@@ -36,14 +38,7 @@ namespace TelegramBot
 
         public async Task SendAsync(MessageInfo message)
         {
-            // Make sure no other updates will be sent as message batches until this batch is complete sending
-            await _messageBatchLock.WaitAsync();
-
-            try
-            {
-                await SendUnsafeAsync(message);
-            }
-            catch (Exception e)
+            async Task HandleException(Exception e)
             {
                 _logger.LogError(
                     e,
@@ -53,19 +48,41 @@ namespace TelegramBot
 
                 if (!message.DownloadMedia)
                 {
-                    _logger.LogInformation("Retrying with DownloadMedia set to true");
-                    
-                    // Send media as stream (upload) instead of sending the url of the media
-                    
-                    await SendUnsafeAsync(
-                        message.Remute(msg => msg.DownloadMedia, true));
+                    await UploadMedia(message);
                 }
+            }
+
+            // Make sure no other updates will be sent as message batches until this batch is complete sending
+            await _messageBatchLock.WaitAsync();
+
+            try
+            {
+                await SendUnsafeAsync(message);
+            }
+            catch (ApiRequestException e)
+            {
+                await HandleException(e);
+            }
+            catch (IOException e)
+            {
+                await HandleException(e);
             }
             finally
             {
                 // Release the thread even if the operation fails (avoid a deadlock)
+                _logger.LogInformation("Releasing message batch lock");
                 _messageBatchLock.Release();
             }
+        }
+
+        private async Task UploadMedia(MessageInfo message)
+        {
+            _logger.LogInformation("Retrying with DownloadMedia set to true");
+
+            // Send media as stream (upload) instead of sending the url of the media
+
+            await SendUnsafeAsync(
+                message.Remute(msg => msg.DownloadMedia, true));
         }
 
         private async Task SendUnsafeAsync(MessageInfo message)
