@@ -1,6 +1,6 @@
 import json
+import logging
 from datetime import datetime
-from logging import Logger
 
 from kafka import KafkaProducer
 
@@ -14,12 +14,11 @@ class UpdatesProducer:
     def __init__(
             self,
             config: UpdatesProducerConfig,
-            video_downloader: VideoDownloader,
-            logger: Logger):
+            video_downloader: VideoDownloader):
         self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
         self.__video_downloader = video_downloader
-        self.__logger = logger
+        self.__logger = logging.getLogger(UpdatesProducer.__name__)
 
     @staticmethod
     def _json_converter(obj):

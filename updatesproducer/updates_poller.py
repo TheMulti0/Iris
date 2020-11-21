@@ -1,5 +1,5 @@
 import asyncio
-from logging import Logger
+import logging
 
 from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
@@ -16,14 +16,13 @@ class UpdatesPoller(IUpdatesPipe):
             producer: UpdatesProducer,
             repository: IUpdatesRepository,
             updates_provider: IUpdatesProvider,
-            cancellation_token: CancellationToken,
-            logger: Logger):
+            cancellation_token: CancellationToken):
         self.__config = config
         self.__producer = producer
         self.__repository = repository
         self.__updates_provider = updates_provider
         self.__cancellation_token = cancellation_token
-        self.__logger = logger
+        self.__logger = logging.getLogger(UpdatesPoller.__name__)
 
     async def start(self):
         while True:

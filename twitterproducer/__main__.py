@@ -11,22 +11,20 @@ from updatesproducer.updates_producer_config import UpdatesProducerConfig
 
 
 def create_poller(config, repository, cancellation_token):
-    tweets_provider = TweetsProvider(config['tweets_producer'], logging.getLogger(TweetsProvider.__name__))
+    tweets_provider = TweetsProvider(config['tweets_producer'])
 
     updates_provider = TwitterUpdatesProvider(tweets_provider)
 
     producer = UpdatesProducer(
         UpdatesProducerConfig(config['tweets_producer']),
-        VideoDownloader(logging.getLogger(VideoDownloader.__name__)),
-        logging.getLogger(UpdatesProducer.__name__))
+        VideoDownloader())
 
     return UpdatesPoller(
         UpdatesPollerConfig(config['tweets_producer']),
         producer,
         repository,
         updates_provider,
-        cancellation_token,
-        logging.getLogger(UpdatesPoller.__name__))
+        cancellation_token)
 
 
 if __name__ == '__main__':

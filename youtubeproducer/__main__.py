@@ -18,16 +18,14 @@ def create_poller(config, repository, cancellation_token):
 
     producer = UpdatesProducer(
         UpdatesProducerConfig(config['videos_producer']),
-        VideoDownloader(logging.getLogger(VideoDownloader.__name__)),
-        logging.getLogger(UpdatesProducer.__name__))
+        VideoDownloader())
 
     return UpdatesPoller(
         UpdatesPollerConfig(config['videos_producer']),
         producer,
         repository,
         updates_provider,
-        cancellation_token,
-        logging.getLogger(UpdatesPoller.__name__))
+        cancellation_token)
 
 
 if __name__ == '__main__':

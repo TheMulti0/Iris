@@ -20,21 +20,17 @@ def create_poller(config, repository, cancellation_token):
 
     producer = UpdatesProducer(
         UpdatesProducerConfig(posts_producer_config),
-        VideoDownloader(
-            logging.getLogger(VideoDownloader.__name__), {
-                'username': posts_producer_config['username'],
-                'password': posts_producer_config['password']
-            }
-        ),
-        logging.getLogger(UpdatesProducer.__name__))
+        VideoDownloader({
+            'username': posts_producer_config['username'],
+            'password': posts_producer_config['password']
+        }))
 
     return UpdatesPoller(
         UpdatesPollerConfig(posts_producer_config),
         producer,
         repository,
         updates_provider,
-        cancellation_token,
-        logging.getLogger(UpdatesPoller.__name__))
+        cancellation_token)
 
 
 if __name__ == '__main__':

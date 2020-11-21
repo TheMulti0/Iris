@@ -27,11 +27,10 @@ class ProducerIntegrationTests(TestCase):
     def test1(self):
         producer = UpdatesPoller(
             self.__topic_producer_config,
+            #TODO MockProducer
             MockUpdatesRepository(),
             MockUpdatesProvider(),
-            CancellationToken(),
-            logging.getLogger(UpdatesPoller.__name__)
-        )
+            CancellationToken())
 
         producer.poll()
 

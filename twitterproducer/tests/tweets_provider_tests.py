@@ -21,7 +21,7 @@ class TweetsProviderTests(TestCase):
         config = json.load(open('twitterconfig.json', encoding='utf-8'))
 
         tweets = list(
-            TweetsProvider(config, logging.getLogger(TweetsProvider.__name__)).get_tweets(user_id))
+            TweetsProvider(config).get_tweets(user_id))
 
         self.assertNotEqual(0, len(tweets))
 

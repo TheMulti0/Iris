@@ -79,10 +79,7 @@ class Startup:
             return MockUpdatesRepository()
 
         self.__logger.info('Creating mongodb repository')
-        return UpdatesRepository(
-            MongoDbConfig(config),
-            logging.getLogger(UpdatesRepository.__name__)
-        )
+        return UpdatesRepository(MongoDbConfig(config))
 
     async def consume_configs(self):
         await asyncio.sleep(1)

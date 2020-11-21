@@ -19,10 +19,7 @@ class MongoDbTests(TestCase):
 
         appsettings = json.load(open('appsettings.json'))
         self.__mongodb_config = MongoDbConfig(appsettings['mongodb'])
-        self.__repository = UpdatesRepository(
-            self.__mongodb_config,
-            logging.getLogger(UpdatesRepository.__name__)
-        )
+        self.__repository = UpdatesRepository(self.__mongodb_config)
 
     def test_update_times(self):
         user_id = 'test_user'
