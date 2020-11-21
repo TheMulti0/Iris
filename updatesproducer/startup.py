@@ -18,6 +18,12 @@ class Startup:
         self.__service_name = service_name
         self.__create_poller = create_pipe
 
+        logging.basicConfig(
+            format='[%(asctime)s] [%(name)s] %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S %z',
+            level=logging.INFO)
+        self.__logger = logging.getLogger(Startup.__name__)
+
         self.__config = {}
         self.__cancellation_token = CancellationToken()
         self.__config_lock = Lock()
@@ -27,17 +33,13 @@ class Startup:
             event_level=logging.ERROR  # Send errors as events
         )
 
-        logging.basicConfig(
-            format='[%(asctime)s] [%(name)s] %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S %z',
-            level=logging.INFO)
-
     def start(self):
-
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json', encoding='utf-8'))
             
             if self.__config.get('sentry'):
+                self.__logger.info('Initializing sentry')
+
                 sentry_sdk.init(
                     dsn=self.__config['sentry']['dsn'],
                     integrations=[self.__sentry_logging]
@@ -63,16 +65,20 @@ class Startup:
         with self.__config_lock:
             repository = self.__create_repository()
 
+            self.__logger.info('Creating updates poller')
             poller = self.__create_poller(self.__config, repository, self.__cancellation_token)
 
+        self.__logger.info('Starting updates poller')
         await poller.start()
 
     def __create_repository(self):
         config = self.__config.get('mongodb')
 
         if config is None:
+            self.__logger.info('Creating mock repository')
             return MockUpdatesRepository()
 
+        self.__logger.info('Creating mongodb repository')
         return UpdatesRepository(
             MongoDbConfig(config),
             logging.getLogger(UpdatesRepository.__name__)
@@ -82,9 +88,12 @@ class Startup:
         await asyncio.sleep(1)
 
         with self.__config_lock:
+            self.__logger.info('Creating kafka consumer')
             consumer = self.create_consumer(self.__config)
 
         for record in consumer:
+            self.__logger.info('Received config')
+
             if record.key != bytes(self.__service_name):
                 continue
 
