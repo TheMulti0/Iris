@@ -8,12 +8,15 @@ from threading import Lock
 from kafka import KafkaConsumer
 
 from updatesproducer.cancellation_token import CancellationToken
+from updatesproducer.db.mongodb_config import MongoDbConfig
+from updatesproducer.db.updates_repository import UpdatesRepository
+from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
 
 
 class Startup:
     def __init__(self, service_name, create_pipe):
         self.__service_name = service_name
-        self.__create_pipe = create_pipe
+        self.__create_poller = create_pipe
 
         self.__config = {}
         self.__cancellation_token = CancellationToken()
@@ -40,7 +43,7 @@ class Startup:
 
         self.run_async(
             self.aggregate(
-                self.start_pipe(),
+                self.start_poller(),
                 # self.consume_configs()
             )
         )
@@ -54,11 +57,24 @@ class Startup:
     async def aggregate(*coroutines):
         await asyncio.gather(*coroutines)
 
-    async def start_pipe(self):
+    async def start_poller(self):
         with self.__config_lock:
-            pipe = self.__create_pipe(self.__config, self.__cancellation_token)
+            repository = self.__create_repository()
 
-        await pipe.start()
+            poller = self.__create_poller(self.__config, repository, self.__cancellation_token)
+
+        await poller.start()
+
+    def __create_repository(self):
+        config = self.__config.get('mongodb')
+
+        if config is None:
+            return MockUpdatesRepository()
+
+        return UpdatesRepository(
+            MongoDbConfig(config),
+            logging.getLogger(UpdatesRepository.__name__)
+        )
 
     async def consume_configs(self):
         await asyncio.sleep(1)

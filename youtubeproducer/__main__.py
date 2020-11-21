@@ -1,8 +1,6 @@
 import logging
 
-from updatesproducer.db.mongodb_config import MongoDbConfig
 from updatesproducer.updates_poller import UpdatesPoller
-from updatesproducer.db.updates_repository import UpdatesRepository
 from updatesproducer.updates_poller_config import UpdatesPollerConfig
 
 from updatesproducer.updates_producer_config import UpdatesProducerConfig
@@ -13,12 +11,7 @@ from youtubeproducer.updateapi.youtube_updates_provider import YouTubeUpdatesPro
 from youtubeproducer.videos.videos_provider import VideosProvider
 
 
-def create_pipe(config, cancellation_token):
-    repository = UpdatesRepository(
-        MongoDbConfig(config['mongodb']),
-        logging.getLogger(UpdatesRepository.__name__)
-    )
-
+def create_poller(config, repository, cancellation_token):
     videos_provider = VideosProvider(config['videos_producer'])
 
     updates_provider = YouTubeUpdatesProvider(videos_provider)
@@ -38,4 +31,4 @@ def create_pipe(config, cancellation_token):
 
 
 if __name__ == '__main__':
-    Startup('YouTube', create_pipe).start()
+    Startup('YouTube', create_poller).start()
