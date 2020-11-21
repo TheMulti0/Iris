@@ -5,19 +5,18 @@ from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 from updatesproducer.iupdates_provider import IUpdatesProvider
 from updatesproducer.iupdatespipe import IUpdatesPipe
-from updatesproducer.updates_poller_config import UpdatesPollerConfig
 from updatesproducer.updates_producer import UpdatesProducer
 
 
 class UpdatesPoller(IUpdatesPipe):
     def __init__(
             self,
-            config: UpdatesPollerConfig,
+            get_config,
             producer: UpdatesProducer,
             repository: IUpdatesRepository,
             updates_provider: IUpdatesProvider,
             cancellation_token: CancellationToken):
-        self.__config = config
+        self.__get_config = get_config
         self.__producer = producer
         self.__repository = repository
         self.__updates_provider = updates_provider
@@ -26,6 +25,8 @@ class UpdatesPoller(IUpdatesPipe):
 
     async def start(self):
         while True:
+            self.__config = self.__get_config()
+
             self.__logger.info('Polling all users')
             self.poll()
 

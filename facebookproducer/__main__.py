@@ -11,12 +11,15 @@ from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_producer import UpdatesProducer
 
 
-def create_poller(config, repository, cancellation_token):
+def create_poller(get_config, repository, cancellation_token):
+    config = get_config()
+    node_name = 'posts_producer'
+
     posts_provider = PostsProvider()
 
     updates_provider = FacebookUpdatesProvider(posts_provider)
 
-    posts_producer_config = config['posts_producer']
+    posts_producer_config = config[node_name]
 
     producer = UpdatesProducer(
         UpdatesProducerConfig(posts_producer_config),
@@ -26,7 +29,7 @@ def create_poller(config, repository, cancellation_token):
         }))
 
     return UpdatesPoller(
-        UpdatesPollerConfig(posts_producer_config),
+        lambda: get_config[node_name],
         producer,
         repository,
         updates_provider,

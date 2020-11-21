@@ -36,19 +36,20 @@ class Startup:
     def start(self):
         with self.__config_lock:
             self.__config = json.load(open('appsettings.json', encoding='utf-8'))
-            
-            if self.__config.get('sentry'):
-                self.__logger.info('Initializing sentry')
 
-                sentry_sdk.init(
-                    dsn=self.__config['sentry']['dsn'],
-                    integrations=[self.__sentry_logging]
-                )
+        config = self.get_config()
+        if config.get('sentry'):
+            self.__logger.info('Initializing sentry')
+
+            sentry_sdk.init(
+                dsn=config['sentry']['dsn'],
+                integrations=[self.__sentry_logging]
+            )
 
         self.run_async(
             self.aggregate(
                 self.start_poller(),
-                # self.consume_configs()
+                self.consume_configs()
             )
         )
 
@@ -62,34 +63,34 @@ class Startup:
         await asyncio.gather(*coroutines)
 
     async def start_poller(self):
-        with self.__config_lock:
-            repository = self.__create_repository()
+        config = self.get_config()
+        repository = self.__create_repository(config)
 
-            self.__logger.info('Creating updates poller')
-            poller = self.__create_poller(self.__config, repository, self.__cancellation_token)
+        self.__logger.info('Creating updates poller')
+        poller = self.__create_poller(self.get_config, repository, self.__cancellation_token)
 
         self.__logger.info('Starting updates poller')
         await poller.start()
 
-    def __create_repository(self):
-        config = self.__config.get('mongodb')
+    def __create_repository(self, config):
+        mongo_config = config.get('mongodb')
 
-        if config is None:
+        if mongo_config is None:
             self.__logger.info('Creating mock repository')
             return MockUpdatesRepository()
 
         self.__logger.info('Creating mongodb repository')
-        return UpdatesRepository(MongoDbConfig(config))
+        return UpdatesRepository(MongoDbConfig(mongo_config))
 
     async def consume_configs(self):
         await asyncio.sleep(1)
 
-        with self.__config_lock:
-            self.__logger.info('Creating kafka consumer')
-            consumer = self.create_consumer(self.__config)
+        config = self.get_config()
+        self.__logger.info('Creating kafka consumer')
+        consumer = self.create_consumer(config)
 
         for record in consumer:
-            self.__logger.info('Received config')
+            self.__logger.info('Received config {}', record)
 
             if record.key != bytes(self.__service_name):
                 continue
@@ -99,6 +100,10 @@ class Startup:
 
             self.__cancellation_token.cancel()
             self.__cancellation_token = CancellationToken()
+
+    def get_config(self):
+        with self.__config_lock:
+            return dict(self.__config)
 
     @staticmethod
     def create_consumer(config):

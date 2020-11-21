@@ -1,7 +1,5 @@
-import logging
 
 from updatesproducer.updates_poller import UpdatesPoller
-from updatesproducer.updates_poller_config import UpdatesPollerConfig
 
 from updatesproducer.updates_producer_config import UpdatesProducerConfig
 from updatesproducer.startup import Startup
@@ -11,17 +9,20 @@ from youtubeproducer.updateapi.youtube_updates_provider import YouTubeUpdatesPro
 from youtubeproducer.videos.videos_provider import VideosProvider
 
 
-def create_poller(config, repository, cancellation_token):
-    videos_provider = VideosProvider(config['videos_producer'])
+def create_poller(get_config, repository, cancellation_token):
+    config = get_config()
+    node_name = 'videos_producer'
+
+    videos_provider = VideosProvider(config[node_name])
 
     updates_provider = YouTubeUpdatesProvider(videos_provider)
 
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config['videos_producer']),
+        UpdatesProducerConfig(config[node_name]),
         VideoDownloader())
 
     return UpdatesPoller(
-        UpdatesPollerConfig(config['videos_producer']),
+        lambda: get_config([node_name]),
         producer,
         repository,
         updates_provider,
