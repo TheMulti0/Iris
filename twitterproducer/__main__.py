@@ -4,23 +4,24 @@ from updatesproducer.startup import Startup
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_poller import UpdatesPoller
 from updatesproducer.updates_producer import UpdatesProducer
-from updatesproducer.updates_producer_config import UpdatesProducerConfig
 
 
 def create_poller(get_config, repository, cancellation_token):
-    config = get_config()
-    node_name = 'tweets_producer'
+    def _get_config():
+        return get_config()['videos_producer']
 
-    tweets_provider = TweetsProvider(config[node_name])
+    config = _get_config()
+
+    tweets_provider = TweetsProvider(config)
 
     updates_provider = TwitterUpdatesProvider(tweets_provider)
 
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config[node_name]),
+        config,
         VideoDownloader())
 
     return UpdatesPoller(
-        lambda: get_config()[node_name],
+        _get_config(),
         producer,
         repository,
         updates_provider,

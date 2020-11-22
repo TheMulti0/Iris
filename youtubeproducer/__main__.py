@@ -1,7 +1,5 @@
-
 from updatesproducer.updates_poller import UpdatesPoller
 
-from updatesproducer.updates_producer_config import UpdatesProducerConfig
 from updatesproducer.startup import Startup
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_producer import UpdatesProducer
@@ -10,19 +8,21 @@ from youtubeproducer.videos.videos_provider import VideosProvider
 
 
 def create_poller(get_config, repository, cancellation_token):
-    config = get_config()
-    node_name = 'videos_producer'
+    def _get_config():
+        return get_config()['videos_producer']
 
-    videos_provider = VideosProvider(config[node_name])
+    config = _get_config()
+
+    videos_provider = VideosProvider(config)
 
     updates_provider = YouTubeUpdatesProvider(videos_provider)
 
     producer = UpdatesProducer(
-        UpdatesProducerConfig(config[node_name]),
+        config,
         VideoDownloader())
 
     return UpdatesPoller(
-        lambda: get_config([node_name]),
+        _get_config,
         producer,
         repository,
         updates_provider,

@@ -5,7 +5,6 @@ from datetime import datetime
 from kafka import KafkaProducer
 
 from updatesproducer.iupdatesproducer import IUpdatesProducer
-from updatesproducer.updates_producer_config import UpdatesProducerConfig
 from updatesproducer.updateapi.imedia import IMedia
 from updatesproducer.updateapi.video import Video
 from updatesproducer.updateapi.video_downloader import VideoDownloader
@@ -14,7 +13,7 @@ from updatesproducer.updateapi.video_downloader import VideoDownloader
 class UpdatesProducer(IUpdatesProducer):
     def __init__(
             self,
-            config: UpdatesProducerConfig,
+            config,
             video_downloader: VideoDownloader):
         self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
@@ -34,11 +33,11 @@ class UpdatesProducer(IUpdatesProducer):
         self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
 
         json_str = json.dumps(update.__dict__, default=self._json_converter)
-        key_bytes = bytes(self.__config.key, 'utf-8')
+        key_bytes = bytes(self.__config['key'], 'utf-8')
         update_bytes = bytes(json_str, 'utf-8')
 
         self.__producer.send(
-            self.__config.topic,
+            self.__config['topic'],
             key=key_bytes,
             value=update_bytes,
             timestamp_ms=int(datetime.now().timestamp()))
