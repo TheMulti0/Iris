@@ -34,8 +34,7 @@ class Startup:
         )
 
     def start(self):
-        with self.__config_lock:
-            self.__config = json.load(open('appsettings.json', encoding='utf-8'))
+        self.update_config(json.load(open('appsettings.json', encoding='utf-8')))
 
         config = self.get_config()
         if config.get('sentry'):
@@ -95,8 +94,7 @@ class Startup:
             if record.key != bytes(self.__service_name):
                 continue
 
-            with self.__config_lock:
-                self.__config.update(json.loads(record.value))
+            self.update_config(json.loads(record.value))
 
             self.__cancellation_token.cancel()
             self.__cancellation_token = CancellationToken()
@@ -104,6 +102,10 @@ class Startup:
     def get_config(self):
         with self.__config_lock:
             return dict(self.__config)
+
+    def update_config(self, new):
+        with self.__config_lock:
+            self.__config.update(new)
 
     @staticmethod
     def create_consumer(config):

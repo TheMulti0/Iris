@@ -4,15 +4,16 @@ import logging
 from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 from updatesproducer.iupdates_provider import IUpdatesProvider
-from updatesproducer.iupdatespipe import IUpdatesPipe
-from updatesproducer.updates_producer import UpdatesProducer
+from updatesproducer.iupdatesproducer import IUpdatesProducer
 
 
-class UpdatesPoller(IUpdatesPipe):
+class UpdatesPoller:
+    __config: dict
+
     def __init__(
             self,
             get_config,
-            producer: UpdatesProducer,
+            producer: IUpdatesProducer,
             repository: IUpdatesRepository,
             updates_provider: IUpdatesProvider,
             cancellation_token: CancellationToken):
@@ -33,14 +34,14 @@ class UpdatesPoller(IUpdatesPipe):
             if self.__cancellation_token.cancelled:
                 return
 
-            interval_seconds = self.__config.update_interval_seconds
+            interval_seconds = self.__config['update_interval_seconds']
             self.__logger.info('Done polling updates')
             self.__logger.info('Sleeping for %s seconds', interval_seconds)
 
             await asyncio.sleep(interval_seconds)
 
     def poll(self):
-        for user in self.__config.watched_users:
+        for user in self.__config['watched_users']:
             try:
                 self._poll_user(user)
             except:
@@ -62,7 +63,7 @@ class UpdatesPoller(IUpdatesPipe):
                 user_id,
                 update.creation_date)
 
-            if self.__config.store_sent_updates:
+            if self.__config.get('store_sent_updates'):
                 self.__repository.update_sent(update.url)
 
         if updates_count == 0:
@@ -82,7 +83,7 @@ class UpdatesPoller(IUpdatesPipe):
         def should_send_update(u):
             is_new = u.creation_date > user_latest_update_time['latest_update_time']
 
-            if self.__config.store_sent_updates:
+            if self.__config.get('store_sent_updates'):
                 sent = self.__repository.was_update_sent(u.url)
             else:
                 sent = False

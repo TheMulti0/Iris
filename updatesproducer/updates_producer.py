@@ -4,13 +4,14 @@ from datetime import datetime
 
 from kafka import KafkaProducer
 
+from updatesproducer.iupdatesproducer import IUpdatesProducer
 from updatesproducer.updates_producer_config import UpdatesProducerConfig
 from updatesproducer.updateapi.imedia import IMedia
 from updatesproducer.updateapi.video import Video
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 
 
-class UpdatesProducer:
+class UpdatesProducer(IUpdatesProducer):
     def __init__(
             self,
             config: UpdatesProducerConfig,
