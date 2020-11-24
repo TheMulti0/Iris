@@ -55,7 +55,7 @@ namespace TelegramBot
                 ?.Get<ConsumerConfig>();
 
             var defaultTelegramConfig = rootConfig
-                .GetSection("DefaultTelegram")
+                .GetSection("Telegram")
                 ?.Get<TelegramConfig>();
 
             services
