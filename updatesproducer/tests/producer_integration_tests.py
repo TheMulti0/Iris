@@ -28,10 +28,10 @@ class ProducerIntegrationTests(TestCase):
     def test1(self):
         producer = UpdatesPoller(
             lambda: self.__topic_producer_config,
-            UpdatesProducer(self.__topic_producer_config, VideoDownloader()),
+            UpdatesProducer(self.__topic_producer_config),
             MockUpdatesRepository(),
             MockUpdatesProvider(),
-            CancellationToken())
+            VideoDownloader())
 
         producer.poll()
 

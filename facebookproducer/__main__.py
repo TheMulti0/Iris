@@ -7,30 +7,11 @@ from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_producer import UpdatesProducer
 
 
-def create_poller(get_config, repository, cancellation_token):
-    def _get_config():
-        return get_config()['posts_producer']
-
-    config = _get_config()
-
+def create_updates_provider(config):
     posts_provider = PostsProvider()
 
-    updates_provider = FacebookUpdatesProvider(posts_provider)
-
-    producer = UpdatesProducer(
-        config,
-        VideoDownloader({
-            'username': config.get('username'),
-            'password': config.get('password')
-        }))
-
-    return UpdatesPoller(
-        _get_config,
-        producer,
-        repository,
-        updates_provider,
-        cancellation_token)
+    return FacebookUpdatesProvider(posts_provider)
 
 
 if __name__ == '__main__':
-    Startup('Facebook', create_poller).start()
+    Startup('Facebook', create_updates_provider).start()

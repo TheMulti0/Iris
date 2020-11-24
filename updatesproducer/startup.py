@@ -11,12 +11,15 @@ from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.mongodb_config import MongoDbConfig
 from updatesproducer.db.updates_repository import UpdatesRepository
 from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
+from updatesproducer.updateapi.video_downloader import VideoDownloader
+from updatesproducer.updates_poller import UpdatesPoller
+from updatesproducer.updates_producer import UpdatesProducer
 
 
 class Startup:
-    def __init__(self, service_name, create_pipe):
+    def __init__(self, service_name, create_updates_provider):
         self.__service_name = service_name
-        self.__create_poller = create_pipe
+        self.__create_updates_provider = create_updates_provider
 
         logging.basicConfig(
             format='[%(asctime)s] [%(name)s] %(message)s',
@@ -25,7 +28,6 @@ class Startup:
         self.__logger = logging.getLogger(Startup.__name__)
 
         self.__config = {}
-        self.__cancellation_token = CancellationToken()
         self.__config_lock = Lock()
 
         self.__sentry_logging = LoggingIntegration(
@@ -63,13 +65,26 @@ class Startup:
 
     async def start_poller(self):
         config = self.get_config()
-        repository = self.__create_repository(config)
-
-        self.__logger.info('Creating updates poller')
-        poller = self.__create_poller(self.get_config, repository, self.__cancellation_token)
+        poller = self.create_poller(config)
 
         self.__logger.info('Starting updates poller')
         await poller.start()
+
+    def create_poller(self, config):
+        repository = self.__create_repository(config)
+
+        self.__logger.info('Creating updates poller')
+
+        producer = UpdatesProducer(config['kafka'])
+        video_downloader = VideoDownloader(config['video_downloader'])
+        updates_provider = self.__create_updates_provider(config)
+
+        return UpdatesPoller(
+            lambda: self.get_config()['producer'],
+            producer,
+            repository,
+            updates_provider,
+            video_downloader)
 
     def __create_repository(self, config):
         mongo_config = config.get('mongodb')
@@ -95,9 +110,6 @@ class Startup:
                 continue
 
             self.update_config(json.loads(record.value))
-
-            self.__cancellation_token.cancel()
-            self.__cancellation_token = CancellationToken()
 
     def get_config(self):
         with self.__config_lock:

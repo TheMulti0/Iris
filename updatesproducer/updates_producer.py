@@ -6,18 +6,14 @@ from kafka import KafkaProducer
 
 from updatesproducer.iupdatesproducer import IUpdatesProducer
 from updatesproducer.updateapi.imedia import IMedia
-from updatesproducer.updateapi.video import Video
-from updatesproducer.updateapi.video_downloader import VideoDownloader
 
 
 class UpdatesProducer(IUpdatesProducer):
     def __init__(
             self,
-            config,
-            video_downloader: VideoDownloader):
+            config):
         self.__config = config
-        self.__producer = KafkaProducer(bootstrap_servers=config.bootstrap_servers)
-        self.__video_downloader = video_downloader
+        self.__producer = KafkaProducer(bootstrap_servers=config['bootstrap_servers'])
         self.__logger = logging.getLogger(UpdatesProducer.__name__)
 
     @staticmethod
@@ -41,14 +37,3 @@ class UpdatesProducer(IUpdatesProducer):
             key=key_bytes,
             value=update_bytes,
             timestamp_ms=int(datetime.now().timestamp()))
-
-    def _download_lowres_videos(self, update):
-        if update.should_redownload_video:
-            # Find all of the old lowres videos that this update has (if any)
-            lowres_videos = list(filter(
-                lambda m: isinstance(m, Video),
-                update.media))
-
-            if len(lowres_videos) != 0:
-                for lowres_video in lowres_videos:
-                    self.__video_downloader.download_video(update, lowres_video)

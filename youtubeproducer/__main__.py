@@ -7,27 +7,11 @@ from youtubeproducer.updateapi.youtube_updates_provider import YouTubeUpdatesPro
 from youtubeproducer.videos.videos_provider import VideosProvider
 
 
-def create_poller(get_config, repository, cancellation_token):
-    def _get_config():
-        return get_config()['videos_producer']
+def create_updates_provider(config):
+    videos_provider = VideosProvider(config['youtube'])
 
-    config = _get_config()
-
-    videos_provider = VideosProvider(config)
-
-    updates_provider = YouTubeUpdatesProvider(videos_provider)
-
-    producer = UpdatesProducer(
-        config,
-        VideoDownloader())
-
-    return UpdatesPoller(
-        _get_config,
-        producer,
-        repository,
-        updates_provider,
-        cancellation_token)
+    return YouTubeUpdatesProvider(videos_provider)
 
 
 if __name__ == '__main__':
-    Startup('YouTube', create_poller).start()
+    Startup('YouTube', create_updates_provider).start()
