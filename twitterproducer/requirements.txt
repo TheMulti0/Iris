@@ -3,3 +3,4 @@ aiokafka
 tweepy
 youtube-dl
 sentry-sdk
+dataclasses

@@ -3,3 +3,4 @@ aiokafka
 facebook-scraper
 youtube-dl
 sentry-sdk
+dataclasses
