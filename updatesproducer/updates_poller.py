@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.iupdates_repository import IUpdatesRepository
 from updatesproducer.iupdates_provider import IUpdatesProvider
 from updatesproducer.iupdatesproducer import IUpdatesProducer

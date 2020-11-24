@@ -1,13 +1,14 @@
 import asyncio
 import json
 import logging
+import os
+
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 from threading import Lock
 
 from kafka import KafkaConsumer
 
-from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.db.mongodb_config import MongoDbConfig
 from updatesproducer.db.updates_repository import UpdatesRepository
 from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
@@ -36,7 +37,8 @@ class Startup:
         )
 
     def start(self):
-        self.update_config(json.load(open('appsettings.json', encoding='utf-8')))
+        config_file_name = self.get_config_file_name()
+        self.update_config(json.load(open(config_file_name, encoding='utf-8')))
 
         config = self.get_config()
         if config.get('sentry'):
@@ -53,6 +55,14 @@ class Startup:
                 self.consume_configs()
             )
         )
+
+    @staticmethod
+    def get_config_file_name():
+        environment = os.environ.get('ENVIRONMENT')
+        if environment:
+            return f'appsettings.{environment}.json'
+        else:
+            return 'appsettings.json'
 
     @staticmethod
     def run_async(future):
@@ -80,7 +90,7 @@ class Startup:
         updates_provider = self.__create_updates_provider(config)
 
         return UpdatesPoller(
-            lambda: self.get_config()['producer'],
+            lambda: self.get_config()['poller'],
             producer,
             repository,
             updates_provider,
@@ -121,9 +131,9 @@ class Startup:
 
     @staticmethod
     def create_consumer(config):
-        config_consumer_config = config['config_consumer']
+        kafka_config = config['kafka']
 
         return KafkaConsumer(
-            config_consumer_config['topic'],
-            bootstrap_servers=config_consumer_config['bootstrap_servers']
+            kafka_config['configs']['topic'],
+            bootstrap_servers=kafka_config['bootstrap_servers']
         )

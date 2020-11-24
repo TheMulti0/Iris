@@ -12,8 +12,8 @@ class UpdatesProducer(IUpdatesProducer):
     def __init__(
             self,
             config):
-        self.__config = config
         self.__producer = KafkaProducer(bootstrap_servers=config['bootstrap_servers'])
+        self.__config = config['updates']
         self.__logger = logging.getLogger(UpdatesProducer.__name__)
 
     @staticmethod
@@ -24,8 +24,6 @@ class UpdatesProducer(IUpdatesProducer):
             return obj.__dict__
 
     def send(self, update):
-        self._download_lowres_videos(update)
-
         self.__logger.info('Sending update %s to Kafka as JSON UTF-8 bytes', update.url)
 
         json_str = json.dumps(update.__dict__, default=self._json_converter)

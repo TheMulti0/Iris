@@ -5,7 +5,6 @@ from unittest import TestCase
 
 from kafka import KafkaConsumer
 
-from updatesproducer.cancellation_token import CancellationToken
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_poller import UpdatesPoller
 from updatesproducer.tests.mock_updates_provider import MockUpdatesProvider
