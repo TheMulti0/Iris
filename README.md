@@ -35,6 +35,8 @@ Iris has a `docker-compose.yml` file you can easily use to deploy all of its mic
 
 All components are configured using JSON files; `appsettings.json` by default, and `appsettings.Development.json` (`Development` is set by the `ENVIRONMENT` environment variable).
 
+> In production, the configuration file of each service is stored at `/app/appsettings.json` (inside container).
+
 #### TelegramBot
 
 ```json
