@@ -64,7 +64,7 @@ All components are configured using JSON files; `appsettings.json` by default, a
     "KeySerializationType": "String",
     "ValueSerializationType": "String"
   },
-  "DefaultTelegram": {
+  "Telegram": {
     "AccessToken": "telegram-access-token",
     "Users": [
       {
