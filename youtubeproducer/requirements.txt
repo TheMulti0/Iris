@@ -1,5 +1,5 @@
 pymongo
-kafka-python
+aiokafka
 youtube-dl
 google-api-python-client
 google-auth

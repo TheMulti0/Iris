@@ -26,11 +26,13 @@ class UpdatesPoller:
         self.__logger = logging.getLogger(UpdatesPoller.__name__)
 
     async def start(self):
+        await self.__producer.start()
+
         while True:
             self.__config = self.__get_config()
 
             self.__logger.info('Polling all users')
-            self.poll()
+            await self.poll()
 
             interval_seconds = self.__config['update_interval_seconds']
             self.__logger.info('Done polling updates')
@@ -38,14 +40,14 @@ class UpdatesPoller:
 
             await asyncio.sleep(interval_seconds)
 
-    def poll(self):
+    async def poll(self):
         for user in self.__config['watched_users']:
             try:
-                self._poll_user(user)
+                await self._poll_user(user)
             except:
                 self.__logger.exception(f'Failed to poll updates of user %s', user)
 
-    def _poll_user(self, user_id):
+    async def _poll_user(self, user_id):
         self.__logger.info('Polling updates of user %s', user_id)
 
         new_updates = self._get_new_updates(user_id)
@@ -57,7 +59,7 @@ class UpdatesPoller:
 
             self._download_lowres_videos(update)
 
-            self.__producer.send(update)
+            await self.__producer.send(update)
 
             self.__repository.set_user_latest_update_time(
                 user_id,

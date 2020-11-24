@@ -7,7 +7,7 @@ import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 from threading import Lock
 
-from kafka import KafkaConsumer
+from aiokafka import AIOKafkaConsumer
 
 from updatesproducer.db.mongodb_config import MongoDbConfig
 from updatesproducer.db.updates_repository import UpdatesRepository
@@ -113,13 +113,21 @@ class Startup:
         self.__logger.info('Creating kafka consumer')
         consumer = self.create_consumer(config)
 
-        for record in consumer:
-            self.__logger.info('Received config {}', record)
+        try:
+            await consumer.start()
 
-            if record.key != bytes(self.__service_name):
-                continue
+            async for message in consumer:
+                await self.on_message(message)
+        finally:
+            await consumer.stop()
 
-            self.update_config(json.loads(record.value))
+    async def on_message(self, message):
+        self.__logger.info('Received config {}', message)
+
+        if message.key != bytes(self.__service_name):
+            pass
+
+        self.update_config(json.loads(message.value))
 
     def get_config(self):
         with self.__config_lock:
@@ -133,7 +141,7 @@ class Startup:
     def create_consumer(config):
         kafka_config = config['kafka']
 
-        return KafkaConsumer(
+        return AIOKafkaConsumer(
             kafka_config['configs']['topic'],
             bootstrap_servers=kafka_config['bootstrap_servers']
         )

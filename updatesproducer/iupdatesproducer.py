@@ -2,5 +2,8 @@ from abc import ABC
 
 
 class IUpdatesProducer(ABC):
-    def send(self, update):
+    async def start(self):
+        pass
+
+    async def send(self, update):
         pass

@@ -3,7 +3,7 @@ import logging
 import unittest
 from unittest import TestCase
 
-from kafka import KafkaConsumer
+from aiokafka import AIOKafkaConsumer
 
 from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_poller import UpdatesPoller
@@ -34,7 +34,7 @@ class ProducerIntegrationTests(TestCase):
 
         producer.poll()
 
-        consumer = KafkaConsumer(
+        consumer = AIOKafkaConsumer(
             'updates',
             bootstrap_servers=self.__topic_producer_config.bootstrap_servers,
             auto_offset_reset='earliest')

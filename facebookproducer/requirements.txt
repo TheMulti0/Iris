@@ -1,5 +1,5 @@
 pymongo
-kafka-python
+aiokafka
 facebook-scraper
 youtube-dl
 sentry-sdk
