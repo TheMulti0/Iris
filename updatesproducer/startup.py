@@ -86,7 +86,7 @@ class Startup:
         self.__logger.info('Creating updates poller')
 
         producer = UpdatesProducer(config['kafka'])
-        video_downloader = VideoDownloader(config['video_downloader'])
+        video_downloader = VideoDownloader(config.get('video_downloader'))
         updates_provider = self.__create_updates_provider(config)
 
         return UpdatesPoller(
