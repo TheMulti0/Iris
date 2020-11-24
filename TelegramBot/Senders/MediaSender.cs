@@ -106,7 +106,10 @@ namespace TelegramBot
             switch (media)
             {
                 case Video v:
-                    var video = new InputMediaVideo(inputMedia);
+                    var video = new InputMediaVideo(inputMedia)
+                    {
+                        SupportsStreaming = true
+                    };
 
                     if (media.ThumbnailUrl != null)
                     {
