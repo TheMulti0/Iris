@@ -5,11 +5,11 @@ from unittest import TestCase
 
 from kafka import KafkaConsumer
 
-from updatesproducer.cancellation_token import CancellationToken
+from updatesproducer.updateapi.video_downloader import VideoDownloader
 from updatesproducer.updates_poller import UpdatesPoller
 from updatesproducer.tests.mock_updates_provider import MockUpdatesProvider
 from updatesproducer.tests.mock_updates_repository import MockUpdatesRepository
-from updatesproducer.updates_producer_config import UpdatesProducerConfig
+from updatesproducer.updates_producer import UpdatesProducer
 
 
 class ProducerIntegrationTests(TestCase):
@@ -22,16 +22,15 @@ class ProducerIntegrationTests(TestCase):
             level=logging.DEBUG)
 
         appsettings = json.load(open('appsettings.json'))
-        self.__topic_producer_config = UpdatesProducerConfig(appsettings['tests_producer'])
+        self.__topic_producer_config = appsettings['tests_producer']
 
     def test1(self):
         producer = UpdatesPoller(
-            self.__topic_producer_config,
+            lambda: self.__topic_producer_config,
+            UpdatesProducer(self.__topic_producer_config),
             MockUpdatesRepository(),
             MockUpdatesProvider(),
-            CancellationToken(),
-            logging.getLogger(UpdatesPoller.__name__)
-        )
+            VideoDownloader())
 
         producer.poll()
 

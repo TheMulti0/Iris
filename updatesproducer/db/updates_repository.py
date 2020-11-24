@@ -1,5 +1,5 @@
+import logging
 from datetime import datetime
-from logging import Logger
 from typing import Optional
 
 from pymongo import MongoClient
@@ -16,8 +16,7 @@ class UpdatesRepository(IUpdatesRepository):
 
     def __init__(
             self,
-            config: MongoDbConfig,
-            logger: Logger):
+            config: MongoDbConfig):
 
         client = MongoClient(config.connection_string)
         self.__update_times = client[config.db]['userlatestupdatetimes']
@@ -28,7 +27,7 @@ class UpdatesRepository(IUpdatesRepository):
             'createdAt',
             expireAfterSeconds=seconds_in_24_hours)
 
-        self.__logger = logger
+        self.__logger = logging.getLogger(UpdatesRepository.__name__)
         self.__logger.info('Connected to MongoDB')
 
     def get_user_latest_update_time(self, user_id):

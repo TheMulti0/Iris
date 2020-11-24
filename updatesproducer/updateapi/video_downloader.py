@@ -1,3 +1,5 @@
+import logging
+
 from youtube_dl import YoutubeDL
 
 from updatesproducer.updateapi.update import Update
@@ -19,10 +21,10 @@ def download_video_with_params(url, params):
 
 
 class VideoDownloader:
-    def __init__(self, logger, params=None):
+    def __init__(self, params=None):
         if params is None:
             params = {}
-        self.__logger = logger
+        self.__logger = logging.getLogger(VideoDownloader.__name__)
         self.__params = params
 
     def download_video(self, update: Update, lowres_video):
