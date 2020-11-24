@@ -32,9 +32,6 @@ class UpdatesPoller:
             self.__logger.info('Polling all users')
             self.poll()
 
-            if self.__cancellation_token.cancelled:
-                return
-
             interval_seconds = self.__config['update_interval_seconds']
             self.__logger.info('Done polling updates')
             self.__logger.info('Sleeping for %s seconds', interval_seconds)
