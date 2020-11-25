@@ -36,10 +36,18 @@ namespace TelegramBot
                 .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
         }
 
-        private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder) => builder
-            .AddConfiguration(context.Configuration)
-            .AddCustomConsole()
-            .AddSentry();
+        private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
+        {
+            builder
+                .AddConfiguration(context.Configuration)
+                .AddCustomConsole();
+
+            if (context.Configuration.GetSection("Sentry")
+                .Exists())
+            {
+                builder.AddSentry();
+            }
+        }
 
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
