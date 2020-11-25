@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigProducer", "ConfigPro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesConsumer", "UpdatesConsumer\UpdatesConsumer.csproj", "{9B910296-9E9D-41CF-A95A-A7302E9AF116}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterUserManager", "TwitterUserManager\TwitterUserManager.csproj", "{75E84264-8219-4051-AF2A-10D039076326}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "MockUpdatesProducer\MockUpdatesProducer.csproj", "{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "DataLayer\DataLayer.csproj", "{940DAB63-458B-4668-A832-9115B285ED12}"
@@ -59,10 +57,6 @@ Global
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75E84264-8219-4051-AF2A-10D039076326}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75E84264-8219-4051-AF2A-10D039076326}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75E84264-8219-4051-AF2A-10D039076326}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75E84264-8219-4051-AF2A-10D039076326}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
