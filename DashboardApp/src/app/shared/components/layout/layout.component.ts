@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/core/services/authentication.service';
 import { User } from 'src/app/models/user.model';
 import { AppActions } from 'src/app/app.constants';
 import { MeService } from 'src/app/core/services/me.service';
-import { SuperUserGuard } from 'src/app/core/services/superuser.guard';
 
 interface Page {
   path: string;

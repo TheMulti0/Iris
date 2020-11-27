@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppActions } from './app.constants';
-import { AuthorizeGuard } from './core/services/authorize.guard';
-import { SuperUserGuard } from './core/services/superuser.guard';
+import { AuthorizeGuard } from './core/guards/authorize.guard';
+import { SuperUserGuard } from './core/guards/superuser.guard';
 import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
 import { UpdatesComponent } from './updates/updates.component';

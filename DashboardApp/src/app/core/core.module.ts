@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthenticationService } from './services/authentication.service';
 import { checkIfUserIsAuthenticated } from './services/check-login-intializer';
-import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
+import { NotAuthenticatedInterceptor } from './interceptors/not-authenticated.interceptor';
 
 
 @NgModule({
