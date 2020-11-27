@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { interval, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { ServerSideDataSource } from '../core/services/server-side-data-source';
+import { PageSearchParams } from '../models/page.model';
 import { Update } from '../models/update.model';
 import { UpdatesService } from '../services/updates.service';
 
@@ -9,32 +13,74 @@ import { UpdatesService } from '../services/updates.service';
   styleUrls: ['./updates.component.scss']
 })
 export class UpdatesComponent implements OnInit {
-  updates: Update[] = [];
-  dataSource: MatTableDataSource<Update> = new MatTableDataSource();
+  dataSource: ServerSideDataSource<Update> = new ServerSideDataSource();
+  updatesLength = 0;
+
   displayedColumns = [
-    "content",
-    "authorId",
-    "creationDate",
-    "url",
-    "repost",
-    "actions"
+    'content',
+    'authorId',
+    'creationDate',
+    'url',
+    'repost',
+    'actions'
   ];
+  
+  @ViewChild(MatPaginator, { static: true })
+  private paginator: MatPaginator;
+  
+  pageSizeOptions: number[] = [5, 20, 30, 50, 100];
 
   constructor(
     private updatesService: UpdatesService
   ) { }
 
-  async ngOnInit() {
-    this.updates = await this.updatesService.getUpdates({ pageSize: 20, pageIndex: 0 }).toPromise();
+  ngOnInit() {
+    this.requestCurrentAsync();
 
-    this.dataSource = new MatTableDataSource(this.updates);
+    this.paginator.page.subscribe(
+      () => this.requestCurrentAsync());
+
+    interval(1000).subscribe(_ => this.onInterval())
+  }
+
+  private onInterval() {
+    return this.updatesService.getUpdatesCount().subscribe(count => this.onCount(count));
+  }
+
+  private onCount(count: number) {
+    this.paginator.length = count;
+
+    if (count < this.paginator.pageSize) {
+      this.requestCurrentAsync();
+    }
+  }
+
+  private requestCurrentAsync() {
+    this.requestAsync(
+      this.createSearchParams(this.paginator.pageIndex));
+  }
+
+  private requestAsync(searchParams: PageSearchParams) {
+    this.dataSource.pushAsync(() => this.getUpdates(searchParams));
+  }
+
+  private getUpdates(searchParams: PageSearchParams): Observable<Update[]> { 
+    return this.updatesService.getUpdates(searchParams)
+      .pipe(
+        tap(updates => this.updatesLength = updates.length)
+      );
+  }
+
+  private createSearchParams(pageIndex: number): PageSearchParams {
+    return {
+      pageIndex: pageIndex,
+      pageSize: this.paginator.pageSize ?? this.pageSizeOptions[0]
+    }
   }
 
   async remove(update: Update) {
-    this.updates.splice(this.updates.indexOf(update), 1);
+    await this.updatesService.removeUpdate(update.id).toPromise();
 
-    this.dataSource = new MatTableDataSource(this.updates);
-
-    await this.updatesService.removeUpdate(update.idd).toPromise();
+    this.requestCurrentAsync();
   }
 }

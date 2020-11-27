@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DashboardBackend.Models
+﻿namespace DashboardBackend.Models
 {
     public class PageSearchParams
     {

@@ -1,5 +1,5 @@
 export interface Update {
-    idd: number;
+    id: number;
     content: string;
     author_id: string;
     creation_date: string;
