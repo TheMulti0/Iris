@@ -9,7 +9,7 @@ import { UpdatesService } from '../services/updates.service';
   styleUrls: ['./updates.component.scss']
 })
 export class UpdatesComponent implements OnInit {
-  updates: Update[] = []
+  updates: Update[] = [];
   dataSource: MatTableDataSource<Update> = new MatTableDataSource();
   displayedColumns = [
     "content",
@@ -25,7 +25,7 @@ export class UpdatesComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.updates = await this.updatesService.getUpdates().toPromise();
+    this.updates = await this.updatesService.getUpdates({ pageSize: 20, pageIndex: 0 }).toPromise();
 
     this.dataSource = new MatTableDataSource(this.updates);
   }

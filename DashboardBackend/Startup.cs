@@ -14,10 +14,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Twitter;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using UpdatesConsumer;
 
 namespace DashboardBackend
@@ -73,6 +75,7 @@ namespace DashboardBackend
                         new MediaJsonSerializer()
                     }
                 })
+                .AddScoped<IUpdatesRepository, UpdatesRepository>()
                 .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
                 .AddHostedService<UpdatesConsumerService>();
 
@@ -136,7 +139,7 @@ namespace DashboardBackend
         {
             var roleManager = provider.GetService<RoleManager<IdentityRole>>();
             
-            await roleManager.CreateAsync(new IdentityRole(RoleNames.SuperUser));
+            await roleManager?.CreateAsync(new IdentityRole(RoleNames.SuperUser));
         }
     }
 }
