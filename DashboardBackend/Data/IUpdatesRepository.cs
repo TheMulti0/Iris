@@ -11,6 +11,8 @@ namespace DashboardBackend.Data
         
         IQueryable<Update> Get(PageSearchParams searchParams);
 
+        Task AddAsync(Update update);
+
         Task DeleteAsync(long id);
     }
 }

@@ -29,6 +29,13 @@ namespace DashboardBackend.Data
                 .Take(searchParams.PageSize);
         }
 
+        public async Task AddAsync(Update update)
+        {
+            await _dbContext.Updates.AddAsync(update);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(long id)
         {
             Update update = await _dbContext.Updates.FindAsync(id);

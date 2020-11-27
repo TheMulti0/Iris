@@ -17,13 +17,10 @@ namespace DashboardBackend.Controllers
         public async Task OnUpdateAsync(Update update, string source)
         {
             using IServiceScope scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            await db.Database.EnsureCreatedAsync();
-            
-            await db.Updates.AddAsync(update);
+            var repository = scope.ServiceProvider.GetRequiredService<IUpdatesRepository>();
 
-            await db.SaveChangesAsync();
+            await repository.AddAsync(update);
         }
     }
 }
