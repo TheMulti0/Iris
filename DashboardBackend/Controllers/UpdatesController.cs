@@ -11,15 +11,22 @@ using UpdatesConsumer;
 namespace DashboardBackend.Controllers
 {
     [ApiController]
-    // [Authorize]
+    [Authorize]
     [Route("[controller]")]
-    public class UpdatesController : ControllerBase
+    public class UpdatesController : Controller
     {
         private readonly IUpdatesRepository _repository;
 
         public UpdatesController(IUpdatesRepository repository)
         {
             _repository = repository;
+        }
+
+        [Route("count")]
+        [HttpGet]
+        public Task<int> Count()
+        {
+            return _repository.CountAsync();
         }
 
         [HttpGet]

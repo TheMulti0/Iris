@@ -13,6 +13,12 @@ export class UpdatesService {
   constructor(
     private httpClient: HttpClient) { }
 
+  getUpdatesCount(): Observable<number> {
+    return this.httpClient.get<number>(
+      `${environment.apiUrl}/updates/count`,
+      { withCredentials: true })
+  }
+
   getUpdates(searchParams: PageSearchParams): Observable<Update[]> {
     const params = {};
 
