@@ -25,7 +25,7 @@ namespace DashboardBackend.Data
             modelBuilder.Entity<Update>(
                 builder =>
                 {
-                    builder.HasKey(u => u.Idd);
+                    builder.HasKey(u => u.Id);
                     builder.Ignore(u => u.Media);
                 });
         }

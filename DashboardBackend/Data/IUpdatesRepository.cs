@@ -10,5 +10,7 @@ namespace DashboardBackend.Data
         Task<int> CountAsync();
         
         IQueryable<Update> Get(PageSearchParams searchParams);
+
+        Task DeleteAsync(long id);
     }
 }

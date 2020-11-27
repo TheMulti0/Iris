@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DashboardBackend.Data;
@@ -38,18 +40,15 @@ namespace DashboardBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            // Update update = await _repository.Updates.FindAsync(id);
-            // EntityEntry<Update> deleted = _repository.Updates.Remove(update);
-            //
-            // if (deleted.Entity.Idd == id)
-            // {
-            //     await _repository.SaveChangesAsync();
-            //     
-            //     return Ok();
-            // }
-            //
-            // deleted.State = EntityState.Unchanged;
-            return StatusCode(503); // Server error
+            try
+            {
+                await _repository.DeleteAsync(id);
+                return Ok();
+            }
+            catch (InvalidOperationException)
+            {
+                return StatusCode((int) HttpStatusCode.ServiceUnavailable); // Server error                
+            }
         }
     }
 }
