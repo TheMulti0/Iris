@@ -50,8 +50,14 @@ export class UpdatesComponent implements OnInit {
   private onCount(count: number) {
     this.paginator.length = count;
 
-    if (count < this.paginator.pageSize) {
-      this.requestCurrentAsync();
+    const pageSize = this.paginator.pageSize;
+    const totalPages = Math.floor((count + pageSize - 1) / pageSize); // start from 1
+
+    if (this.paginator.pageIndex == totalPages - 1) { // this is last page
+      const itemsInLastPage = count % pageSize;
+      if (this.updatesLength < itemsInLastPage) {
+        this.requestCurrentAsync();
+      }
     }
   }
 
