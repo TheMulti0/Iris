@@ -21,8 +21,6 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
-using Newtonsoft.Json;
 using UpdatesConsumer;
 
 namespace DashboardBackend
@@ -40,12 +38,14 @@ namespace DashboardBackend
         public void ConfigureServices(IServiceCollection services)
         {
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+            
+            var mongodb = Configuration.GetSection("MongoDb").Get<MongoDbSettings>();
 
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(
                     options => options.SignIn.RequireConfirmedAccount = true)
                 .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
-                    "mongodb://localhost:27017", "DashboardDB");
+                    mongodb.ConnectionString, mongodb.DatabaseName);
 
             var twitter = Configuration.GetSection("Authentication:Twitter").Get<TwitterSettings>();
             services.AddSingleton(twitter);
