@@ -70,7 +70,7 @@ namespace DashboardBackend.Controllers
 
                 await _userManager.AddLoginAsync(newUser, info);
                 
-                IEnumerable<Claim> newUserClaims = info.Principal.Claims.Append(new Claim("userId", newUser.Id)); // Generated UUID
+                IEnumerable<Claim> newUserClaims = info.Principal.Claims.Append(new Claim("userId", newUser.Id.ToString())); // Generated UUID
                 
                 await _userManager.AddClaimsAsync(newUser, newUserClaims);
 
@@ -125,7 +125,7 @@ namespace DashboardBackend.Controllers
         [HttpGet("[action]")]
         public IActionResult IsAuthenticated()
         {
-            return new ObjectResult(User.Identity.IsAuthenticated);
+            return new ObjectResult(User.Identity?.IsAuthenticated);
         }
         
         [HttpGet("[action]")]

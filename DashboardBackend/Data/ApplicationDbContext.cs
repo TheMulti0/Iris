@@ -1,33 +1,19 @@
-﻿using DashboardBackend.Models;
-using IdentityServer4.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+using MongoDbGenericRepository;
 using UpdatesConsumer;
 
 namespace DashboardBackend.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class ApplicationDbContext
     {
-        public DbSet<Update> Updates { get; set; }
-        
-        public ApplicationDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+        public IMongoCollection<Update> Updates { get; }
+
+        public ApplicationDbContext(IMongoDbContext context)
         {
-            Database.EnsureCreated();
-        }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            
-            modelBuilder.Entity<Update>(
-                builder =>
-                {
-                    builder.HasKey(u => u.Id);
-                    builder.Ignore(u => u.Media);
-                });
+            Updates = context.GetCollection<Update>();
         }
     }
 }

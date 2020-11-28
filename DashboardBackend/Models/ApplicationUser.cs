@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCore.Identity.MongoDbCore.Models;
 
 namespace DashboardBackend.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : MongoIdentityUser
     {
         public string ProfilePicture { get; set; }   
     }

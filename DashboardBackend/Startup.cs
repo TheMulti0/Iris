@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using UpdatesConsumer;
@@ -36,13 +39,13 @@ namespace DashboardBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(
-                options =>
-                    options.UseSqlite(
-                        Configuration.GetConnectionString("DefaultConnection")));
+            BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services
+                .AddIdentity<ApplicationUser, ApplicationRole>(
+                    options => options.SignIn.RequireConfirmedAccount = true)
+                .AddMongoDbStores<ApplicationUser, ApplicationRole, Guid>(
+                    "mongodb://localhost:27017", "DashboardDB");
 
             var twitter = Configuration.GetSection("Authentication:Twitter").Get<TwitterSettings>();
             services.AddSingleton(twitter);
@@ -75,6 +78,7 @@ namespace DashboardBackend
                         new MediaJsonSerializer()
                     }
                 })
+                .AddScoped<ApplicationDbContext>()
                 .AddScoped<IUpdatesRepository, UpdatesRepository>()
                 .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
                 .AddHostedService<UpdatesConsumerService>();
@@ -137,9 +141,9 @@ namespace DashboardBackend
 
         private static async Task CreateRoles(IServiceProvider provider)
         {
-            var roleManager = provider.GetService<RoleManager<IdentityRole>>();
+            var roleManager = provider.GetService<RoleManager<ApplicationRole>>();
             
-            await roleManager?.CreateAsync(new IdentityRole(RoleNames.SuperUser));
+            await roleManager?.CreateAsync(new ApplicationRole(RoleNames.SuperUser));
         }
     }
 }

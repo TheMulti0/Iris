@@ -1,53 +1,50 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DashboardBackend.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using UpdatesConsumer;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace DashboardBackend.Data
 {
     public class UpdatesRepository : IUpdatesRepository
     {
-        private ApplicationDbContext _dbContext;
+        private ApplicationDbContext _context;
 
-        public UpdatesRepository(ApplicationDbContext dbContext)
+        public UpdatesRepository(ApplicationDbContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
 
         public Task<int> CountAsync()
         {
-            return _dbContext.Updates.CountAsync();
+            return _context.Updates.AsQueryable().CountAsync();
         }
 
-        public IQueryable<Update> Get(PageSearchParams searchParams)
+        public Task<List<Update>> Get(PageSearchParams searchParams)
         {
-            return _dbContext.Updates
-                .Skip(searchParams.PageSize * (searchParams.PageIndex - 1))
+            IMongoQueryable<Update> updates = _context.Updates.AsQueryable()
+                .Skip(searchParams.PageSize * searchParams.PageIndex)
                 .Take(searchParams.PageSize);
+            
+            return updates.ToListAsync();
         }
 
         public async Task AddAsync(Update update)
         {
-            await _dbContext.Updates.AddAsync(update);
-
-            await _dbContext.SaveChangesAsync();
+            await _context.Updates.InsertOneAsync(update);
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(Guid id)
         {
-            Update update = await _dbContext.Updates.FindAsync(id);
-            EntityEntry<Update> deleted = _dbContext.Updates.Remove(update);
+            Update update = await _context.Updates.FindOneAndDeleteAsync(u => u.Id == id);
             
-            if (deleted.Entity.Id == id)
+            if (update.Id == id)
             {
-                await _dbContext.SaveChangesAsync();
                 return;
             }
             
-            deleted.State = EntityState.Unchanged;
             throw new InvalidOperationException();
         }
     }

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DashboardBackend.Models;
 using UpdatesConsumer;
@@ -9,10 +11,10 @@ namespace DashboardBackend.Data
     {
         Task<int> CountAsync();
         
-        IQueryable<Update> Get(PageSearchParams searchParams);
+        Task<List<Update>> Get(PageSearchParams searchParams);
 
         Task AddAsync(Update update);
 
-        Task DeleteAsync(long id);
+        Task DeleteAsync(Guid id);
     }
 }

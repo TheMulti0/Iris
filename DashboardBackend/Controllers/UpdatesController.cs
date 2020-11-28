@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,11 +35,11 @@ namespace DashboardBackend.Controllers
         [HttpGet]
         public Task<List<Update>> Get([FromQuery] PageSearchParams searchParams)
         {
-            return _repository.Get(searchParams).ToListAsync();
+            return _repository.Get(searchParams);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
