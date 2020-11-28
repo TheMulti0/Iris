@@ -2,6 +2,11 @@
 
 <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+  </ng-container>
+
   <ng-container matColumnDef="content">
     <mat-header-cell *matHeaderCellDef>Content</mat-header-cell>
     <mat-cell *matCellDef="let element"> {{element.content}} </mat-cell>

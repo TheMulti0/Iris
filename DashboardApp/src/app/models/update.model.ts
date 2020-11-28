@@ -1,5 +1,5 @@
 export interface Update {
-    id: number;
+    id: string;
     content: string;
     author_id: string;
     creation_date: string;
@@ -12,20 +12,23 @@ export type Media = Photo | Video | Audio;
 
 export interface Photo {
     url: string;
- }
+}
 
-export interface Video {
+export interface ILinkable {
     url: string;
+}
+
+export interface IStreamable extends ILinkable {
     thumbnail_url: string;
     duration_seconds: number;
+}
+
+export interface Video extends IStreamable {
     width: number;
     height: number;
 }
 
-export interface Audio {
-    url: string;
-    thumbnail_url: string;
-    duration_seconds: number;
+export interface Audio extends IStreamable {
     title: string;
     artist: string;
 }

@@ -17,6 +17,7 @@ export class UpdatesComponent implements OnInit {
   updatesLength = 0;
 
   displayedColumns = [
+    'id',
     'content',
     'authorId',
     'creationDate',

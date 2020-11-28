@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Update } from '../models/update.model';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -31,7 +31,7 @@ export class UpdatesService {
       { withCredentials: true, params: params })
   }
 
-  removeUpdate(id: number): Observable<Object> {
+  removeUpdate(id: string): Observable<Object> {
     return this.httpClient.delete(
       `${environment.apiUrl}/updates/${id}`,
       { withCredentials: true });
