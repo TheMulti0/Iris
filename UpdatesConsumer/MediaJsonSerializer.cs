@@ -6,7 +6,7 @@ namespace UpdatesConsumer
 {
     public class MediaJsonSerializer : JsonConverter<IMedia>
     {
-        private const string TypeDiscriminator = "_type";
+        private const string TypeDiscriminator = "type";
 
         public override IMedia Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

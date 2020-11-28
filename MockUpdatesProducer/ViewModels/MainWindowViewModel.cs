@@ -113,11 +113,11 @@ namespace MockUpdatesProducer
                 new InternalUpdate
                 {
                     AuthorId = "MockUser",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Audio",
+                            Type = "Audio",
                             Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
                             ThumbnailUrl = string.Empty,
                             DurationSeconds = 60,
@@ -134,11 +134,11 @@ namespace MockUpdatesProducer
                     AuthorId = "MockUser",
                     Content = "Mock audio",
                     Url = "https://mock-url.com",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Audio",
+                            Type = "Audio",
                             Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
                             DurationSeconds = 60,
                             ThumbnailUrl = string.Empty,
@@ -153,11 +153,11 @@ namespace MockUpdatesProducer
                 new InternalUpdate
                 {
                     AuthorId = "MockUser",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 
@@ -171,11 +171,11 @@ namespace MockUpdatesProducer
                     AuthorId = "MockUser",
                     Content = "Mock photo",
                     Url = "https://mock-url.com",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 
@@ -187,11 +187,11 @@ namespace MockUpdatesProducer
                 new InternalUpdate
                 {
                     AuthorId = "MockUser",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 
@@ -205,11 +205,11 @@ namespace MockUpdatesProducer
                     AuthorId = "MockUser",
                     Content = "Mock video",
                     Url = "https://mock-url.com",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 
@@ -221,17 +221,17 @@ namespace MockUpdatesProducer
                 new InternalUpdate
                 {
                     AuthorId = "MockUser",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Video",
+                            Type = "Video",
                             Url = "http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
                             ThumbnailUrl = string.Empty
                         }, 
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 
@@ -245,17 +245,17 @@ namespace MockUpdatesProducer
                     AuthorId = "MockUser",
                     Content = "Mock multiple media",
                     Url = "https://mock-url.com",
-                    Media = new List<InternalMedia>
+                    Media = new List<Audio>
                     {
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Video",
+                            Type = "Video",
                             Url = "http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
                             ThumbnailUrl = string.Empty
                         }, 
-                        new InternalMedia
+                        new Audio
                         {
-                            _type = "Photo",
+                            Type = "Photo",
                             Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
                             ThumbnailUrl = string.Empty
                         } 

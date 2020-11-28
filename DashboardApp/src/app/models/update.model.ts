@@ -6,15 +6,18 @@ export interface Update {
     url: string;
     media: Media[];
     repost: boolean;
+    isExpanded: boolean;
 }
 
 export type Media = Photo | Video | Audio;
 
 export interface Photo {
+    type: string;
     url: string;
 }
 
 export interface ILinkable {
+    type: string;
     url: string;
 }
 

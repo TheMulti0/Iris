@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using UpdatesConsumer;
 
 namespace MockUpdatesProducer
 {
@@ -19,7 +20,7 @@ namespace MockUpdatesProducer
         public string Url { get; set; }
 
         [JsonPropertyName("media")] 
-        public virtual List<InternalMedia> Media { get; set; }
+        public virtual List<Audio> Media { get; set; }
 
         [JsonPropertyName("repost")]
         public bool Repost { get; set; }

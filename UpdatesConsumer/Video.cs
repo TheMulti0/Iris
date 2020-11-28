@@ -4,6 +4,9 @@ namespace UpdatesConsumer
 {
     public class Video : IMedia
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = nameof(Video);
+
         [JsonPropertyName("url")]
         public string Url { get; set; }
 

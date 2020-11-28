@@ -4,6 +4,8 @@ namespace UpdatesConsumer
 {
     public interface IMedia
     {
+        public string Type { get; set; }
+        
         [JsonPropertyName("url")]
         public string Url { get; set; }
 

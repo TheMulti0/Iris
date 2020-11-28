@@ -1,35 +1,30 @@
 <h1 id="tableLabel">Updates</h1>
 
-<mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
-  </ng-container>
+<mat-table [dataSource]="dataSource" class="mat-elevation-z8" multiTemplateDataRows>
 
   <ng-container matColumnDef="content">
     <mat-header-cell *matHeaderCellDef>Content</mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.content}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.content }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="authorId">
     <mat-header-cell *matHeaderCellDef> Author Id </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.author_id}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.author_id }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="creationDate">
     <mat-header-cell *matHeaderCellDef> Creation Date </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.creation_date}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.creation_date | date:'medium' }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="url">
     <mat-header-cell *matHeaderCellDef> Url </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.url}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.url }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="repost">
     <mat-header-cell *matHeaderCellDef> Repost </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.repost}} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.repost === true ? 'Yes' : 'No' }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="actions">
@@ -43,8 +38,29 @@
     </mat-cell>
   </ng-container>
 
+  <ng-container matColumnDef="expandedDetail">
+    <mat-cell *matCellDef="let element">
+
+      <mat-list>
+        <mat-list-item *ngFor="let media of element.media"> 
+
+          <mat-icon>{{ getIcon(media) }}</mat-icon>
+
+          <a [href]="media.url">{{ getName(media) }}</a>
+
+        </mat-list-item>
+       </mat-list>
+
+    </mat-cell>
+  </ng-container>
+
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
+    [class.expanded]="row.isExpanded" (click)="toggleRowState(row)">
+  </mat-row>
+  <mat-row *matRowDef="let row; columns: ['expandedDetail'];"
+    [@detailExpand]="row.isExpanded === true ? 'expanded' : 'collapsed'" style="overflow: hidden">
+  </mat-row>
 
 </mat-table>
 

@@ -1,23 +1,30 @@
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { interval, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ServerSideDataSource } from '../core/services/server-side-data-source';
 import { PageSearchParams } from '../models/page.model';
-import { Update } from '../models/update.model';
+import { Media, Update, Photo, Video, Audio } from '../models/update.model';
 import { UpdatesService } from '../services/updates.service';
 
 @Component({
   selector: 'app-updates',
   templateUrl: './updates.component.html',
-  styleUrls: ['./updates.component.scss']
+  styleUrls: ['./updates.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', paddingLeft: '10pt', minHeight: '0', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', paddingLeft: '10pt', visibility: 'visible' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class UpdatesComponent implements OnInit {
   dataSource: ServerSideDataSource<Update> = new ServerSideDataSource();
   updatesLength = 0;
 
   displayedColumns = [
-    'id',
     'content',
     'authorId',
     'creationDate',
@@ -36,12 +43,34 @@ export class UpdatesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.requestCurrentAsync();
-
     this.paginator.page.subscribe(
       () => this.requestCurrentAsync());
 
+    this.requestCurrentAsync();
+    
     interval(1000).subscribe(_ => this.onInterval())
+  }
+
+  toggleRowState(row) {
+    row.isExpanded = !row.isExpanded;
+  }
+
+  getIcon(media: Media) {
+    switch (media.type) {
+      case 'Video':
+        return 'movie';
+    
+      case 'Audio':
+        return 'audiotrack';
+
+      default:
+        return 'image';
+    }
+  }
+
+  getName(media: Media) {
+    console.log(media);
+    return media.type;
   }
 
   private onInterval() {

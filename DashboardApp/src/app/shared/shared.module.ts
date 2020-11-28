@@ -8,15 +8,18 @@ import { MaterialModule } from './material.module';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CoreModule } from '../core/core.module';
 import { AvatarModule } from 'ngx-avatar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [LayoutComponent],
   exports: [
     LayoutComponent,
+    CoreModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    BrowserAnimationsModule
   ],
   imports: [
     AvatarModule,
@@ -26,7 +29,8 @@ import { AvatarModule } from 'ngx-avatar';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    BrowserAnimationsModule
   ]
 })
 export class SharedModule { }

@@ -4,6 +4,9 @@ namespace UpdatesConsumer
 {
     public class Photo : IMedia
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; } = nameof(Photo);
+    
         [JsonPropertyName("url")]
         public string Url { get; set; }
 
