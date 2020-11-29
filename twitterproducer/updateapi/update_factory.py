@@ -61,7 +61,8 @@ class UpdateFactory:
                    u != url and \
                    u != TWITTER_BASE_DOMAIN and\
                    u != TWITTER_BASE_DOMAIN_WWW and\
-                   u != TWITTER_BASE_URL
+                   u != TWITTER_BASE_URL and\
+                   not u.contains('facebook.com')
 
         try:
             response = requests.get(f'{LINKUNSHORTEN_BASE_URL}/link?url={url}').text
