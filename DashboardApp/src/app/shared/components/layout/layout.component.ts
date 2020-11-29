@@ -62,7 +62,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    this.subscriptions.forEach(
+      subscription => subscription.unsubscribe());
   }
 
   private isAuthenticated(isAuthenticated: boolean) {

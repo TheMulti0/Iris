@@ -1,7 +1,7 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { interval, Observable } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ServerSideDataSource } from '../core/services/server-side-data-source';
 import { PageSearchParams } from '../models/page.model';
@@ -32,23 +32,31 @@ export class UpdatesComponent implements OnInit {
     'repost',
     'actions'
   ];
-  
+
   @ViewChild(MatPaginator, { static: true })
   private paginator: MatPaginator;
-  
+
   pageSizeOptions: number[] = [5, 20, 30, 50, 100];
+
+  subscriptions: Subscription[] = [];
 
   constructor(
     private updatesService: UpdatesService
   ) { }
 
   ngOnInit() {
-    this.paginator.page.subscribe(
-      () => this.requestCurrentAsync());
-
     this.requestCurrentAsync();
-    
-    interval(1000).subscribe(_ => this.onInterval())
+
+    this.subscriptions.push(
+      interval(1000).subscribe(_ => this.onInterval()),
+      this.paginator.page.subscribe(
+        () => this.requestCurrentAsync()),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(
+      subscription => subscription.unsubscribe());
   }
 
   toggleRowState(row) {
@@ -59,7 +67,7 @@ export class UpdatesComponent implements OnInit {
     switch (media.type) {
       case 'Video':
         return 'movie';
-    
+
       case 'Audio':
         return 'audiotrack';
 
@@ -100,7 +108,7 @@ export class UpdatesComponent implements OnInit {
     this.dataSource.pushAsync(() => this.getUpdates(searchParams));
   }
 
-  private getUpdates(searchParams: PageSearchParams): Observable<Update[]> { 
+  private getUpdates(searchParams: PageSearchParams): Observable<Update[]> {
     return this.updatesService.getUpdates(searchParams)
       .pipe(
         tap(updates => this.updatesLength = updates.length)
@@ -111,10 +119,10 @@ export class UpdatesComponent implements OnInit {
     return {
       pageIndex: pageIndex,
       pageSize: this.paginator.pageSize ?? this.pageSizeOptions[0]
-    }
+    };
   }
 
-  async remove(update: Update) {
+  async remove(update) {
     await this.updatesService.removeUpdate(update.id).toPromise();
 
     this.requestCurrentAsync();

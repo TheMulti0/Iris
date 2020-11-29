@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DashboardBackend.Controllers
 {
+    [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class UsersController : Controller
     {

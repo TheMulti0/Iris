@@ -22,8 +22,7 @@ namespace DashboardBackend.Controllers
             _repository = repository;
         }
 
-        [Route("count")]
-        [HttpGet]
+        [HttpGet("[action]")]
         public Task<int> Count()
         {
             return _repository.CountAsync();

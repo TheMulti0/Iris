@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DashboardBackend.Controllers
 {
+    [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class MeController : Controller
     {
@@ -18,15 +20,13 @@ namespace DashboardBackend.Controllers
         }
         
         [HttpGet]
-        [Authorize]
         public Task<ApplicationUser> Me()
         {
             return _userManager.GetUserAsync(User);
         }
         
-        [HttpGet("roles")]
-        [Authorize]
-        public async Task<IList<string>> Roles()
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<string>> Roles()
         {
             ApplicationUser applicationUser = await Me();
             

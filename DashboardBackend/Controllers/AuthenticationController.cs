@@ -13,6 +13,7 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace DashboardBackend.Controllers 
 {
+    [ApiController]
     [Route("[controller]")]
     public class AuthenticationController : Controller
     {
@@ -33,7 +34,7 @@ namespace DashboardBackend.Controllers
             _twitterSettings = twitterSettings;
         }    
         
-        [HttpGet("login")]
+        [HttpGet("Login")]
         public IActionResult SignInWithExternalProvider(string provider, string returnUrl)
         {
             string callback = Url.Action(
@@ -113,7 +114,7 @@ namespace DashboardBackend.Controllers
 
                     IAuthenticatedUser user = await twitterClient.Users.GetAuthenticatedUserAsync();
                     
-                    return user.ProfileImageUrl;
+                    return user.ProfileImageUrlFullSize;
 
                 default:
                     return "";

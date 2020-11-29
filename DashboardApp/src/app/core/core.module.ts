@@ -4,6 +4,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthenticationService } from './services/authentication.service';
 import { checkIfUserIsAuthenticated } from './services/check-login-intializer';
 import { NotAuthenticatedInterceptor } from './interceptors/not-authenticated.interceptor';
+import { getUserRoles } from './services/role-initializer';
+import { MeService } from './services/me.service';
 
 
 @NgModule({
@@ -13,6 +15,7 @@ import { NotAuthenticatedInterceptor } from './interceptors/not-authenticated.in
   ],
   providers: [
     { provide: APP_INITIALIZER, useFactory: checkIfUserIsAuthenticated, multi: true, deps: [AuthenticationService] },
+    { provide: APP_INITIALIZER, useFactory: getUserRoles, multi: true, deps: [MeService] },
     { provide: HTTP_INTERCEPTORS, useClass: NotAuthenticatedInterceptor, multi: true }
   ],
 })

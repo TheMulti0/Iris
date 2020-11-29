@@ -46,7 +46,13 @@
 
           <mat-icon>{{ getIcon(media) }}</mat-icon>
 
-          <a [href]="media.url">{{ getName(media) }}</a>
+          <span>
+            {{ getName(media) }}
+            <a [href]="media.url">
+              (Link)
+            </a>
+          </span>
+          
 
         </mat-list-item>
        </mat-list>
