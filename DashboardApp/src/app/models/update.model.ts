@@ -11,10 +11,6 @@ export interface Update {
 
 export type Media = Photo | Video | Audio;
 
-export interface Photo {
-    type: string;
-    url: string;
-}
 
 export interface ILinkable {
     type: string;
@@ -24,6 +20,11 @@ export interface ILinkable {
 export interface IStreamable extends ILinkable {
     thumbnail_url: string;
     duration_seconds: number;
+}
+
+export interface Photo extends ILinkable {
+    type: string;
+    url: string;
 }
 
 export interface Video extends IStreamable {
