@@ -1,11 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Text.Json;
 using System.Windows;
-using System.Windows.Input;
-using Extensions;
 using Kafka.Public;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using UpdatesConsumer;
 
 namespace MockUpdatesProducer

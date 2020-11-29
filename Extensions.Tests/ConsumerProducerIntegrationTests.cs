@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Kafka.Public;
-using Kafka.Public.Loggers;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

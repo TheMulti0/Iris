@@ -4,7 +4,6 @@ using System.Reactive.Subjects;
 using System.Text.Json;
 using Extensions;
 using Kafka.Public;
-using Microsoft.Extensions.Logging;
 
 namespace TelegramBot
 {
