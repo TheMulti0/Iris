@@ -7,5 +7,5 @@ class Audio(IMedia):
     artist: int
 
     def __init__(self, **kwargs):
-        self._type = 'Audio'
+        self.type = 'Audio'
         self.__dict__.update(kwargs)

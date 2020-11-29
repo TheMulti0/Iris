@@ -7,5 +7,5 @@ class Video(IMedia):
     height: int
 
     def __init__(self, **kwargs):
-        self._type = 'Video'
+        self.type = 'Video'
         self.__dict__.update(kwargs)
