@@ -7,6 +7,6 @@ namespace UpdatesProducer
     {
         Task<UserLatestUpdateTime> GetAsync(string userId);
         
-        Task SetAsync(string userId, DateTime latestUpdateTime);    
+        Task AddOrUpdateAsync(string userId, DateTime latestUpdateTime);    
     }
 }

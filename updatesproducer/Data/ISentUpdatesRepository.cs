@@ -6,6 +6,6 @@ namespace UpdatesProducer
     {
         Task<SentUpdate> GetAsync(string url);
         
-        Task SetAsync(string url);
+        Task AddAsync(string url);
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Common;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -11,6 +13,18 @@ namespace UpdatesProducer
         public SentUpdatesRepository(ApplicationDbContext context)
         {
             _collection = context.SentUpdates;
+
+            var keys = Builders<SentUpdate>.IndexKeys
+                .Ascending(update => update.SentAt);
+            
+            var options = new CreateIndexOptions
+            {
+                ExpireAfter = TimeSpan.FromDays(1)
+            };
+            var indexModel = new CreateIndexModel<SentUpdate>(keys, options);
+            
+            _collection.Indexes
+                .CreateOne(indexModel);
         }
         
         public Task<SentUpdate> GetAsync(string url)
@@ -20,22 +34,15 @@ namespace UpdatesProducer
                 .FirstOrDefaultAsync(sentUpdate => sentUpdate.Url == url);
         }
 
-        public async Task SetAsync(string url)
+        public async Task AddAsync(string url)
         {
             var sentUpdate = new SentUpdate
             {
+                SentAt = DateTime.Now,
                 Url = url
             };
             
-            var newEntity = await _collection
-                .FindOneAndReplaceAsync(
-                    u => u.Url == url,
-                    sentUpdate);
-
-            if (newEntity == null)
-            {
-                await _collection.InsertOneAsync(sentUpdate);
-            }
+            await _collection.InsertOneAsync(sentUpdate);
         }
     }
 }

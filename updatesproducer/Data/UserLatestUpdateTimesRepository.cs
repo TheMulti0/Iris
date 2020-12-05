@@ -21,7 +21,7 @@ namespace UpdatesProducer
                 .FirstOrDefaultAsync(userLatestUpdateTime => userLatestUpdateTime.UserId == userId);
         }
 
-        public async Task SetAsync(string userId, DateTime latestUpdateTime)
+        public async Task AddOrUpdateAsync(string userId, DateTime latestUpdateTime)
         {
             var updateTime = new UserLatestUpdateTime
             {
