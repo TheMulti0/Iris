@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Audio = UpdatesConsumer.Audio;
+using Audio = Common.Audio;
 
 namespace TelegramBot
 {

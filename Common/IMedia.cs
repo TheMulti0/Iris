@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace UpdatesConsumer
+namespace Common
 {
     public interface IMedia
     {

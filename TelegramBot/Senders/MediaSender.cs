@@ -6,13 +6,14 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.Extensions.Logging;
 using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using UpdatesConsumer;
-using Video = UpdatesConsumer.Video;
+using Video = Common.Video;
 
 namespace TelegramBot
 {

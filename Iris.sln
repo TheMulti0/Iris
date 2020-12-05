@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookProducer", "Faceboo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesProducer.Tests", "UpdatesProducer.Tests\UpdatesProducer.Tests.csproj", "{AD335F9A-E613-4B27-BBDE-E3570B3320CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{630E5374-67E2-4FC0-A287-F2A503BBC64F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{AD335F9A-E613-4B27-BBDE-E3570B3320CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD335F9A-E613-4B27-BBDE-E3570B3320CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD335F9A-E613-4B27-BBDE-E3570B3320CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{630E5374-67E2-4FC0-A287-F2A503BBC64F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{630E5374-67E2-4FC0-A287-F2A503BBC64F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{630E5374-67E2-4FC0-A287-F2A503BBC64F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{630E5374-67E2-4FC0-A287-F2A503BBC64F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common;
 using DashboardBackend.Models;
-using UpdatesConsumer;
 
 namespace DashboardBackend.Data
 {
@@ -10,9 +10,9 @@ namespace DashboardBackend.Data
     {
         Task<int> CountAsync();
         
-        Task<List<Update>> Get(PageSearchParams searchParams);
+        Task<List<UpdateEntity>> Get(PageSearchParams searchParams);
 
-        Task AddAsync(Update update);
+        Task AddAsync(UpdateEntity update);
 
         Task DeleteAsync(Guid id);
     }

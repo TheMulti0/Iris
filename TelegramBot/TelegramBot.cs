@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using UpdatesConsumer;
-using Update = UpdatesConsumer.Update;
+using Update = Common.Update;
 
 namespace TelegramBot
 {

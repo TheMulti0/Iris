@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using UpdatesConsumer;

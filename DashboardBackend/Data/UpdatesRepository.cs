@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common;
 using DashboardBackend.Models;
-using UpdatesConsumer;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -10,7 +10,7 @@ namespace DashboardBackend.Data
 {
     public class UpdatesRepository : IUpdatesRepository
     {
-        private readonly IMongoCollection<Update> _collection;
+        private readonly IMongoCollection<UpdateEntity> _collection;
 
         public UpdatesRepository(ApplicationDbContext context)
         {
@@ -22,23 +22,23 @@ namespace DashboardBackend.Data
             return _collection.AsQueryable().CountAsync();
         }
 
-        public Task<List<Update>> Get(PageSearchParams searchParams)
+        public Task<List<UpdateEntity>> Get(PageSearchParams searchParams)
         {
-            IMongoQueryable<Update> updates = _collection.AsQueryable()
+            IMongoQueryable<UpdateEntity> updates = _collection.AsQueryable()
                 .Skip(searchParams.PageSize * searchParams.PageIndex)
                 .Take(searchParams.PageSize);
             
             return updates.ToListAsync();
         }
 
-        public async Task AddAsync(Update update)
+        public async Task AddAsync(UpdateEntity update)
         {
             await _collection.InsertOneAsync(update);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            Update update = await _collection.FindOneAndDeleteAsync(u => u.Id == id);
+            UpdateEntity update = await _collection.FindOneAndDeleteAsync(u => u.Id == id);
             
             if (update.Id == id)
             {

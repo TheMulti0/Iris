@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows.Input;
+using Common;
 using Extensions;
 using Kafka.Public;
 using Microsoft.Extensions.Logging;

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Common;
 using DashboardBackend.Data;
 using Microsoft.Extensions.DependencyInjection;
 using UpdatesConsumer;
@@ -20,7 +21,15 @@ namespace DashboardBackend.Controllers
 
             var repository = scope.ServiceProvider.GetRequiredService<IUpdatesRepository>();
 
-            await repository.AddAsync(update);
+            await repository.AddAsync(new UpdateEntity
+            {
+                AuthorId = update.AuthorId,
+                Content = update.Content,
+                CreationDate = update.CreationDate,
+                Media = update.Media,
+                Repost = update.Repost,
+                Url = update.Url
+            });
         }
     }
 }

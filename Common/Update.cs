@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace UpdatesConsumer
+namespace Common
 {
     public class Update
     {
-        [BsonId]
-        public Guid Id { get; set; }
-        
         [JsonPropertyName("content")]
         public string Content { get; set; }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Common;
 using DashboardBackend.Data;
 using DashboardBackend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,7 @@ namespace DashboardBackend.Controllers
         }
 
         [HttpGet]
-        public Task<List<Update>> Get([FromQuery] PageSearchParams searchParams)
+        public Task<List<UpdateEntity>> Get([FromQuery] PageSearchParams searchParams)
         {
             return _repository.Get(searchParams);
         }
