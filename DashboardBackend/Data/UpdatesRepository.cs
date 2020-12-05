@@ -10,21 +10,21 @@ namespace DashboardBackend.Data
 {
     public class UpdatesRepository : IUpdatesRepository
     {
-        private ApplicationDbContext _context;
+        private readonly IMongoCollection<Update> _collection;
 
         public UpdatesRepository(ApplicationDbContext context)
         {
-            _context = context;
+            _collection = context.Updates;
         }
 
         public Task<int> CountAsync()
         {
-            return _context.Updates.AsQueryable().CountAsync();
+            return _collection.AsQueryable().CountAsync();
         }
 
         public Task<List<Update>> Get(PageSearchParams searchParams)
         {
-            IMongoQueryable<Update> updates = _context.Updates.AsQueryable()
+            IMongoQueryable<Update> updates = _collection.AsQueryable()
                 .Skip(searchParams.PageSize * searchParams.PageIndex)
                 .Take(searchParams.PageSize);
             
@@ -33,12 +33,12 @@ namespace DashboardBackend.Data
 
         public async Task AddAsync(Update update)
         {
-            await _context.Updates.InsertOneAsync(update);
+            await _collection.InsertOneAsync(update);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            Update update = await _context.Updates.FindOneAndDeleteAsync(u => u.Id == id);
+            Update update = await _collection.FindOneAndDeleteAsync(u => u.Id == id);
             
             if (update.Id == id)
             {

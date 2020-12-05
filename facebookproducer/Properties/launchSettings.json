@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "FacebookProducer": {
+      "commandName": "Project",
+      "workingDirectory": "../../../",
+      "environmentVariables": {
+        "ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
