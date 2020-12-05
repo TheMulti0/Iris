@@ -7,9 +7,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UpdatesProducer.Tests
 {
     [TestClass]
-    public class UserLatestUpdateTimesRepositoryTests
+    public class SentUpdatesRepositoryTests
     {
-        private static IUserLatestUpdateTimesRepository _repository;
+        private static ISentUpdatesRepository _repository;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -23,24 +23,22 @@ namespace UpdatesProducer.Tests
                         DatabaseName = "test"
                     })
                 .AddSingleton<ApplicationDbContext>()
-                .AddSingleton<IUserLatestUpdateTimesRepository, UserLatestUpdateTimesRepository>()
+                .AddSingleton<ISentUpdatesRepository, SentUpdatesRepository>()
                 .BuildServiceProvider();
 
-            _repository = services.GetService<IUserLatestUpdateTimesRepository>();
+            _repository = services.GetService<ISentUpdatesRepository>();
         }
 
         [TestMethod]
         public async Task TestGetSet()
         {
-            const string userId = "test";
-            DateTime latestUpdateTime = DateTime.Parse(DateTime.Now.ToString()); // To ignore millisecond precision
+            const string url = "https://test.com";
             
-            await _repository.SetAsync(userId, latestUpdateTime);
+            await _repository.SetAsync(url);
             
-            UserLatestUpdateTime userLatestUpdateTime = await _repository.GetAsync(userId);
+            var sentUpdate = await _repository.GetAsync(url);
             
-            Assert.AreEqual(userId, userLatestUpdateTime.UserId);
-            Assert.AreEqual(latestUpdateTime, userLatestUpdateTime.LatestUpdateTime.ToLocalTime());
+            Assert.AreEqual(url, sentUpdate.Url);
         }
     }
 }
