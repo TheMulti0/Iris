@@ -1,5 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FacebookProducer.Tests
@@ -7,11 +9,19 @@ namespace FacebookProducer.Tests
     [TestClass]
     public class FacebookUpdatesProviderTests
     {
-        private readonly FacebookUpdatesProvider _updatesProvider;
+        private static FacebookUpdatesProvider _updatesProvider;
 
-        public FacebookUpdatesProviderTests()
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
         {
-            _updatesProvider = new FacebookUpdatesProvider();
+            var loggerFactory = new LoggerFactory(
+                new[]
+                {
+                    new TestsLoggerProvider(context)
+                });
+            
+            _updatesProvider = new FacebookUpdatesProvider(
+                loggerFactory.CreateLogger<FacebookUpdatesProvider>());
         }
 
         [TestMethod]

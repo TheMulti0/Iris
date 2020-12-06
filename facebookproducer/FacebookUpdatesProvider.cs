@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using UpdatesProducer;
 
@@ -10,19 +11,31 @@ namespace FacebookProducer
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
+        private readonly ILogger<FacebookUpdatesProvider> _logger;
+
+        public FacebookUpdatesProvider(ILogger<FacebookUpdatesProvider> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<IEnumerable<Update>> GetUpdatesAsync(string userId)
         {
-            var output = await ScriptExecutor.Execute(
-                "python",
-                "get_posts.py",
-                new List<string>
-                {
-                    "Netanyahu",
-                    "1"
-                });
+            const string scriptName = "get_posts.py";
+            
+            try
+            {
+                string output = await ScriptExecutor.ExecutePython(
+                    scriptName, userId, 1);
+                
+                return JsonConvert.DeserializeObject<Post[]>(output)
+                    .Select(ToUpdate);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to parse {} output", scriptName);
+            }
 
-            return JsonConvert.DeserializeObject<Post[]>(output)
-                .Select(ToUpdate);
+            return Enumerable.Empty<Update>();
         }
 
         private static Update ToUpdate(Post post)

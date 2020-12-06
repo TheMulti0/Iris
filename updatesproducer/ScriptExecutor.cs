@@ -1,19 +1,31 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace FacebookProducer
+namespace UpdatesProducer
 {
-    public class ScriptExecutor
+    public static class ScriptExecutor
     {
+        public static Task<string> ExecutePython(
+            string fileName,
+            params object[] parameters)
+        {
+            return Execute("python", fileName, parameters);
+        }
+        
         public static Task<string> Execute(
             string command,
             string fileName,
-            List<string> args)
+            params object[] parameters)
         {
-            args.Insert(0, fileName);
-
-            var startInfo = CreateProcessStartInfo(command, args);
+            var arguments = new[] { fileName }
+                .Concat(
+                    parameters.Select(o => o.ToString()));
+            
+            ProcessStartInfo startInfo = CreateProcessStartInfo(
+                command,
+                arguments);
             
             using Process process = Process.Start(startInfo);
 
@@ -21,7 +33,8 @@ namespace FacebookProducer
         }
 
         private static ProcessStartInfo CreateProcessStartInfo(
-            string command, IEnumerable<string> args)
+            string command,
+            IEnumerable<string> args)
         {
             return new()
             {
