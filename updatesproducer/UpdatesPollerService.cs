@@ -150,7 +150,7 @@ namespace UpdatesProducer
 
         private async ValueTask<bool> NotSent(Update update)
         {
-            return await _sentUpdatesRepository.ExistsAsync(update.Url);
+            return !await _sentUpdatesRepository.ExistsAsync(update.Url);
         }
     }
 }

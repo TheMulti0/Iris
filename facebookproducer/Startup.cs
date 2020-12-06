@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Extensions;
+using FacebookProducer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,14 +39,21 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
-    var mongoDbSettings = rootConfig
+    var mongoDbConfig = rootConfig
             .GetSection("MongoDb")
             ?.Get<MongoDbConfig>();
+            
+    var kafkaConfig = rootConfig
+            .GetSection("Kafka")
+            ?.Get<BaseKafkaConfig>();
+            
+    var pollerConfig = rootConfig
+            .GetSection("Poller")
+            ?.Get<PollerConfig>();
 
     services
-        .AddMongoDb(mongoDbSettings)
-        .AddSingleton<ApplicationDbContext>()
-        .AddSingleton<IUserLatestUpdateTimesRepository, UserLatestUpdateTimesRepository>()
+        .AddUpdatesProducer<FacebookUpdatesProvider>(
+            mongoDbConfig, kafkaConfig, pollerConfig)
         .BuildServiceProvider();
 }
     
