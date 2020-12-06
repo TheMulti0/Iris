@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace DashboardBackend.Data
 {
-    public class UpdateEntity : Update
+    public record UpdateEntity : Update
     {
         [BsonId]
         public Guid Id { get; set; }

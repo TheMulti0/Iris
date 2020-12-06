@@ -8,11 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
-using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using UpdatesConsumer;
 using Video = Common.Video;
 
 namespace TelegramBot
@@ -82,8 +80,7 @@ namespace TelegramBot
 
             // Send media as stream (upload) instead of sending the url of the media
 
-            await SendUnsafeAsync(
-                message.Remute(msg => msg.DownloadMedia, true));
+            await SendUnsafeAsync(message with { DownloadMedia = true });
         }
 
         private async Task SendUnsafeAsync(MessageInfo message)
@@ -180,8 +177,7 @@ namespace TelegramBot
 
             if (message.Message.Any())
             {
-                MessageInfo newMessage = message
-                    .Remute(i => i.ReplyMessageId, firstMediaMessageId);
+                MessageInfo newMessage = message with { ReplyMessageId = firstMediaMessageId };
 
                 await _textSender.SendAsync(newMessage);
             }

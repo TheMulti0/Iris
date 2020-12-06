@@ -4,25 +4,25 @@ using System.Text.Json.Serialization;
 
 namespace Common
 {
-    public class Update
+    public record Update
     {
         [JsonPropertyName("content")]
-        public string Content { get; set; }
+        public string Content { get; init; }
 
         [JsonPropertyName("author_id")]
-        public string AuthorId { get; set; }
+        public string AuthorId { get; init; }
 
         [JsonPropertyName("creation_date")]
-        public DateTime? CreationDate { get; set; }
+        public DateTime? CreationDate { get; init; }
 
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; init; }
 
         [JsonPropertyName("media")] 
-        public List<IMedia> Media { get; set; }
+        public List<IMedia> Media { get; init; }
 
         [JsonPropertyName("repost")]
-        public bool Repost { get; set; }
+        public bool Repost { get; init; }
 
         public override string ToString()
         {

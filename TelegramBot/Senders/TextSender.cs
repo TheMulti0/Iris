@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -62,9 +61,8 @@ namespace TelegramBot
 
                 foreach (string msg in messageChunks)
                 {
-                    MessageInfo newInfo = message
-                        .Remute(i => i.Message, msg)
-                        .Remute(i => i.ReplyMessageId, lastMessageId);
+                    MessageInfo newInfo 
+                        = message with { Message = msg, ReplyMessageId = lastMessageId};
                     
                     Message lastMessage = await SendSingleTextMessage(newInfo);
 
