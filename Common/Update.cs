@@ -13,7 +13,7 @@ namespace Common
         public string AuthorId { get; set; }
 
         [JsonPropertyName("creation_date")]
-        public DateTime CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
 
         [JsonPropertyName("url")]
         public string Url { get; set; }

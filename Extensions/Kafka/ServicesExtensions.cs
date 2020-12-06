@@ -10,6 +10,7 @@ namespace Extensions
     {
         public static IServiceCollection AddProducer<TKey, TValue>(
             this IServiceCollection services,
+            BaseKafkaConfig config,
             JsonSerializerOptions options = null) 
             where TKey : class 
             where TValue : class
@@ -17,7 +18,7 @@ namespace Extensions
             IKafkaProducer<TKey, TValue> CreateKafkaProducer(IServiceProvider provider)
             {
                 return KafkaProducerFactory.Create<TKey, TValue>(
-                    provider.GetService<BaseKafkaConfig>(),
+                    config,
                     provider.GetService<ILoggerFactory>(),
                     options);
             }

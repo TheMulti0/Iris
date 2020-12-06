@@ -4,8 +4,8 @@ namespace UpdatesProducer
 {
     public interface ISentUpdatesRepository
     {
-        Task<SentUpdate> GetAsync(string url);
-        
+        Task<bool> ExistsAsync(string url);
+
         Task AddAsync(string url);
     }
 }

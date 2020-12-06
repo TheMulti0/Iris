@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Common;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -27,11 +26,11 @@ namespace UpdatesProducer
                 .CreateOne(indexModel);
         }
         
-        public Task<SentUpdate> GetAsync(string url)
+        public Task<bool> ExistsAsync(string url)
         {
             return _collection
                 .AsQueryable()
-                .FirstOrDefaultAsync(sentUpdate => sentUpdate.Url == url);
+                .AnyAsync(sentUpdate => sentUpdate.Url == url);
         }
 
         public async Task AddAsync(string url)

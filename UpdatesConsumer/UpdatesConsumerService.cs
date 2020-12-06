@@ -11,24 +11,24 @@ namespace UpdatesConsumer
 {
     public class UpdatesConsumerService : BackgroundService
     {
-        private readonly IKafkaConsumer<string, Update> _updateConsumer;
+        private readonly IKafkaConsumer<string, Update> _updatesConsumer;
         private readonly IUpdateConsumer _consumer;
         private readonly ILogger<UpdatesConsumerService> _logger;
         private IDisposable _updateSubscription;
 
         public UpdatesConsumerService(
-            IKafkaConsumer<string, Update> updateConsumer, 
+            IKafkaConsumer<string, Update> updatesConsumer, 
             IUpdateConsumer consumer,
             ILogger<UpdatesConsumerService> logger)
         {
-            _updateConsumer = updateConsumer;
+            _updatesConsumer = updatesConsumer;
             _consumer = consumer;
             _logger = logger;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _updateSubscription = _updateConsumer.Messages.SubscribeAsync(OnNext);
+            _updateSubscription = _updatesConsumer.Messages.SubscribeAsync(OnNext);
 
             // Dispose the update subscription when service is stopped
             stoppingToken.Register(() => _updateSubscription?.Dispose());

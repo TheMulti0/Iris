@@ -40,7 +40,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     
     var mongoDbSettings = rootConfig
             .GetSection("MongoDb")
-            ?.Get<MongoDbSettings>();
+            ?.Get<MongoDbConfig>();
 
     services
         .AddMongoDb(mongoDbSettings)

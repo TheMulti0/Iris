@@ -17,7 +17,7 @@ namespace UpdatesProducer.Tests
             var services = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
                 .AddMongoDb(
-                    new MongoDbSettings
+                    new MongoDbConfig
                     {
                         ConnectionString = "mongodb://localhost:27017",
                         DatabaseName = "test"
@@ -34,11 +34,9 @@ namespace UpdatesProducer.Tests
         {
             const string url = "https://test.com";
             
-            await _repository.SetAsync(url);
+            await _repository.AddAsync(url);
             
-            var sentUpdate = await _repository.GetAsync(url);
-            
-            Assert.AreEqual(url, sentUpdate.Url);
+            Assert.IsTrue(await _repository.ExistsAsync(url));
         }
     }
 }

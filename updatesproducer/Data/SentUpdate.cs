@@ -5,9 +5,9 @@ namespace UpdatesProducer
 {
     public class SentUpdate
     {
-        public DateTime CreatedAt { get; set; }
-        
         [BsonId]
         public string Url { get; set; }
+
+        public DateTime SentAt { get; set; }
     }
 }

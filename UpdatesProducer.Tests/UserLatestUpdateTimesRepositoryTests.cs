@@ -17,7 +17,7 @@ namespace UpdatesProducer.Tests
             var services = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
                 .AddMongoDb(
-                    new MongoDbSettings
+                    new MongoDbConfig
                     {
                         ConnectionString = "mongodb://localhost:27017",
                         DatabaseName = "test"
@@ -35,7 +35,7 @@ namespace UpdatesProducer.Tests
             const string userId = "test";
             DateTime latestUpdateTime = DateTime.Parse(DateTime.Now.ToString()); // To ignore millisecond precision
             
-            await _repository.SetAsync(userId, latestUpdateTime);
+            await _repository.AddOrUpdateAsync(userId, latestUpdateTime);
             
             UserLatestUpdateTime userLatestUpdateTime = await _repository.GetAsync(userId);
             

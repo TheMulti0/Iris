@@ -1,6 +1,6 @@
 ﻿namespace UpdatesProducer
 {
-    public class MongoDbSettings
+    public class MongoDbConfig
     {
         public string ConnectionString { get; set; }
 
