@@ -51,11 +51,7 @@ namespace Extensions.Tests
         {
             var config = new ConsumerConfig
             {
-                SubscriptionTopics = new[]
-                {
-                    _config.DefaultTopic
-                },
-                DefaultTopic = _config.DefaultTopic,
+                Topic = _config.Topic,
                 BrokersServers = _config.BrokersServers,
                 GroupId = "tests-consumers-group",
                 KeySerializationType = _config.KeySerializationType,

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Common;
 using Telegram.Bot.Types;
-using UpdatesConsumer;
 using Update = Common.Update;
 
 namespace TelegramBot

@@ -4,7 +4,7 @@
     {
         public string BrokersServers { get; set; }
 
-        public virtual string DefaultTopic { get; set; }
+        public string Topic { get; set; }
 
         public SerializationType KeySerializationType { get; set; }
         

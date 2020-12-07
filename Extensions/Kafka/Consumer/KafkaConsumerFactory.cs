@@ -21,14 +21,15 @@ namespace Extensions
                 loggerFactory);
 
             var consumer = new KafkaConsumer<TKey, TValue>(
-                config.DefaultTopic,
+                config.Topic,
                 clusterClient);
 
             var consumerGroupConfig = new ConsumerGroupConfiguration
             {
                 DefaultOffsetToReadFrom = Offset.Earliest
             };
-            consumer.Subscribe(config.GroupId, config.SubscriptionTopics, consumerGroupConfig);
+            consumer.Subscribe(
+                config.GroupId, new [] { config.Topic }, consumerGroupConfig);
 
             return consumer;
         }

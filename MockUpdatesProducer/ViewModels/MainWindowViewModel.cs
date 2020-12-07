@@ -76,7 +76,7 @@ namespace MockUpdatesProducer
             var baseKafkaConfig = new BaseKafkaConfig
             {
                 BrokersServers = "localhost:9092",
-                DefaultTopic = "updates",
+                Topic = "updates",
                 KeySerializationType = SerializationType.String,
                 ValueSerializationType = SerializationType.Json
             };

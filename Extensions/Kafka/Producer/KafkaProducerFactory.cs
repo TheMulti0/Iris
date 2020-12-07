@@ -20,7 +20,7 @@ namespace Extensions
                 serializationConfig,
                 loggerFactory);
             
-            return new KafkaProducer<TKey, TValue>(config.DefaultTopic, clusterClient);
+            return new KafkaProducer<TKey, TValue>(config.Topic, clusterClient);
         }
         
         private static SerializationConfig CreateSerializationConfig(
