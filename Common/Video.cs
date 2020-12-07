@@ -13,13 +13,17 @@ namespace Common
         [JsonPropertyName("thumbnail_url")]
         public string ThumbnailUrl { get; set; }
         
+        //TODO use TimeSpan
         [JsonPropertyName("duration_seconds")]
         public int? DurationSeconds { get; set; }
 
         [JsonPropertyName("width")]
-        public int Width { get; set; }
+        public int? Width { get; set; }
 
         [JsonPropertyName("height")]
-        public int Height { get; set; }
+        public int? Height { get; set; }
+
+        [JsonIgnore]
+        public bool IsHighestFormatAvaliable { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -69,11 +70,9 @@ namespace UpdatesProducer
         private async Task PollUser(string userId, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Polling {}", userId);
-            
-            // TODO Download videos
 
-            IEnumerable<Update> updates = (await GetUpdates(userId, cancellationToken))
-                .ToList();
+            IEnumerable<Update> updates = await GetUpdates(userId, cancellationToken)
+                .ToListAsync(cancellationToken);
             
             foreach (Update update in updates)
             {
@@ -101,15 +100,59 @@ namespace UpdatesProducer
             }
         }
 
-        private async Task<IEnumerable<Update>> GetUpdates(
-            string userId, CancellationToken cancellationToken)
+        private async IAsyncEnumerable<Update> GetUpdates(
+            string userId,
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(userId);
 
             UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(userId);
 
-            return await GetNewUpdates(
-                updates, userLatestUpdateTime, cancellationToken);
+            ConfiguredCancelableAsyncEnumerable<Update> newUpdates = GetNewUpdates(updates, userLatestUpdateTime)
+                .WithCancellation(cancellationToken);
+
+            await foreach (Update update in newUpdates)
+            {
+                yield return await WithExtractedVideo(update, cancellationToken);
+            }
+        }
+
+        private async ValueTask<Update> WithExtractedVideo(Update update, CancellationToken cancellationToken)
+        {
+            var newMedia = await update.Media.ToAsyncEnumerable()
+                .SelectAwaitWithCancellation(ExtractVideo)
+                .ToListAsync(cancellationToken);
+
+            return update with { Media = newMedia };
+        }
+
+        private async ValueTask<IMedia> ExtractVideo(
+            IMedia media, CancellationToken cancellationToken)
+        {
+            static async Task<IMedia> Extracted(Video old)
+            {
+                Video extracted = await VideoExtractor.ExtractVideo(old.Url);
+                if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
+                {
+                    // TODO use records 'with'
+                    extracted.ThumbnailUrl = old.ThumbnailUrl;
+                }
+                return extracted;
+            }
+
+            if (media is Video video)
+            {
+                try
+                {
+                    return await Extracted(video);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to extract video of url {}", video.Url);
+                }
+            }
+
+            return media;
         }
 
         private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(string userId)
@@ -123,20 +166,18 @@ namespace UpdatesProducer
             return await _userLatestUpdateTimesRepository.GetAsync(userId) ?? zero;
         }
 
-        private async Task<IEnumerable<Update>> GetNewUpdates(
+        private IAsyncEnumerable<Update> GetNewUpdates(
             IEnumerable<Update> updates,
-            UserLatestUpdateTime userLatestUpdateTime,
-            CancellationToken cancellationToken)
+            UserLatestUpdateTime userLatestUpdateTime)
         {
             var newUpdates = updates
                 .Where(IsNew(userLatestUpdateTime))
-                .OrderBy(update => update.CreationDate);
+                .OrderBy(update => update.CreationDate)
+                .ToAsyncEnumerable();
 
             if (_config.StoreSentUpdates)
             {
-                return await newUpdates.ToAsyncEnumerable()
-                    .WhereAwait(NotSent)
-                    .ToListAsync(cancellationToken);
+                return newUpdates.WhereAwait(NotSent);
             }
             
             return newUpdates;

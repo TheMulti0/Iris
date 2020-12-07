@@ -16,8 +16,12 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
     const string fileName = "appsettings";
     const string fileType = "json";
 
+    string basePath = Path.Combine(
+        Directory.GetCurrentDirectory(),
+        Environment.GetEnvironmentVariable("CONFIG_DIRECTORY") ?? string.Empty);
+    
     builder
-        .SetBasePath(Directory.GetCurrentDirectory())
+        .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
 }

@@ -24,10 +24,11 @@ namespace FacebookProducer
             
             try
             {
-                string output = await ScriptExecutor.ExecutePython(
+                // TODO make page count an optional configurable field
+                string response = await ScriptExecutor.ExecutePython(
                     scriptName, userId, 1);
                 
-                return JsonConvert.DeserializeObject<Post[]>(output)
+                return JsonConvert.DeserializeObject<Post[]>(response)
                     .Select(ToUpdate);
             }
             catch (Exception e)
@@ -48,7 +49,6 @@ namespace FacebookProducer
                 Url = post.PostUrl,
                 Media = GetMedia(post).ToList(),
                 Repost = post.Text == post.SharedText
-                // TODO redownload video
             };
         }
 
@@ -68,7 +68,8 @@ namespace FacebookProducer
             var video = new Video
             {
                 Url = post.VideoUrl,
-                ThumbnailUrl = post.VideoThumbnailUrl
+                ThumbnailUrl = post.VideoThumbnailUrl,
+                IsHighestFormatAvaliable = false
             };
 
             return photos.Concat(new IMedia[] { video });

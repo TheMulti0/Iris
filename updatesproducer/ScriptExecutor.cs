@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace UpdatesProducer
             return Execute("python", fileName, parameters);
         }
         
-        public static Task<string> Execute(
+        public static async Task<string> Execute(
             string command,
             string fileName,
             params object[] parameters)
@@ -29,7 +30,13 @@ namespace UpdatesProducer
             
             using Process process = Process.Start(startInfo);
 
-            return process?.StandardOutput.ReadToEndAsync();
+            string output = await process?.StandardOutput?.ReadToEndAsync();
+            if (string.IsNullOrEmpty(output))
+            {
+                throw new InvalidOperationException("Failed to execute script (no output)");
+            }
+
+            return output;
         }
 
         private static ProcessStartInfo CreateProcessStartInfo(

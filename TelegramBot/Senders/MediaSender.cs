@@ -120,13 +120,13 @@ namespace TelegramBot
                     {
                         video.Duration = v.DurationSeconds ?? default;
                     }
-                    if (v.Width != 0)
+                    if (v.Width != null)
                     {
-                        video.Width = v.Width;
+                        video.Width = (int) v.Width;
                     }
-                    if (v.Height != 0)
+                    if (v.Height != null)
                     {
-                        video.Height = v.Height;
+                        video.Height = (int) v.Height;
                     }
 
                     return video;

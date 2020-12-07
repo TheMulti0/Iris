@@ -3,9 +3,9 @@
   "profiles": {
     "FacebookProducer": {
       "commandName": "Project",
-      "workingDirectory": "../../../",
       "environmentVariables": {
-        "ENVIRONMENT": "Development"
+        "ENVIRONMENT": "Development",
+        "CONFIG_DIRECTORY": "../../../"
       }
     },
     "Docker": {
