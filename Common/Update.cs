@@ -26,7 +26,7 @@ namespace Common
 
         public override string ToString()
         {
-            return $"Url: {Url} - Creation date: {CreationDate} - Media length: {Media.Count} - Repost: {Repost}";
+            return $"{Url} (By {AuthorId}, Media length: {Media.Count}, Repost: {Repost})";
         }
     }
 }
