@@ -15,7 +15,8 @@ namespace UpdatesProducer.Tests
                 {
                     Content = $"mock update by {userId}",
                     AuthorId = userId,
-                    CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now,
+                    Url = "mockurl.com"
                 }
             };
             

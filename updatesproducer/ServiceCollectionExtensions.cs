@@ -2,6 +2,7 @@ using Common;
 using Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDbGenericRepository;
+using UpdatesProducer.Mock;
 
 namespace UpdatesProducer
 {
@@ -13,8 +14,11 @@ namespace UpdatesProducer
             BaseKafkaConfig kafkaConfig,
             PollerConfig pollerConfig) where TProvider : class, IUpdatesProvider
         {
+            services = mongoDbConfig != null 
+                ? services.AddUpdatesProducerMongoRepositories(mongoDbConfig) 
+                : services.AddUpdatesProducerMockRepositories();
+
             return services
-                .AddUpdatesProducerMongoRepositories(mongoDbConfig)
                 .AddProducer<string, Update>(kafkaConfig)
                 .AddSingleton<IUpdatesProducer, KafkaUpdatesProducer>()
                 .AddSingleton<IUpdatesProvider, TProvider>()
@@ -27,9 +31,17 @@ namespace UpdatesProducer
         {
             return services
                 .AddMongoDb(config)
-                .AddSingleton<ApplicationDbContext>()
-                .AddSingleton<IUserLatestUpdateTimesRepository, UserLatestUpdateTimesRepository>()
-                .AddSingleton<ISentUpdatesRepository, SentUpdatesRepository>();
+                .AddSingleton<MongoApplicationDbContext>()
+                .AddSingleton<IUserLatestUpdateTimesRepository, MongoUserLatestUpdateTimesRepository>()
+                .AddSingleton<ISentUpdatesRepository, MongoSentUpdatesRepository>();
+        }
+
+        public static IServiceCollection AddUpdatesProducerMockRepositories(
+            this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<IUserLatestUpdateTimesRepository, MockUserLatestUpdateTimesRepository>()
+                .AddSingleton<ISentUpdatesRepository, MockSentUpdatesRepository>();
         }
 
         public static IServiceCollection AddMongoDb(

@@ -22,8 +22,8 @@ namespace UpdatesProducer.Tests
                         ConnectionString = "mongodb://localhost:27017",
                         DatabaseName = "test"
                     })
-                .AddSingleton<ApplicationDbContext>()
-                .AddSingleton<IUserLatestUpdateTimesRepository, UserLatestUpdateTimesRepository>()
+                .AddSingleton<MongoApplicationDbContext>()
+                .AddSingleton<IUserLatestUpdateTimesRepository, MongoUserLatestUpdateTimesRepository>()
                 .BuildServiceProvider();
 
             _repository = services.GetService<IUserLatestUpdateTimesRepository>();

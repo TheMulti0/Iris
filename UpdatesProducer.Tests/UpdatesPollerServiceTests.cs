@@ -18,13 +18,6 @@ namespace UpdatesProducer.Tests
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            // TODO add in memory repositories
-            var mongoDbConfig = new MongoDbConfig
-            {
-                ConnectionString = "mongodb://localhost:27017",
-                DatabaseName = "test"
-            };
-
             var pollerConfig = new PollerConfig
             {
                 Interval = TimeSpan.Zero,
@@ -34,7 +27,7 @@ namespace UpdatesProducer.Tests
 
             IServiceCollection addHostedService = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
-                .AddUpdatesProducerMongoRepositories(mongoDbConfig)
+                .AddUpdatesProducerMockRepositories()
                 .AddSingleton<IUpdatesProducer, MockUpdatesProducer>()
                 .AddSingleton<IUpdatesProvider, MockUpdatesProvider>()
                 .AddUpdatesPollerService(pollerConfig);

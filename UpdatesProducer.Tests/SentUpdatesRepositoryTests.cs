@@ -22,8 +22,8 @@ namespace UpdatesProducer.Tests
                         ConnectionString = "mongodb://localhost:27017",
                         DatabaseName = "test"
                     })
-                .AddSingleton<ApplicationDbContext>()
-                .AddSingleton<ISentUpdatesRepository, SentUpdatesRepository>()
+                .AddSingleton<MongoApplicationDbContext>()
+                .AddSingleton<ISentUpdatesRepository, MongoSentUpdatesRepository>()
                 .BuildServiceProvider();
 
             _repository = services.GetService<ISentUpdatesRepository>();
