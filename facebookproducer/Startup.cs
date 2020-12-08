@@ -43,21 +43,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
-    var mongoDbConfig = rootConfig
-            .GetSection("MongoDb")
-            ?.Get<MongoDbConfig>();
-            
-    var kafkaConfig = rootConfig
-            .GetSection("Kafka")
-            ?.Get<BaseKafkaConfig>();
-            
-    var pollerConfig = rootConfig
-            .GetSection("Poller")
-            ?.Get<PollerConfig>();
-
     services
-        .AddUpdatesProducer<FacebookUpdatesProvider>(
-            mongoDbConfig, kafkaConfig, pollerConfig)
+        .AddUpdatesProducer<FacebookUpdatesProvider>(rootConfig)
         .BuildServiceProvider();
 }
     

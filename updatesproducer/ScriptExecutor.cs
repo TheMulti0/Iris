@@ -22,7 +22,9 @@ namespace UpdatesProducer
         {
             var arguments = new[] { fileName }
                 .Concat(
-                    parameters.Select(o => o.ToString()));
+                    parameters
+                        .Where(o => o != null)
+                        .Select(o => o.ToString()));
             
             ProcessStartInfo startInfo = CreateProcessStartInfo(
                 command,

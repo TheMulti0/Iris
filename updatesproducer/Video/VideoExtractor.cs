@@ -6,9 +6,16 @@ using Common;
 
 namespace UpdatesProducer
 {
-    public static class VideoExtractor
+    public class VideoExtractor
     {
-        public static async Task<Video> ExtractVideo(string url)
+        private readonly VideoExtractorConfig _config;
+
+        public VideoExtractor(VideoExtractorConfig config)
+        {
+            _config = config;
+        }
+
+        public async Task<Video> ExtractVideo(string url)
         {
             JsonElement root = await GetResponse(url);
 
@@ -37,12 +44,14 @@ namespace UpdatesProducer
                 height);
         }
 
-        private static async Task<JsonElement> GetResponse(string url)
+        private async Task<JsonElement> GetResponse(string url)
         {
             var response = await ScriptExecutor.ExecutePython(
                 "extract_video.py",
                 url,
-                "best");
+                _config.FormatRequest,
+                _config.UserName,
+                _config.Password);
 
             return JsonDocument.Parse(response).RootElement;
         }

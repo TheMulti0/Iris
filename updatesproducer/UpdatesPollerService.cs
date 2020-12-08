@@ -17,6 +17,7 @@ namespace UpdatesProducer
         private readonly IUpdatesProvider _updatesProvider;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
+        private readonly VideoExtractor _videoExtractor;
         private readonly ILogger<UpdatesPollerService> _logger;
 
         public UpdatesPollerService(
@@ -25,6 +26,7 @@ namespace UpdatesProducer
             IUpdatesProvider updatesProvider,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
+            VideoExtractor videoExtractor,
             ILogger<UpdatesPollerService> logger)
         {
             _config = config;
@@ -32,6 +34,7 @@ namespace UpdatesProducer
             _updatesProvider = updatesProvider;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
+            _videoExtractor = videoExtractor;
             _logger = logger;
         }
 
@@ -113,7 +116,12 @@ namespace UpdatesProducer
 
             await foreach (Update update in newUpdates)
             {
-                yield return await WithExtractedVideo(update, cancellationToken);
+                if (update.Media?.Any() == true)
+                {
+                    yield return await WithExtractedVideo(update, cancellationToken);
+                }
+
+                yield return update;
             }
         }
 
@@ -144,9 +152,9 @@ namespace UpdatesProducer
             return media;
         }
 
-        private static async Task<IMedia> GetExtractedVideo(Video old)
+        private async Task<IMedia> GetExtractedVideo(Video old)
         {
-            Video extracted = await VideoExtractor.ExtractVideo(old.Url);
+            Video extracted = await _videoExtractor.ExtractVideo(old.Url);
             
             if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
             {

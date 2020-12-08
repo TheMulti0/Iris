@@ -7,13 +7,16 @@ namespace UpdatesProducer
 {
     internal class KafkaUpdatesProducer : IUpdatesProducer
     {
+        private readonly KafkaConfig _config;
         private readonly IKafkaProducer<string, Update> _producer;
         private readonly ILogger<KafkaUpdatesProducer> _logger;
 
         public KafkaUpdatesProducer(
+            KafkaConfig config,
             IKafkaProducer<string, Update> producer,
             ILogger<KafkaUpdatesProducer> logger)
         {
+            _config = config;
             _producer = producer;
             _logger = logger;
         }
@@ -22,10 +25,8 @@ namespace UpdatesProducer
         {
             _logger.LogInformation("Sending update {} to Kafka", update);
 
-            // TODO service name key
-
             _producer.Produce(
-                key: "Key",
+                key: _config.Updates.Key,
                 data: update,
                 timestamp: DateTime.Now);
         }
