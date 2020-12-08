@@ -129,22 +129,11 @@ namespace UpdatesProducer
         private async ValueTask<IMedia> ExtractVideo(
             IMedia media, CancellationToken cancellationToken)
         {
-            static async Task<IMedia> Extracted(Video old)
-            {
-                Video extracted = await VideoExtractor.ExtractVideo(old.Url);
-                if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
-                {
-                    // TODO use records 'with'
-                    extracted.ThumbnailUrl = old.ThumbnailUrl;
-                }
-                return extracted;
-            }
-
             if (media is Video video)
             {
                 try
                 {
-                    return await Extracted(video);
+                    return await GetExtractedVideo(video);
                 }
                 catch (Exception e)
                 {
@@ -153,6 +142,17 @@ namespace UpdatesProducer
             }
 
             return media;
+        }
+
+        private static async Task<IMedia> GetExtractedVideo(Video old)
+        {
+            Video extracted = await VideoExtractor.ExtractVideo(old.Url);
+            
+            if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
+            {
+                return extracted with { ThumbnailUrl = old.ThumbnailUrl };
+            }
+            return extracted;
         }
 
         private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(string userId)

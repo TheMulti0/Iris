@@ -47,8 +47,8 @@ namespace MockUpdatesProducer
             }
         }
 
-        private readonly IKafkaProducer<string, InternalUpdate> _producer;
-        private readonly Dictionary<UpdateType, InternalUpdate> _updates;
+        private readonly IKafkaProducer<string, Update> _producer;
+        private readonly Dictionary<UpdateType, Update> _updates;
 
         public MainWindowViewModel()
         {
@@ -71,7 +71,7 @@ namespace MockUpdatesProducer
             return new ObservableCollection<UpdateTypeButton>(updateTypeButtons);
         }
 
-        private static IKafkaProducer<string, InternalUpdate> CreateProducer()
+        private static IKafkaProducer<string, Update> CreateProducer()
         {
             var baseKafkaConfig = new BaseKafkaConfig
             {
@@ -84,186 +84,153 @@ namespace MockUpdatesProducer
             var loggerFactory = new LoggerFactory();
             loggerFactory.AddProvider(new CustomConsoleLoggerProvider());
 
-            return KafkaProducerFactory.Create<string, InternalUpdate>(
+            return KafkaProducerFactory.Create<string, Update>(
                 baseKafkaConfig,
                 loggerFactory,
-                new JsonSerializerOptions());
+                new JsonSerializerOptions
+                {
+                    Converters = { new MediaJsonConverter() }
+                });
         }
 
-        private static Dictionary<UpdateType, InternalUpdate> CreateUpdates() => new Dictionary<UpdateType, InternalUpdate>
+        private static Dictionary<UpdateType, Update> CreateUpdates()
         {
+            var audio = new Audio(
+                "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
+                string.Empty,
+                TimeSpan.FromMinutes(1),
+                "Title",
+                "Artist");
+            
+            var photo = new Photo(
+                "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png");
+            
+            var video = new Video(
+                "http://mirror.bigbuckbunny.de/peach/bigbuckbunny_movies/big_buck_bunny_720p_surround.avi",
+                string.Empty,
+                true);
+            
+            return new()
             {
-                UpdateType.Text,
-                new InternalUpdate
                 {
-                    AuthorId = "MockUser",
-                    Content = "Mock update"
-                }
-            },
-            {
-                UpdateType.TextWithUrl,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Content = "Mock update",
-                    Url = "https://mock-url.com"
-                }
-            },
-            {
-                UpdateType.Audio,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Media = new List<Audio>
+                    UpdateType.Text,
+                    new Update
                     {
-                        new Audio
+                        AuthorId = "MockUser",
+                        Content = "Mock update"
+                    }
+                },
+                {
+                    UpdateType.TextWithUrl,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Content = "Mock update",
+                        Url = "https://mock-url.com"
+                    }
+                },
+                {
+                    UpdateType.Audio,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Media = new List<IMedia>
                         {
-                            Type = "Audio",
-                            Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
-                            ThumbnailUrl = string.Empty,
-                            DurationSeconds = 60,
-                            Title = "Title",
-                            Artist = "Artist"
+                            audio
+                        }
+                    }
+                },
+                {
+                    UpdateType.AudioWithDetails,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Content = "Mock audio",
+                        Url = "https://mock-url.com",
+                        Media = new List<IMedia>
+                        {
+                            audio
+                        }
+                    }
+                },
+                {
+                    UpdateType.Photo,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Media = new List<IMedia>
+                        {
+                            photo
+                        }
+                    }
+                },
+                {
+                    UpdateType.PhotoWithDetails,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Content = "Mock photo",
+                        Url = "https://mock-url.com",
+                        Media = new List<IMedia>
+                        {
+                            photo
+                        }
+                    }
+                },
+                {
+                    UpdateType.Video,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Media = new List<IMedia>
+                        {
+                            video
+                        }
+                    }
+                },
+                {
+                    UpdateType.VideoWithDetails,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Content = "Mock video",
+                        Url = "https://mock-url.com",
+                        Media = new List<IMedia>
+                        {
+                            video
+                        }
+                    }
+                },
+                {
+                    UpdateType.MultipleMedia,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Media = new List<IMedia>
+                        {
+                            video,
+                            photo,
+                            audio
+                        }
+                    }
+                },
+                {
+                    UpdateType.MultipleMediaWithDetails,
+                    new Update
+                    {
+                        AuthorId = "MockUser",
+                        Content = "Mock multiple media",
+                        Url = "https://mock-url.com",
+                        Media = new List<IMedia>
+                        {
+                            video,
+                            photo,
+                            audio
                         }
                     }
                 }
-            },
-            {
-                UpdateType.AudioWithDetails,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Content = "Mock audio",
-                    Url = "https://mock-url.com",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Audio",
-                            Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
-                            DurationSeconds = 60,
-                            ThumbnailUrl = string.Empty,
-                            Title = "Title",
-                            Artist = "Artist"
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.Photo,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.PhotoWithDetails,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Content = "Mock photo",
-                    Url = "https://mock-url.com",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.Video,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.VideoWithDetails,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Content = "Mock video",
-                    Url = "https://mock-url.com",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.MultipleMedia,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Video",
-                            Url = "http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-                            ThumbnailUrl = string.Empty
-                        }, 
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            },
-            {
-                UpdateType.MultipleMediaWithDetails,
-                new InternalUpdate
-                {
-                    AuthorId = "MockUser",
-                    Content = "Mock multiple media",
-                    Url = "https://mock-url.com",
-                    Media = new List<Audio>
-                    {
-                        new Audio
-                        {
-                            Type = "Video",
-                            Url = "http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-                            ThumbnailUrl = string.Empty
-                        }, 
-                        new Audio
-                        {
-                            Type = "Photo",
-                            Url = "https://www.creare.co.uk/wp-content/uploads/2016/02/google-1018443_1920.png",
-                            ThumbnailUrl = string.Empty
-                        } 
-                    }
-                }
-            }
-        };
+            };
+        }
 
         private void Produce(object o)
         {

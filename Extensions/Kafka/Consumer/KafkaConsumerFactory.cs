@@ -26,7 +26,7 @@ namespace Extensions
 
             var consumerGroupConfig = new ConsumerGroupConfiguration
             {
-                DefaultOffsetToReadFrom = Offset.Earliest
+                DefaultOffsetToReadFrom = Offset.Latest
             };
             consumer.Subscribe(
                 config.GroupId, new [] { config.Topic }, consumerGroupConfig);

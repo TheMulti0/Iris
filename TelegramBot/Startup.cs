@@ -61,7 +61,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
             {
                 Converters =
                 {
-                    new MediaJsonSerializer()
+                    new MediaJsonConverter()
                 }
             })
         .AddConsumer<string, string>(configConsumerConfig)

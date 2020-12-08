@@ -6,7 +6,6 @@ using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UpdatesConsumer;
 
 namespace TelegramBot.Tests
 {
@@ -25,7 +24,7 @@ namespace TelegramBot.Tests
                 builder => builder.AddTestsLogging(context));
 
             _config = Result<TelegramConfig>.Failure("Default config");
-            
+
             var configsProvider = new FileConfigProvider();
             configsProvider.Configs.Subscribe(result => _config = result);
 
@@ -37,7 +36,7 @@ namespace TelegramBot.Tests
 
             return Task.Delay(1000); // Wait for JSON config to be read
         }
-        
+
         [TestMethod]
         public async Task TestText()
         {
@@ -48,18 +47,19 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Content = "Mock update"
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestLongText()
         {
             User user = GetFirstConfiguredUser();
 
             var content = "";
-            for (int i = 0; i < 5000; i++)
+            for (var i = 0; i < 5000; i++)
             {
                 content += $"{i} \n";
             }
@@ -69,11 +69,12 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Content = content
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestTextWithUrl()
         {
@@ -85,13 +86,13 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Content = "Mock update",
                     Url = "https://mock-url.com"
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
-        
-        
+
+
         [TestMethod]
         public async Task TestAudio()
         {
@@ -102,20 +103,20 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
-                    {   
-                        new Audio
-                        {
-                            Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
-                            DurationSeconds = 297,
-                            Title = "Title",
-                            Artist = "Artist"
-                        } 
+                    {
+                        new Audio(
+                            "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
+                            string.Empty,
+                            TimeSpan.FromSeconds(297),
+                            "Title",
+                            "Artist")
                     }
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestPhoto()
         {
@@ -126,17 +127,15 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
-                    {   
-                        new Photo
-                        {
-                            Url = PhotoUrl
-                        } 
+                    {
+                        new Photo(PhotoUrl)
                     }
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestPhotoWithDetails()
         {
@@ -147,26 +146,24 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
-                    {   
-                        new Video
-                        {
-                            Url = PhotoUrl
-                        } 
+                    {
+                        new Video(PhotoUrl, string.Empty, IsBestFormat: true)
                     },
                     Content = "Mock photo",
                     Url = "https://mock-url.com"
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestPhotoWithLongText()
         {
             User user = GetFirstConfiguredUser();
 
             var content = "";
-            for (int i = 0; i < 5000; i++)
+            for (var i = 0; i < 5000; i++)
             {
                 content += $"{i} \n";
             }
@@ -178,16 +175,14 @@ namespace TelegramBot.Tests
                     Content = content,
                     Media = new List<IMedia>
                     {
-                        new Photo
-                        {
-                            Url = PhotoUrl
-                        }
+                        new Photo(PhotoUrl)
                     }
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestVideo()
         {
@@ -198,17 +193,15 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
-                    {   
-                        new Video
-                        {
-                            Url = VideoUrl
-                        } 
+                    {
+                        new Video(VideoUrl, string.Empty, true)
                     }
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestVideoWithDetails()
         {
@@ -218,20 +211,18 @@ namespace TelegramBot.Tests
                 new Update
                 {
                     AuthorId = user.UserNames[0],
-                    Media = new List<IMedia> 
-                    {   
-                        new Video
-                        {
-                            Url = VideoUrl
-                        } 
+                    Media = new List<IMedia>
+                    {
+                        new Video(VideoUrl, string.Empty, IsBestFormat: true)
                     },
                     Content = "Mock video",
                     Url = "https://mock-url.com"
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
-        
+
         [TestMethod]
         public async Task TestMultipleMediaWithDetails()
         {
@@ -242,20 +233,15 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
-                    {   
-                        new Video
-                        {
-                            Url = VideoUrl
-                        },
-                        new Photo
-                        {
-                            Url = PhotoUrl
-                        } 
+                    {
+                        new Video(VideoUrl, string.Empty, true),
+                        new Photo(PhotoUrl)
                     },
                     Content = "Mock medias",
                     Url = "https://mock-url.com"
-                }, "test");
-            
+                },
+                "test");
+
             await _bot.FlushAsync();
         }
 

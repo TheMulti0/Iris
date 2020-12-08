@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Common
 {
-    public class MediaJsonSerializer : JsonConverter<IMedia>
+    public class MediaJsonConverter : JsonConverter<IMedia>
     {
         private const string TypeDiscriminator = "type";
 
@@ -20,16 +23,33 @@ namespace Common
             {
                 default:
                     return JsonSerializer.Deserialize<Photo>(rawText, options);
-                case "Video":
+                
+                case nameof(Video):
                     return JsonSerializer.Deserialize<Video>(rawText, options);
-                case "Audio":
+                
+                case nameof(Audio):
                     return JsonSerializer.Deserialize<Audio>(rawText, options);
             }
         }
 
-        public override void Write(Utf8JsonWriter writer, IMedia value, JsonSerializerOptions options)
+        public override void Write(
+            Utf8JsonWriter writer, IMedia value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            Type valueType = value.GetType();
+            
+            var dictionary = new Dictionary<string, object>
+            {
+                {
+                    TypeDiscriminator, valueType.Name
+                }
+            };
+
+            foreach (PropertyInfo property in valueType.GetProperties())
+            {
+                dictionary.Add(property.Name, property.GetValue(value));
+            }
+            
+            JsonSerializer.Serialize(writer, dictionary);
         }
     }
 }

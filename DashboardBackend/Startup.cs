@@ -73,7 +73,7 @@ namespace DashboardBackend
                 {
                     Converters =
                     {
-                        new MediaJsonSerializer()
+                        new MediaJsonConverter()
                     }
                 })
                 .AddScoped<ApplicationDbContext>()

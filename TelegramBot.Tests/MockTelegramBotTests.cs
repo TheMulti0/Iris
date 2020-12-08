@@ -13,6 +13,11 @@ namespace TelegramBot.Tests
     [TestClass]
     public class MockTelegramBotTests
     {
+        private const string UpdateUrl = "https://mock-url.com";
+        private const string PhotoUrl = "https://mock-photo-url.com";
+        private const string VideoUrl = "https://mock-video-url.com";
+        private const string AudioUrl = "https://mock-audio-url.com";
+        
         private static Result<TelegramConfig> _config;
         private static TelegramBot _bot;
 
@@ -59,7 +64,7 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Content = "Mock update",
-                    Url = "https://mock-url.com"
+                    Url = UpdateUrl
                 }, "test");
             
             await _bot.FlushAsync();
@@ -76,13 +81,12 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia> 
                     {   
-                        new Audio
-                        {
-                            Url = "https://awaod01.streamgates.net/103fm_aw/nis1109206.mp3?aw_0_1st.collectionid=nis&aw_0_1st.episodeid=109206&aw_0_1st.skey=1599814244&listeningSessionID=5f159c950b71b138_191_254__54fddcd17821d4ada536bb55cbcd9a3084e57e35",
-                            DurationSeconds = 60,
-                            Title = "Title",
-                            Artist = "Artist"
-                        } 
+                        new Audio(
+                            AudioUrl,
+                            string.Empty,
+                            TimeSpan.FromMinutes(1),
+                            "Title",
+                            "Artist")
                     }
                 }, "test");
             
@@ -100,10 +104,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {   
-                        new Photo
-                        {
-                            Url = "https://mock-photo-url.com"
-                        } 
+                        new Photo(PhotoUrl)
                     }
                 }, "test");
             
@@ -121,13 +122,10 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {   
-                        new Photo
-                        {
-                            Url = "https://mock-photo-url.com"
-                        } 
+                        new Photo(PhotoUrl)
                     },
                     Content = "Mock photo",
-                    Url = "https://mock-url.com"
+                    Url = UpdateUrl
                 }, "test");
             
             
@@ -145,10 +143,10 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {
-                        new Video
-                        {
-                            Url = "https://mock-video-url.com"
-                        } 
+                        new Video(
+                            VideoUrl,
+                            string.Empty,
+                            true)
                     }
                 }, "test");
             
@@ -166,13 +164,14 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {   
-                        new Video
-                        {
-                            Url = "https://mock-video-url.com"
-                        } 
+                        new Video(
+                            VideoUrl,
+                            string.Empty,
+                            true
+                        )
                     },
                     Content = "Mock video",
-                    Url = "https://mock-url.com"
+                    Url = UpdateUrl
                 }, "test");
             
             await _bot.FlushAsync();
@@ -189,17 +188,15 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia> 
                     {   
-                        new Video
-                        {
-                            Url = "https://mock-video-url.com"
-                        },
-                        new Photo
-                        {
-                            Url = "https://mock-photo-url.com"
-                        } 
+                        new Video(
+                            VideoUrl,
+                            string.Empty,
+                            true
+                        ),
+                        new Photo(PhotoUrl) 
                     },
                     Content = "Mock medias",
-                    Url = "https://mock-url.com"
+                    Url = UpdateUrl
                 }, "test");
             
             await _bot.FlushAsync();

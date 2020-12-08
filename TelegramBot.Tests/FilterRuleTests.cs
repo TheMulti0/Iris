@@ -57,10 +57,7 @@ namespace TelegramBot.Tests
                     Content = "Mock update",
                     Media = new List<IMedia>
                     {   
-                        new Photo
-                        {
-                            Url = "https://mock-photo-url.com"
-                        } 
+                        new Photo("https://mock-photo-url.com")
                     }
                 }, "test");
             

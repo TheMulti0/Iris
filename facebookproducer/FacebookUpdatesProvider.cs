@@ -55,22 +55,17 @@ namespace FacebookProducer
         private static IEnumerable<IMedia> GetMedia(Post post)
         {
             IEnumerable<Photo> photos = post.Images.Select(
-                url => new Photo
-                {
-                    Url = url
-                });
+                url => new Photo(url));
 
             if (post.VideoUrl == null)
             {
                 return photos;
             }
-            
-            var video = new Video
-            {
-                Url = post.VideoUrl,
-                ThumbnailUrl = post.VideoThumbnailUrl,
-                IsHighestFormatAvaliable = false
-            };
+
+            var video = new Video(
+                post.VideoUrl,
+                post.VideoThumbnailUrl,
+                false);
 
             return photos.Concat(new IMedia[] { video });
         }

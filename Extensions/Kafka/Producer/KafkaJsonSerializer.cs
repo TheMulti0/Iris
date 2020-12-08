@@ -31,16 +31,5 @@ namespace Extensions
 
             return StringSerializer.Serialize(json, toStream);
         }
-
-        private static JsonSerializerOptions CreateJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new DateTimeConverter()
-                }
-            };
-        }
     }
 }

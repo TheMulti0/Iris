@@ -26,17 +26,15 @@ namespace UpdatesProducer
             int? width = root.GetPropertyOrNull("duration")?.GetIntOrNull();
             int? height = root.GetPropertyOrNull("duration")?.GetIntOrNull();
 
-            // TimeSpan? duration = GetDuration(durationSeconds);
+            TimeSpan? duration = GetDuration(durationSeconds);
 
-            return new Video
-            {
-                Url = extractedUrl,
-                ThumbnailUrl = thumbnailUrl,
-                DurationSeconds = (int?) durationSeconds,
-                Width = width,
-                Height = height,
-                IsHighestFormatAvaliable = true
-            };
+            return new Video(
+                extractedUrl,
+                thumbnailUrl,
+                IsBestFormat: true,
+                duration,
+                width,
+                height);
         }
 
         private static async Task<JsonElement> GetResponse(string url)

@@ -109,16 +109,16 @@ namespace TelegramBot
                         SupportsStreaming = true
                     };
 
-                    if (media.ThumbnailUrl != null)
+                    if (v.ThumbnailUrl != null)
                     {
                         video.Thumb = new InputMedia(
-                            await _httpClient.GetStreamAsync(media.ThumbnailUrl, message.CancellationToken),
+                            await _httpClient.GetStreamAsync(v.ThumbnailUrl, message.CancellationToken),
                             "Thumbnail");
                     }
                     
-                    if (v.DurationSeconds != null || v.DurationSeconds != 0)
+                    if (v.Duration?.Seconds != null)
                     {
-                        video.Duration = v.DurationSeconds ?? default;
+                        video.Duration = (int) v.Duration?.Seconds;
                     }
                     if (v.Width != null)
                     {
