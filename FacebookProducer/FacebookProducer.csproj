@@ -31,6 +31,23 @@
       <None Update="get_posts.py">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Remove="__main__.py" />
+      <None Remove="__init__.py" />
+      <None Remove="updateapi\update_factory.py" />
+      <None Remove="updateapi\media_factory.py" />
+      <None Remove="updateapi\facebook_updates_provider.py" />
+      <None Remove="updateapi\__init__.py" />
+      <None Remove="tests\posts_provider_tests.py" />
+      <None Remove="tests\mock_posts_provider.py" />
+      <None Remove="tests\facebook_updates_provider_tests.py" />
+      <None Remove="posts\posts_provider.py" />
+      <None Remove="posts\post.py" />
+      <None Remove="posts\iposts_provider.py" />
+      <None Remove="posts\__init__.py" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="tests" />
     </ItemGroup>
 
 </Project>
