@@ -6,9 +6,9 @@ This is Iris - a scalable social media update manager.
 The producers use MongoDB to save each configured user's last update time, that is used to make sure no update will be sent twice.
 
 Supported producers sources:
- - [x] YouTube
  - [x] Twitter
  - [x] Facebook
+ - [ ] YouTube
  - [ ] Instagram
  - [ ] Soundcloud
  - [ ] Interviews
