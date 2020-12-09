@@ -15,7 +15,8 @@ namespace UpdatesProducer
         {
             return services.AddUpdatesProducer<TProvider>(
                 configuration.GetSection<MongoDbConfig>("MongoDb"),
-                configuration.GetSection<KafkaConfig>("Kafka"),
+                configuration.GetSection<RabbitMqConfig>("UpdatesPublisher"),
+                configuration.GetSection<UpdatesProviderBaseConfig>("UpdatesProvider"),
                 configuration.GetSection<PollerConfig>("Poller"),
                 configuration.GetSection<VideoExtractorConfig>("VideoExtractor"));
         }
@@ -23,7 +24,8 @@ namespace UpdatesProducer
         public static IServiceCollection AddUpdatesProducer<TProvider>(
             this IServiceCollection services,
             MongoDbConfig mongoDbConfig,
-            KafkaConfig kafkaConfig,
+            RabbitMqConfig rabbitMqConfig,
+            UpdatesProviderBaseConfig updatesProviderBaseConfig,
             PollerConfig pollerConfig,
             VideoExtractorConfig videoExtractorConfig) where TProvider : class, IUpdatesProvider
         {
@@ -32,10 +34,10 @@ namespace UpdatesProducer
                 : services.AddUpdatesProducerMockRepositories();
             
             return services
-                .AddKafkaUpdatesProducer(kafkaConfig)
-                .AddSingleton<IUpdatesProducer, KafkaUpdatesProducer>()
+                .AddRabbitMqUpdatesPublisher(rabbitMqConfig)
+                .AddSingleton<IUpdatesPublisher, RabbitMqUpdatesPublisher>()
                 .AddVideoExtractor(videoExtractorConfig)
-                .AddSingleton<IUpdatesProvider, TProvider>()
+                .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
                 .AddUpdatesPollerService(pollerConfig);
         }
 
@@ -69,22 +71,14 @@ namespace UpdatesProducer
                 .AddSingleton(config);
         }
 
-        public static IServiceCollection AddKafkaUpdatesProducer(
+        public static IServiceCollection AddRabbitMqUpdatesPublisher(
             this IServiceCollection services,
-            KafkaConfig config)
+            RabbitMqConfig config)
         {
-            var baseKafkaConfig = new BaseKafkaConfig
-            {
-                BrokersServers = config.BrokersServers,
-                Topic = config.Updates.Topic,
-                KeySerializationType = SerializationType.String,
-                ValueSerializationType = SerializationType.Json
-            };
-
             return services
-                .AddProducer<string, Update>(baseKafkaConfig)
                 .AddSingleton(config)
-                .AddSingleton<IUpdatesProducer, KafkaUpdatesProducer>();
+                .AddSingleton<RabbitMqPublisher>()
+                .AddSingleton<IUpdatesPublisher, RabbitMqUpdatesPublisher>();
         }
         
 
@@ -95,6 +89,15 @@ namespace UpdatesProducer
             return services
                 .AddSingleton(config)
                 .AddSingleton<VideoExtractor>();
+        }
+
+        public static IServiceCollection AddUpdatesProvider<TProvider>(
+            this IServiceCollection services,
+            UpdatesProviderBaseConfig config) where TProvider : class, IUpdatesProvider
+        {
+            return services
+                .AddSingleton(config)
+                .AddSingleton<IUpdatesProvider, TProvider>();
         }
 
         public static IServiceCollection AddUpdatesPollerService(

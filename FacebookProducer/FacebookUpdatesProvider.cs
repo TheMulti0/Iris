@@ -11,10 +11,14 @@ namespace FacebookProducer
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
+        private readonly UpdatesProviderBaseConfig _config;
         private readonly ILogger<FacebookUpdatesProvider> _logger;
 
-        public FacebookUpdatesProvider(ILogger<FacebookUpdatesProvider> logger)
+        public FacebookUpdatesProvider(
+            UpdatesProviderBaseConfig config,
+            ILogger<FacebookUpdatesProvider> logger)
         {
+            _config = config;
             _logger = logger;
         }
 
@@ -29,7 +33,7 @@ namespace FacebookProducer
                     scriptName, userId, 1);
                 
                 return JsonConvert.DeserializeObject<Post[]>(response)
-                    .Select(ToUpdate);
+                    .Select(ToUpdate(userId));
             }
             catch (Exception e)
             {
@@ -39,16 +43,17 @@ namespace FacebookProducer
             return Enumerable.Empty<Update>();
         }
 
-        private static Update ToUpdate(Post post)
+        private Func<Post, Update> ToUpdate(string userId)
         {
-            return new()
+            return post => new Update
             {
                 Content = post.Text,
-                AuthorId = post.AuthorId,
+                AuthorId = userId,
                 CreationDate = post.CreationDate,
                 Url = post.PostUrl,
                 Media = GetMedia(post).ToList(),
-                Repost = post.Text == post.SharedText
+                Repost = post.Text == post.SharedText,
+                Source = _config.Name
             };
         }
 

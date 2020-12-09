@@ -32,8 +32,6 @@ namespace FacebookProducer
             string Link,
         [JsonProperty("user_id")]
             string UserId,
-        [JsonProperty("author_id")]
-            string AuthorId,
         [JsonProperty("images")]
             string[] Images);
 }

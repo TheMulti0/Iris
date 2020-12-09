@@ -11,8 +11,8 @@ namespace Extensions
         private readonly IConnection _connection;
         private readonly IModel _model;
 
-        private readonly Subject<BasicDeliverEventArgs> _received = new();
-        public IObservable<BasicDeliverEventArgs> Received => _received;
+        private readonly Subject<BasicDeliverEventArgs> _messages = new();
+        public IObservable<BasicDeliverEventArgs> Messages => _messages;
 
         public RabbitMqConsumer(RabbitMqConfig config)
         {
@@ -28,7 +28,7 @@ namespace Extensions
 
             consumer.Received += (_, args) =>
             {
-                _received.OnNext(args);
+                _messages.OnNext(args);
             };
 
             _model.BasicConsume(config.Destination, true, consumer);

@@ -13,7 +13,7 @@ namespace UpdatesProducer
     public class UpdatesPollerService : BackgroundService
     {
         private readonly PollerConfig _config;
-        private readonly IUpdatesProducer _updatesProducer;
+        private readonly IUpdatesPublisher _updatesPublisher;
         private readonly IUpdatesProvider _updatesProvider;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
@@ -22,7 +22,7 @@ namespace UpdatesProducer
 
         public UpdatesPollerService(
             PollerConfig config,
-            IUpdatesProducer updatesProducer, 
+            IUpdatesPublisher updatesPublisher, 
             IUpdatesProvider updatesProvider,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
@@ -30,7 +30,7 @@ namespace UpdatesProducer
             ILogger<UpdatesPollerService> logger)
         {
             _config = config;
-            _updatesProducer = updatesProducer;
+            _updatesPublisher = updatesPublisher;
             _updatesProvider = updatesProvider;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
@@ -95,7 +95,7 @@ namespace UpdatesProducer
 
         private async Task SendUpdate(Update update)
         {
-            _updatesProducer.Send(update);
+            _updatesPublisher.Send(update);
 
             if (_config.StoreSentUpdates)
             {

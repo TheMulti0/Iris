@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UpdatesProducer;
 
 namespace FacebookProducer.Tests
 {
@@ -21,6 +22,7 @@ namespace FacebookProducer.Tests
                 });
             
             _updatesProvider = new FacebookUpdatesProvider(
+                new UpdatesProviderBaseConfig { Name = "Facebook" },
                 loggerFactory.CreateLogger<FacebookUpdatesProvider>());
         }
 

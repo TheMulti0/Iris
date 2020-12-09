@@ -59,7 +59,7 @@ namespace TelegramBot.Tests
                     {   
                         new Photo("https://mock-photo-url.com")
                     }
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }

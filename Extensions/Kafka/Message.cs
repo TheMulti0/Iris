@@ -15,7 +15,7 @@ namespace Extensions
         public override string ToString()
         {
             string keyString = Key.HasValue
-                ? $"Key = {Key}, "
+                ? $"Key = {Key}"
                 : string.Empty;
 
             string valueString = Value.HasValue

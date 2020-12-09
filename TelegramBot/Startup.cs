@@ -44,27 +44,15 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var updatesConsumerConfig = rootConfig
         .GetSection("UpdatesConsumer")
         ?
-        .Get<ConsumerConfig>();
-
-    var configConsumerConfig = rootConfig
-        .GetSection("ConfigConsumer")
-        ?.Get<ConsumerConfig>();
+        .Get<RabbitMqConfig>();
 
     var defaultTelegramConfig = rootConfig
         .GetSection("Telegram")
         ?.Get<TelegramConfig>();
 
     services
-        .AddConsumer<string, Update>(
-            updatesConsumerConfig,
-            new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new MediaJsonConverter()
-                }
-            })
-        .AddConsumer<string, string>(configConsumerConfig)
+        .AddSingleton(updatesConsumerConfig)
+        .AddSingleton<RabbitMqConsumer>()
         .AddSingleton(defaultTelegramConfig)
         .AddSingleton<IConfigProvider, ConfigProvider>()
         .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()

@@ -59,7 +59,7 @@ namespace Extensions.Tests
         {
             var consumer = new RabbitMqConsumer(_consumerConfig);
 
-            return consumer.Received;
+            return consumer.Messages;
         }
 
         private static void PublishOneMessage(string updateContent)

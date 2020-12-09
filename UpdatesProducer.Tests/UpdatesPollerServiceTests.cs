@@ -12,7 +12,7 @@ namespace UpdatesProducer.Tests
     [TestClass]
     public class UpdatesPollerServiceTests
     {
-        private static MockUpdatesProducer _producer;
+        private static MockUpdatesPublisher _publisher;
         private static IHostedService _service;
 
         [ClassInitialize]
@@ -28,14 +28,14 @@ namespace UpdatesProducer.Tests
             IServiceCollection addHostedService = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
                 .AddUpdatesProducerMockRepositories()
-                .AddSingleton<IUpdatesProducer, MockUpdatesProducer>()
+                .AddSingleton<IUpdatesPublisher, MockUpdatesPublisher>()
                 .AddSingleton<IUpdatesProvider, MockUpdatesProvider>()
                 .AddUpdatesPollerService(pollerConfig);
             
             var services = addHostedService
                 .BuildServiceProvider();
             
-            _producer = (MockUpdatesProducer) services.GetService<IUpdatesProducer>();
+            _publisher = (MockUpdatesPublisher) services.GetService<IUpdatesPublisher>();
             _service = services.GetService<IHostedService>();
         }
         
@@ -50,7 +50,7 @@ namespace UpdatesProducer.Tests
         [Timeout(1000)]
         public async Task TestProduce()
         {
-            var first = await _producer.Updates.FirstOrDefaultAsync();
+            var first = await _publisher.Updates.FirstOrDefaultAsync();
             
             Assert.IsNotNull(first);
         }

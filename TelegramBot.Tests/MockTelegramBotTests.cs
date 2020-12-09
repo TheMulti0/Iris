@@ -49,7 +49,7 @@ namespace TelegramBot.Tests
                 {
                     AuthorId = user.UserNames[0],
                     Content = "Mock update"
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -65,7 +65,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Content = "Mock update",
                     Url = UpdateUrl
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -88,7 +88,7 @@ namespace TelegramBot.Tests
                             "Title",
                             "Artist")
                     }
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -106,7 +106,7 @@ namespace TelegramBot.Tests
                     {   
                         new Photo(PhotoUrl)
                     }
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -126,7 +126,7 @@ namespace TelegramBot.Tests
                     },
                     Content = "Mock photo",
                     Url = UpdateUrl
-                }, "test");
+                });
             
             
             await _bot.FlushAsync();
@@ -148,7 +148,7 @@ namespace TelegramBot.Tests
                             string.Empty,
                             true)
                     }
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -172,7 +172,7 @@ namespace TelegramBot.Tests
                     },
                     Content = "Mock video",
                     Url = UpdateUrl
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }
@@ -197,7 +197,7 @@ namespace TelegramBot.Tests
                     },
                     Content = "Mock medias",
                     Url = UpdateUrl
-                }, "test");
+                });
             
             await _bot.FlushAsync();
         }

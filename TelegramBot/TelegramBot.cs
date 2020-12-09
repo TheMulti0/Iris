@@ -86,7 +86,7 @@ namespace TelegramBot
             }
         }
 
-        public async Task OnUpdateAsync(Update update, string source)
+        public async Task OnUpdateAsync(Update update)
         {
             (TelegramConfig config, MessageSender sender) = GetState();
 
@@ -102,7 +102,7 @@ namespace TelegramBot
             {
                 try
                 {
-                    MessageInfo messageInfo = _messageBuilder.Build(update, source, user, chatId);
+                    MessageInfo messageInfo = _messageBuilder.Build(update, user, chatId);
 
                     await SendChatUpdate(update, sender, messageInfo, chatId);
                 }

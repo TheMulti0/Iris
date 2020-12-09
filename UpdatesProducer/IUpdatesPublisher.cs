@@ -2,7 +2,7 @@ using Common;
 
 namespace UpdatesProducer
 {
-    public interface IUpdatesProducer
+    public interface IUpdatesPublisher
     {
         public void Send(Update update);
     }
