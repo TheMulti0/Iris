@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Text.Json;
@@ -14,7 +14,7 @@ namespace Extensions.Tests
     ///     Requires a Kafka broker running
     /// </summary>
     [TestClass]
-    public class ConsumerProducerIntegrationTests
+    public class KafkaIntegrationTests
     {
         private const string UpdateContent = "This is a test!";
 
