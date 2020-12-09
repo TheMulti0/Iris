@@ -116,12 +116,9 @@ namespace UpdatesProducer
 
             await foreach (Update update in newUpdates)
             {
-                if (update.Media?.Any() == true)
-                {
-                    yield return await WithExtractedVideo(update, cancellationToken);
-                }
-
-                yield return update;
+                yield return update.Media?.Any() == true
+                    ? await WithExtractedVideo(update, cancellationToken) 
+                    : update;
             }
         }
 

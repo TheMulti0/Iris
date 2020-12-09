@@ -30,17 +30,9 @@ namespace UpdatesProducer
             services = mongoDbConfig != null 
                 ? services.AddUpdatesProducerMongoRepositories(mongoDbConfig) 
                 : services.AddUpdatesProducerMockRepositories();
-
-            var baseKafkaConfig = new BaseKafkaConfig
-            {
-                BrokersServers = kafkaConfig.BrokersServers,
-                Topic = kafkaConfig.Updates.Topic,
-                KeySerializationType = SerializationType.String,
-                ValueSerializationType = SerializationType.Json
-            };
             
             return services
-                .AddProducer<string, Update>(baseKafkaConfig)
+                .AddKafkaUpdatesProducer(kafkaConfig)
                 .AddSingleton<IUpdatesProducer, KafkaUpdatesProducer>()
                 .AddVideoExtractor(videoExtractorConfig)
                 .AddSingleton<IUpdatesProvider, TProvider>()
@@ -70,9 +62,31 @@ namespace UpdatesProducer
             this IServiceCollection services,
             MongoDbConfig config)
         {
-            return services.AddSingleton<IMongoDbContext>(
-                new MongoDbContext(config.ConnectionString, config.DatabaseName));
+            var mongoDbContext = new MongoDbContext(config.ConnectionString, config.DatabaseName);
+            
+            return services
+                .AddSingleton<IMongoDbContext>(mongoDbContext)
+                .AddSingleton(config);
         }
+
+        public static IServiceCollection AddKafkaUpdatesProducer(
+            this IServiceCollection services,
+            KafkaConfig config)
+        {
+            var baseKafkaConfig = new BaseKafkaConfig
+            {
+                BrokersServers = config.BrokersServers,
+                Topic = config.Updates.Topic,
+                KeySerializationType = SerializationType.String,
+                ValueSerializationType = SerializationType.Json
+            };
+
+            return services
+                .AddProducer<string, Update>(baseKafkaConfig)
+                .AddSingleton(config)
+                .AddSingleton<IUpdatesProducer, KafkaUpdatesProducer>();
+        }
+        
 
         public static IServiceCollection AddVideoExtractor(
             this IServiceCollection services,
@@ -85,10 +99,10 @@ namespace UpdatesProducer
 
         public static IServiceCollection AddUpdatesPollerService(
             this IServiceCollection services,
-            PollerConfig pollerConfig)
+            PollerConfig config)
         {
             return services
-                .AddSingleton(pollerConfig)
+                .AddSingleton(config)
                 .AddHostedService<UpdatesPollerService>();
         }
     }
