@@ -1,26 +1,19 @@
 version: '3.4'
 
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
-    restart: always
-    networks:
-      - kafka_network
-
-  kafka:
-    image: wurstmeister/kafka
-    container_name: kafka
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    container_name: 'rabbitmq'
     environment:
-      KAFKA_BROKER_ID: 0
-      KAFKA_HEAP_OPTS: -Xmx256M -Xms128M
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "updates:1:1, configs:1:1"
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    volumes:
+      - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
     networks:
-      - kafka_network
-    depends_on:
-      - zookeeper
+      - rabbitmq_network
 
   mongodb: 
     image: mongo:latest
@@ -37,68 +30,30 @@ services:
       context: .
       dockerfile: TelegramBot/Dockerfile
     container_name: telegrambot
+    restart: always
     volumes:
       - './TelegramBot/appsettings.json:/app/appsettings.json'
-    restart: always
     networks:
-      - kafka_network
+      - rabbitmq_network
     depends_on:
-      - kafka
-
-  twitterproducer:
-    image: themulti0/iris_twitterproducer:latest
-    build:
-      context: .
-      dockerfile: updatesproducer/Dockerfile
-      args:
-        PROJECT_DIR: 'twitterproducer'
-    restart: always
-    container_name: twitterproducer
-    volumes:
-      - './twitterproducer/appsettings.json:/app/appsettings.json'
-    networks:
-      - kafka_network
-      - mongodb_network
-    depends_on:
-      - kafka
-      - mongodb
+      - rabbitmq
 
   facebookproducer:
     image: themulti0/iris_facebookproducer:latest
     build:
       context: .
-      dockerfile: updatesproducer/Dockerfile
-      args:
-        PROJECT_DIR: 'facebookproducer'
-    restart: always
+      dockerfile: FacebookProducer/Dockerfile
     container_name: facebookproducer
-    volumes:
-      - './facebookproducer/appsettings.json:/app/appsettings.json'
-    networks:
-      - kafka_network
-      - mongodb_network
-    depends_on:
-      - kafka
-      - mongodb
-
-  youtubeproducer:
-    image: themulti0/iris_youtubeproducer:latest
-    build:
-      context: .
-      dockerfile: updatesproducer/Dockerfile
-      args:
-        PROJECT_DIR: 'youtubeproducer'
     restart: always
-    container_name: youtubeproducer
     volumes:
-      - './youtubeproducer/appsettings.json:/app/appsettings.json'
+      - './FacebookProducer/appsettings.json:/app/appsettings.json'
     networks:
-      - kafka_network
+      - rabbitmq_network
       - mongodb_network
     depends_on:
-      - kafka
+      - rabbitmq
       - mongodb
 
 networks:
-  kafka_network:
+  rabbitmq_network:
   mongodb_network:

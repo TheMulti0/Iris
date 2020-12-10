@@ -35,7 +35,6 @@ namespace UpdatesProducer
             
             return services
                 .AddRabbitMqUpdatesPublisher(rabbitMqConfig)
-                .AddSingleton<IUpdatesPublisher, RabbitMqUpdatesPublisher>()
                 .AddVideoExtractor(videoExtractorConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
                 .AddUpdatesPollerService(pollerConfig);

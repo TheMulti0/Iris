@@ -12,7 +12,7 @@ namespace UpdatesProducer
             string fileName,
             params object[] parameters)
         {
-            return Execute("python", fileName, parameters);
+            return Execute("python3", fileName, parameters);
         }
         
         public static async Task<string> Execute(
