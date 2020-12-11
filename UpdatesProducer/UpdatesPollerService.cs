@@ -108,7 +108,9 @@ namespace UpdatesProducer
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(userId);
-            IOrderedEnumerable<Update> sortedUpdates = updates.OrderBy(update => update.CreationDate);
+            IOrderedEnumerable<Update> sortedUpdates = updates
+                .Reverse()
+                .OrderBy(update => update.CreationDate);
 
             UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(userId);
 
