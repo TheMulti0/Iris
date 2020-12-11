@@ -53,6 +53,22 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+      
+  twitterproducer:
+    image: themulti0/iris_twitterproducer:latest
+    build:
+      context: .
+      dockerfile: TwitterProducer/Dockerfile
+    container_name: twitterproducer
+    restart: always
+    volumes:
+      - './TwitterProducer/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
 
 networks:
   rabbitmq_network:
