@@ -14,8 +14,8 @@ def main(args):
 
     if len(args) > 2:
         ytdl_options = ytdl_options.update({
-            'username': args[3],
-            'password': args[4]
+            'username': args[2],
+            'password': args[3]
         })
 
     with YoutubeDL(ytdl_options) as ytdl:

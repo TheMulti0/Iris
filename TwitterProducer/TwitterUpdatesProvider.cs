@@ -39,7 +39,7 @@ namespace TwitterProducer
         {
             var parameters = new GetUserTimelineParameters(userId)
             {
-                PageSize = 20,
+                PageSize = 10,
                 TweetMode = TweetMode.Extended
             };
             ITweet[] tweets = await _twitterClient.Timelines.GetUserTimelineAsync(parameters);
