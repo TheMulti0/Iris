@@ -79,6 +79,8 @@ namespace UpdatesProducer
             
             foreach (Update update in updates)
             {
+                await Task.Delay(_config.SendDelay, cancellationToken);
+                
                 await SendUpdate(update);
             }
 
@@ -108,9 +110,9 @@ namespace UpdatesProducer
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(userId);
-            IOrderedEnumerable<Update> sortedUpdates = updates
+            List<Update> sortedUpdates = updates
                 .Reverse()
-                .OrderBy(update => update.CreationDate);
+                .OrderBy(update => update.CreationDate).ToList();
 
             UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(userId);
 
