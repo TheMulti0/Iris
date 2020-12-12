@@ -14,8 +14,8 @@ namespace TelegramBot
         int ReplyMessageId = 0,
         bool DownloadMedia = false)
     {
-        public bool FitsInOneTextMessage => Message.Length <= TelegramConstants.MaxMediaCaptionLength;
+        public bool FitsInOneTextMessage => Message.Length <= TelegramConstants.MaxTextMessageLength;
 
-        public bool FitsInOneMediaMessage => Message.Length <= TelegramConstants.MaxTextMessageLength;
+        public bool FitsInOneMediaMessage => Message.Length <= TelegramConstants.MaxMediaCaptionLength;
     }
 }
