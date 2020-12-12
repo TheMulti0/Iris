@@ -15,17 +15,26 @@ namespace UpdatesProducer
         {
             _collection = context.SentUpdates;
 
+            if (!_collection.Indexes.List().Any()) // There shouldn't be more than one index in the collection
+            {
+                CreateExpirationIndex(config);
+            }
+        }
+
+        private void CreateExpirationIndex(MongoDbConfig config)
+        {
             IndexKeysDefinition<SentUpdate> keys = Builders<SentUpdate>.IndexKeys
                 .Ascending(update => update.SentAt);
-            
+
             var options = new CreateIndexOptions
             {
                 ExpireAfter = config.SentUpdatesExpiration ?? TimeSpan.FromDays(1)
             };
             var indexModel = new CreateIndexModel<SentUpdate>(keys, options);
-            
+
             _collection.Indexes.CreateOne(indexModel);
         }
+
         
         public Task<bool> ExistsAsync(string url)
         {
