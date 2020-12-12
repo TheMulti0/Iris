@@ -13,18 +13,17 @@ namespace UpdatesConsumer
 {
     public class UpdatesConsumerService : BackgroundService
     {
-        private readonly RabbitMqConsumer _updatesConsumer;
+        private readonly RabbitMqConfig _config;
         private readonly IUpdateConsumer _consumer;
         private readonly ILogger<UpdatesConsumerService> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
-        private IDisposable _updateSubscription;
 
         public UpdatesConsumerService(
-            RabbitMqConsumer updatesConsumer, 
+            RabbitMqConfig config, 
             IUpdateConsumer consumer,
             ILogger<UpdatesConsumerService> logger)
         {
-            _updatesConsumer = updatesConsumer;
+            _config = config;
             _consumer = consumer;
             _logger = logger;
 
@@ -39,19 +38,19 @@ namespace UpdatesConsumer
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _updateSubscription = _updatesConsumer.Messages.SubscribeAsync(OnNext);
+            var consumer = new RabbitMqConsumer(_config, OnMessage);
 
-            // Dispose the update subscription when service is stopped
-            stoppingToken.Register(() => _updateSubscription?.Dispose());
+            // Dispose the consumer when service is stopped
+            stoppingToken.Register(() => consumer.Dispose());
 
             return Task.CompletedTask;
         }
 
-        private async Task OnNext(BasicDeliverEventArgs record)
+        private async Task OnMessage(BasicDeliverEventArgs message)
         {
             try
             {
-                var update = JsonSerializer.Deserialize<Update>(record.Body.Span, _jsonSerializerOptions);
+                var update = JsonSerializer.Deserialize<Update>(message.Body.Span, _jsonSerializerOptions);
                 await _consumer.OnUpdateAsync(update);
             }
             catch (Exception e)

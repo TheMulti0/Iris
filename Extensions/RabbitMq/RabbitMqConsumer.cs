@@ -11,27 +11,29 @@ namespace Extensions
         private readonly IConnection _connection;
         private readonly IModel _model;
 
-        private readonly Subject<BasicDeliverEventArgs> _messages = new();
-        public IObservable<BasicDeliverEventArgs> Messages => _messages;
-
-        public RabbitMqConsumer(RabbitMqConfig config)
+        public RabbitMqConsumer(
+            RabbitMqConfig config,
+            Func<BasicDeliverEventArgs, Task> onMessage)
         {
             var factory = new ConnectionFactory
             {
-                Uri = config.ConnectionString
+                Uri = config.ConnectionString,
+                DispatchConsumersAsync = true
             };
             
             _connection = factory.CreateConnection();
             _model = _connection.CreateModel();
             
-            var consumer = new EventingBasicConsumer(_model);
+            var consumer = new AsyncEventingBasicConsumer(_model);
 
-            consumer.Received += (_, args) =>
+            consumer.Received += async (_, message) =>
             {
-                _messages.OnNext(args);
+                await onMessage(message);
+
+                _model.BasicAck(message.DeliveryTag, false);
             };
 
-            _model.BasicConsume(config.Destination, true, consumer);
+            _model.BasicConsume(config.Destination, false, consumer);
         }
 
         public void Dispose()

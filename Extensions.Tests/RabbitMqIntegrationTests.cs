@@ -43,23 +43,23 @@ namespace Extensions.Tests
             PublishOneMessage(UpdateContent);
             
             BasicDeliverEventArgs firstMessage = null;
-            IObservable<BasicDeliverEventArgs> consumedMessages = GetConsumedMessages();
-            consumedMessages.Subscribe(
-                args =>
-                {
-                    firstMessage = args;
-                });
+
+            Task OnMessage(BasicDeliverEventArgs args)
+            {
+                firstMessage = args;
+                return Task.CompletedTask;
+            }
+
+            Consume(OnMessage);
             await Task.Delay(1000);            
             var update = JsonSerializer.Deserialize<Update>(firstMessage.Body.Span);
 
             Assert.AreEqual(UpdateContent, update.Content);
         }
 
-        private static IObservable<BasicDeliverEventArgs> GetConsumedMessages()
+        private static void Consume(Func<BasicDeliverEventArgs, Task> onMessage)
         {
-            var consumer = new RabbitMqConsumer(_consumerConfig);
-
-            return consumer.Messages;
+            var consumer = new RabbitMqConsumer(_consumerConfig, onMessage);
         }
 
         private static void PublishOneMessage(string updateContent)
