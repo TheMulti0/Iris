@@ -79,9 +79,9 @@ namespace UpdatesProducer
             
             foreach (Update update in updates)
             {
-                await Task.Delay(_config.SendDelay, cancellationToken);
-                
                 await SendUpdate(update);
+
+                await Task.Delay(_config.SendDelay, cancellationToken);
             }
 
             if (updates.Any())
