@@ -15,7 +15,7 @@ namespace TelegramBot
             _filterRules = config.FilterRules ?? new List<FilterRule>();
         }
 
-        public MessageInfo Build(Update update, string source, User user, ChatId chatId)
+        public MessageInfo Build(Update update, User user, ChatId chatId)
         {
             bool FindFilterRule(FilterRule rule)
             {
@@ -47,7 +47,7 @@ namespace TelegramBot
             {
                 string repostPrefix = update.Repost ? " בפרסום מחדש" : string.Empty;
 
-                message = $"<a href=\"{update.Url}\">{user.DisplayName}{repostPrefix} ({source}):</a>\n\n\n{update.Content}";
+                message = $"<a href=\"{update.Url}\">{user.DisplayName}{repostPrefix} ({update.Source}):</a>\n\n\n{update.Content}";
             }
 
             List<IMedia> media = filterRule?.DisableMedia == true

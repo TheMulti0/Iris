@@ -13,15 +13,15 @@ namespace TelegramBot
         public IObservable<Result<TelegramConfig>> Configs => _configs;
 
         public ConfigProvider(
-            IKafkaConsumer<string, string> consumer,
+            // IKafkaConsumer<string, string> consumer,
             TelegramConfig defaultConfig)
         {
             _configs = new BehaviorSubject<Result<TelegramConfig>>(Result<TelegramConfig>.Success(defaultConfig));
             
-            consumer.Messages
-                .Where(ConfigBelongsToTelegram)
-                .Select(DeserializeConfig)
-                .Subscribe(_configs.OnNext);
+            // consumer.Messages
+            //     .Where(ConfigBelongsToTelegram)
+            //     .Select(DeserializeConfig)
+            //     .Subscribe(_configs.OnNext);
         }
         
         private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record) 

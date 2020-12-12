@@ -15,7 +15,7 @@ namespace DashboardBackend.Controllers
             _scopeFactory = scopeFactory;
         }
 
-        public async Task OnUpdateAsync(Update update, string source)
+        public async Task OnUpdateAsync(Update update)
         {
             using IServiceScope scope = _scopeFactory.CreateScope();
 
@@ -28,7 +28,8 @@ namespace DashboardBackend.Controllers
                 CreationDate = update.CreationDate,
                 Media = update.Media,
                 Repost = update.Repost,
-                Url = update.Url
+                Url = update.Url,
+                Source = update.Source
             });
         }
     }

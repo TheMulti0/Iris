@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+        <PackageReference Include="MongoDB.Bson" Version="2.11.4" />
+        <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
+        <PackageReference Include="MongoDbGenericRepository" Version="1.4.3" />
+        <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="extract_video.py">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Remove="tests\producer_integration_tests.py" />
+      <None Remove="tests\mongodb_tests.py" />
+      <None Remove="tests\mock_updates_provider.py" />
+      <None Remove="tests\mock_updates_producer.py" />
+      <None Remove="tests\appsettings.json" />
+      <None Remove="tests\__init__.py" />
+      <None Remove="db\user_latest_update_time.py" />
+      <None Remove="db\updates_repository.py" />
+      <None Remove="db\mongodb_config.py" />
+      <None Remove="db\iupdates_repository.py" />
+      <None Remove="db\__init__.py" />
+      <None Remove="updateapi\video_downloader.py" />
+      <None Remove="updateapi\video.py" />
+      <None Remove="updateapi\update.py" />
+      <None Remove="updateapi\photo.py" />
+      <None Remove="updateapi\imedia.py" />
+      <None Remove="updateapi\audio.py" />
+      <None Remove="updateapi\__init__.py" />
+      <None Remove="__init__.py" />
+      <None Remove="iupdates_provider.py" />
+      <None Remove="iupdatesproducer.py" />
+      <None Remove="startup.py" />
+      <None Remove="updates_poller.py" />
+      <None Remove="updates_producer.py" />
+      <None Remove="Dockerfile" />
+    </ItemGroup>
+
+</Project>

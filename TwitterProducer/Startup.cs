@@ -1,14 +1,12 @@
-using System;
+﻿using System;
 using System.IO;
-using System.Text.Json;
-using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TelegramBot;
-using UpdatesConsumer;
+using TwitterProducer;
+using UpdatesProducer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -18,8 +16,12 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
     const string fileName = "appsettings";
     const string fileType = "json";
 
+    string basePath = Path.Combine(
+        Directory.GetCurrentDirectory(),
+        Environment.GetEnvironmentVariable("CONFIG_DIRECTORY") ?? string.Empty);
+    
     builder
-        .SetBasePath(Directory.GetCurrentDirectory())
+        .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
 }
@@ -41,24 +43,11 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
-    var updatesConsumerConfig = rootConfig
-        .GetSection("UpdatesConsumer")
-        ?
-        .Get<RabbitMqConfig>();
-
-    var defaultTelegramConfig = rootConfig
-        .GetSection("Telegram")
-        ?.Get<TelegramConfig>();
-
+    var twitterConfig = rootConfig.GetSection<TwitterUpdatesProviderConfig>("UpdatesProvider");
+    
     services
-        .AddSingleton(updatesConsumerConfig)
-        .AddSingleton<RabbitMqConsumer>()
-        .AddSingleton(defaultTelegramConfig)
-        .AddSingleton<IConfigProvider, ConfigProvider>()
-        .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
-        .AddSingleton<MessageBuilder>()
-        .AddSingleton<IUpdateConsumer, TelegramBot.TelegramBot>()
-        .AddHostedService<UpdatesConsumerService>()
+        .AddSingleton(twitterConfig)
+        .AddUpdatesProducer<TwitterUpdatesProvider>(rootConfig)
         .BuildServiceProvider();
 }
     

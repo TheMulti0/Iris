@@ -6,9 +6,9 @@ This is Iris - a scalable social media update manager.
 The producers use MongoDB to save each configured user's last update time, that is used to make sure no update will be sent twice.
 
 Supported producers sources:
- - [x] YouTube
  - [x] Twitter
  - [x] Facebook
+ - [ ] YouTube
  - [ ] Instagram
  - [ ] Soundcloud
  - [ ] Interviews
@@ -17,7 +17,7 @@ Supported Consumers sources:
  - [x] Telegram
  - [ ] Web dashboard
 
-All of the components use Apache Kafka for communication (The `/updates` topic for all updates, `/configs` topic for configurations).
+All of the components use RabbitMQ for communication.
 
 [This is a deployed working example, Iris is configured to send tweets and posts of the Israeli 'Yamina' party candidates.](https://t.me/YaminaUpdates)
 
@@ -41,65 +41,51 @@ All components are configured using JSON files; `appsettings.json` by default, a
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "System": "Information",
-      "Microsoft": "Information"
-    }
-  },
-  "UpdatesConsumer": {
-    "SubscriptionTopics": [
-      "updates"
-    ],
-    "GroupId": "updates-consumers",
-    "BrokersServers": "kafka:9092",
-    "KeySerializationType": "String",
-    "ValueSerializationType": "Json"
-  },
-  "ConfigConsumer": {
-    "SubscriptionTopics": [
-      "configs"
-    ],
-    "GroupId": "telegram-config-consumers",
-    "BrokersServers": "kafka:9092",
-    "KeySerializationType": "String",
-    "ValueSerializationType": "String"
-  },
-  "Telegram": {
-    "AccessToken": "telegram-access-token",
-    "Users": [
-      {
-        "UserNames": [
-          "example-user",
-          "example-user2"
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "System": "Information",
+            "Microsoft": "Information"
+        }
+    },
+    "UpdatesConsumer": {
+        "ConnectionString": "amqp://guest:guest@rabbitmq:5672//",
+        "Destination": "updates"
+    },
+    "Telegram": {
+        "AccessToken": "telegram-access-token",
+        "Users": [
+            {
+                "UserNames": [
+                    "example-user",
+                    "example-user2"
+                ],
+                "DisplayName": "Example user",
+                "ChatIds": [
+                    "@ExampleChatId",
+                    -111111111
+                ]
+            }
         ],
-        "DisplayName": "Example user",
-        "ChatIds": [
-          "@ExampleChatId",
-          -111111111
+        "FilterRules": [
+            {
+                "UserNames": [
+                    "example-user2"
+                ],
+                "ChatIds": [
+                    "@ExampleChatId"        
+                ],
+                "SkipReposts": true,
+                "HideMessagePrefix": true,
+                "DisableMedia": true
+            }
         ]
-      }
-    ],
-    "FilterRules": [
-      {
-        "UserNames": [
-	  "example-user2"
-	],
-        "ChatIds": [
-          "@ExampleChatId"        
-        ],
-        "SkipReposts": true,
-        "HideMessagePrefix": true,
-        "DisableMedia": true
-      }
-    ]
-  },
-  "Sentry": {
-    "Dsn": "sentry-dsn",
-    "MinimumBreadcrumbLevel": "Information",
-    "MinimumEventLevel": "Warning"
-  }
+    },
+    "Sentry": {
+        "Dsn": "sentry-dsn",
+        "MinimumBreadcrumbLevel": "Information",
+        "MinimumEventLevel": "Warning"
+    }
 }
 ```
 
@@ -107,62 +93,61 @@ All components are configured using JSON files; `appsettings.json` by default, a
 
 This is a base configuration example for all update producers in the system:
 
-> Note: if the `mongodb` node will not be found then an in-memory database will be used
+> Note: if the `MongoDB` node will not be found then an in-memory database will be used
 
-> Note 2: the `video_downloader` node is optional, it is used to pass parameters to `yt-dl`
-
-> Note 3: in `producer`, the field `store_sent_updates` enables 24-hour period store of sent urls, useful for websites in which for the first 24-hour period the timestamp on the post is relative and not absolute 
+> Note 3: in `producer`, the field `store_sent_updates` enables store of sent urls for configured period, useful for websites in which the timestamp on the post is relative and not absolute 
 
 ```json
 {
-  "kafka": {
-    "bootstrap_servers": [
-      "kafka:9092"    
-    ],
-    "configs": {
-      "topic": "configs"
+    "Logging": {
+        "LogLevel": {
+            "Default": "Debug",
+            "System": "Information",
+            "Microsoft": "Information"
+        }
     },
-    "updates": {
-      "topic": "updates", 
-      "key": "fromproducer1"
+    "MongoDb": {
+        "ConnectionString": "mongodb://mongodb:27017",
+        "DatabaseName": "ProducerDB",
+        "SentUpdatesExpiration": "48:00:00"
+    },
+    "UpdatesPublisher": {
+        "ConnectionString": "amqp://guest:guest@rabbitmq:5672//",
+        "Destination": "amq.topic"
+    },
+    "UpdatesProvider": {
+        "Name": "MyProducer"
+    },
+    "Poller": {
+        "Interval": "00:00:10",
+        "WatchedUserIds": [
+            "example-user",
+            "example-user2"
+        ],
+        "StoreSentUpdates": false
+    },
+    "VideoExtractor": {
+        "FormatRequest": "best",
+        "UserName": "optional username",
+        "Password": "optional password"
+    },
+    "Sentry": {
+        "Dsn": "sentry-dsn",
+        "MinimumBreadcrumbLevel": "Information",
+        "MinimumEventLevel": "Warning"
     }
-  },
-  "mongodb": {
-    "connection_string": "mongodb://localhost:27017/",
-    "db": "ProducerDB"
-  },
-  "video_downloader": {
-    "username": "username@tothiswebsite.com",
-    "password": "safepassword"
-  },
-  "poller": {
-    "update_interval_seconds": 60,
-    "watched_users": [
-      "example-user",
-      "example-user2"
-    ],
-    "store_sent_updates": true
-  }
 }
 ```
 
-##### `twitter-producer`
+##### TwitterProducer
 
-`twitter-producer` has an additional node in the configuration: 
+TwitterProducer has additional fields in the `UpdatesProvider` node:
 ```json
-"twitter": {
-  "consumer_key": "consumer-key",
-  "consumer_secret": "consumer-key-secret",
-  "access_token": "access-token",
-  "access_token_secret": "access-token-secret",
-} 
-```
-
-##### `youtube-producer`
-
-`youtube-producer` has an additional node in the configuration: 
-```json
-"youtube": {
-  "api_key": "youtube-api-key"
-} 
+"UpdatesProvider": {
+    "Name": "Twitter",
+    "ConsumerKey": "consumerkey",
+    "ConsumerSecret": "consumersecret",
+    "AccessToken": "accesstoken",
+    "AccessTokenSecret": "d5w3LWl8eef52xSGJfj61OJeF606ddJxdVSMTpzknKfZ6"
+},
 ```
