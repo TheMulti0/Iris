@@ -139,29 +139,32 @@ namespace UpdatesProducer
         private async ValueTask<IMedia> ExtractVideo(
             IMedia media, CancellationToken cancellationToken)
         {
-            if (media is Video video)
+            if (media is not LowQualityVideo video)
             {
-                try
-                {
-                    return await GetExtractedVideo(video);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Failed to extract video of url {}", video.Url);
-                }
+                return media;
+            }
+            
+            try
+            {
+                return await GetExtractedVideo(video);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to extract video of url {}", video.Url);
             }
 
             return media;
         }
 
-        private async Task<IMedia> GetExtractedVideo(Video old)
+        private async Task<IMedia> GetExtractedVideo(LowQualityVideo old)
         {
-            Video extracted = await _videoExtractor.ExtractVideo(old.Url);
+            Video extracted = await _videoExtractor.ExtractVideo(old.RequestUrl);
             
             if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
             {
                 return extracted with { ThumbnailUrl = old.ThumbnailUrl };
             }
+            
             return extracted;
         }
 

@@ -142,7 +142,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {
-                        new Video(PhotoUrl, string.Empty, IsBestFormat: true)
+                        new Video(PhotoUrl, string.Empty)
                     },
                     Content = "Mock photo",
                     Url = "https://mock-url.com"
@@ -187,7 +187,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {
-                        new Video(VideoUrl, string.Empty, true)
+                        new Video(VideoUrl, string.Empty)
                     }
                 });
 
@@ -205,7 +205,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {
-                        new Video(VideoUrl, string.Empty, IsBestFormat: true)
+                        new Video(VideoUrl, string.Empty)
                     },
                     Content = "Mock video",
                     Url = "https://mock-url.com"
@@ -225,7 +225,7 @@ namespace TelegramBot.Tests
                     AuthorId = user.UserNames[0],
                     Media = new List<IMedia>
                     {
-                        new Video(VideoUrl, string.Empty, true),
+                        new Video(VideoUrl, string.Empty),
                         new Photo(PhotoUrl)
                     },
                     Content = "Mock medias",

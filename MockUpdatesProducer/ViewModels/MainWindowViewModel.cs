@@ -107,8 +107,7 @@ namespace MockUpdatesProducer
             
             var video = new Video(
                 "http://mirror.bigbuckbunny.de/peach/bigbuckbunny_movies/big_buck_bunny_720p_surround.avi",
-                string.Empty,
-                true);
+                string.Empty);
             
             return new()
             {

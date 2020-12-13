@@ -141,7 +141,6 @@ namespace TwitterProducer
                     new Video(
                         bestVideo.URL,
                         thumbnailUrl,
-                        true,
                         TimeSpan.FromMilliseconds(videoInfo.DurationInMilliseconds),
                         size?.Width,
                         size?.Height));

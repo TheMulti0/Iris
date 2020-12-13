@@ -21,14 +21,14 @@ namespace Common
 
             switch (type)
             {
-                default:
+                case nameof(Photo):
                     return JsonSerializer.Deserialize<Photo>(rawText, options);
-                
-                case nameof(Video):
-                    return JsonSerializer.Deserialize<Video>(rawText, options);
                 
                 case nameof(Audio):
                     return JsonSerializer.Deserialize<Audio>(rawText, options);
+                
+                default:
+                    return JsonSerializer.Deserialize<Video>(rawText, options); 
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
@@ -8,6 +9,15 @@ namespace UpdatesProducer
 {
     public class VideoExtractor
     {
+        private class VideoInfo
+        {
+            public string ExtractedUrl { get; set; }
+            public string ThumbnailUrl { get; set; }
+            public double? DurationSeconds { get; set; }
+            public int? Width { get; set; }
+            public int? Height { get; set; }
+        }
+        
         private readonly VideoExtractorConfig _config;
 
         public VideoExtractor(VideoExtractorConfig config)
@@ -19,29 +29,58 @@ namespace UpdatesProducer
         {
             JsonElement root = await GetResponse(url);
 
-            string highestFormatUrl = GetHighestFormatUrl(root);
+            JsonElement? highestFormat = GetFormats(root)?.LastOrDefault();
             
-            string extractedUrl = root.GetPropertyOrNull("url")?.GetString() ?? highestFormatUrl;
+            var videoInfo = GetCombinedVideoInfo(root, highestFormat);
 
-            if (extractedUrl == null)
+            if (videoInfo.ExtractedUrl == null)
             {
                 throw new NullReferenceException("Extracted url was not found");
             }
-            
-            string thumbnailUrl = root.GetPropertyOrNull("thumbnail")?.GetString();
-            double? durationSeconds = root.GetPropertyOrNull("duration")?.GetDoubleOrNull();
-            int? width = root.GetPropertyOrNull("duration")?.GetIntOrNull();
-            int? height = root.GetPropertyOrNull("duration")?.GetIntOrNull();
 
-            TimeSpan? duration = GetDuration(durationSeconds);
+            TimeSpan? duration = GetDuration(videoInfo.DurationSeconds);
 
             return new Video(
-                extractedUrl,
-                thumbnailUrl,
-                IsBestFormat: true,
+                videoInfo.ExtractedUrl,
+                videoInfo.ThumbnailUrl,
                 duration,
-                width,
-                height);
+                videoInfo.Width,
+                videoInfo.Height);
+        }
+
+        private static VideoInfo GetCombinedVideoInfo(JsonElement? root, JsonElement? highestFormat)
+        {
+            VideoInfo videoInfo = GetVideoInfo(root);
+            VideoInfo fallbackInfo = GetVideoInfo(highestFormat);
+
+            CombineVideoInfos(fallbackInfo, videoInfo);
+
+            return videoInfo;
+        }
+
+        private static void CombineVideoInfos(VideoInfo fallbackInfo, VideoInfo videoInfo)
+        {
+            foreach (PropertyInfo property in typeof(VideoInfo).GetProperties())
+            {
+                var fallbackValue = property.GetValue(fallbackInfo);
+
+                if (property.GetValue(videoInfo) == null && fallbackValue != null)
+                {
+                    property.SetValue(videoInfo, fallbackValue!);
+                }
+            }
+        }
+
+        private static VideoInfo GetVideoInfo(JsonElement? element)
+        {
+            return new()
+            {
+                ExtractedUrl = element?.GetPropertyOrNull("url")?.GetString(),
+                ThumbnailUrl = element?.GetPropertyOrNull("thumbnail")?.GetString(),
+                DurationSeconds = element?.GetPropertyOrNull("duration")?.GetDoubleOrNull(),
+                Width = element?.GetPropertyOrNull("width")?.GetIntOrNull(),
+                Height = element?.GetPropertyOrNull("height")?.GetIntOrNull()
+            };
         }
 
         private async Task<JsonElement> GetResponse(string url)
@@ -60,14 +99,6 @@ namespace UpdatesProducer
         {
             return root.GetPropertyOrNull("formats")?
                 .EnumerateArray();
-        }
-
-        private static string GetHighestFormatUrl(JsonElement root)
-        {
-            return GetFormats(root)
-                ?.LastOrDefault()
-                .GetPropertyOrNull("url")
-                ?.GetString();
         }
 
         private static TimeSpan? GetDuration(double? durationSeconds)

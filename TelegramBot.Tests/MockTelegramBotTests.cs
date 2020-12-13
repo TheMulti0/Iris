@@ -145,8 +145,7 @@ namespace TelegramBot.Tests
                     {
                         new Video(
                             VideoUrl,
-                            string.Empty,
-                            true)
+                            string.Empty)
                     }
                 });
             
@@ -166,8 +165,7 @@ namespace TelegramBot.Tests
                     {   
                         new Video(
                             VideoUrl,
-                            string.Empty,
-                            true
+                            string.Empty
                         )
                     },
                     Content = "Mock video",
@@ -190,8 +188,7 @@ namespace TelegramBot.Tests
                     {   
                         new Video(
                             VideoUrl,
-                            string.Empty,
-                            true
+                            string.Empty
                         ),
                         new Photo(PhotoUrl) 
                     },
