@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBot.Tests", "Telegr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensions.Tests\Extensions.Tests.csproj", "{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigProducer", "ConfigProducer\ConfigProducer.csproj", "{5EB185A7-F289-4214-A702-3B95DF71581D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesConsumer", "UpdatesConsumer\UpdatesConsumer.csproj", "{9B910296-9E9D-41CF-A95A-A7302E9AF116}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "MockUpdatesProducer\MockUpdatesProducer.csproj", "{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}"
@@ -61,10 +59,6 @@ Global
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EB185A7-F289-4214-A702-3B95DF71581D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EB185A7-F289-4214-A702-3B95DF71581D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EB185A7-F289-4214-A702-3B95DF71581D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EB185A7-F289-4214-A702-3B95DF71581D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Release|Any CPU.ActiveCfg = Release|Any CPU
