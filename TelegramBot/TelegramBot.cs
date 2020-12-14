@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Extensions;
 using Microsoft.Extensions.Logging;
+using Optional;
+using Optional.Unsafe;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using UpdatesConsumer;
@@ -60,29 +62,29 @@ namespace TelegramBot
                 "Received new config {}, trying to create new TelegramBotClient with it",
                 config);
             
-            Optional<ITelegramBotClient> client = await CreateNewTelegramBotClient(config);
+            var client = await CreateNewTelegramBotClient(config);
             
             if (client.HasValue)
             {
                 lock (_configLock) 
                 {
-                    _sender = new MessageSender(client.Value, _loggerFactory);
+                    _sender = new MessageSender(client.ValueOrDefault(), _loggerFactory);
                     _config = config;
                 }
             }
         }
 
-        private async Task<Optional<ITelegramBotClient>> CreateNewTelegramBotClient(TelegramConfig config)
+        private async Task<Option<ITelegramBotClient>> CreateNewTelegramBotClient(TelegramConfig config)
         {
             try
             {
-                return Optional<ITelegramBotClient>.WithValue(
+                return Option.Some(
                     await _clientProvider.CreateAsync(config));
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Failed to create TelegramBotClient with new config");
-                return Optional<ITelegramBotClient>.Empty();
+                return Option.None<ITelegramBotClient>();
             }
         }
 

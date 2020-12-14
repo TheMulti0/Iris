@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
+using Optional;
+using Optional.Unsafe;
 using Tweetinvi;
 using Tweetinvi.Models;
 using Tweetinvi.Models.Entities;
@@ -112,17 +114,17 @@ namespace TwitterProducer
                 }
                 else
                 {
-                    Optional<IMedia> video = GetVideo(media, url);
+                    Option<IMedia> video = GetVideo(media, url);
                     
                     if (video.HasValue)
                     {
-                        yield return video.Value;
+                        yield return video.ValueOrDefault();
                     }
                 }
             }
         }
 
-        private static Optional<IMedia> GetVideo(IMediaEntity media, string thumbnailUrl)
+        private static Option<IMedia> GetVideo(IMediaEntity media, string thumbnailUrl)
         {
             IVideoInformationEntity videoInfo = media.VideoDetails;
             IVideoEntityVariant[] variants = videoInfo.Variants;
@@ -137,7 +139,7 @@ namespace TwitterProducer
 
             if (bestVideo != null)
             {
-                return Optional<IMedia>.WithValue(
+                return Option.Some<IMedia>(
                     new Video(
                         bestVideo.URL,
                         thumbnailUrl,
@@ -146,7 +148,7 @@ namespace TwitterProducer
                         size?.Height));
             }
             
-            return Optional<IMedia>.Empty();
+            return Option.None<IMedia>();
         }
     }
 }
