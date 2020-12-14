@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
-using Kafka.Public;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;

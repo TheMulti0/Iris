@@ -1,9 +1,6 @@
 using System;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text.Json;
 using Extensions;
-using Kafka.Public;
 
 namespace TelegramBot
 {
@@ -24,20 +21,20 @@ namespace TelegramBot
             //     .Subscribe(_configs.OnNext);
         }
         
-        private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record) 
-            => record.Key == "Telegram";
-
-        private static Result<TelegramConfig> DeserializeConfig(KafkaRecord<string, string> record)
-        {
-            try
-            {
-                return Result<TelegramConfig>.Success(
-                    JsonSerializer.Deserialize<TelegramConfig>(record.Value));
-            }
-            catch (Exception e)
-            {
-                return Result<TelegramConfig>.Failure(e);
-            }
-        }
+        // private static bool ConfigBelongsToTelegram(KafkaRecord<string, string> record) 
+        //     => record.Key == "Telegram";
+        //
+        // private static Result<TelegramConfig> DeserializeConfig(KafkaRecord<string, string> record)
+        // {
+        //     try
+        //     {
+        //         return Result<TelegramConfig>.Success(
+        //             JsonSerializer.Deserialize<TelegramConfig>(record.Value));
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return Result<TelegramConfig>.Failure(e);
+        //     }
+        // }
     }
 }

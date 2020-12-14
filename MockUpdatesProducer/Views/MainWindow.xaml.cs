@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using Common;
-using Kafka.Public;
-using UpdatesConsumer;
+﻿using System.Windows;
 
 namespace MockUpdatesProducer
 {
@@ -11,9 +7,6 @@ namespace MockUpdatesProducer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private IKafkaProducer<string, Update> _producer;
-        private Dictionary<UpdateType, Update> _updates;
-
         public MainWindow()
         {
             InitializeComponent();

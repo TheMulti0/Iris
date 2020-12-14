@@ -41,24 +41,16 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
-    var updatesConsumerConfig = rootConfig
-        .GetSection("UpdatesConsumer")
-        ?
-        .Get<RabbitMqConfig>();
-
     var defaultTelegramConfig = rootConfig
         .GetSection("Telegram")
         ?.Get<TelegramConfig>();
 
     services
-        .AddSingleton(updatesConsumerConfig)
-        .AddSingleton<RabbitMqConsumer>()
         .AddSingleton(defaultTelegramConfig)
         .AddSingleton<IConfigProvider, ConfigProvider>()
         .AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>()
         .AddSingleton<MessageBuilder>()
-        .AddSingleton<IUpdateConsumer, TelegramBot.TelegramBot>()
-        .AddHostedService<UpdatesConsumerService>()
+        .AddUpdatesConsumer<TelegramBot.TelegramBot>(rootConfig)
         .BuildServiceProvider();
 }
     

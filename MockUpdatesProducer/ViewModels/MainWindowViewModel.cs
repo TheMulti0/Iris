@@ -8,10 +8,7 @@ using System.Text.Json;
 using System.Windows.Input;
 using Common;
 using Extensions;
-using Kafka.Public;
-using Microsoft.Extensions.Logging;
 using MockUpdatesProducer.Annotations;
-using UpdatesConsumer;
 
 namespace MockUpdatesProducer
 {
@@ -47,8 +44,9 @@ namespace MockUpdatesProducer
             }
         }
 
-        private readonly IKafkaProducer<string, Update> _producer;
+        private readonly RabbitMqPublisher _publisher;
         private readonly Dictionary<UpdateType, Update> _updates;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public MainWindowViewModel()
         {
@@ -56,9 +54,17 @@ namespace MockUpdatesProducer
 
             UpdateTypes = CreateUpdateTypes();
 
-            _producer = CreateProducer();
+            _publisher = CreatePublisher();
 
             _updates = CreateUpdates();
+
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new MediaJsonConverter()
+                }
+            };
         }
 
         private static ObservableCollection<UpdateTypeButton> CreateUpdateTypes()
@@ -71,25 +77,13 @@ namespace MockUpdatesProducer
             return new ObservableCollection<UpdateTypeButton>(updateTypeButtons);
         }
 
-        private static IKafkaProducer<string, Update> CreateProducer()
+        private static RabbitMqPublisher CreatePublisher()
         {
-            var baseKafkaConfig = new BaseKafkaConfig
-            {
-                BrokersServers = "localhost:9092",
-                Topic = "updates",
-                KeySerializationType = SerializationType.String,
-                ValueSerializationType = SerializationType.Json
-            };
-
-            var loggerFactory = new LoggerFactory();
-            loggerFactory.AddProvider(new CustomConsoleLoggerProvider());
-
-            return KafkaProducerFactory.Create<string, Update>(
-                baseKafkaConfig,
-                loggerFactory,
-                new JsonSerializerOptions
+            return new(
+                new RabbitMqConfig
                 {
-                    Converters = { new MediaJsonConverter() }
+                    ConnectionString = new Uri("amqp://guest:guest@localhost:5672//"),
+                    Destination = "amq.topic"
                 });
         }
 
@@ -235,7 +229,8 @@ namespace MockUpdatesProducer
         {
             var type = (UpdateType) o;
 
-            _producer.Produce(Name, _updates[type]);
+            var value = JsonSerializer.SerializeToUtf8Bytes(_updates[type], _jsonSerializerOptions);
+            _publisher.Publish(Name, value);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -64,22 +64,10 @@ namespace DashboardBackend
                     options.Events.OnRedirectToLogin = UnauthorizedResponse;
                 });
             
-            var updatesConsumerConfig = Configuration
-                .GetSection("UpdatesConsumer").Get<ConsumerConfig>();
-            
-            services.AddConsumer<string, Update>(
-                updatesConsumerConfig,
-                new JsonSerializerOptions
-                {
-                    Converters =
-                    {
-                        new MediaJsonConverter()
-                    }
-                })
+            services
                 .AddScoped<ApplicationDbContext>()
                 .AddScoped<IUpdatesRepository, UpdatesRepository>()
-                .AddSingleton<IUpdateConsumer, UpdatesDataLayerAppender>()
-                .AddHostedService<UpdatesConsumerService>();
+                .AddUpdatesConsumer<UpdatesDataLayerAppender>(Configuration);
 
             services.AddCors(options =>
             {
