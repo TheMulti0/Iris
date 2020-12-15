@@ -96,7 +96,8 @@ namespace UpdatesProducer
             // Cut out the json element, ignore the logs and other outputs
             string response = output.Substring(
                 output.IndexOf('{'),
-                output.LastIndexOf('}') + 1);
+                Math.Min(
+                    output.LastIndexOf('}') + 1, output.Length));
 
             return JsonDocument.Parse(response).RootElement;
         }
