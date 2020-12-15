@@ -85,12 +85,18 @@ namespace UpdatesProducer
 
         private async Task<JsonElement> GetResponse(string url)
         {
-            var response = await ScriptExecutor.ExecutePython(
+            var output
+                = await ScriptExecutor.ExecutePython(
                 "extract_video.py",
                 url,
                 _config.FormatRequest,
                 _config.UserName,
                 _config.Password);
+
+            // Cut out the json element, ignore the logs and other outputs
+            string response = output.Substring(
+                output.IndexOf('{'),
+                output.LastIndexOf('}') + 1);
 
             return JsonDocument.Parse(response).RootElement;
         }
