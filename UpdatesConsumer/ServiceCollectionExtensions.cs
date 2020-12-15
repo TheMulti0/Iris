@@ -11,7 +11,7 @@ namespace UpdatesConsumer
             IConfiguration configuration) where TConsumer : class, IUpdateConsumer
         {
             return services.AddUpdatesConsumer<TConsumer>(
-                configuration.GetSection<RabbitMqConfig>("UpdatesPublisher"));
+                configuration.GetSection<RabbitMqConfig>("UpdatesConsumer"));
         }
 
         public static IServiceCollection AddUpdatesConsumer<TConsumer>(
@@ -20,7 +20,7 @@ namespace UpdatesConsumer
         {
             return services
                 .AddRabbitMqConsumer(rabbitMqConfig)
-                .AddSingleton<TConsumer>()
+                .AddSingleton<IUpdateConsumer, TConsumer>()
                 .AddHostedService<UpdatesConsumerService>();
         }
 
