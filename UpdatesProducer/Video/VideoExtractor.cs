@@ -94,10 +94,9 @@ namespace UpdatesProducer
                 _config.Password);
 
             // Cut out the json element, ignore the logs and other outputs
-            Console.WriteLine(output);
-            
             int startIndex = output.IndexOf('{');
             int lastIndex = output.LastIndexOf('}') + 1;
+
             string response = output.Substring(
                 startIndex,
                 lastIndex - startIndex);
