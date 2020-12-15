@@ -94,6 +94,7 @@ namespace UpdatesProducer
                 _config.Password);
 
             // Cut out the json element, ignore the logs and other outputs
+            Console.WriteLine(output);
             string response = output.Substring(
                 output.IndexOf('{'),
                 output.Length);
