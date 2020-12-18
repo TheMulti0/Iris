@@ -69,6 +69,22 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+        
+  feedsproducer:
+    image: themulti0/iris_feedsproducer:latest
+    build:
+      context: .
+      dockerfile: FeedsProducer/Dockerfile
+    container_name: feedsproducer
+    restart: always
+    volumes:
+      - './FeedsProducer/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
 
 networks:
   rabbitmq_network:

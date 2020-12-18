@@ -26,13 +26,13 @@ namespace TelegramBot
         {
             _logger.LogInformation("Sending audio message");
 
-            var inputOnlineFile = new InputMedia(
-                await _httpClient.GetStreamAsync(audio.Url, message.CancellationToken),
-                "Audio");
+            InputMedia audioFile = audio.Url;
 
             await _client.SendAudioAsync(
                 chatId: message.ChatId,
-                audio: inputOnlineFile,
+                audio: audioFile,
+                caption: message.Message,
+                thumb: audio.ThumbnailUrl,
                 duration: audio.Duration?.Seconds ?? default,
                 performer: audio.Artist,
                 title: audio.Title,
