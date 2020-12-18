@@ -8,6 +8,7 @@ The producers use MongoDB to save each configured user's last update time, that 
 Supported producers sources:
  - [x] Twitter
  - [x] Facebook
+ - [x] RSS Feeds (only text & audio items are currently supported)
  - [ ] YouTube
  - [ ] Instagram
  - [ ] Soundcloud
