@@ -3,12 +3,12 @@ version: '3.4'
 services:
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
-    ports:
-      - '5672:5672'
-      - '15672:15672'
     container_name: 'rabbitmq'
     environment:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
     volumes:
       - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
@@ -19,10 +19,12 @@ services:
     image: mongo:latest
     container_name: mongodb
     restart: always
-    networks:
-      - mongodb_network
+    ports:
+      - 27017:27017
     volumes:
       - ./mongodb:/data/db
+    networks:
+      - mongodb_network
 
   telegrambot:
     image: themulti0/iris_telegrambot:latest
