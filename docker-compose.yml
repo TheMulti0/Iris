@@ -21,6 +21,7 @@ services:
     restart: always
     volumes:
       - ./mongodb:/data/db
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
     networks:
       - mongodb_network
 
