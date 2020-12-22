@@ -47,13 +47,14 @@ namespace TwitterProducer
             ITweet[] tweets = await _twitterClient.Timelines.GetUserTimelineAsync(parameters);
 
             return tweets
-                .Where(IsTweetPublishable)
+                .Where(IsTweetPublishable(userId))
                 .Select(ToUpdate(userId));
         }
 
-        private static bool IsTweetPublishable(ITweet tweet)
+        private static Func<ITweet, bool> IsTweetPublishable(string userId)
         {
-            return tweet.InReplyToStatusId == null;
+            return tweet => tweet.InReplyToStatusId == null ||
+                            tweet.InReplyToScreenName == userId; 
         }
 
         private Func<ITweet, Update> ToUpdate(string userId)
