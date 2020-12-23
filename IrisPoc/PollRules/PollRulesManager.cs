@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Subjects;
+
+namespace IrisPoc
+{
+    internal class PollRulesManager : ISetPollRulesConsumer, IPollRulesProducer
+    {
+        private readonly Subject<SetPollRule> _setUserPollRuleRequests = new();
+        public IObservable<SetPollRule> SetUserPollRules => _setUserPollRuleRequests;
+        
+        private readonly IDataLayer _dataLayer;
+
+        public PollRulesManager(IDataLayer dataLayer)
+        {
+            _dataLayer = dataLayer;
+        }
+
+        public void Update(SetPollRule request)
+        {
+            Console.WriteLine($"Adding {request}");
+            
+            (PollRuleType type, UserPollRule info, string chatId) = request;
+            if (type == PollRuleType.Poll)
+            {
+                Console.WriteLine($"Adding {request}");
+                _dataLayer.Add(info, chatId);
+            }
+            else
+            {
+                Console.WriteLine($"Removing {request}");
+                _dataLayer.Remove(info, chatId);
+            }
+
+            _setUserPollRuleRequests.OnNext(request);
+        }
+
+        public IEnumerable<UserPollRule> GetPollRules()
+        {
+            return _dataLayer.Get().Keys;
+        }
+    }
+}
