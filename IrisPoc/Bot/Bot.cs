@@ -5,11 +5,11 @@ namespace IrisPoc
 {
     internal class Bot
     {
-        private readonly ISetPollRulesConsumer _setPollRulesConsumer;
+        private readonly IChatPollRulesConsumer _chatPollRulesConsumer;
 
-        public Bot(ISetPollRulesConsumer setPollRulesConsumer)
+        public Bot(IChatPollRulesConsumer chatPollRulesConsumer)
         {
-            _setPollRulesConsumer = setPollRulesConsumer;
+            _chatPollRulesConsumer = chatPollRulesConsumer;
         }
 
         public void Run()
@@ -26,12 +26,12 @@ namespace IrisPoc
                 {
                     string[] items = requestString.Split(' ');
 
-                    PollRuleType pollRuleType = items[0].StartsWith("a")
-                        ? PollRuleType.Poll
-                        : PollRuleType.StopPoll;
+                    Request request = items[0].StartsWith("a")
+                        ? Request.StartPoll
+                        : Request.StopPoll;
 
-                    var request = new SetPollRule(
-                        pollRuleType,
+                    var rule = new ChatPollRequest(
+                        request,
                         new UserPollRule(
                             new User(
                                 items[1],
@@ -39,9 +39,9 @@ namespace IrisPoc
                             TimeSpan.FromSeconds(int.Parse(items[3]))),
                         "chat");
 
-                    Console.WriteLine($"Sending {request}");
+                    Console.WriteLine($"Sending {rule}");
 
-                    _setPollRulesConsumer.Update(request);
+                    _chatPollRulesConsumer.Update(rule);
                 }
                 catch (Exception e)
                 {

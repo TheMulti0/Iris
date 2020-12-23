@@ -5,7 +5,7 @@ namespace IrisPoc
 {
     internal interface IPollRulesProducer
     {
-        IObservable<SetPollRule> SetUserPollRules { get; }
+        IObservable<ChatPollRequest> ChatPollRequests { get; }
         
         IEnumerable<UserPollRule> GetPollRules();
     }

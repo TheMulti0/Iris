@@ -6,14 +6,14 @@ using Common;
 
 namespace IrisPoc
 {
-    internal class MessageManager : IUpdatesConsumer, IMessagesProducer
+    internal class MessagesManager : IUpdatesConsumer, IMessagesProducer
     {
         private readonly Subject<Message> _messages = new();
         public IObservable<Message> Messages => _messages;
 
         private readonly IDataLayer _dataLayer;
 
-        public MessageManager(IDataLayer dataLayer)
+        public MessagesManager(IDataLayer dataLayer)
         {
             _dataLayer = dataLayer;
         }

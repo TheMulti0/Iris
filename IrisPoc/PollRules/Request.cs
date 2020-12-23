@@ -1,8 +1,8 @@
 ﻿namespace IrisPoc
 {
-    internal enum PollRuleType
+    internal enum Request
     {
-        Poll,
+        StartPoll,
         StopPoll
     }
 }

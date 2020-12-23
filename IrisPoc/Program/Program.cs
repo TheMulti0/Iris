@@ -4,8 +4,8 @@
     {
         private static void Main()
         {
-            ISetPollRulesConsumer setPollRulesConsumer = Orchestrator.WireUp();
-            new Bot(setPollRulesConsumer).Run();
+            IChatPollRulesConsumer chatPollRulesConsumer = Orchestrator.WireUp();
+            new Bot(chatPollRulesConsumer).Run();
         }
     }
 }

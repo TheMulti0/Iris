@@ -21,10 +21,10 @@ namespace IrisPoc
                 _current = manager.GetPollRules();
             }
 
-            manager.SetUserPollRules.Subscribe(OnNext);
+            manager.ChatPollRequests.Subscribe(OnNext);
         }
 
-        private void OnNext(SetPollRule request)
+        private void OnNext(ChatPollRequest request)
         {
             Console.WriteLine($"Received new job assignment {request}");
 
@@ -32,13 +32,13 @@ namespace IrisPoc
             // UpdateCurrent(assignment);
         }
 
-        private void UpdateCurrent(SetPollRule request)
+        private void UpdateCurrent(ChatPollRequest request)
         {
-            (PollRuleType type, UserPollRule userJobInfo, string _) = request;
+            (Request type, UserPollRule userJobInfo, string _) = request;
 
             lock (_currentLock)
             {
-                if (type == PollRuleType.StopPoll)
+                if (type == Request.StopPoll)
                 {
                     _current = _current.Where(info => info == userJobInfo);
                 }

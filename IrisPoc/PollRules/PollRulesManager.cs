@@ -4,10 +4,10 @@ using System.Reactive.Subjects;
 
 namespace IrisPoc
 {
-    internal class PollRulesManager : ISetPollRulesConsumer, IPollRulesProducer
+    internal class PollRulesManager : IChatPollRulesConsumer, IPollRulesProducer
     {
-        private readonly Subject<SetPollRule> _setUserPollRuleRequests = new();
-        public IObservable<SetPollRule> SetUserPollRules => _setUserPollRuleRequests;
+        private readonly Subject<ChatPollRequest> _setUserPollRuleRequests = new();
+        public IObservable<ChatPollRequest> ChatPollRequests => _setUserPollRuleRequests;
         
         private readonly IDataLayer _dataLayer;
 
@@ -16,12 +16,12 @@ namespace IrisPoc
             _dataLayer = dataLayer;
         }
 
-        public void Update(SetPollRule request)
+        public void Update(ChatPollRequest request)
         {
             Console.WriteLine($"Adding {request}");
             
-            (PollRuleType type, UserPollRule info, string chatId) = request;
-            if (type == PollRuleType.Poll)
+            (Request type, UserPollRule info, string chatId) = request;
+            if (type == Request.StartPoll)
             {
                 Console.WriteLine($"Adding {request}");
                 _dataLayer.Add(info, chatId);

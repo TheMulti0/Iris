@@ -5,12 +5,12 @@ namespace IrisPoc
 {
     internal static class Orchestrator
     {
-        public static ISetPollRulesConsumer WireUp()
+        public static IChatPollRulesConsumer WireUp()
         {
             var dataLayer = new DataLayer();
             
             var requestManager = new PollRulesManager(dataLayer);
-            var messageManager = new MessageManager(dataLayer);
+            var messageManager = new MessagesManager(dataLayer);
             var distributor = new ScrapersDistributor(requestManager);
             
             var scraper = new Scraper(messageManager, distributor);

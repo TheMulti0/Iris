@@ -1,7 +1,7 @@
 ﻿namespace IrisPoc
 {
-    internal record SetPollRule(
-        PollRuleType Type,
+    internal record ChatPollRequest(
+        Request Request,
         UserPollRule PollRule,
         string ChatId);
 }
