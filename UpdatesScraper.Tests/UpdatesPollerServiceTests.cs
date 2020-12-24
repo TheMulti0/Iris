@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,30 +13,29 @@ namespace UpdatesScraper.Tests
     [TestClass]
     public class UpdatesPollerServiceTests
     {
-        private static MockUpdatesPublisher _publisher;
+        private static UpdatesScraper _scraper;
         private static IHostedService _service;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            var pollerConfig = new PollerConfig
+            var pollerConfig = new ScraperConfig
             {
-                Interval = TimeSpan.Zero,
-                WatchedUserIds = new [] { "mockuser" },
                 StoreSentUpdates = true
             };
 
             IServiceCollection addHostedService = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
                 .AddUpdatesScraperMockRepositories()
-                .AddSingleton<IUpdatesPublisher, MockUpdatesPublisher>()
+                .AddSingleton<IUpdatesProducer, MockUpdatesProducer>()
                 .AddSingleton<IUpdatesProvider, MockUpdatesProvider>()
-                .AddUpdatesPollerService(pollerConfig);
+                .AddVideoExtractor(new VideoExtractorConfig())
+                .AddUpdatesScraper(pollerConfig);
             
             var services = addHostedService
                 .BuildServiceProvider();
             
-            _publisher = (MockUpdatesPublisher) services.GetService<IUpdatesPublisher>();
+            _scraper = services.GetRequiredService<UpdatesScraper>();
             _service = services.GetService<IHostedService>();
         }
         
@@ -48,9 +48,10 @@ namespace UpdatesScraper.Tests
 
         [TestMethod]
         [Timeout(1000)]
-        public async Task TestProduce()
+        public async Task TestScrape()
         {
-            var first = await _publisher.Updates.FirstOrDefaultAsync();
+            var first = await _scraper.ScrapeUser("test", CancellationToken.None)
+                .FirstOrDefaultAsync();
             
             Assert.IsNotNull(first);
         }

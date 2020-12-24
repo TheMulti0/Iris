@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TelegramSender;
-using UpdatesConsumer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -16,8 +15,12 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
     const string fileName = "appsettings";
     const string fileType = "json";
 
+    string basePath = Path.Combine(
+        Directory.GetCurrentDirectory(),
+        Environment.GetEnvironmentVariable("CONFIG_DIRECTORY") ?? string.Empty);
+    
     builder
-        .SetBasePath(Directory.GetCurrentDirectory())
+        .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
 }

@@ -5,23 +5,23 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["FacebookProducer/FacebookProducer.csproj", "FacebookProducer/"]
+COPY ["FacebookScraper/FacebookScraper.csproj", "FacebookScraper/"]
 COPY ["UpdatesScraper/UpdatesScraper.csproj", "UpdatesScraper/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
-RUN dotnet restore "FacebookProducer/FacebookProducer.csproj"
+RUN dotnet restore "FacebookScraper/FacebookScraper.csproj"
 COPY . .
-WORKDIR "/src/FacebookProducer"
-RUN dotnet build "FacebookProducer.csproj" -c Release -o /app/build
+WORKDIR "/src/FacebookScraper"
+RUN dotnet build "FacebookScraper.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "FacebookProducer.csproj" -c Release -o /app/publish
+RUN dotnet publish "FacebookScraper.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY --from=build /src/FacebookProducer/requirements.txt .
+COPY --from=build /src/FacebookScraper/requirements.txt .
 RUN apt-get update -y && apt-get install python3-pip -y
 RUN pip3 install --upgrade pip
 RUN pip3 install -r "requirements.txt"
-ENTRYPOINT ["dotnet", "FacebookProducer.dll"]
+ENTRYPOINT ["dotnet", "FacebookScraper.dll"]

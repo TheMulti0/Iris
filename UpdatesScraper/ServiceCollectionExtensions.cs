@@ -2,6 +2,7 @@ using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using UpdatesScraper.Mock;
 
@@ -15,29 +16,32 @@ namespace UpdatesScraper
         {
             return services.AddUpdatesScraper<TProvider>(
                 configuration.GetSection<MongoDbConfig>("MongoDb"),
-                configuration.GetSection<RabbitMqConfig>("UpdatesPublisher"),
+                configuration.GetSection<RabbitMqConfig>("UpdatesProducer"),
                 configuration.GetSection<UpdatesProviderBaseConfig>("UpdatesProvider"),
-                configuration.GetSection<PollerConfig>("Poller"),
-                configuration.GetSection<VideoExtractorConfig>("VideoExtractor"));
+                configuration.GetSection<VideoExtractorConfig>("VideoExtractor"),
+                configuration.GetSection<ScraperConfig>("Scraper"),
+                configuration.GetSection<RabbitMqConfig>("JobsConsumer"));
         }
 
         public static IServiceCollection AddUpdatesScraper<TProvider>(
             this IServiceCollection services,
             MongoDbConfig mongoDbConfig,
-            RabbitMqConfig rabbitMqConfig,
+            RabbitMqConfig producerConfig,
             UpdatesProviderBaseConfig updatesProviderBaseConfig,
-            PollerConfig pollerConfig,
-            VideoExtractorConfig videoExtractorConfig) where TProvider : class, IUpdatesProvider
+            VideoExtractorConfig videoExtractorConfig,
+            ScraperConfig scraperConfig,
+            RabbitMqConfig consumerConfig) where TProvider : class, IUpdatesProvider
         {
             services = mongoDbConfig != null 
                 ? services.AddUpdatesScraperMongoRepositories(mongoDbConfig) 
                 : services.AddUpdatesScraperMockRepositories();
-            
+
             return services
-                .AddRabbitMqUpdatesPublisher(rabbitMqConfig)
-                .AddVideoExtractor(videoExtractorConfig)
+                .AddUpdatesProducer(producerConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
-                .AddUpdatesPollerService(pollerConfig);
+                .AddVideoExtractor(videoExtractorConfig)
+                .AddUpdatesScraper(scraperConfig)
+                .AddJobsConsumer(consumerConfig);
         }
 
         public static IServiceCollection AddUpdatesScraperMongoRepositories(
@@ -70,24 +74,15 @@ namespace UpdatesScraper
                 .AddSingleton(config);
         }
 
-        public static IServiceCollection AddRabbitMqUpdatesPublisher(
+        public static IServiceCollection AddUpdatesProducer(
             this IServiceCollection services,
             RabbitMqConfig config)
         {
             return services
-                .AddSingleton(config)
-                .AddSingleton<RabbitMqPublisher>()
-                .AddSingleton<IUpdatesPublisher, RabbitMqUpdatesPublisher>();
-        }
-        
-
-        public static IServiceCollection AddVideoExtractor(
-            this IServiceCollection services,
-            VideoExtractorConfig config)
-        {
-            return services
-                .AddSingleton(config)
-                .AddSingleton<VideoExtractor>();
+                .AddSingleton<IUpdatesProducer>(
+                    provider => new UpdatesProducer(
+                        config,
+                        provider.GetService<ILogger<UpdatesProducer>>()));
         }
 
         public static IServiceCollection AddUpdatesProvider<TProvider>(
@@ -99,13 +94,36 @@ namespace UpdatesScraper
                 .AddSingleton<IUpdatesProvider, TProvider>();
         }
 
-        public static IServiceCollection AddUpdatesPollerService(
+        public static IServiceCollection AddVideoExtractor(
             this IServiceCollection services,
-            PollerConfig config)
+            VideoExtractorConfig config)
         {
             return services
                 .AddSingleton(config)
-                .AddHostedService<UpdatesPollerService>();
+                .AddSingleton<VideoExtractor>();
+        }
+
+        public static IServiceCollection AddUpdatesScraper(
+            this IServiceCollection services,
+            ScraperConfig config)
+        {
+            return services
+                .AddSingleton(config)
+                .AddSingleton<UpdatesScraper>();
+        }
+
+        public static IServiceCollection AddJobsConsumer(
+            this IServiceCollection services,
+            RabbitMqConfig config)
+        {
+            return services
+                .AddSingleton(config)
+                .AddSingleton<IJobsConsumer, JobsConsumer>()
+                .AddHostedService(
+                    provider => new JobsConsumerService(
+                        config,
+                        provider.GetService<IJobsConsumer>(),
+                        provider.GetService<ILogger<JobsConsumerService>>()));
         }
     }
 }

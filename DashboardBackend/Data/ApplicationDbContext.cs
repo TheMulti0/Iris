@@ -1,7 +1,5 @@
-﻿using Common;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDbGenericRepository;
-using UpdatesConsumer;
 
 namespace DashboardBackend.Data
 {

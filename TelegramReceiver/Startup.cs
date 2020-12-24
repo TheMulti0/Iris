@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using Extensions;
-using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TelegramReceiver;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -41,19 +41,15 @@ static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder
 static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
 {
     IConfiguration rootConfig = hostContext.Configuration;
-    
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("UpdatesConsumer"); 
-    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesProducer"); 
+
+    var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
+    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("ChatPollRequestsProducer");
 
     services
-        .AddSingleton<IMessagesProducer>(
-            _ => new MessagesProducer(producerConfig))
-        .AddSingleton<IUpdatesConsumer, UpdatesConsumer>()
-        .AddHostedService(
-            provider => new UpdatesConsumerService(
-                consumerConfig,
-                provider.GetService<IUpdatesConsumer>(),
-                provider.GetService<ILogger<UpdatesConsumerService>>()))
+        .AddSingleton(consumerConfig)
+        .AddSingleton<IChatPollRequestsProducer, ChatPollRequestsProducer>()
+        .AddSingleton(telegramConfig)
+        .AddHostedService<MessageReceiverService>()
         .BuildServiceProvider();
 }
     

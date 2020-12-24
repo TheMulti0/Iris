@@ -19,7 +19,6 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using UpdatesConsumer;
 
 namespace DashboardBackend
 {
@@ -63,11 +62,10 @@ namespace DashboardBackend
                     options.Events.OnRedirectToAccessDenied = UnauthorizedResponse;
                     options.Events.OnRedirectToLogin = UnauthorizedResponse;
                 });
-            
+
             services
                 .AddScoped<ApplicationDbContext>()
-                .AddScoped<IUpdatesRepository, UpdatesRepository>()
-                .AddUpdatesConsumer<UpdatesDataLayerAppender>(Configuration);
+                .AddScoped<IUpdatesRepository, UpdatesRepository>();
 
             services.AddCors(options =>
             {

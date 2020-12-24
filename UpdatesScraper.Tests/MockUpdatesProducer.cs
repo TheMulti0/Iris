@@ -4,12 +4,12 @@ using Common;
 
 namespace UpdatesScraper.Tests
 {
-    internal class MockUpdatesPublisher : IUpdatesPublisher
+    internal class MockUpdatesProducer : IUpdatesProducer
     {
         private readonly Subject<Update> _updates = new();
         public IObservable<Update> Updates => _updates;
         
-        public void Send(Update update)
+        public void SendUpdate(Update update)
         {
             _updates.OnNext(update);
         }

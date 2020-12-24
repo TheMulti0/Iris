@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramSender.Tests", "Tel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensions.Tests\Extensions.Tests.csproj", "{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesConsumer", "UpdatesConsumer\UpdatesConsumer.csproj", "{9B910296-9E9D-41CF-A95A-A7302E9AF116}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "MockUpdatesProducer\MockUpdatesProducer.csproj", "{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{3D720852-B6EE-4B52-9D37-096CEAEF04A5}"
@@ -45,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapersDistributor", "Scra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PollRulesManager", "PollRulesManager\PollRulesManager.csproj", "{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramReceiver", "TelegramReceiver\TelegramReceiver.csproj", "{885765AF-ADBC-4F36-A5DE-65B92770DB51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +71,6 @@ Global
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B910296-9E9D-41CF-A95A-A7302E9AF116}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -135,6 +131,10 @@ Global
 		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{885765AF-ADBC-4F36-A5DE-65B92770DB51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{885765AF-ADBC-4F36-A5DE-65B92770DB51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{885765AF-ADBC-4F36-A5DE-65B92770DB51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{885765AF-ADBC-4F36-A5DE-65B92770DB51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

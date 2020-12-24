@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Common;
 using DashboardBackend.Data;
 using DashboardBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UpdatesConsumer;
 
 namespace DashboardBackend.Controllers
 {

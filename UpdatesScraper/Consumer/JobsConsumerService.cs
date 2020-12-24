@@ -9,31 +9,22 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;
 
-namespace TelegramSender
+namespace UpdatesScraper
 {
-    public class MessagesConsumerService : BackgroundService
+    public class JobsConsumerService : BackgroundService
     {
         private readonly RabbitMqConfig _config;
-        private readonly IMessagesConsumer _consumer;
-        private readonly ILogger<MessagesConsumerService> _logger;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
+        private readonly IJobsConsumer _consumer;
+        private readonly ILogger<JobsConsumerService> _logger;
 
-        public MessagesConsumerService(
+        public JobsConsumerService(
             RabbitMqConfig config, 
-            IMessagesConsumer consumer,
-            ILogger<MessagesConsumerService> logger)
+            IJobsConsumer consumer,
+            ILogger<JobsConsumerService> logger)
         {
             _config = config;
             _consumer = consumer;
             _logger = logger;
-
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new MediaJsonConverter()
-                }
-            };
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -52,12 +43,9 @@ namespace TelegramSender
             {
                 try
                 {
-                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    string userId = Encoding.UTF8.GetString(message.Body.Span.ToArray());
                     
-                    var m = JsonSerializer.Deserialize<Message>(json)
-                                  ?? throw new NullReferenceException($"Failed to deserialize {json}");
-
-                    await _consumer.OnMessageAsync(m, token);
+                    await _consumer.OnJobAsync(userId, token);
                 }
                 catch (Exception e)
                 {

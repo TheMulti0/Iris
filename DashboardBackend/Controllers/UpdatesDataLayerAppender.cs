@@ -2,11 +2,10 @@
 using Common;
 using DashboardBackend.Data;
 using Microsoft.Extensions.DependencyInjection;
-using UpdatesConsumer;
 
 namespace DashboardBackend.Controllers
 {
-    public class UpdatesDataLayerAppender : IUpdateConsumer
+    public class UpdatesDataLayerAppender
     {
         private readonly IServiceScopeFactory _scopeFactory;
 

@@ -5,17 +5,19 @@ using Microsoft.Extensions.Logging;
 
 namespace UpdatesScraper
 {
-    internal class RabbitMqUpdatesPublisher : IUpdatesPublisher
+    internal class UpdatesProducer : IUpdatesProducer
     {
         private readonly RabbitMqPublisher _publisher;
-        private readonly ILogger<RabbitMqUpdatesPublisher> _logger;
+        private readonly RabbitMqConfig _config;
+        private readonly ILogger<UpdatesProducer> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public RabbitMqUpdatesPublisher(
-            RabbitMqPublisher publisher,
-            ILogger<RabbitMqUpdatesPublisher> logger)
+        public UpdatesProducer(
+            RabbitMqConfig config,
+            ILogger<UpdatesProducer> logger)
         {
-            _publisher = publisher;
+            _publisher = new RabbitMqPublisher(config);
+            _config = config;
             _logger = logger;
 
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -24,12 +26,12 @@ namespace UpdatesScraper
             };
         }
 
-        public void Send(Update update)
+        public void SendUpdate(Update update)
         {
-            _logger.LogInformation("Sending update {} to RabbitMQ", update);
+            _logger.LogInformation("Sending update {}", update);
 
             _publisher.Publish(
-                "update",
+                _config.Destination,
                 JsonSerializer.SerializeToUtf8Bytes(update, _jsonSerializerOptions));
         }
     }

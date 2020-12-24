@@ -5,103 +5,52 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace UpdatesScraper
 {
-    public class UpdatesPollerService : BackgroundService
+    public class UpdatesScraper
     {
-        private readonly PollerConfig _config;
-        private readonly IUpdatesPublisher _updatesPublisher;
+        private readonly ScraperConfig _config;
+        private readonly IUpdatesProducer _updatesProducer;
         private readonly IUpdatesProvider _updatesProvider;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
         private readonly VideoExtractor _videoExtractor;
-        private readonly ILogger<UpdatesPollerService> _logger;
+        private readonly ILogger<UpdatesScraper> _logger;
 
-        public UpdatesPollerService(
-            PollerConfig config,
-            IUpdatesPublisher updatesPublisher, 
+        public UpdatesScraper(
+            ScraperConfig config,
+            IUpdatesProducer updatesProducer, 
             IUpdatesProvider updatesProvider,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
             VideoExtractor videoExtractor,
-            ILogger<UpdatesPollerService> logger)
+            ILogger<UpdatesScraper> logger)
         {
             _config = config;
-            _updatesPublisher = updatesPublisher;
+            _updatesProducer = updatesProducer;
             _updatesProvider = updatesProvider;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
             _videoExtractor = videoExtractor;
             _logger = logger;
         }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (true)
-            {
-                stoppingToken.ThrowIfCancellationRequested();
-
-                _logger.LogInformation("Beginning to poll all users");
-                
-                await Poll(stoppingToken);
-                
-                _logger.LogInformation("Finished polling all users");
-                _logger.LogInformation("Sleeping for {}", _config.Interval);
-
-                await Task.Delay(_config.Interval, stoppingToken);
-            }
-        }
-
-        private async Task Poll(CancellationToken cancellationToken)
-        {
-            foreach (string userId in _config.WatchedUserIds)
-            {
-                try
-                {
-                    await PollUser(userId, cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Failed to poll updates of {}", userId);
-                }
-            }
-        }
-
-        private async Task PollUser(string userId, CancellationToken cancellationToken)
+        
+        public async IAsyncEnumerable<Update> ScrapeUser(string userId, CancellationToken token)
         {
             _logger.LogInformation("Polling {}", userId);
 
-            IEnumerable<Update> updates = await GetUpdates(userId, cancellationToken)
-                .ToListAsync(cancellationToken);
+            IAsyncEnumerable<Update> updates = GetUpdates(userId, token);
             
-            foreach (Update update in updates)
+            await foreach (Update update in updates.WithCancellation(token))
             {
-                await SendUpdate(update);
-
-                await Task.Delay(_config.SendDelay, cancellationToken);
-            }
-
-            if (updates.Any())
-            {
-                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(userId, DateTime.Now);
-            }
-            else
-            {
-                _logger.LogInformation("No new updates found for {}", userId);
-            }
-
-        }
-
-        private async Task SendUpdate(Update update)
-        {
-            _updatesPublisher.Send(update);
-
-            if (_config.StoreSentUpdates)
-            {
-                await _sentUpdatesRepository.AddAsync(update.Url);
+                if (_config.StoreSentUpdates)
+                {
+                    await _sentUpdatesRepository.AddAsync(update.Url);
+                }
+                
+                yield return update;
             }
         }
 
@@ -183,17 +132,14 @@ namespace UpdatesScraper
             IEnumerable<Update> updates,
             UserLatestUpdateTime userLatestUpdateTime)
         {
-            var newUpdates = updates
+            IAsyncEnumerable<Update> newUpdates = updates
                 .Where(IsNew(userLatestUpdateTime))
                 .OrderBy(update => update.CreationDate)
                 .ToAsyncEnumerable();
 
-            if (_config.StoreSentUpdates)
-            {
-                return newUpdates.WhereAwait(NotSent);
-            }
-            
-            return newUpdates;
+            return _config.StoreSentUpdates 
+                ? newUpdates.WhereAwait(NotSent) 
+                : newUpdates;
         }
 
         private static Func<Update, bool> IsNew(UserLatestUpdateTime userLatestUpdateTime)
