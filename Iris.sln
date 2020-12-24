@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrisPoc", "IrisPoc\IrisPoc.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedsScraper.Tests", "FeedsScraper.Tests\FeedsScraper.Tests.csproj", "{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagesManager", "MessagesManager\MessagesManager.csproj", "{C94C3C4C-708A-4818-9543-7494C29ABC6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapersDistributor", "ScrapersDistributor\ScrapersDistributor.csproj", "{B39D1018-25CB-47DC-8012-CE2E83C200E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +121,14 @@ Global
 		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94C3C4C-708A-4818-9543-7494C29ABC6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94C3C4C-708A-4818-9543-7494C29ABC6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94C3C4C-708A-4818-9543-7494C29ABC6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94C3C4C-708A-4818-9543-7494C29ABC6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
