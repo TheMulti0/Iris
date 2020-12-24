@@ -7,9 +7,9 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions", "Extensions\Extensions.csproj", "{9B2FEDA1-07D3-45C5-AFE4-068ED396C616}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBot", "TelegramBot\TelegramBot.csproj", "{F7CC73B4-E6A9-4CE4-9665-E7A5030B502F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramSender", "TelegramSender\TelegramSender.csproj", "{F7CC73B4-E6A9-4CE4-9665-E7A5030B502F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBot.Tests", "TelegramBot.Tests\TelegramBot.Tests.csproj", "{6BC0582D-9162-4E4F-9CAF-DA7328AAD7AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramSender.Tests", "TelegramSender.Tests\TelegramSender.Tests.csproj", "{6BC0582D-9162-4E4F-9CAF-DA7328AAD7AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensions.Tests\Extensions.Tests.csproj", "{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}"
 EndProject

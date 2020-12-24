@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,8 +47,10 @@ namespace ScrapersDistributor
             {
                 try
                 {
-                    var request = JsonSerializer.Deserialize<ChatPollRequest>(message.Body.Span)
-                                  ?? throw new NullReferenceException();
+                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    
+                    var request = JsonSerializer.Deserialize<PollRequest>(json)
+                                 ?? throw new NullReferenceException($"Failed to deserialize {json}");
 
                     await _requestsConsumer.OnRequestAsync(request, token);
                 }

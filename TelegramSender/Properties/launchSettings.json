@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "TelegramSender": {
+      "commandName": "Project",
+      "workingDirectory": "../../../",
+      "environmentVariables": {
+        "ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

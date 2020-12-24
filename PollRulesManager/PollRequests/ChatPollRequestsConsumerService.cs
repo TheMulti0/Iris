@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,7 +52,10 @@ namespace PollRulesManager
             {
                 try
                 {
-                    var request = JsonSerializer.Deserialize<ChatPollRequest>(message.Body.Span, _jsonSerializerOptions);
+                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    
+                    var request = JsonSerializer.Deserialize<ChatPollRequest>(json, _jsonSerializerOptions)
+                                 ?? throw new NullReferenceException($"Failed to deserialize {json}");
                     
                     await _consumer.OnRequestAsync(request, token);
                 }

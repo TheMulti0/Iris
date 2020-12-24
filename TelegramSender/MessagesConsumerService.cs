@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,19 +8,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;
 
-namespace MessagesManager
+namespace TelegramSender
 {
-    public class UpdatesConsumerService : BackgroundService
+    public class MessagesConsumerService : BackgroundService
     {
         private readonly RabbitMqConfig _config;
-        private readonly IUpdatesConsumer _consumer;
-        private readonly ILogger<UpdatesConsumerService> _logger;
+        private readonly IMessagesConsumer _consumer;
+        private readonly ILogger<MessagesConsumerService> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public UpdatesConsumerService(
+        public MessagesConsumerService(
             RabbitMqConfig config, 
-            IUpdatesConsumer consumer,
-            ILogger<UpdatesConsumerService> logger)
+            IMessagesConsumer consumer,
+            ILogger<MessagesConsumerService> logger)
         {
             _config = config;
             _consumer = consumer;
@@ -52,12 +51,9 @@ namespace MessagesManager
             {
                 try
                 {
-                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    var m = JsonSerializer.Deserialize<Message>(message.Body.Span, _jsonSerializerOptions);
                     
-                    var update = JsonSerializer.Deserialize<Update>(json, _jsonSerializerOptions)
-                                 ?? throw new NullReferenceException($"Failed to deserialize {json}");
-                    
-                    await _consumer.OnUpdateAsync(update, token);
+                    await _consumer.OnMessageAsync(m, token);
                 }
                 catch (Exception e)
                 {

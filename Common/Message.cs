@@ -2,5 +2,7 @@
 
 namespace Common
 {
-    public record Message(Update Update, List<string> DestinationChats);
+    public record Message(
+        Update Update,
+        List<string> DestinationChats);
 }

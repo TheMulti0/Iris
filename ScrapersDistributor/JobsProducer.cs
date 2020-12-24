@@ -15,7 +15,7 @@ namespace ScrapersDistributor
 
         public void SendJob(User user)
         {
-            (string userId, string source) = user;
+            (string userId, string _, string source) = user;
             
             byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(userId);
             

@@ -27,12 +27,12 @@ services:
     networks:
       - mongodb_network
 
-  telegrambot:
-    image: themulti0/iris_telegrambot:latest
+  telegramsender:
+    image: themulti0/iris_telegramsender:latest
     build:
       context: .
       dockerfile: TelegramBot/Dockerfile
-    container_name: telegrambot
+    container_name: telegramsender
     restart: always
     volumes:
       - './TelegramBot/appsettings.json:/app/appsettings.json'
