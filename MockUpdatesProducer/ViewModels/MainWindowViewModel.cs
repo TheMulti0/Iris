@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Common;
 using Extensions;
 using MockUpdatesProducer.Annotations;
+using MockUpdatesProducer.Models;
 
 namespace MockUpdatesProducer
 {

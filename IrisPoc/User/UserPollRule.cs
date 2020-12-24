@@ -6,7 +6,7 @@ namespace IrisPoc
         User User,
         TimeSpan? Interval)
     {
-        public virtual bool Equals(UserPollRule? other)
+        public virtual bool Equals(UserPollRule other)
         {
             return other?.User == User;
         }

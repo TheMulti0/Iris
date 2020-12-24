@@ -41,15 +41,15 @@ services:
     depends_on:
       - rabbitmq
 
-  facebookproducer:
-    image: themulti0/iris_facebookproducer:latest
+  facebookscraper:
+    image: themulti0/iris_facebookscraper:latest
     build:
       context: .
-      dockerfile: FacebookProducer/Dockerfile
-    container_name: facebookproducer
+      dockerfile: FacebookScraper/Dockerfile
+    container_name: facebookscraper
     restart: always
     volumes:
-      - './FacebookProducer/appsettings.json:/app/appsettings.json'
+      - './FacebookScraper/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
       - mongodb_network
@@ -57,15 +57,15 @@ services:
       - rabbitmq
       - mongodb
       
-  twitterproducer:
-    image: themulti0/iris_twitterproducer:latest
+  twitterscraper:
+    image: themulti0/iris_twitterscraper:latest
     build:
       context: .
-      dockerfile: TwitterProducer/Dockerfile
-    container_name: twitterproducer
+      dockerfile: TwitterScraper/Dockerfile
+    container_name: twitterscraper
     restart: always
     volumes:
-      - './TwitterProducer/appsettings.json:/app/appsettings.json'
+      - './TwitterScraper/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
       - mongodb_network
@@ -73,15 +73,15 @@ services:
       - rabbitmq
       - mongodb
         
-  feedsproducer:
-    image: themulti0/iris_feedsproducer:latest
+  feedscraper:
+    image: themulti0/iris_feedscraper:latest
     build:
       context: .
-      dockerfile: FeedsProducer/Dockerfile
-    container_name: feedsproducer
+      dockerfile: FeedsScraper/Dockerfile
+    container_name: feedscraper
     restart: always
     volumes:
-      - './FeedsProducer/appsettings.json:/app/appsettings.json'
+      - './FeedsScraper/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
       - mongodb_network

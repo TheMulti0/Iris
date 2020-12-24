@@ -1,4 +1,4 @@
-﻿namespace MockUpdatesProducer
+﻿namespace MockUpdatesProducer.Models
 {
     public enum UpdateType
     {

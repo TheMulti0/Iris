@@ -19,25 +19,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "Mock
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{3D720852-B6EE-4B52-9D37-096CEAEF04A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesProducer", "UpdatesProducer\UpdatesProducer.csproj", "{391D2F02-2E02-4992-8AA4-5B367C82C67B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesScraper", "UpdatesScraper\UpdatesScraper.csproj", "{391D2F02-2E02-4992-8AA4-5B367C82C67B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookProducer", "FacebookProducer\FacebookProducer.csproj", "{16CBBE91-5418-4886-9605-F73EAC56996B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookScraper", "FacebookScraper\FacebookScraper.csproj", "{16CBBE91-5418-4886-9605-F73EAC56996B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesProducer.Tests", "UpdatesProducer.Tests\UpdatesProducer.Tests.csproj", "{AD335F9A-E613-4B27-BBDE-E3570B3320CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesScraper.Tests", "UpdatesScraper.Tests\UpdatesScraper.Tests.csproj", "{AD335F9A-E613-4B27-BBDE-E3570B3320CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{630E5374-67E2-4FC0-A287-F2A503BBC64F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookProducer.Tests", "FacebookProducer.Tests\FacebookProducer.Tests.csproj", "{F7329884-AB6E-4C9C-9EDA-FEE42FBA1420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookScraper.Tests", "FacebookScraper.Tests\FacebookScraper.Tests.csproj", "{F7329884-AB6E-4C9C-9EDA-FEE42FBA1420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterProducer", "TwitterProducer\TwitterProducer.csproj", "{1577E1B6-E5BE-4E4B-BF78-230571BD4445}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterScraper", "TwitterScraper\TwitterScraper.csproj", "{1577E1B6-E5BE-4E4B-BF78-230571BD4445}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterProducer.Tests", "TwitterProducer.Tests\TwitterProducer.Tests.csproj", "{41DB2817-DF7F-4117-B034-2BE7E4318F34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterScraper.Tests", "TwitterScraper.Tests\TwitterScraper.Tests.csproj", "{41DB2817-DF7F-4117-B034-2BE7E4318F34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedsProducer", "FeedsProducer\FeedsProducer.csproj", "{7DAAB597-75C1-4350-B5D0-AD2CDD6C73AE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedsProducer.Tests", "FeedsProducer.Tests\FeedsProducer.Tests.csproj", "{98069B36-9879-42FB-A396-F9FD59122258}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedsScraper", "FeedsScraper\FeedsScraper.csproj", "{7DAAB597-75C1-4350-B5D0-AD2CDD6C73AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrisPoc", "IrisPoc\IrisPoc.csproj", "{B064F0C7-C5AC-4731-B2CE-13664AF6177F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedsScraper.Tests", "FeedsScraper.Tests\FeedsScraper.Tests.csproj", "{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,14 +109,14 @@ Global
 		{7DAAB597-75C1-4350-B5D0-AD2CDD6C73AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DAAB597-75C1-4350-B5D0-AD2CDD6C73AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DAAB597-75C1-4350-B5D0-AD2CDD6C73AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98069B36-9879-42FB-A396-F9FD59122258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98069B36-9879-42FB-A396-F9FD59122258}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98069B36-9879-42FB-A396-F9FD59122258}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98069B36-9879-42FB-A396-F9FD59122258}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B064F0C7-C5AC-4731-B2CE-13664AF6177F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B064F0C7-C5AC-4731-B2CE-13664AF6177F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B064F0C7-C5AC-4731-B2CE-13664AF6177F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B064F0C7-C5AC-4731-B2CE-13664AF6177F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E17938A-EE9B-4D9F-AE7C-B3E4E2544BF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
