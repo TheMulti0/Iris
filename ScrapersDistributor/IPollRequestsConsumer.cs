@@ -6,6 +6,6 @@ namespace ScrapersDistributor
 {
     public interface IPollRequestsConsumer
     {
-        Task OnRequestAsync(ChatPollRequest request, CancellationToken token);
+        Task OnRequestAsync(PollRequest request, CancellationToken token);
     }
 }

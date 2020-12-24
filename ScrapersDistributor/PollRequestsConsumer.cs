@@ -21,7 +21,7 @@ namespace ScrapersDistributor
             _logger = logger;
         }
         
-        public Task OnRequestAsync(ChatPollRequest request, CancellationToken token)
+        public Task OnRequestAsync(PollRequest request, CancellationToken token)
         {
             try
             {

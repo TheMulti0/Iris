@@ -48,7 +48,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     services
         .AddSingleton<IJobsProducer>(
             _ => new JobsProducer(producerConfig))
-        .AddSingleton<IPollRequestsConsumer>()
+        .AddSingleton<IPollRequestsConsumer, PollRequestsConsumer>()
         .AddHostedService(
             provider => new PollRequestsConsumerService(
                 consumerConfig,

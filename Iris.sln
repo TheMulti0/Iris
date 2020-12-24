@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagesManager", "Messages
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapersDistributor", "ScrapersDistributor\ScrapersDistributor.csproj", "{B39D1018-25CB-47DC-8012-CE2E83C200E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PollRulesManager", "PollRulesManager\PollRulesManager.csproj", "{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B39D1018-25CB-47DC-8012-CE2E83C200E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

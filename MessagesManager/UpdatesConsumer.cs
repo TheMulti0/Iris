@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MessagesManager
 {
-    public class UpdatesConsumer
+    public class UpdatesConsumer : IUpdatesConsumer
     {
         private readonly IMessagesProducer _producer;
         private readonly ILogger<IUpdatesConsumer> _logger;
