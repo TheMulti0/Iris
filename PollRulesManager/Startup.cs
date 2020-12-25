@@ -32,7 +32,9 @@ namespace PollRulesManager
 
             services
                 .AddSingleton<IPollRequestsProducer>(
-                    _ => new PollRequestsProducer(producerConfig))
+                    provider => new PollRequestsProducer(
+                        producerConfig,
+                        provider.GetService<ILogger<PollRequestsProducer>>()))
                 .AddSingleton<IChatPollRequestsConsumer, ChatPollRequestsConsumer>()
                 .AddHostedService(
                     provider => new ChatPollRequestsConsumerService(

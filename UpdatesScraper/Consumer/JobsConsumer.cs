@@ -27,7 +27,7 @@ namespace UpdatesScraper
 
         public async Task OnJobAsync(string userId, CancellationToken token)
         {
-            _logger.LogInformation("Got poll job for {}", userId);
+            _logger.LogInformation("Received poll job for {}", userId);
 
             bool foundUpdates = false;
             

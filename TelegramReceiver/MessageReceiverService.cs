@@ -52,14 +52,18 @@ namespace TelegramReceiver
             {
                 return;
             }
+
+            var userPollRule = new UserPollRule(
+                new User(updateMessage.Text, updateMessage.Text, "Facebook"),
+                TimeSpan.FromSeconds(10));
+            
+            var chatPollRequest = new ChatPollRequest(
+                Request.StartPoll,
+                userPollRule,
+                (ChatId) updateMessage.Chat.Id);
             
             _producer.SendRequest(
-                new ChatPollRequest(
-                    Request.StartPoll,
-                    new UserPollRule(
-                        new User(updateMessage.Text, updateMessage.Text, "Facebook"),
-                        TimeSpan.FromSeconds(10)),
-                    (ChatId) updateMessage.Chat.Id));
+                chatPollRequest);
         }
 
         public override void Dispose()

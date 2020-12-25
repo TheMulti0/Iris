@@ -31,6 +31,7 @@ namespace PollRulesManager
             {
                 Converters =
                 {
+                    new TimeSpanConverter(),
                     new MediaJsonConverter()
                 }
             };

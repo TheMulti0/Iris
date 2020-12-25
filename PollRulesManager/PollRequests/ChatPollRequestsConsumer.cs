@@ -21,6 +21,8 @@ namespace PollRulesManager
 
         public Task OnRequestAsync(ChatPollRequest request, CancellationToken token)
         {
+            _logger.LogInformation("Received chat poll request {}", request);
+        
             _producer.SendPollRequest(request);
 
             return Task.CompletedTask;

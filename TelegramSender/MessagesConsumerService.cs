@@ -54,7 +54,7 @@ namespace TelegramSender
                 {
                     string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
                     
-                    var m = JsonSerializer.Deserialize<Message>(json)
+                    var m = JsonSerializer.Deserialize<Message>(json, _jsonSerializerOptions)
                                   ?? throw new NullReferenceException($"Failed to deserialize {json}");
 
                     await _consumer.OnMessageAsync(m, token);

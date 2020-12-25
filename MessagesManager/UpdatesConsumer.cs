@@ -21,6 +21,8 @@ namespace MessagesManager
 
         public Task OnUpdateAsync(Update update, CancellationToken token)
         {
+            _logger.LogInformation("Received update {}", update);
+            
             _producer.SendMessage(new Message(update, new List<string>()));
 
             return Task.CompletedTask;

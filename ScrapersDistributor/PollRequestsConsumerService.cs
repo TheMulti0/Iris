@@ -16,6 +16,7 @@ namespace ScrapersDistributor
         private readonly RabbitMqConfig _config;
         private readonly IPollRequestsConsumer _requestsConsumer;
         private readonly ILogger<PollRequestsConsumerService> _logger;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         private RabbitMqConsumer _consumer;
 
@@ -27,6 +28,14 @@ namespace ScrapersDistributor
             _config = config;
             _requestsConsumer = requestsConsumer;
             _logger = logger;
+
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new TimeSpanConverter()
+                }
+            };
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -49,7 +58,7 @@ namespace ScrapersDistributor
                 {
                     string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
                     
-                    var request = JsonSerializer.Deserialize<PollRequest>(json)
+                    var request = JsonSerializer.Deserialize<PollRequest>(json, _jsonSerializerOptions)
                                  ?? throw new NullReferenceException($"Failed to deserialize {json}");
 
                     await _requestsConsumer.OnRequestAsync(request, token);

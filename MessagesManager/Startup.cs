@@ -47,7 +47,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 
     services
         .AddSingleton<IMessagesProducer>(
-            _ => new MessagesProducer(producerConfig))
+            provider => new MessagesProducer(
+                producerConfig,
+                provider.GetService<ILogger<MessagesProducer>>()))
         .AddSingleton<IUpdatesConsumer, UpdatesConsumer>()
         .AddHostedService(
             provider => new UpdatesConsumerService(

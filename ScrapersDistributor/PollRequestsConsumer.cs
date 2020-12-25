@@ -9,8 +9,12 @@ namespace ScrapersDistributor
 {
     internal class PollRequestsConsumer : IPollRequestsConsumer
     {
+        private record RunningOperation(
+            Task Task,
+            CancellationTokenSource TokenSource);
+        
         private readonly IJobsProducer _producer;
-        private readonly ConcurrentDictionary<UserPollRule, Task> _userJobsTasks = new();
+        private readonly ConcurrentDictionary<UserPollRule, RunningOperation> _userPollOperations = new();
         private readonly ILogger<PollRequestsConsumer> _logger;
 
         public PollRequestsConsumer(
@@ -25,6 +29,8 @@ namespace ScrapersDistributor
         {
             try
             {
+                _logger.LogInformation("Received poll request {}", request);
+                
                 (Request type, UserPollRule rule) = request;
                 
                 if (type == Request.StartPoll)
@@ -46,22 +52,36 @@ namespace ScrapersDistributor
 
         private void AddUserPollRule(UserPollRule rule)
         {
+            _logger.LogInformation("Adding user poll rule {}", rule);
+
+            var cts = new CancellationTokenSource();
+            
             var userTask = Task.Factory.StartNew(
-                () => PeriodicallySendJobs(rule),
+                () => PeriodicallySendJobs(rule, cts.Token),
                 TaskCreationOptions.AttachedToParent);
 
-            _userJobsTasks.AddOrUpdate(
+            var operation = new RunningOperation(
+                userTask,
+                cts);
+
+            _userPollOperations.AddOrUpdate(
                 rule,
-                _ => userTask,
-                (_, _) => userTask);
+                _ => operation,
+                (_, _) => operation);
         }
 
         private void RemoveUserPollRule(UserPollRule rule)
         {
-            _userJobsTasks.TryRemove(rule, out Task _);
+            _logger.LogInformation("Removing user poll rule {}", rule);
+            
+            _userPollOperations.TryRemove(rule, out RunningOperation operation);
+            
+            operation?.TokenSource.Cancel();
         }
 
-        private async Task PeriodicallySendJobs(UserPollRule rule)
+        private async Task PeriodicallySendJobs(
+            UserPollRule rule,
+            CancellationToken token)
         {
             (User user, TimeSpan? i) = rule;
 
@@ -78,7 +98,7 @@ namespace ScrapersDistributor
                 {
                     _producer.SendJob(user);
           
-                    await Task.Delay(interval);
+                    await Task.Delay(interval, token);
                 }
                 catch (Exception e)
                 {
