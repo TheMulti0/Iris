@@ -48,6 +48,7 @@ namespace MockUpdatesProducer
         private readonly RabbitMqPublisher _publisher;
         private readonly Dictionary<UpdateType, Update> _updates;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
+        private static readonly User User = new("mock-user", "Mock user", "Mock");
 
         public MainWindowViewModel()
         {
@@ -110,7 +111,7 @@ namespace MockUpdatesProducer
                     UpdateType.Text,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock update"
                     }
                 },
@@ -118,7 +119,7 @@ namespace MockUpdatesProducer
                     UpdateType.TextWithUrl,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock update",
                         Url = "https://mock-url.com"
                     }
@@ -127,7 +128,7 @@ namespace MockUpdatesProducer
                     UpdateType.Audio,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Media = new List<IMedia>
                         {
                             audio
@@ -138,7 +139,7 @@ namespace MockUpdatesProducer
                     UpdateType.AudioWithDetails,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock audio",
                         Url = "https://mock-url.com",
                         Media = new List<IMedia>
@@ -151,7 +152,7 @@ namespace MockUpdatesProducer
                     UpdateType.Photo,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Media = new List<IMedia>
                         {
                             photo
@@ -162,7 +163,7 @@ namespace MockUpdatesProducer
                     UpdateType.PhotoWithDetails,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock photo",
                         Url = "https://mock-url.com",
                         Media = new List<IMedia>
@@ -175,7 +176,7 @@ namespace MockUpdatesProducer
                     UpdateType.Video,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Media = new List<IMedia>
                         {
                             video
@@ -186,7 +187,7 @@ namespace MockUpdatesProducer
                     UpdateType.VideoWithDetails,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock video",
                         Url = "https://mock-url.com",
                         Media = new List<IMedia>
@@ -199,7 +200,7 @@ namespace MockUpdatesProducer
                     UpdateType.MultipleMedia,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Media = new List<IMedia>
                         {
                             video,
@@ -212,7 +213,7 @@ namespace MockUpdatesProducer
                     UpdateType.MultipleMediaWithDetails,
                     new Update
                     {
-                        AuthorId = "MockUser",
+                        Author = User,
                         Content = "Mock multiple media",
                         Url = "https://mock-url.com",
                         Media = new List<IMedia>

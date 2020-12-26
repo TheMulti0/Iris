@@ -6,6 +6,6 @@ namespace UpdatesScraper
 {
     public interface IJobsConsumer
     {
-        Task OnJobAsync(string userId, CancellationToken token);
+        Task OnJobAsync(User user, CancellationToken token);
     }
 }

@@ -8,7 +8,7 @@ namespace Common
     {
         public string Content { get; init; }
 
-        public string AuthorId { get; init; }
+        public User Author { get; init; }
 
         public DateTime? CreationDate { get; init; }
 
@@ -22,7 +22,7 @@ namespace Common
 
         public override string ToString()
         {
-            return $"{Url} (By {AuthorId}, Media length: {Media?.Count}, Repost: {Repost})";
+            return $"{Url} (By {Author}, Media length: {Media?.Count}, Repost: {Repost})";
         }
     }
 }

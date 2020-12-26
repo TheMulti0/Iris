@@ -67,10 +67,8 @@ namespace UpdatesScraper
             this IServiceCollection services,
             MongoDbConfig config)
         {
-            var mongoDbContext = new MongoDbContext(config.ConnectionString, config.DatabaseName);
-            
             return services
-                .AddSingleton<IMongoDbContext>(mongoDbContext)
+                .AddSingleton<IMongoDbContext>(new MongoDbContext(config.ConnectionString, config.DatabaseName))
                 .AddSingleton(config);
         }
 

@@ -20,7 +20,7 @@ namespace FeedsScraper.Tests
         [TestMethod]
         public async Task Test1()
         {
-            List<Update> updates = (await _provider.GetUpdatesAsync("http://feeds.soundcloud.com/users/soundcloud:users:108885014/sounds.rss")).ToList();
+            List<Update> updates = (await _provider.GetUpdatesAsync(new User("http://feeds.soundcloud.com/users/soundcloud:users:108885014/sounds.rss", "feed", "test"))).ToList();
             
             Assert.IsNotNull(updates);
             CollectionAssert.AllItemsAreNotNull(updates);

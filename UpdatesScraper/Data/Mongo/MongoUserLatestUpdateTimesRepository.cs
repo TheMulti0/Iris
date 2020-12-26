@@ -28,16 +28,33 @@ namespace UpdatesScraper
                 UserId = userId,
                 LatestUpdateTime = latestUpdateTime
             };
-            
-            UserLatestUpdateTime newEntity = await _collection
-                .FindOneAndReplaceAsync(
-                    userLatestUpdateTime => userLatestUpdateTime.UserId == userId,
-                    updateTime);
 
-            if (newEntity == null)
+            var existing = await GetAsync(userId);
+            
+            if (existing == null)
             {
                 await _collection.InsertOneAsync(updateTime);
+                return;
             }
+
+            bool updateSuccess;
+            do
+            {
+                existing = await GetAsync(userId);
+
+                UpdateDefinition<UserLatestUpdateTime> update = Builders<UserLatestUpdateTime>.Update
+                    .Set(u => u.Version, existing.Version + 1)
+                    .Set(u => u.LatestUpdateTime, latestUpdateTime);
+                
+                var result = await _collection
+                    .UpdateOneAsync(
+                        userLatestUpdateTime => userLatestUpdateTime.Version == existing.Version &&
+                                                userLatestUpdateTime.UserId == userId,
+                        update);
+
+                updateSuccess = result.IsAcknowledged && result.ModifiedCount > 0;
+            }
+            while (!updateSuccess);
         }
     }
 }

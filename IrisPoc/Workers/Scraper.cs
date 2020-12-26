@@ -22,7 +22,7 @@ namespace IrisPoc
                 new Update
                 {
                     Content = "Mock",
-                    AuthorId = userId
+                    Author = new Common.User(userId, userId, "platform")
                 });
         }
     }

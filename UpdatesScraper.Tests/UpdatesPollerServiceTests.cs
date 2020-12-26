@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,7 +51,7 @@ namespace UpdatesScraper.Tests
         [Timeout(1000)]
         public async Task TestScrape()
         {
-            var first = await _scraper.ScrapeUser("test", CancellationToken.None)
+            var first = await _scraper.ScrapeUser(new User("test", "test","test"), CancellationToken.None)
                 .FirstOrDefaultAsync();
             
             Assert.IsNotNull(first);

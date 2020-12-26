@@ -12,7 +12,6 @@ namespace UpdatesScraper
     public class UpdatesScraper
     {
         private readonly ScraperConfig _config;
-        private readonly IUpdatesProducer _updatesProducer;
         private readonly IUpdatesProvider _updatesProvider;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
@@ -21,7 +20,6 @@ namespace UpdatesScraper
 
         public UpdatesScraper(
             ScraperConfig config,
-            IUpdatesProducer updatesProducer, 
             IUpdatesProvider updatesProvider,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
@@ -29,7 +27,6 @@ namespace UpdatesScraper
             ILogger<UpdatesScraper> logger)
         {
             _config = config;
-            _updatesProducer = updatesProducer;
             _updatesProvider = updatesProvider;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
@@ -37,11 +34,11 @@ namespace UpdatesScraper
             _logger = logger;
         }
         
-        public async IAsyncEnumerable<Update> ScrapeUser(string userId, CancellationToken token)
+        public async IAsyncEnumerable<Update> ScrapeUser(User user, CancellationToken token)
         {
-            _logger.LogInformation("Polling {}", userId);
+            _logger.LogInformation("Polling {}", user);
 
-            IAsyncEnumerable<Update> updates = GetUpdates(userId, token);
+            IAsyncEnumerable<Update> updates = GetUpdates(user, token);
             
             await foreach (Update update in updates.WithCancellation(token))
             {
@@ -55,15 +52,15 @@ namespace UpdatesScraper
         }
 
         private async IAsyncEnumerable<Update> GetUpdates(
-            string userId,
+            User user,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(userId);
+            IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(user);
             List<Update> sortedUpdates = updates
                 .Reverse()
                 .OrderBy(update => update.CreationDate).ToList();
 
-            UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(userId);
+            UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(user.UserId);
 
             ConfiguredCancelableAsyncEnumerable<Update> newUpdates = GetNewUpdates(sortedUpdates, userLatestUpdateTime)
                 .WithCancellation(cancellationToken);

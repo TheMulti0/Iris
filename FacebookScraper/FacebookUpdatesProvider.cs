@@ -24,7 +24,7 @@ namespace FacebookScraper
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Update>> GetUpdatesAsync(string userId)
+        public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
             const string scriptName = "get_posts.py";
             
@@ -32,10 +32,10 @@ namespace FacebookScraper
             {
                 // TODO make page count an optional configurable field
                 string response = await ScriptExecutor.ExecutePython(
-                    scriptName, userId, 1);
+                    scriptName, user.UserId, 1);
                 
                 return JsonConvert.DeserializeObject<Post[]>(response)
-                    .Select(ToUpdate(userId));
+                    .Select(ToUpdate(user));
             }
             catch (Exception e)
             {
@@ -45,12 +45,12 @@ namespace FacebookScraper
             return Enumerable.Empty<Update>();
         }
 
-        private Func<Post, Update> ToUpdate(string userId)
+        private Func<Post, Update> ToUpdate(User user)
         {
             return post => new Update
             {
                 Content = post.Text,
-                AuthorId = userId,
+                Author = user,
                 CreationDate = post.CreationDate,
                 Url = post.PostUrl,
                 Media = GetMedia(post).ToList(),

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,7 +30,7 @@ namespace FacebookScraper.Tests
         [TestMethod]
         public async Task TestGetUpdatesAsync()
         {
-            var updates = await _updatesProvider.GetUpdatesAsync("Netanyahu");
+            var updates = await _updatesProvider.GetUpdatesAsync(new User("Netanyahu", "Netanyahu", "Facebook"));
             
             Assert.IsNotNull(updates);
             

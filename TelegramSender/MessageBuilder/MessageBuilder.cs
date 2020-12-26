@@ -14,7 +14,7 @@ namespace TelegramSender
             string repostPrefix = update.Repost ? " בפרסום מחדש" : string.Empty;
 
             // TODO show author display name
-            var messageContent = $"<a href=\"{update.Url}\">{update.AuthorId}{repostPrefix} ({update.Source}):</a>\n\n\n{update.Content}";
+            var messageContent = $"<a href=\"{update.Url}\">{update.Author.DisplayName}{repostPrefix} ({update.Source}):</a>\n\n\n{update.Content}";
 
             return new MessageInfo(
                 messageContent,

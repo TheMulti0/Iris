@@ -21,7 +21,7 @@ namespace IrisPoc
         public void NewUpdate(Update update)
         {
             List<string> chatIds = _dataLayer.Get()
-                .FirstOrDefault(pair => pair.Key.User.UserId == update.AuthorId)
+                .FirstOrDefault(pair => pair.Key.User.UserId == update.Author.UserId)
                 .Value;
             
             _messages.OnNext(new Message(update, chatIds));

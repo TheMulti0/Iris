@@ -20,13 +20,11 @@ namespace ScrapersDistributor
 
         public void SendJob(User user)
         {
-            (string userId, string _, string source) = user;
+            _logger.LogInformation("Sending job {}", user);
             
-            _logger.LogInformation("Sending job {}", userId);
+            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(user);
             
-            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(userId);
-            
-            _publisher.Publish(source, bytes);
+            _publisher.Publish(user.Source, bytes);
         }
     }
 }

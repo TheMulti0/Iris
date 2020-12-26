@@ -20,23 +20,23 @@ namespace FeedsScraper
             _config = config;
         }
         
-        public async Task<IEnumerable<Update>> GetUpdatesAsync(string userId)
+        public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
             // userId is treated as url to the feed
-            Feed feed = await FeedReader.ReadAsync(userId);
+            Feed feed = await FeedReader.ReadAsync(user.UserId);
 
             return feed.Items.Select(
                 ToUpdate(
-                    feed.Title,
+                    user,
                     _config.Name));
         }
 
-        private Func<FeedItem, Update> ToUpdate(string feedName, string source)
+        private Func<FeedItem, Update> ToUpdate(User feed, string source)
         {
             return item => new Update
             {
                 Content = GetContent(item),
-                AuthorId = feedName,
+                Author = feed,
                 CreationDate = item.PublishingDate,
                 Url = item.Link,
                 Media = GetMedia(item),

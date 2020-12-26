@@ -6,6 +6,6 @@ namespace UpdatesScraper
 {
     public interface IUpdatesProvider
     {
-        public Task<IEnumerable<Update>> GetUpdatesAsync(string userId);
+        public Task<IEnumerable<Update>> GetUpdatesAsync(User user);
     }
 }

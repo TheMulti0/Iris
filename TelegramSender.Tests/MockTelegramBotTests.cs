@@ -17,10 +17,9 @@ namespace TelegramSender.Tests
         private const string PhotoUrl = "https://mock-photo-url.com";
         private const string VideoUrl = "https://mock-video-url.com";
         private const string AudioUrl = "https://mock-audio-url.com";
-        private const string MockUserId = "mock-user";
 
         private static readonly User User = new(
-            MockUserId,
+            "mock-user",
             "Mock user",
             "Mock platform");
 
@@ -57,7 +56,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Content = "Mock update"
             };
             
@@ -81,7 +80,7 @@ namespace TelegramSender.Tests
             
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Content = content
             };
             
@@ -99,7 +98,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Content = "Mock update",
                 Url = UpdateUrl
             };
@@ -118,7 +117,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia> 
                 {   
                     new Audio(
@@ -144,7 +143,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia>
                 {   
                     new Photo(PhotoUrl)
@@ -165,7 +164,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia>
                 {   
                     new Photo(PhotoUrl)
@@ -188,7 +187,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia>
                 {
                     new Video(
@@ -211,7 +210,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia>
                 {   
                     new Video(
@@ -237,7 +236,7 @@ namespace TelegramSender.Tests
         {
             var update = new Update
             {
-                AuthorId = MockUserId,
+                Author = User,
                 Media = new List<IMedia> 
                 {   
                     new Video(

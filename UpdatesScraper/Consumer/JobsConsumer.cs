@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.Extensions.Logging;
 using Update = Common.Update;
 
@@ -25,13 +26,13 @@ namespace UpdatesScraper
             _logger = logger;
         }
 
-        public async Task OnJobAsync(string userId, CancellationToken token)
+        public async Task OnJobAsync(User user, CancellationToken token)
         {
-            _logger.LogInformation("Received poll job for {}", userId);
+            _logger.LogInformation("Received poll job for {}", user);
 
             bool foundUpdates = false;
             
-            await foreach (Update update in _scraper.ScrapeUser(userId, token))
+            await foreach (Update update in _scraper.ScrapeUser(user, token))
             {
                 foundUpdates = true;
                 
@@ -40,11 +41,11 @@ namespace UpdatesScraper
 
             if (foundUpdates)
             {
-                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(userId, DateTime.Now);
+                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(user.UserId, DateTime.Now);
             }
             else
             {
-                _logger.LogInformation("No new updates found for {}", userId);
+                _logger.LogInformation("No new updates found for {}", user);
             }
         }
     }

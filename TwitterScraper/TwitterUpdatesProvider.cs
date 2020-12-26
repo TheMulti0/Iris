@@ -37,9 +37,9 @@ namespace TwitterScraper
             _config = config;
         }
 
-        public async Task<IEnumerable<Update>> GetUpdatesAsync(string userId)
+        public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
-            var parameters = new GetUserTimelineParameters(userId)
+            var parameters = new GetUserTimelineParameters(user.UserId)
             {
                 PageSize = 10,
                 TweetMode = TweetMode.Extended
@@ -47,8 +47,8 @@ namespace TwitterScraper
             ITweet[] tweets = await _twitterClient.Timelines.GetUserTimelineAsync(parameters);
 
             return tweets
-                .Where(IsTweetPublishable(userId))
-                .Select(ToUpdate(userId));
+                .Where(IsTweetPublishable(user.UserId))
+                .Select(ToUpdate(user));
         }
 
         private static Func<ITweet, bool> IsTweetPublishable(string userId)
@@ -57,14 +57,14 @@ namespace TwitterScraper
                             tweet.InReplyToScreenName == userId; 
         }
 
-        private Func<ITweet, Update> ToUpdate(string userId)
+        private Func<ITweet, Update> ToUpdate(User user)
         {
             return tweet => new Update
             {
                 Content = CleanText(tweet.IsRetweet 
                     ? tweet.RetweetedTweet.Text 
                     : tweet.FullText),
-                AuthorId = userId,
+                Author = user,
                 CreationDate = tweet.CreatedAt.DateTime,
                 Url = tweet.Url,
                 Media = GetMedia(tweet).ToList(),

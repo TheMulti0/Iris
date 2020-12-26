@@ -7,14 +7,14 @@ namespace UpdatesScraper.Tests
 {
     internal class MockUpdatesProvider : IUpdatesProvider
     {
-        public Task<IEnumerable<Update>> GetUpdatesAsync(string userId)
+        public Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
             IEnumerable<Update> updates = new Update[]
             {
                 new()
                 {
-                    Content = $"mock update by {userId}",
-                    AuthorId = userId,
+                    Content = $"mock update by {user}",
+                    Author = user,
                     CreationDate = DateTime.Now,
                     Url = "mockurl.com"
                 }

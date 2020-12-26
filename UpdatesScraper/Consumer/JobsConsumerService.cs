@@ -43,9 +43,12 @@ namespace UpdatesScraper
             {
                 try
                 {
-                    string userId = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
                     
-                    await _consumer.OnJobAsync(userId, token);
+                    var user = JsonSerializer.Deserialize<User>(json)
+                                 ?? throw new NullReferenceException($"Failed to deserialize {json}");
+                    
+                    await _consumer.OnJobAsync(user, token);
                 }
                 catch (Exception e)
                 {
