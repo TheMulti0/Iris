@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockUpdatesProducer", "MockUpdatesProducer\MockUpdatesProducer.csproj", "{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardBackend", "DashboardBackend\DashboardBackend.csproj", "{3D720852-B6EE-4B52-9D37-096CEAEF04A5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesScraper", "UpdatesScraper\UpdatesScraper.csproj", "{391D2F02-2E02-4992-8AA4-5B367C82C67B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacebookScraper", "FacebookScraper\FacebookScraper.csproj", "{16CBBE91-5418-4886-9605-F73EAC56996B}"
@@ -77,10 +75,6 @@ Global
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D720852-B6EE-4B52-9D37-096CEAEF04A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D720852-B6EE-4B52-9D37-096CEAEF04A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D720852-B6EE-4B52-9D37-096CEAEF04A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D720852-B6EE-4B52-9D37-096CEAEF04A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
