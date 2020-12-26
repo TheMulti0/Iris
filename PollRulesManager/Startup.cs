@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using MongoDbGenericRepository;
+using UserDataLayer;
 
 namespace PollRulesManager
 {
@@ -29,8 +29,16 @@ namespace PollRulesManager
         {
             var consumerConfig = Configuration.GetSection<RabbitMqConfig>("ChatPollRequestsConsumer"); 
             var producerConfig = Configuration.GetSection<RabbitMqConfig>("PollRequestsProducer");
+            var mongoConfig = Configuration.GetSection<MongoDbConfig>("MongoDb");
 
             services
+                .AddSingleton<IMongoDbContext>(
+                    _ => new MongoDbContext(
+                        mongoConfig.ConnectionString,
+                        mongoConfig.DatabaseName))
+                .AddSingleton(mongoConfig)
+                .AddSingleton<MongoApplicationDbContext>()
+                .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
                 .AddSingleton<IPollRequestsProducer>(
                     provider => new PollRequestsProducer(
                         producerConfig,
@@ -40,6 +48,7 @@ namespace PollRulesManager
                     provider => new ChatPollRequestsConsumerService(
                         consumerConfig,
                         provider.GetService<IChatPollRequestsConsumer>(),
+                        provider.GetService<ISavedUsersRepository>(),
                         provider.GetService<ILogger<ChatPollRequestsConsumerService>>()));
             
             services.AddControllers();

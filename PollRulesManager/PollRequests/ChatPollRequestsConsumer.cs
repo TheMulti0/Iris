@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
@@ -19,13 +18,11 @@ namespace PollRulesManager
             _logger = logger;
         }
 
-        public Task OnRequestAsync(ChatPollRequest request, CancellationToken token)
+        public async Task OnRequestAsync(ChatPollRequest request, CancellationToken token)
         {
             _logger.LogInformation("Received chat poll request {}", request);
-        
-            _producer.SendPollRequest(request);
 
-            return Task.CompletedTask;
+            _producer.SendPollRequest(request);
         }
     }
 }

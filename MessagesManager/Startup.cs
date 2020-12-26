@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDbGenericRepository;
+using UserDataLayer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -43,9 +45,17 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     IConfiguration rootConfig = hostContext.Configuration;
     
     var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("UpdatesConsumer"); 
-    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesProducer"); 
+    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesProducer");
+    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
+        .AddSingleton<IMongoDbContext>(
+            _ => new MongoDbContext(
+                mongoConfig.ConnectionString,
+                mongoConfig.DatabaseName))
+        .AddSingleton(mongoConfig)
+        .AddSingleton<MongoApplicationDbContext>()
+        .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
         .AddSingleton<IMessagesProducer>(
             provider => new MessagesProducer(
                 producerConfig,
