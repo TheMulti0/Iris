@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDbGenericRepository;
 using TelegramReceiver;
+using UserDataLayer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -44,12 +46,23 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
     var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("ChatPollRequestsProducer");
+    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
+        .AddSingleton<IMongoDbContext>(
+            _ => new MongoDbContext(
+                mongoConfig.ConnectionString,
+                mongoConfig.DatabaseName))
+        .AddSingleton(mongoConfig)
+        .AddSingleton<MongoApplicationDbContext>()
+        .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
         .AddSingleton(consumerConfig)
         .AddSingleton<IChatPollRequestsProducer, ChatPollRequestsProducer>()
         .AddSingleton(telegramConfig)
-        .AddHostedService<MessageReceiverService>()
+        .AddSingleton<ICommand, UsersCommand>()
+        .AddSingleton<ICommand, SelectPlatformCommand>()
+        .AddSingleton<ICommand, AddUserCommand>()
+        .AddHostedService<MessageHandlerService>()
         .BuildServiceProvider();
 }
     

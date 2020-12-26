@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -7,24 +9,34 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using Message = Telegram.Bot.Types.Message;
+using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
 {
-    public class MessageReceiverService : BackgroundService
+    internal static class Routes
+    {
+        public const string UserRoute = "user";
+    }
+    
+    public class MessageHandlerService : BackgroundService
     {
         private readonly ITelegramBotClient _client;
+        private readonly IEnumerable<ICommand> _commands;
         private readonly IChatPollRequestsProducer _producer;
-        private readonly ILogger<MessageReceiverService> _logger;
+        private readonly ILogger<MessageHandlerService> _logger;
 
-        public MessageReceiverService(
+        public MessageHandlerService(
             TelegramConfig config,
-            IChatPollRequestsProducer producer,
-            ILogger<MessageReceiverService> logger)
+            IEnumerable<ICommand> commands,
+            //IChatPollRequestsProducer producer,
+            ILogger<MessageHandlerService> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
-            _producer = producer;
+            _commands = commands;
+            //_producer = producer;
             _logger = logger;
         }
 
@@ -41,29 +53,23 @@ namespace TelegramReceiver
             
             _client.StartReceiving(cancellationToken: stoppingToken);
             
-            _client.OnUpdate += ClientOnOnUpdate;
+            _client.OnUpdate += OnUpdate;
         }
 
-        private void ClientOnOnUpdate(object sender, UpdateEventArgs e)
+        private async void OnUpdate(object _, UpdateEventArgs args)
         {
-            Message updateMessage = e.Update.Message;
+            Update update = args.Update;
 
-            if (updateMessage == null)
+            foreach (ICommand command in _commands)
             {
-                return;
+                bool shouldTrigger = command.Triggers
+                    .Any(trigger => trigger.ShouldTrigger(update));
+                
+                if (shouldTrigger)
+                {
+                    await command.OperateAsync(_client, update);
+                }
             }
-
-            var userPollRule = new UserPollRule(
-                new User(updateMessage.Text, updateMessage.Text, "Facebook"),
-                TimeSpan.FromSeconds(10));
-            
-            var chatPollRequest = new ChatPollRequest(
-                Request.StartPoll,
-                userPollRule,
-                (ChatId) updateMessage.Chat.Id);
-            
-            _producer.SendRequest(
-                chatPollRequest);
         }
 
         public override void Dispose()
