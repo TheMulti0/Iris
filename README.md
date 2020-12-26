@@ -27,7 +27,7 @@ All of the components use RabbitMQ for communication.
 
 ### Architecture
 
-<img src="https://i.imgur.com/q5nJeLc.png"></img>
+<img src="https://i.imgur.com/Wtp5MgL.png"></img>
 
 ### Deploying
 
