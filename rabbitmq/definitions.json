@@ -37,9 +37,106 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
+        },
+        {
+            "name": "feedsJobs",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "pollRequests",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "facebookJobs",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "chatPollRequests",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "messages",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
+        },
+        {
+            "name": "twitterJobs",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
         }
     ],
-    "exchanges": [],
+    "exchanges": [
+        {
+            "name": "chatPollRequests",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "pollRequests",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "Facebook",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "updates",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "jobs",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "messages",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        }
+    ],
     "bindings": [
         {
             "source": "amq.topic",
@@ -47,6 +144,62 @@
             "destination": "updates",
             "destination_type": "queue",
             "routing_key": "update",
+            "arguments": {}
+        },
+        {
+            "source": "chatPollRequests",
+            "vhost": "/",
+            "destination": "chatPollRequests",
+            "destination_type": "queue",
+            "routing_key": "chatPollRequests",
+            "arguments": {}
+        },
+        {
+            "source": "jobs",
+            "vhost": "/",
+            "destination": "facebookJobs",
+            "destination_type": "queue",
+            "routing_key": "Facebook",
+            "arguments": {}
+        },
+        {
+            "source": "jobs",
+            "vhost": "/",
+            "destination": "feedsJobs",
+            "destination_type": "queue",
+            "routing_key": "Feeds",
+            "arguments": {}
+        },
+        {
+            "source": "jobs",
+            "vhost": "/",
+            "destination": "twitterJobs",
+            "destination_type": "queue",
+            "routing_key": "Twitter",
+            "arguments": {}
+        },
+        {
+            "source": "messages",
+            "vhost": "/",
+            "destination": "messages",
+            "destination_type": "queue",
+            "routing_key": "messages",
+            "arguments": {}
+        },
+        {
+            "source": "pollRequests",
+            "vhost": "/",
+            "destination": "pollRequests",
+            "destination_type": "queue",
+            "routing_key": "pollRequests",
+            "arguments": {}
+        },
+        {
+            "source": "updates",
+            "vhost": "/",
+            "destination": "updates",
+            "destination_type": "queue",
+            "routing_key": "updates",
             "arguments": {}
         }
     ]
