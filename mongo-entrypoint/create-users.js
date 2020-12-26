@@ -24,3 +24,12 @@ db.createUser(
     roles: [{ role: 'readWrite', db: 'FeedsProducerDb' }],
   },
 );
+
+db = db.getSiblingDB('UsersDb');
+db.createUser(
+  {
+    user: 'user',
+    pwd: 'user',
+    roles: [{ role: 'readWrite', db: 'UserDataLayer' }],
+  },
+);
