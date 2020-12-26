@@ -14,6 +14,7 @@ namespace Common
 
         public string Url { get; init; }
 
+        [JsonConverter(typeof(MediaJsonConverter))]
         public List<IMedia> Media { get; init; }
 
         public bool Repost { get; init; }
