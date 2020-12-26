@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,17 +40,9 @@ namespace PollRulesManager
                 .AddSingleton(mongoConfig)
                 .AddSingleton<MongoApplicationDbContext>()
                 .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
-                .AddSingleton<IPollRequestsProducer>(
-                    provider => new PollRequestsProducer(
-                        producerConfig,
-                        provider.GetService<ILogger<PollRequestsProducer>>()))
-                .AddSingleton<IChatPollRequestsConsumer, ChatPollRequestsConsumer>()
-                .AddHostedService(
-                    provider => new ChatPollRequestsConsumerService(
-                        consumerConfig,
-                        provider.GetService<IChatPollRequestsConsumer>(),
-                        provider.GetService<ISavedUsersRepository>(),
-                        provider.GetService<ILogger<ChatPollRequestsConsumerService>>()));
+                .AddProducer<PollRequest>(producerConfig)
+                .AddSingleton<IConsumer<ChatPollRequest>, ChatPollRequestsConsumer>()
+                .AddConsumerService<ChatPollRequest>(consumerConfig);
             
             services.AddControllers();
             services.AddSwaggerGen(

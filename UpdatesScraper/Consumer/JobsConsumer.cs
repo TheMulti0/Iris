@@ -2,21 +2,22 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
 using Microsoft.Extensions.Logging;
 using Update = Common.Update;
 
 namespace UpdatesScraper
 {
-    public class JobsConsumer : IJobsConsumer
+    public class JobsConsumer : IConsumer<User>
     {
         private readonly UpdatesScraper _scraper;
-        private readonly IUpdatesProducer _producer;
+        private readonly IProducer<Update> _producer;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ILogger<JobsConsumer> _logger;
 
         public JobsConsumer(
             UpdatesScraper scraper,
-            IUpdatesProducer producer,
+            IProducer<Update> producer,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ILogger<JobsConsumer> logger)
         {
@@ -26,7 +27,7 @@ namespace UpdatesScraper
             _logger = logger;
         }
 
-        public async Task OnJobAsync(User user, CancellationToken token)
+        public async Task ConsumeAsync(User user, CancellationToken token)
         {
             _logger.LogInformation("Received poll job for {}", user);
 
@@ -36,7 +37,7 @@ namespace UpdatesScraper
             {
                 foundUpdates = true;
                 
-                _producer.SendUpdate(update);
+                _producer.Send(update);
             }
 
             if (foundUpdates)

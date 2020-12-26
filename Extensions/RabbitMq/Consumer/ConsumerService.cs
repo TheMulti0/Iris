@@ -3,24 +3,22 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Common;
-using Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;
 
-namespace UpdatesScraper
+namespace Extensions
 {
-    public class JobsConsumerService : BackgroundService
+    public class ConsumerService<T> : BackgroundService
     {
         private readonly RabbitMqConfig _config;
-        private readonly IJobsConsumer _consumer;
-        private readonly ILogger<JobsConsumerService> _logger;
+        private readonly IConsumer<T> _consumer;
+        private readonly ILogger<ConsumerService<T>> _logger;
 
-        public JobsConsumerService(
+        public ConsumerService(
             RabbitMqConfig config, 
-            IJobsConsumer consumer,
-            ILogger<JobsConsumerService> logger)
+            IConsumer<T> consumer,
+            ILogger<ConsumerService<T>> logger)
         {
             _config = config;
             _consumer = consumer;
@@ -45,10 +43,10 @@ namespace UpdatesScraper
                 {
                     string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
                     
-                    var user = JsonSerializer.Deserialize<User>(json)
-                                 ?? throw new NullReferenceException($"Failed to deserialize {json}");
+                    var item = JsonSerializer.Deserialize<T>(json)
+                               ?? throw new NullReferenceException($"Failed to deserialize {json}");
                     
-                    await _consumer.OnJobAsync(user, token);
+                    await _consumer.ConsumeAsync(item, token);
                 }
                 catch (Exception e)
                 {

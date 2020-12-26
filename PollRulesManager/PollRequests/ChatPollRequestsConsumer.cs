@@ -1,28 +1,29 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace PollRulesManager
 {
-    public class ChatPollRequestsConsumer : IChatPollRequestsConsumer
+    public class ChatPollRequestsConsumer : IConsumer<ChatPollRequest>
     {
-        private readonly IPollRequestsProducer _producer;
-        private readonly ILogger<IChatPollRequestsConsumer> _logger;
+        private readonly IProducer<ChatPollRequest> _producer;
+        private readonly ILogger<ChatPollRequestsConsumer> _logger;
 
         public ChatPollRequestsConsumer(
-            IPollRequestsProducer producer,
-            ILogger<IChatPollRequestsConsumer> logger)
+            IProducer<ChatPollRequest> producer,
+            ILogger<ChatPollRequestsConsumer> logger)
         {
             _producer = producer;
             _logger = logger;
         }
 
-        public async Task OnRequestAsync(ChatPollRequest request, CancellationToken token)
+        public async Task ConsumeAsync(ChatPollRequest request, CancellationToken token)
         {
             _logger.LogInformation("Received chat poll request {}", request);
 
-            _producer.SendPollRequest(request);
+            _producer.Send(request);
         }
     }
 }

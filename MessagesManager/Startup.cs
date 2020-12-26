@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Common;
 using Extensions;
 using MessagesManager;
 using Microsoft.Extensions.Configuration;
@@ -56,16 +57,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(mongoConfig)
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
-        .AddSingleton<IMessagesProducer>(
-            provider => new MessagesProducer(
-                producerConfig,
-                provider.GetService<ILogger<MessagesProducer>>()))
-        .AddSingleton<IUpdatesConsumer, UpdatesConsumer>()
-        .AddHostedService(
-            provider => new UpdatesConsumerService(
-                consumerConfig,
-                provider.GetService<IUpdatesConsumer>(),
-                provider.GetService<ILogger<UpdatesConsumerService>>()))
+        .AddProducer<Message>(producerConfig)
+        .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
+        .AddConsumerService<Update>(consumerConfig)
         .BuildServiceProvider();
 }
     

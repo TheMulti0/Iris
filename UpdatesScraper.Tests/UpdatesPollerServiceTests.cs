@@ -28,7 +28,7 @@ namespace UpdatesScraper.Tests
             IServiceCollection addHostedService = new ServiceCollection()
                 .AddLogging(builder => builder.AddTestsLogging(context))
                 .AddUpdatesScraperMockRepositories()
-                .AddSingleton<IUpdatesProducer, MockUpdatesProducer>()
+                .AddSingleton<IProducer<Update>, MockUpdatesProducer>()
                 .AddSingleton<IUpdatesProvider, MockUpdatesProvider>()
                 .AddVideoExtractor(new VideoExtractorConfig())
                 .AddUpdatesScraper(pollerConfig);

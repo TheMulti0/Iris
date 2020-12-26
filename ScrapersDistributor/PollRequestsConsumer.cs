@@ -3,29 +3,30 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace ScrapersDistributor
 {
-    internal class PollRequestsConsumer : IPollRequestsConsumer
+    internal class PollRequestsConsumer : IConsumer<PollRequest>
     {
         private record RunningOperation(
             Task Task,
             CancellationTokenSource TokenSource);
         
-        private readonly IJobsProducer _producer;
+        private readonly IProducer<User> _producer;
         private readonly ConcurrentDictionary<UserPollRule, RunningOperation> _userPollOperations = new();
         private readonly ILogger<PollRequestsConsumer> _logger;
 
         public PollRequestsConsumer(
-            IJobsProducer producer,
+            IProducer<User> producer,
             ILogger<PollRequestsConsumer> logger)
         {
             _producer = producer;
             _logger = logger;
         }
         
-        public Task OnRequestAsync(PollRequest request, CancellationToken token)
+        public Task ConsumeAsync(PollRequest request, CancellationToken token)
         {
             try
             {
@@ -96,7 +97,7 @@ namespace ScrapersDistributor
             {
                 try
                 {
-                    _producer.SendJob(user);
+                    _producer.Send(user);
           
                     await Task.Delay(interval, token);
                 }

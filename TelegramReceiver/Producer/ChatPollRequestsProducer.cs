@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TelegramReceiver
 {
-    public class ChatPollRequestsProducer : IChatPollRequestsProducer
+    public class ChatPollRequestsProducer : IProducer<ChatPollRequest>
     {
         private readonly RabbitMqConfig _config;
         private readonly RabbitMqPublisher _publisher;
@@ -26,7 +26,7 @@ namespace TelegramReceiver
             };
         }
 
-        public void SendRequest(ChatPollRequest request)
+        public void Send(ChatPollRequest request)
         {
             _logger.LogInformation("Sending chat poll request {}", request);
             

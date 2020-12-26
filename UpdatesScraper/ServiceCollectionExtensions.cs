@@ -37,7 +37,7 @@ namespace UpdatesScraper
                 : services.AddUpdatesScraperMockRepositories();
 
             return services
-                .AddUpdatesProducer(producerConfig)
+                .AddProducer<Update>(producerConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
                 .AddVideoExtractor(videoExtractorConfig)
                 .AddUpdatesScraper(scraperConfig)
@@ -70,17 +70,6 @@ namespace UpdatesScraper
             return services
                 .AddSingleton<IMongoDbContext>(new MongoDbContext(config.ConnectionString, config.DatabaseName))
                 .AddSingleton(config);
-        }
-
-        public static IServiceCollection AddUpdatesProducer(
-            this IServiceCollection services,
-            RabbitMqConfig config)
-        {
-            return services
-                .AddSingleton<IUpdatesProducer>(
-                    provider => new UpdatesProducer(
-                        config,
-                        provider.GetService<ILogger<UpdatesProducer>>()));
         }
 
         public static IServiceCollection AddUpdatesProvider<TProvider>(
@@ -116,12 +105,8 @@ namespace UpdatesScraper
         {
             return services
                 .AddSingleton(config)
-                .AddSingleton<IJobsConsumer, JobsConsumer>()
-                .AddHostedService(
-                    provider => new JobsConsumerService(
-                        config,
-                        provider.GetService<IJobsConsumer>(),
-                        provider.GetService<ILogger<JobsConsumerService>>()));
+                .AddSingleton<IConsumer<User>, JobsConsumer>()
+                .AddConsumerService<User>(config);
         }
     }
 }

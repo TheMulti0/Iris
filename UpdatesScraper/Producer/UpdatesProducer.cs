@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace UpdatesScraper
 {
-    internal class UpdatesProducer : IUpdatesProducer
+    internal class UpdatesProducer : IProducer<Update>
     {
         private readonly RabbitMqPublisher _publisher;
         private readonly RabbitMqConfig _config;
@@ -26,7 +26,7 @@ namespace UpdatesScraper
             };
         }
 
-        public void SendUpdate(Update update)
+        public void Send(Update update)
         {
             _logger.LogInformation("Sending update {}", update);
 

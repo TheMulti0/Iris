@@ -1,30 +1,28 @@
 ﻿using System.Text.Json;
-using Common;
-using Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace MessagesManager
+namespace Extensions
 {
-    public class MessagesProducer : IProducer<Message>
+    public class Producer<T> : IProducer<T>
     {
         private readonly RabbitMqConfig _config;
         private readonly RabbitMqPublisher _publisher;
-        private readonly ILogger<MessagesProducer> _logger;
+        private readonly ILogger<Producer<T>> _logger;
 
-        public MessagesProducer(
+        public Producer(
             RabbitMqConfig config,
-            ILogger<MessagesProducer> logger)
+            ILogger<Producer<T>> logger)
         {
             _config = config;
             _publisher = new RabbitMqPublisher(config);
             _logger = logger;
         }
-        
-        public void Send(Message message)
+
+        public void Send(T item)
         {
-            _logger.LogInformation("Sending message {}", message);
+            _logger.LogInformation("Sending {}", item);
             
-            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(message);
+            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item);
             
             _publisher.Publish(_config.Destination, bytes);
         }

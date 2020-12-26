@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ScrapersDistributor
 {
-    internal class JobsProducer : IJobsProducer
+    internal class JobsProducer : IProducer<User>
     {
         private readonly RabbitMqPublisher _publisher;
         private readonly ILogger<JobsProducer> _logger;
@@ -18,7 +18,7 @@ namespace ScrapersDistributor
             _logger = logger;
         }
 
-        public void SendJob(User user)
+        public void Send(User user)
         {
             _logger.LogInformation("Sending job {}", user);
             

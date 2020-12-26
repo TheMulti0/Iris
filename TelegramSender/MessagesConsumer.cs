@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Extensions;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,7 +13,7 @@ using Update = Common.Update;
 
 namespace TelegramSender
 {
-    public class MessagesConsumer : IMessagesConsumer
+    public class MessagesConsumer : IConsumer<Message>
     {
         private readonly ISenderFactory _senderFactory;
         private readonly MessageBuilder _messageBuilder;
@@ -31,7 +32,7 @@ namespace TelegramSender
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
 
-        public async Task OnMessageAsync(Message message, CancellationToken token)
+        public async Task ConsumeAsync(Message message, CancellationToken token)
         {
             _sender ??= await _senderFactory.CreateAsync();
             

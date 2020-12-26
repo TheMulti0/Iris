@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,9 +50,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(telegramConfig)
         .AddSingleton<ISenderFactory, SenderFactory>()
         .AddSingleton<MessageBuilder>()
-        .AddSingleton<IMessagesConsumer, MessagesConsumer>()
-        .AddSingleton(consumerConfig)
-        .AddHostedService<MessagesConsumerService>()
+        .AddSingleton<IConsumer<Message>, MessagesConsumer>()
+        .AddConsumerService<Message>(consumerConfig)
         .BuildServiceProvider();
 }
     

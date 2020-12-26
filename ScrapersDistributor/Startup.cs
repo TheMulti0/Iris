@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,16 +47,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var producerConfig = rootConfig.GetSection<RabbitMqConfig>("JobsProducer"); 
 
     services
-        .AddSingleton<IJobsProducer>(
-            provider => new JobsProducer(
-                producerConfig,
-                provider.GetService<ILogger<JobsProducer>>()))
-        .AddSingleton<IPollRequestsConsumer, PollRequestsConsumer>()
-        .AddHostedService(
-            provider => new PollRequestsConsumerService(
-                consumerConfig,
-                provider.GetService<IPollRequestsConsumer>(),
-                provider.GetService<ILogger<PollRequestsConsumerService>>()))
+        .AddProducer<User>(producerConfig)
+        .AddSingleton<IConsumer<PollRequest>, PollRequestsConsumer>()
+        .AddConsumerService<PollRequest>(consumerConfig)
         .BuildServiceProvider();
 }
     

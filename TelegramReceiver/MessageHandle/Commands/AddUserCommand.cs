@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -19,7 +18,7 @@ namespace TelegramReceiver
     {
         private static readonly ConcurrentDictionary<ChatId, string> ChatPlatforms = new(new ChatIdIEqualityComparer());
         private readonly ISavedUsersRepository _repository;
-        private readonly IChatPollRequestsProducer _producer;
+        private readonly IProducer<ChatPollRequest> _producer;
 
         private class PlatformSavedTrigger : ITrigger
         {
@@ -40,7 +39,7 @@ namespace TelegramReceiver
 
         public AddUserCommand(
             ISavedUsersRepository repository,
-            IChatPollRequestsProducer producer)
+            IProducer<ChatPollRequest> producer)
         {
             _repository = repository;
             _producer = producer;
@@ -87,11 +86,9 @@ namespace TelegramReceiver
             var user = new User(messageText, messageText, platform);
             TimeSpan interval = TimeSpan.FromMinutes(30);
             
-            var userPollRule = new UserPollRule(
-                user,
-                interval);
+            var userPollRule = new UserPollRule(user, interval);
 
-            _producer.SendRequest(
+            _producer.Send(
                 new ChatPollRequest(
                     Request.StartPoll,
                     userPollRule,

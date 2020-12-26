@@ -60,7 +60,7 @@ namespace TelegramSender.Tests
                 Content = "Mock update"
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -84,7 +84,7 @@ namespace TelegramSender.Tests
                 Content = content
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -103,7 +103,7 @@ namespace TelegramSender.Tests
                 Url = UpdateUrl
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -129,7 +129,7 @@ namespace TelegramSender.Tests
                 }
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -150,7 +150,7 @@ namespace TelegramSender.Tests
                 }
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -173,7 +173,7 @@ namespace TelegramSender.Tests
                 Url = UpdateUrl
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -196,7 +196,7 @@ namespace TelegramSender.Tests
                 }
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -222,7 +222,7 @@ namespace TelegramSender.Tests
                 Url = UpdateUrl
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),
@@ -249,7 +249,7 @@ namespace TelegramSender.Tests
                 Url = UpdateUrl
             };
             
-            await _consumer.OnMessageAsync(
+            await _consumer.ConsumeAsync(
                 new Message(
                     update,
                     new List<string> { _testConfig.ChatId }),

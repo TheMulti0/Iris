@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +46,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     IConfiguration rootConfig = hostContext.Configuration;
 
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("ChatPollRequestsProducer");
+    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("ChatPollRequestsProducer");
     var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
@@ -56,8 +57,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(mongoConfig)
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
-        .AddSingleton(consumerConfig)
-        .AddSingleton<IChatPollRequestsProducer, ChatPollRequestsProducer>()
+        .AddProducer<ChatPollRequest>(producerConfig)
         .AddSingleton(telegramConfig)
         .AddSingleton<ICommand, UsersCommand>()
         .AddSingleton<ICommand, SelectPlatformCommand>()
