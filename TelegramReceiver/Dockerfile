@@ -5,18 +5,19 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["TelegramSender/TelegramSender.csproj", "TelegramSender/"]
+COPY ["TelegramReceiver/TelegramReceiver.csproj", "TelegramReceiver/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
-RUN dotnet restore "TelegramSender/TelegramSender.csproj"
+COPY ["UserDataLayer/UserDataLayer.csproj", "UserDataLayer/"]
+RUN dotnet restore "TelegramReceiver/TelegramReceiver.csproj"
 COPY . .
-WORKDIR "/src/TelegramSender"
-RUN dotnet build "TelegramSender.csproj" -c Release -o /app/build
+WORKDIR "/src/TelegramReceiver"
+RUN dotnet build "TelegramReceiver.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TelegramSender.csproj" -c Release -o /app/publish
+RUN dotnet publish "TelegramReceiver.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TelegramSender.dll"]
+ENTRYPOINT ["dotnet", "TelegramReceiver.dll"]

@@ -12,7 +12,7 @@ namespace PollRulesManager
         private readonly ILogger<ChatPollRequestsConsumer> _logger;
 
         public ChatPollRequestsConsumer(
-            IProducer<ChatPollRequest> producer,
+            IProducer<PollRequest> producer,
             ILogger<ChatPollRequestsConsumer> logger)
         {
             _producer = producer;

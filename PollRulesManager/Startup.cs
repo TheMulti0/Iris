@@ -40,7 +40,10 @@ namespace PollRulesManager
                 .AddSingleton(mongoConfig)
                 .AddSingleton<MongoApplicationDbContext>()
                 .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
-                .AddProducer<PollRequest>(producerConfig)
+                .AddSingleton<IProducer<PollRequest>, PollRequestsProducer>(
+                    provider => new PollRequestsProducer(
+                        producerConfig,
+                        provider.GetService<ILogger<PollRequestsProducer>>()))
                 .AddSingleton<IConsumer<ChatPollRequest>, ChatPollRequestsConsumer>()
                 .AddConsumerService<ChatPollRequest>(consumerConfig);
             

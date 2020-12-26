@@ -5,18 +5,18 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["TelegramSender/TelegramSender.csproj", "TelegramSender/"]
+COPY ["ScrapersDistributor/ScrapersDistributor.csproj", "ScrapersDistributor/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
-RUN dotnet restore "TelegramSender/TelegramSender.csproj"
+RUN dotnet restore "ScrapersDistributor/ScrapersDistributor.csproj"
 COPY . .
-WORKDIR "/src/TelegramSender"
-RUN dotnet build "TelegramSender.csproj" -c Release -o /app/build
+WORKDIR "/src/ScrapersDistributor"
+RUN dotnet build "ScrapersDistributor.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TelegramSender.csproj" -c Release -o /app/publish
+RUN dotnet publish "ScrapersDistributor.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TelegramSender.dll"]
+ENTRYPOINT ["dotnet", "ScrapersDistributor.dll"]

@@ -7,8 +7,8 @@ services:
     environment:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - 5672:5672
+      - 15672:15672
     volumes:
       - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
@@ -27,22 +27,55 @@ services:
     networks:
       - mongodb_network
 
-  telegramsender:
-    image: themulti0/iris_telegramsender:latest
+  telegramreceiver:
+    image: iris/telegramreceiver:latest
     build:
       context: .
-      dockerfile: TelegramBot/Dockerfile
-    container_name: telegramsender
+      dockerfile: TelegramReceiver/Dockerfile
+    container_name: telegramreceiver
     restart: always
     volumes:
-      - './TelegramBot/appsettings.json:/app/appsettings.json'
+      - './TelegramReceiver/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  pollrulesmanager:
+    image: iris/pollrulesmanager:latest
+    build:
+      context: .
+      dockerfile: PollRulesManager/Dockerfile
+    container_name: pollrulesmanager
+    restart: always
+    volumes:
+      - './PollRulesManager/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  scrapersdistributor:
+    image: iris/scrapersdistributor:latest
+    build:
+      context: .
+      dockerfile: ScrapersDistributor/Dockerfile
+    container_name: scrapersdistributor
+    restart: always
+    volumes:
+      - './ScrapersDistributor/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
     depends_on:
+      - pollrulesmanager
       - rabbitmq
 
   facebookscraper:
-    image: themulti0/iris_facebookscraper:latest
+    image: iris/facebookscraper:latest
     build:
       context: .
       dockerfile: FacebookScraper/Dockerfile
@@ -56,9 +89,9 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
-      
+
   twitterscraper:
-    image: themulti0/iris_twitterscraper:latest
+    image: iris/twitterscraper:latest
     build:
       context: .
       dockerfile: TwitterScraper/Dockerfile
@@ -72,16 +105,48 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
-        
-  feedscraper:
-    image: themulti0/iris_feedscraper:latest
+      
+  feedsscraper:
+    image: iris/feedsscraper:latest
     build:
       context: .
       dockerfile: FeedsScraper/Dockerfile
-    container_name: feedscraper
+    container_name: feedsscraper
     restart: always
     volumes:
       - './FeedsScraper/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
+      
+  messagesmanager:
+    image: iris/messagesmanager:latest
+    build:
+      context: .
+      dockerfile: MessagesManager/Dockerfile
+    container_name: messagesmanager
+    restart: always
+    volumes:
+      - './MessagesManager/appsettings.json:/app/appsettings.json'
+    networks:
+      - rabbitmq_network
+      - mongodb_network
+    depends_on:
+      - rabbitmq
+      - mongodb
+
+  telegramsender:
+    image: iris/telegramsender:latest
+    build:
+      context: .
+      dockerfile: TelegramSender/Dockerfile
+    container_name: telegramsender
+    restart: always
+    volumes:
+      - './TelegramSender/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
       - mongodb_network
