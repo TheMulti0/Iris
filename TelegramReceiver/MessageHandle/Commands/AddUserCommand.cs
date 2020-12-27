@@ -6,6 +6,7 @@ using Common;
 using Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using TelegramReceiver.Data;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -17,7 +18,8 @@ namespace TelegramReceiver
     
     internal class AddUserCommand : ICommand
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IConnectionsRepository _connectionsRepository;
+        private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
 
         public const string CallbackPath = "platform";
@@ -27,10 +29,12 @@ namespace TelegramReceiver
         };
 
         public AddUserCommand(
-            ISavedUsersRepository repository,
+            IConnectionsRepository connectionsRepository,
+            ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer)
         {
-            _repository = repository;
+            _connectionsRepository = connectionsRepository;
+            _savedUsersRepository = savedUsersRepository;
             _producer = producer;
         }
 
@@ -72,7 +76,8 @@ namespace TelegramReceiver
         
         private async Task AddUser(ITelegramBotClient client, Message message, string platform)
         {
-            ChatId chatId = message.Chat.Id;
+            ChatId contextChat = message.Chat.Id;
+            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;;
             string messageText = message.Text;
             
             var user = new User(messageText, messageText, platform);
@@ -84,18 +89,18 @@ namespace TelegramReceiver
                 new ChatPollRequest(
                     Request.StartPoll,
                     userPollRule,
-                    chatId));
+                    connectedChat));
 
-            await _repository.AddOrUpdateAsync(
+            await _savedUsersRepository.AddOrUpdateAsync(
                 user,
                 new ChatInfo
                 {
-                    Chat = chatId,
+                    Chat = connectedChat,
                     Interval = interval
                 });
 
             await client.SendTextMessageAsync(
-                chatId: chatId,
+                chatId: contextChat,
                 text: $"Added {messageText} from platform {platform}",
                 replyToMessageId: message.MessageId);
         }

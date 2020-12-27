@@ -17,5 +17,18 @@ namespace TelegramReceiver
                     return null;
             }
         }
+        
+        public static User GetUser(this Update update)
+        {
+            switch (update.Type)
+            {
+                case UpdateType.Message:
+                    return update.Message.From;
+                case UpdateType.CallbackQuery:
+                    return update.CallbackQuery.From;
+                default:
+                    return null;
+            }
+        }
     }
 }

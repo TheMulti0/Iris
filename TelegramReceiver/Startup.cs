@@ -8,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using TelegramReceiver;
+using TelegramReceiver.Data;
 using UserDataLayer;
+using MongoApplicationDbContext = UserDataLayer.MongoApplicationDbContext;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -57,6 +59,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(mongoConfig)
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+        .AddSingleton<TelegramReceiver.Data.MongoApplicationDbContext>()
+        .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>()
         .AddProducer<ChatPollRequest>(producerConfig)
         .AddSingleton(telegramConfig)
         .AddSingleton<ICommand, UsersCommand>()
@@ -65,6 +69,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<ICommand, ManageUserCommand>()
         .AddSingleton<ICommand, SetUserDisplayNameCommand>()
         .AddSingleton<ICommand, RemoveUserCommand>()
+        .AddSingleton<ICommand, ConnectCommand>()
         .AddHostedService<MessageHandlerService>()
         .BuildServiceProvider();
 }

@@ -6,6 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramReceiver.Data;
 using UserDataLayer;
 using User = Common.User;
 
@@ -13,7 +14,8 @@ namespace TelegramReceiver
 {
     internal class RemoveUserCommand : ICommand
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IConnectionsRepository _connectionsRepository;
+        private readonly ISavedUsersRepository _savedUsersRepository;
 
         public const string CallbackPath = "remove";
 
@@ -22,9 +24,11 @@ namespace TelegramReceiver
         };
 
         public RemoveUserCommand(
-            ISavedUsersRepository repository)
+            IConnectionsRepository connectionsRepository,
+            ISavedUsersRepository savedUsersRepository)
         {
-            _repository = repository;
+            _connectionsRepository = connectionsRepository;
+            _savedUsersRepository = savedUsersRepository;
         }
 
         public async Task OperateAsync(Context context)
@@ -45,13 +49,14 @@ namespace TelegramReceiver
             ITelegramBotClient client,
             InlineKeyboardMarkup markup)
         {
-            var chatId = (ChatId) message.Chat.Id;
+            ChatId contextChat = message.Chat.Id;
+            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;
 
-            await _repository.RemoveAsync(user, chatId);
+            await _savedUsersRepository.RemoveAsync(user, connectedChat);
 
             await client.EditMessageTextAsync(
                 messageId: message.MessageId,
-                chatId: chatId,
+                chatId: contextChat,
                 text: $"Removed {user.UserId}",
                 replyMarkup: markup);
         }
@@ -71,18 +76,6 @@ namespace TelegramReceiver
             string[] items = query.Data.Split("-");
             
             return new User(items[^2], DisplayName: null, items[^1]);
-        }
-
-        private static Task SendRequestMessage(
-            ITelegramBotClient client,
-            Message message,
-            InlineKeyboardMarkup markup)
-        {
-            return client.EditMessageTextAsync(
-                chatId: message.Chat.Id,
-                messageId: message.MessageId,
-                text: " ",
-                replyMarkup: markup);
         }
     }
 }

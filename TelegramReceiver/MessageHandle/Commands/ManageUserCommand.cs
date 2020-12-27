@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
-using Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -42,25 +40,7 @@ namespace TelegramReceiver
             (ITelegramBotClient client, IObservable<Update> _, Update currentUpdate) = context;
             CallbackQuery query = currentUpdate.CallbackQuery;
 
-            User user = GetUser(query);
-
-            await SendUserInfo(client, query.Message, user);
-        }
-
-        private User GetUser(CallbackQuery query)
-        {
-            User basicInfo = GetUserBasicInfo(query);
-
-            IQueryable<SavedUser> savedUsers = _repository
-                .GetAll();
-            IQueryable<SavedUser> queryable = savedUsers
-                .Where(
-                    user => user.Chats
-                        .Any(chat => chat.Chat == (ChatId) query.Message.Chat.Id));
-            return queryable
-                .First(savedUser => savedUser.User.UserId == basicInfo.UserId &&
-                                             savedUser.User.Source == basicInfo.Source)
-                .User;
+            await SendUserInfo(client, query.Message, GetUserBasicInfo(query));
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)

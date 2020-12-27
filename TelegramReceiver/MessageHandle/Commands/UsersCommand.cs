@@ -6,13 +6,15 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramReceiver.Data;
 using UserDataLayer;
 
 namespace TelegramReceiver
 {
     internal class UsersCommand : ICommand
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IConnectionsRepository _connectionsRepository;
+        private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IEnumerable<InlineKeyboardButton> _addUserButton;
         private readonly InlineKeyboardMarkup _noUsersMarkup;
 
@@ -24,9 +26,11 @@ namespace TelegramReceiver
         };
 
         public UsersCommand(
-            ISavedUsersRepository repository)
+            IConnectionsRepository connectionsRepository,
+            ISavedUsersRepository savedUsersRepository)
         {
-            _repository = repository;
+            _connectionsRepository = connectionsRepository;
+            _savedUsersRepository = savedUsersRepository;
 
             _addUserButton = new[]
             {
@@ -35,31 +39,33 @@ namespace TelegramReceiver
             _noUsersMarkup = new InlineKeyboardMarkup(_addUserButton);
         }
 
-        public Task OperateAsync(Context context)
+        public async Task OperateAsync(Context context)
         {
             (ITelegramBotClient client, _, Update update) = context;
-            var chatId = update.GetChatId();
+            ChatId contextChat = update.GetChatId();
+            ChatId connectedChat = await _connectionsRepository.GetAsync(update.GetUser()) ?? contextChat;
 
-            List<SavedUser> currentUsers = _repository
+            List<SavedUser> currentUsers = _savedUsersRepository
                 .GetAll()
                 .Where(
                     user => user.Chats
-                        .Any(chat => chat.Chat == chatId))
+                        .Any(chat => chat.Chat == connectedChat))
                 .ToList();
 
             (InlineKeyboardMarkup markup, string text) = Get(currentUsers);
 
             if (update.Type == UpdateType.CallbackQuery)
             {
-                return client.EditMessageTextAsync(
-                    chatId: chatId,
+                await client.EditMessageTextAsync(
+                    chatId: contextChat,
                     messageId: update.CallbackQuery.Message.MessageId,
                     text: text,
                     replyMarkup: markup);
+                return;
             }
             
-            return client.SendTextMessageAsync(
-                chatId: chatId,
+            await client.SendTextMessageAsync(
+                chatId: contextChat,
                 text: text,
                 replyMarkup: markup);
     }

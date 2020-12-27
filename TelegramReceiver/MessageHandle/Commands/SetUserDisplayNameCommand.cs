@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Common;
-using Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramReceiver.Data;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -18,7 +16,8 @@ namespace TelegramReceiver
 {
     internal class SetUserDisplayNameCommand : ICommand
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IConnectionsRepository _connectionsRepository;
+        private readonly ISavedUsersRepository _savedUsersRepository;
 
         public const string CallbackPath = "setDisplayName";
 
@@ -27,9 +26,11 @@ namespace TelegramReceiver
         };
 
         public SetUserDisplayNameCommand(
-            ISavedUsersRepository repository)
+            IConnectionsRepository connectionsRepository,
+            ISavedUsersRepository savedUsersRepository)
         {
-            _repository = repository;
+            _connectionsRepository = connectionsRepository;
+            _savedUsersRepository = savedUsersRepository;
         }
 
         public async Task OperateAsync(Context context)
@@ -56,16 +57,17 @@ namespace TelegramReceiver
             ITelegramBotClient client,
             IReplyMarkup markup)
         {
-            var chatId = (ChatId) update.Message.Chat.Id;
+            ChatId contextChat = update.GetChatId();
+            ChatId connectedChat = await _connectionsRepository.GetAsync(update.GetUser()) ?? contextChat;
 
-            SavedUser savedUser = await _repository.GetAsync(user);
-            ChatInfo chat = savedUser.Chats.First(info => info.Chat == chatId);
+            SavedUser savedUser = await _savedUsersRepository.GetAsync(user);
+            ChatInfo chat = savedUser.Chats.First(info => info.Chat == connectedChat);
 
             string newDisplayName = update.Message.Text;
-            await _repository.AddOrUpdateAsync(user with { DisplayName = newDisplayName }, chat);
+            await _savedUsersRepository.AddOrUpdateAsync(user with { DisplayName = newDisplayName }, chat);
 
             await client.SendTextMessageAsync(
-                chatId: chatId,
+                chatId: contextChat,
                 text: $"Updated display name to {newDisplayName}",
                 replyMarkup: markup);
         }
