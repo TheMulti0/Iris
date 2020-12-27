@@ -3,9 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using UserDataLayer;
 
 namespace TelegramReceiver
 {
@@ -32,8 +30,9 @@ namespace TelegramReceiver
             _platformsMarkup = new InlineKeyboardMarkup(platformButtons);
         }
 
-        public Task OperateAsync(ITelegramBotClient client, Update update)
+        public Task OperateAsync(Context context)
         {
+            (ITelegramBotClient client, _, Update update) = context;
             Message message = update.CallbackQuery.Message;
 
             return client.EditMessageTextAsync(

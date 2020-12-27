@@ -14,7 +14,9 @@ namespace TelegramReceiver
         private readonly IEnumerable<InlineKeyboardButton> _addUserButton;
         private readonly InlineKeyboardMarkup _noUsersMarkup;
 
-        public ITrigger[] Triggers { get; } = { new MessageTextTrigger("/start") };
+        public ITrigger[] Triggers { get; } = {
+            new MessageTextTrigger("/start")
+        };
 
         public UsersCommand(
             ISavedUsersRepository repository)
@@ -28,19 +30,20 @@ namespace TelegramReceiver
             _noUsersMarkup = new InlineKeyboardMarkup(_addUserButton);
         }
 
-        public Task OperateAsync(ITelegramBotClient client, Update update)
+        public Task OperateAsync(Context context)
         {
-            var msg = update.Message;
+            (ITelegramBotClient client, _, Update update) = context;
+            Message message = update.Message;
 
             List<SavedUser> currentUsers = _repository
                 .Get()
                 .Where(user => user.Chats
-                           .Any(chat => chat.Chat == (ChatId) msg.Chat.Id))
+                           .Any(chat => chat.Chat == (ChatId) message.Chat.Id))
                 .ToList();
 
             return currentUsers.Any() 
-                ? WithUsers(client, msg, currentUsers) 
-                : NoUsersFound(client, msg);
+                ? WithUsers(client, message, currentUsers) 
+                : NoUsersFound(client, message);
         }
 
         private async Task NoUsersFound(ITelegramBotClient client, Message msg)

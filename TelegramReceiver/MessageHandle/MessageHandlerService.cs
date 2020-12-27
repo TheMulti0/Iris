@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -37,15 +39,33 @@ namespace TelegramReceiver
                 identity.Username,
                 identity.Id);
             
-            _client.StartReceiving(cancellationToken: stoppingToken);
+            IObservable<Update> updates = Observable.FromEventPattern<UpdateEventArgs>(
+                action => _client.OnUpdate += action,
+                action => _client.OnUpdate -= action).Select(pattern => pattern.EventArgs.Update);
             
-            _client.OnUpdate += OnUpdate;
+            await ListenForUpdates(updates, stoppingToken);
         }
 
-        private async void OnUpdate(object _, UpdateEventArgs args)
+        private async Task ListenForUpdates(
+            IObservable<Update> updates,
+            CancellationToken token)
         {
-            Update update = args.Update;
+            _client.StartReceiving(cancellationToken: token);
 
+            var defaultContext = new Context(_client, updates);
+
+            var asyncEnumerable = updates
+                .ToAsyncEnumerable()
+                .WithCancellation(token);
+
+            await foreach (Update update in asyncEnumerable)
+            {
+                await OnUpdate(update, defaultContext with { Update = update});
+            }
+        }
+
+        private async Task OnUpdate(Update update, Context context)
+        {
             foreach (ICommand command in _commands)
             {
                 bool shouldTrigger = command.Triggers
@@ -53,7 +73,7 @@ namespace TelegramReceiver
                 
                 if (shouldTrigger)
                 {
-                    await command.OperateAsync(_client, update);
+                    await command.OperateAsync(context);
                 }
             }
         }

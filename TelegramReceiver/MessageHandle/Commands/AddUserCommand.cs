@@ -34,22 +34,21 @@ namespace TelegramReceiver
             _producer = producer;
         }
 
-        public async Task OperateAsync(ITelegramBotClient client, Update update)
+        public async Task OperateAsync(Context context)
         {
-            IObservable<EventPattern<MessageEventArgs>> messages = Observable.FromEventPattern<MessageEventArgs>(
-                action => client.OnMessage += action,
-                action => client.OnMessage -= action);
-            
-            CallbackQuery query = update.CallbackQuery;
+            (ITelegramBotClient client, IObservable<Update> incoming, Update currentUpdate) = context;
+            CallbackQuery query = currentUpdate.CallbackQuery;
 
             string platform = GetPlatform(query);
 
             await RequestToSendUser(client, query, platform);
 
-            var args = await messages
-                .FirstAsync(pattern => pattern.EventArgs.Message.Chat.Id == query.Message.Chat.Id);
+            // Wait for the user to reply with desired user id
             
-            await AddUser(client, args.EventArgs.Message, platform);
+            Update newUpdate = await incoming
+                .FirstAsync(update => update.Message?.Chat?.Id == query.Message.Chat.Id);
+            
+            await AddUser(client, newUpdate.Message, platform);
         }
 
         private static string GetPlatform(CallbackQuery query)

@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace TelegramReceiver
 {
@@ -8,6 +6,6 @@ namespace TelegramReceiver
     {
         ITrigger[] Triggers { get; }
 
-        Task OperateAsync(ITelegramBotClient client, Update update);
+        Task OperateAsync(Context context);
     }
 }
