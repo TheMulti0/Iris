@@ -20,7 +20,9 @@ namespace TelegramReceiver
         {
             var platforms = new[]
             {
-                "Facebook"
+                "Facebook",
+                "Twitter",
+                "Feeds"
             };
             
             IEnumerable<InlineKeyboardButton> platformButtons = platforms
