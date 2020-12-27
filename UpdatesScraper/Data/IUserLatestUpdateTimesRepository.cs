@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Common;
 
 namespace UpdatesScraper
 {
     public interface IUserLatestUpdateTimesRepository
     {
-        Task<UserLatestUpdateTime> GetAsync(string userId);
+        Task<UserLatestUpdateTime> GetAsync(User user);
         
-        Task AddOrUpdateAsync(string userId, DateTime latestUpdateTime);    
+        Task AddOrUpdateAsync(User user, DateTime latestUpdateTime);    
     }
 }

@@ -42,7 +42,7 @@ namespace UpdatesScraper
 
             if (foundUpdates)
             {
-                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(user.UserId, DateTime.Now);
+                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(user, DateTime.Now);
             }
             else
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Common;
 using Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,14 +33,14 @@ namespace UpdatesScraper.Tests
         [TestMethod]
         public async Task TestGetSet()
         {
-            const string userId = "test";
+            var userId = new User("test", null, "test");
             DateTime latestUpdateTime = DateTime.Parse(DateTime.Now.ToString()); // To ignore millisecond precision
             
             await _repository.AddOrUpdateAsync(userId, latestUpdateTime);
             
             UserLatestUpdateTime userLatestUpdateTime = await _repository.GetAsync(userId);
             
-            Assert.AreEqual(userId, userLatestUpdateTime.UserId);
+            Assert.AreEqual(userId, userLatestUpdateTime.User);
             Assert.AreEqual(latestUpdateTime, userLatestUpdateTime.LatestUpdateTime.ToLocalTime());
         }
     }

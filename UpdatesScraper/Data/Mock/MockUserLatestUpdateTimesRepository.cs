@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.Extensions.Logging;
 
 namespace UpdatesScraper.Mock
@@ -14,17 +15,17 @@ namespace UpdatesScraper.Mock
             _logger = logger;
         }
 
-        public Task<UserLatestUpdateTime> GetAsync(string userId)
+        public Task<UserLatestUpdateTime> GetAsync(User user)
         {
             return Task.FromResult(
                 new UserLatestUpdateTime
                 {
-                    UserId = userId,
+                    User = user,
                     LatestUpdateTime = DateTime.MinValue
                 });
         }
 
-        public Task AddOrUpdateAsync(string userId, DateTime latestUpdateTime)
+        public Task AddOrUpdateAsync(User user, DateTime latestUpdateTime)
         {
             return Task.CompletedTask;
         }

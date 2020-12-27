@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Common;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -14,22 +15,25 @@ namespace UpdatesScraper
             _collection = context.UserLatestUpdateTimes;
         }
         
-        public Task<UserLatestUpdateTime> GetAsync(string userId)
+        public Task<UserLatestUpdateTime> GetAsync(User user)
         {
+            (string userId, string source) = user;
+            
             return _collection
                 .AsQueryable()
-                .FirstOrDefaultAsync(userLatestUpdateTime => userLatestUpdateTime.UserId == userId);
+                .FirstOrDefaultAsync(u => u.User.UserId == userId &&
+                                          u.User.Source == source);
         }
 
-        public async Task AddOrUpdateAsync(string userId, DateTime latestUpdateTime)
+        public async Task AddOrUpdateAsync(User user, DateTime latestUpdateTime)
         {
             var updateTime = new UserLatestUpdateTime
             {
-                UserId = userId,
+                User = user,
                 LatestUpdateTime = latestUpdateTime
             };
 
-            var existing = await GetAsync(userId);
+            var existing = await GetAsync(user);
             
             if (existing == null)
             {
@@ -40,7 +44,7 @@ namespace UpdatesScraper
             bool updateSuccess;
             do
             {
-                existing = await GetAsync(userId);
+                existing = await GetAsync(user);
 
                 UpdateDefinition<UserLatestUpdateTime> update = Builders<UserLatestUpdateTime>.Update
                     .Set(u => u.Version, existing.Version + 1)
@@ -49,7 +53,7 @@ namespace UpdatesScraper
                 var result = await _collection
                     .UpdateOneAsync(
                         userLatestUpdateTime => userLatestUpdateTime.Version == existing.Version &&
-                                                userLatestUpdateTime.UserId == userId,
+                                                userLatestUpdateTime.User == user,
                         update);
 
                 updateSuccess = result.IsAcknowledged && result.ModifiedCount > 0;

@@ -60,7 +60,7 @@ namespace UpdatesScraper
                 .Reverse()
                 .OrderBy(update => update.CreationDate).ToList();
 
-            UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(user.UserId);
+            UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(user);
 
             ConfiguredCancelableAsyncEnumerable<Update> newUpdates = GetNewUpdates(sortedUpdates, userLatestUpdateTime)
                 .WithCancellation(cancellationToken);
@@ -114,15 +114,15 @@ namespace UpdatesScraper
             return extracted;
         }
 
-        private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(string userId)
+        private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(User user)
         {
             var zero = new UserLatestUpdateTime
             {
-                UserId = userId,
+                User = user,
                 LatestUpdateTime = DateTime.MinValue
             };
             
-            return await _userLatestUpdateTimesRepository.GetAsync(userId) ?? zero;
+            return await _userLatestUpdateTimesRepository.GetAsync(user) ?? zero;
         }
 
         private IAsyncEnumerable<Update> GetNewUpdates(

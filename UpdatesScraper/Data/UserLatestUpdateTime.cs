@@ -1,12 +1,12 @@
 using System;
+using Common;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace UpdatesScraper
 {
     public class UserLatestUpdateTime
     {
-        [BsonId] 
-        public string UserId { get; set; }
+        public User User { get; set; }
 
         public int Version { get; set; }
         
