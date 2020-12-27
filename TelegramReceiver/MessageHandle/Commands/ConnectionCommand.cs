@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using TelegramReceiver.Data;
 
 namespace TelegramReceiver
@@ -24,11 +25,20 @@ namespace TelegramReceiver
             (ITelegramBotClient client, _, Update currentUpdate) = context;
 
             Message message = currentUpdate.Message;
-            ChatId connectedChat = await _repository.GetAsync(message.From);
+            ChatId connectedChatId = await _repository.GetAsync(message.From);
+            Chat connectedChat = await client.GetChatAsync(connectedChatId);
 
+            if (connectedChat.Type == ChatType.Private)
+            {
+                await client.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: $"Not connected to any external chat");
+                return;
+            }
+            
             await client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"Connected to {(await client.GetChatAsync(connectedChat)).Title}! ({connectedChat})");
+                text: $"Connected to {connectedChat.Title}! ({connectedChatId})");
         }
     }
 }
