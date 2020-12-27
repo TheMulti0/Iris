@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
 using Telegram.Bot;
+using Telegram.Bot.Args;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -16,25 +17,13 @@ namespace TelegramReceiver
 {
     internal class AddUserCommand : ICommand
     {
-        private static readonly ConcurrentDictionary<ChatId, string> ChatPlatforms = new(new ChatIdIEqualityComparer());
         private readonly ISavedUsersRepository _repository;
         private readonly IProducer<ChatPollRequest> _producer;
-
-        private class PlatformSavedTrigger : ITrigger
-        {
-            public bool ShouldTrigger(Update update)
-            {
-                ChatId? chatId = update?.Message?.Chat?.Id;
-                
-                return chatId != null && ChatPlatforms.ContainsKey(chatId);
-            }
-        }
 
         public const string CallbackPath = "platform";
 
         public ITrigger[] Triggers { get; } = {
             new StartsWithCallbackTrigger(CallbackPath),
-            new PlatformSavedTrigger()
         };
 
         public AddUserCommand(
@@ -45,43 +34,48 @@ namespace TelegramReceiver
             _producer = producer;
         }
 
-        public Task OperateAsync(ITelegramBotClient client, Update update)
+        public async Task OperateAsync(ITelegramBotClient client, Update update)
         {
-            switch (update.Type)
-            {
-                case UpdateType.CallbackQuery:
-                    return RequestToSendUser(client, update.CallbackQuery);
-                
-                default:
-                    return AddUser(client, update.Message);
-            }
+            IObservable<EventPattern<MessageEventArgs>> messages = Observable.FromEventPattern<MessageEventArgs>(
+                action => client.OnMessage += action,
+                action => client.OnMessage -= action);
+            
+            CallbackQuery query = update.CallbackQuery;
+
+            string platform = GetPlatform(query);
+
+            await RequestToSendUser(client, query, platform);
+
+            var args = await messages
+                .FirstAsync(pattern => pattern.EventArgs.Message.Chat.Id == query.Message.Chat.Id);
+            
+            await AddUser(client, args.EventArgs.Message, platform);
         }
 
-        private static Task RequestToSendUser(ITelegramBotClient client, CallbackQuery callbackQuery)
+        private static string GetPlatform(CallbackQuery query)
         {
-            CallbackQuery query = callbackQuery;
-
-            string platform = query.Data
+            return query.Data
                 .Split("-")
                 .Last();
-            
-            Message message = query.Message;
-            ChatId chatId = message.Chat.Id;
+        }
 
-            ChatPlatforms.TryAdd(chatId, platform);
+        private static Task RequestToSendUser(
+            ITelegramBotClient client,
+            CallbackQuery callbackQuery,
+            string platform)
+        {
+            Message message = callbackQuery.Message;
 
             return client.EditMessageTextAsync(
-                chatId: chatId,
+                chatId: message.Chat.Id,
                 messageId: message.MessageId,
                 text: $"Enter user from {platform}");
         }
         
-        private async Task AddUser(ITelegramBotClient client, Message message)
+        private async Task AddUser(ITelegramBotClient client, Message message, string platform)
         {
             ChatId chatId = message.Chat.Id;
             string messageText = message.Text;
-
-            ChatPlatforms.TryRemove(chatId, out string platform);
             
             var user = new User(messageText, messageText, platform);
             TimeSpan interval = TimeSpan.FromMinutes(30);
