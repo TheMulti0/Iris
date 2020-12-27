@@ -71,8 +71,8 @@ services:
     networks:
       - rabbitmq_network
     depends_on:
-      - pollrulesmanager
       - rabbitmq
+      - pollrulesmanager
 
   facebookscraper:
     image: iris/facebookscraper:latest

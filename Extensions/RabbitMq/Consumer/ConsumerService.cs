@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Events;
@@ -14,6 +15,7 @@ namespace Extensions
         private readonly RabbitMqConfig _config;
         private readonly IConsumer<T> _consumer;
         private readonly ILogger<ConsumerService<T>> _logger;
+        private JsonSerializerOptions _jsonSerializerOptions;
 
         public ConsumerService(
             RabbitMqConfig config, 
@@ -23,6 +25,15 @@ namespace Extensions
             _config = config;
             _consumer = consumer;
             _logger = logger;
+            
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new MediaJsonConverter()
+                }
+            };
+
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,8 +53,8 @@ namespace Extensions
                 try
                 {
                     string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
-                    
-                    var item = JsonSerializer.Deserialize<T>(json)
+
+                    var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
                                ?? throw new NullReferenceException($"Failed to deserialize {json}");
                     
                     await _consumer.ConsumeAsync(item, token);

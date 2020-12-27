@@ -30,5 +30,7 @@ namespace Common
             userId = UserId;
             source = Source;
         }
+
+        public override string ToString() => $"{UserId} ({Source})";
     }
 }
