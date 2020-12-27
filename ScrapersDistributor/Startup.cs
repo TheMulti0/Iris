@@ -48,7 +48,10 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var pollerConfig = rootConfig.GetSection<PollRulesPollerConfig>("PollRulesPoller"); 
 
     services
-        .AddProducer<User>(producerConfig)
+        .AddSingleton<IProducer<User>, JobsProducer>(
+            provider => new JobsProducer(
+                producerConfig,
+                provider.GetService<ILogger<JobsProducer>>()))
         .AddSingleton<IConsumer<PollRequest>, PollRequestsConsumer>()
         .AddConsumerService<PollRequest>(consumerConfig)
         .AddSingleton(pollerConfig)
