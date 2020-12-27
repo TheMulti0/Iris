@@ -24,5 +24,11 @@ namespace Common
         {
             return HashCode.Combine(UserId, Source);
         }
+
+        public void Deconstruct(out string userId, out string source)
+        {
+            userId = UserId;
+            source = Source;
+        }
     }
 }

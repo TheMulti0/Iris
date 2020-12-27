@@ -52,15 +52,18 @@ namespace TelegramReceiver
         {
             _client.StartReceiving(cancellationToken: token);
 
-            var defaultContext = new Context(_client, updates);
-
             var asyncEnumerable = updates
                 .ToAsyncEnumerable()
                 .WithCancellation(token);
 
             await foreach (Update update in asyncEnumerable)
             {
-                await OnUpdate(update, defaultContext with { Update = update});
+                IObservable<Update> incomingUpdatesFromChat = updates
+                    .Where(u => u.GetChatId().GetHashCode() == update.GetChatId().GetHashCode());
+                
+                var context = new Context(_client, incomingUpdatesFromChat, update);
+                
+                await OnUpdate(update, context);
             }
         }
 
@@ -70,10 +73,19 @@ namespace TelegramReceiver
             {
                 bool shouldTrigger = command.Triggers
                     .Any(trigger => trigger.ShouldTrigger(update));
+
+                if (!shouldTrigger)
+                {
+                    continue;
+                }
                 
-                if (shouldTrigger)
+                try
                 {
                     await command.OperateAsync(context);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to execute command");
                 }
             }
         }

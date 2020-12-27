@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MoreLinq.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 
@@ -14,8 +16,11 @@ namespace TelegramReceiver
         private readonly IEnumerable<InlineKeyboardButton> _addUserButton;
         private readonly InlineKeyboardMarkup _noUsersMarkup;
 
+        public const string CallbackPath = "home";
+        
         public ITrigger[] Triggers { get; } = {
-            new MessageTextTrigger("/start")
+            new MessageTextTrigger("/start"),
+            new CallbackTrigger(CallbackPath)
         };
 
         public UsersCommand(
@@ -33,52 +38,60 @@ namespace TelegramReceiver
         public Task OperateAsync(Context context)
         {
             (ITelegramBotClient client, _, Update update) = context;
-            Message message = update.Message;
+            var chatId = update.GetChatId();
 
             List<SavedUser> currentUsers = _repository
-                .Get()
-                .Where(user => user.Chats
-                           .Any(chat => chat.Chat == (ChatId) message.Chat.Id))
+                .GetAll()
+                .Where(
+                    user => user.Chats
+                        .Any(chat => chat.Chat == chatId))
                 .ToList();
 
+            (InlineKeyboardMarkup markup, string text) = Get(currentUsers);
+
+            if (update.Type == UpdateType.CallbackQuery)
+            {
+                return client.EditMessageTextAsync(
+                    chatId: chatId,
+                    messageId: update.CallbackQuery.Message.MessageId,
+                    text: text,
+                    replyMarkup: markup);
+            }
+            
+            return client.SendTextMessageAsync(
+                chatId: chatId,
+                text: text,
+                replyMarkup: markup);
+    }
+
+        private (InlineKeyboardMarkup, string) Get(IReadOnlyCollection<SavedUser> currentUsers)
+        {
             return currentUsers.Any() 
-                ? WithUsers(client, message, currentUsers) 
-                : NoUsersFound(client, message);
+                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} users found") 
+                : (_noUsersMarkup, "No users found");
         }
 
-        private async Task NoUsersFound(ITelegramBotClient client, Message msg)
+        private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
         {
-            await client.SendTextMessageAsync(
-                chatId: msg.Chat.Id,
-                text: "No users found",
-                replyToMessageId: msg.MessageId,
-                replyMarkup: _noUsersMarkup);
-        }
-
-        private async Task WithUsers(
-            ITelegramBotClient client,
-            Message msg,
-            List<SavedUser> users)
-        {
-            IEnumerable<InlineKeyboardButton> userButtons = users
+            IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
                 .Select(ToButton)
-                .Concat(_addUserButton);
+                .Batch(2)
+                .Concat(
+                    new[]
+                    {
+                        _addUserButton
+                    });
             
-            var inlineKeyboardMarkup = new InlineKeyboardMarkup(userButtons);
-            
-            await client.SendTextMessageAsync(
-                chatId: msg.Chat.Id,
-                text: $"{users.Count} users configured",
-                replyToMessageId: msg.MessageId,
-                replyMarkup: inlineKeyboardMarkup);
+            return new InlineKeyboardMarkup(userButtons);
         }
 
-        private InlineKeyboardButton ToButton(SavedUser user)
+        private static InlineKeyboardButton ToButton(SavedUser user)
         {
-            (string userId, _, string source) = user.User;
+            (string userId, string source) = user.User;
 
             return InlineKeyboardButton.WithCallbackData(
-                $"{userId} ({source})");
+                $"{userId} ({source})",
+                $"{ManageUserCommand.CallbackPath}-{userId}-{source}");
         }
     }
 }

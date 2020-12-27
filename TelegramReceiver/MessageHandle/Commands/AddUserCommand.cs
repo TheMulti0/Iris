@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
 using Telegram.Bot;
-using Telegram.Bot.Args;
 using Telegram.Bot.Types;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
+using UpdateType = Telegram.Bot.Types.Enums.UpdateType;
 
 namespace TelegramReceiver
 {
+    
     internal class AddUserCommand : ICommand
     {
         private readonly ISavedUsersRepository _repository;
@@ -41,12 +41,11 @@ namespace TelegramReceiver
 
             string platform = GetPlatform(query);
 
-            await RequestToSendUser(client, query, platform);
+            await SendRequestMessage(client, query, platform);
 
             // Wait for the user to reply with desired user id
-            
-            Update newUpdate = await incoming
-                .FirstAsync(update => update.Message?.Chat?.Id == query.Message.Chat.Id);
+
+            Update newUpdate = await incoming.FirstAsync(update => update.Type == UpdateType.Message);
             
             await AddUser(client, newUpdate.Message, platform);
         }
@@ -58,7 +57,7 @@ namespace TelegramReceiver
                 .Last();
         }
 
-        private static Task RequestToSendUser(
+        private static Task SendRequestMessage(
             ITelegramBotClient client,
             CallbackQuery callbackQuery,
             string platform)

@@ -7,7 +7,7 @@ namespace UserDataLayer
 {
     public class MockSavedUsersRepository : ISavedUsersRepository
     {
-        public IQueryable<SavedUser> Get()
+        public IQueryable<SavedUser> GetAll()
         {
             return new EnumerableQuery<SavedUser>(
                 new SavedUser[]
@@ -35,7 +35,7 @@ namespace UserDataLayer
             return Task.CompletedTask;
         }
 
-        public Task RemoveAsync(User user, ChatInfo chat)
+        public Task RemoveAsync(User user, string chatId)
         {
             return Task.CompletedTask;
         }

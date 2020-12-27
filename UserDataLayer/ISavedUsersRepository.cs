@@ -7,12 +7,12 @@ namespace UserDataLayer
 {
     public interface ISavedUsersRepository
     {
-        IQueryable<SavedUser> Get();
+        IQueryable<SavedUser> GetAll();
         
         Task<SavedUser> GetAsync(User user);
         
         Task AddOrUpdateAsync(User user, ChatInfo chat);
 
-        Task RemoveAsync(User user, ChatInfo chat);
+        Task RemoveAsync(User user, string chatId);
     }
 }

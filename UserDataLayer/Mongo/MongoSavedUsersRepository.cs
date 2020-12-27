@@ -16,7 +16,7 @@ namespace UserDataLayer
             _collection = context.SavedUsers;
         }
 
-        public IQueryable<SavedUser> Get()
+        public IQueryable<SavedUser> GetAll()
         {
             return _collection
                 .AsQueryable();
@@ -24,8 +24,10 @@ namespace UserDataLayer
         
         public Task<SavedUser> GetAsync(User user)
         {
+            (string userId, string source) = user;
+            
             return _collection
-                .Find(savedUser => savedUser.User.UserId == user.UserId)
+                .Find(savedUser => savedUser.User.UserId == userId && savedUser.User.Source == source)
                 .FirstOrDefaultAsync();
         }
 
@@ -55,8 +57,11 @@ namespace UserDataLayer
             while (!updateSuccess);
         }
 
-        public async Task RemoveAsync(User user, ChatInfo chat)
+        public async Task RemoveAsync(User user, string chatId)
         {
+            var fullUser = await GetAsync(user);
+            var chat = fullUser.Chats.First(info => info.Chat == chatId);
+
             SavedUser existing = await GetAsync(user);
 
             if (existing.Chats.Contains(chat) && existing.Chats.Count == 1)
@@ -71,6 +76,8 @@ namespace UserDataLayer
                 }
                 while (!removeSuccess);
             }
+
+            existing.Chats.Remove(chat);
 
             bool updateSuccess;
             do
