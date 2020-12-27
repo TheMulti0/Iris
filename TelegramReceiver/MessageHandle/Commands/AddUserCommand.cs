@@ -21,6 +21,7 @@ namespace TelegramReceiver
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
+        private readonly TimeSpan _defaultInterval;
 
         public const string CallbackPath = "platform";
 
@@ -29,6 +30,7 @@ namespace TelegramReceiver
         };
 
         public AddUserCommand(
+            TelegramConfig config,
             IConnectionsRepository connectionsRepository,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer)
@@ -36,6 +38,8 @@ namespace TelegramReceiver
             _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
+            
+            _defaultInterval = config.DefaultInterval;
         }
 
         public async Task OperateAsync(Context context)
@@ -81,7 +85,7 @@ namespace TelegramReceiver
             string messageText = message.Text;
             
             var user = new User(messageText, messageText, platform);
-            TimeSpan interval = TimeSpan.FromMinutes(30);
+            TimeSpan interval = _defaultInterval;
             
             var userPollRule = new UserPollRule(user, interval);
 
@@ -101,7 +105,7 @@ namespace TelegramReceiver
 
             await client.SendTextMessageAsync(
                 chatId: contextChat,
-                text: $"Added {messageText} from platform {platform}",
+                text: $"Added {messageText} from platform {platform} with max delay set to up to {interval * 2}",
                 replyToMessageId: message.MessageId);
         }
     }
