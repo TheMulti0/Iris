@@ -7,7 +7,7 @@ namespace TelegramReceiver.Data
     internal class Connection
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        public ObjectId? _id { get; set; }
         
         public User User { get; set; }
 

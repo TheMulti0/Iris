@@ -1,4 +1,5 @@
-﻿using Telegram.Bot.Types;
+﻿using System.Linq;
+using Telegram.Bot.Types;
 
 namespace TelegramReceiver
 {
@@ -13,7 +14,7 @@ namespace TelegramReceiver
 
         public bool ShouldTrigger(Update update)
         {
-            return update.Message?.Text.StartsWith(_text) == true;
+            return update.Message?.Text?.Split(' ').FirstOrDefault() == _text;
         }
     }
 }

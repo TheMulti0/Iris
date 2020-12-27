@@ -70,6 +70,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<ICommand, SetUserDisplayNameCommand>()
         .AddSingleton<ICommand, RemoveUserCommand>()
         .AddSingleton<ICommand, ConnectCommand>()
+        .AddSingleton<ICommand, DisconnectCommand>()
+        .AddSingleton<ICommand, ConnectionCommand>()
         .AddHostedService<MessageHandlerService>()
         .BuildServiceProvider();
 }

@@ -15,7 +15,7 @@ namespace TelegramReceiver.Data
             _collection = context.Connection;
         }
 
-        public async Task<ChatId> GetAsync(User user)
+        public async Task<string> GetAsync(User user)
         {
             Connection connection = await _collection.AsQueryable()
                 .FirstOrDefaultAsync(c => c.User.Id == user.Id);
@@ -31,15 +31,22 @@ namespace TelegramReceiver.Data
                 Chat = chatId
             };
 
-            var newEntity = await _collection
-                .FindOneAndReplaceAsync(
-                    c => c.User == user,
-                    connection);
-
-            if (newEntity == null)
+            string existingChatId = await GetAsync(user);
+            if (existingChatId == chatId)
+            {
+                return;
+            }
+            if (existingChatId == null)
             {
                 await _collection.InsertOneAsync(connection);
+                return;
             }
+
+            UpdateDefinition<Connection> update = Builders<Connection>.Update.Set(c => c.Chat, (string) chatId);
+            
+            await _collection.UpdateOneAsync(
+                c => c.User == user,
+                update);
         }
     }
 }
