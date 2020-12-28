@@ -98,13 +98,13 @@ namespace ScrapersDistributor
                 try
                 {
                     _producer.Send(user);
-          
-                    await Task.Delay(interval, token);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError(e, "Failed to send job for {}", rule);
                 }
+                
+                await Task.Delay(interval, token);
             }
         }
     }
