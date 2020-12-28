@@ -3,43 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot;
+using MoreLinq.Extensions;
 using Telegram.Bot.Types.ReplyMarkups;
 using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
     internal class SelectPlatformCommand : ICommand
     {
-        private readonly InlineKeyboardMarkup _platformsMarkup;
-
         public const string CallbackPath = "selectPlatform";
         public ITrigger[] Triggers { get; } = {
             new CallbackTrigger(CallbackPath)
         };
 
-        public SelectPlatformCommand()
+        public Task OperateAsync(Context context )
         {
-            var platforms = Enum.GetNames<Platform>();
+            Message message = context.Update.CallbackQuery.Message;
             
-            IEnumerable<InlineKeyboardButton> platformButtons = platforms
-                .Select(platform => InlineKeyboardButton
-                            .WithCallbackData(platform, $"{AddUserCommand.CallbackPath}-{platform}"));
-
-            _platformsMarkup = new InlineKeyboardMarkup(platformButtons);
-        }
-
-        public Task OperateAsync(Context context)
-        {
-            (ITelegramBotClient client, _, Update update) = context;
-            Message message = update.CallbackQuery.Message;
-
-            return client.EditMessageTextAsync(
+            return context.Client.EditMessageTextAsync(
                 chatId: message.Chat.Id,
                 messageId: message.MessageId,
-                text: "Select a platform",
-                replyMarkup: _platformsMarkup);
+                text: context.LanguageDictionary.SelectPlatform,
+                replyMarkup: GetMarkup(context));
+        }
+        
+        private InlineKeyboardMarkup GetMarkup(Context context)
+        {
+            InlineKeyboardButton ToButton(Platform platform)
+            {
+                return InlineKeyboardButton.WithCallbackData(
+                    context.LanguageDictionary.GetPlatform(platform),
+                    $"{AddUserCommand.CallbackPath}-{Enum.GetName(platform)}");
+            }
+            
+            IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = Enum.GetValues<Platform>()
+                .Select(ToButton)
+                .Batch(2)
+                .Concat(
+                    new[]
+                    {
+                        new []
+                        {
+                            InlineKeyboardButton.WithCallbackData(
+                                context.LanguageDictionary.Back,
+                                UsersCommand.CallbackPath)                            
+                        }
+                    });
+            
+            return new InlineKeyboardMarkup(userButtons);
         }
     }
 }

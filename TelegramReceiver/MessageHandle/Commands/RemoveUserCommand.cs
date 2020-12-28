@@ -37,41 +37,37 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, _, Update currentUpdate) = context;
-            CallbackQuery query = currentUpdate.CallbackQuery;
+            CallbackQuery query = context.Update.CallbackQuery;
 
             User user = GetUserBasicInfo(query);
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(user);
+            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(context, user);
 
-            await Remove(user, query.Message, client, inlineKeyboardMarkup);
+            await Remove(context, user, query.Message, inlineKeyboardMarkup);
         }
 
         private async Task Remove(
+            Context context,
             User user,
             Message message,
-            ITelegramBotClient client,
             InlineKeyboardMarkup markup)
         {
-            ChatId contextChat = message.Chat.Id;
-            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;
+            await _savedUsersRepository.RemoveAsync(user, context.ConnectedChatId);
 
-            await _savedUsersRepository.RemoveAsync(user, connectedChat);
-
-            await client.EditMessageTextAsync(
+            await context.Client.EditMessageTextAsync(
                 messageId: message.MessageId,
-                chatId: contextChat,
-                text: $"Removed {user.UserId}",
+                chatId: context.ContextChatId,
+                text: $"{context.LanguageDictionary.Removed} ({user.UserId})",
                 replyMarkup: markup);
         }
 
-        private static InlineKeyboardMarkup CreateMarkup(User user)
+        private static InlineKeyboardMarkup CreateMarkup(Context context, User user)
         {
             (string userId, Platform platform) = user;
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
-                    "Back",
+                    context.LanguageDictionary.Back,
                     $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}"));
         }
 

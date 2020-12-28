@@ -19,7 +19,6 @@ namespace TelegramReceiver
     
     internal class AddUserCommand : ICommand
     {
-        private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
         private readonly TimeSpan _defaultInterval;
@@ -32,11 +31,9 @@ namespace TelegramReceiver
 
         public AddUserCommand(
             TelegramConfig config,
-            IConnectionsRepository connectionsRepository,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer)
         {
-            _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
             
@@ -45,18 +42,17 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, IObservable<Update> incoming, Update currentUpdate) = context;
-            CallbackQuery query = currentUpdate.CallbackQuery;
+            CallbackQuery query = context.Update.CallbackQuery;
 
             Platform platform = GetPlatform(query);
 
-            await SendRequestMessage(client, query, platform);
+            await SendRequestMessage(context, query, platform);
 
             // Wait for the user to reply with desired user id
 
-            Update newUpdate = await incoming.FirstAsync(update => update.Type == UpdateType.Message);
+            Update newUpdate = await context.IncomingUpdates.FirstAsync(update => update.Type == UpdateType.Message);
             
-            await AddUser(client, newUpdate.Message, platform);
+            await AddUser(context, newUpdate.Message, platform);
         }
 
         private static Platform GetPlatform(CallbackQuery query)
@@ -67,22 +63,20 @@ namespace TelegramReceiver
         }
 
         private static Task SendRequestMessage(
-            ITelegramBotClient client,
+            Context context,
             CallbackQuery callbackQuery,
             Platform platform)
         {
             Message message = callbackQuery.Message;
 
-            return client.EditMessageTextAsync(
+            return context.Client.EditMessageTextAsync(
                 chatId: message.Chat.Id,
                 messageId: message.MessageId,
-                text: $"Enter user from {Enum.GetName(platform)}");
+                text: $"{context.LanguageDictionary.EnterUserFromPlatform} {context.LanguageDictionary.GetPlatform(platform)}");
         }
         
-        private async Task AddUser(ITelegramBotClient client, Message message, Platform platform)
+        private async Task AddUser(Context context, Message message, Platform platform)
         {
-            ChatId contextChat = message.Chat.Id;
-            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;;
             string messageText = message.Text;
             
             var user = new User(messageText, platform);
@@ -94,19 +88,21 @@ namespace TelegramReceiver
                 new ChatPollRequest(
                     Request.StartPoll,
                     userPollRule,
-                    connectedChat));
+                    context.ConnectedChatId));
 
             await _savedUsersRepository.AddOrUpdateAsync(
                 user,
                 new UserChatInfo
                 {
-                    ChatId = connectedChat,
-                    Interval = interval
+                    ChatId = context.ConnectedChatId,
+                    Interval = interval,
+                    DisplayName = user.UserId,
+                    Language = context.Language
                 });
 
-            await client.SendTextMessageAsync(
-                chatId: contextChat,
-                text: $"Added {messageText} from platform {platform} with max delay set to up to {interval * 2}",
+            await context.Client.SendTextMessageAsync(
+                chatId: context.ContextChatId,
+                text: $"{context.LanguageDictionary.Added} {user.UserId}",
                 replyToMessageId: message.MessageId);
         }
     }

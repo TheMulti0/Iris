@@ -8,6 +8,8 @@ namespace Common
 
         public string DisplayName { get; set; }
 
+        public Language Language { get; set; } 
+
         public string ChatId { get; set; }
 
         public bool Equals(UserChatInfo other)

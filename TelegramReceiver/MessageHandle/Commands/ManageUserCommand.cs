@@ -18,9 +18,8 @@ namespace TelegramReceiver
 {
     internal class ManageUserCommand : ICommand
     {
-        private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly InlineKeyboardButton[] _backRow;
+        private readonly Languages _languages;
 
         public const string CallbackPath = "manageUser";
 
@@ -29,24 +28,18 @@ namespace TelegramReceiver
         };
 
         public ManageUserCommand(
-            IConnectionsRepository connectionsRepository,
-            ISavedUsersRepository savedUsersRepository)
+            ISavedUsersRepository savedUsersRepository,
+            Languages languages)
         {
-            _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
-
-            _backRow = new[]
-            {
-                InlineKeyboardButton.WithCallbackData("Back", UsersCommand.CallbackPath), 
-            };
+            _languages = languages;
         }
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, IObservable<Update> _, Update currentUpdate) = context;
-            CallbackQuery query = currentUpdate.CallbackQuery;
+            CallbackQuery query = context.Update.CallbackQuery;
 
-            await SendUserInfo(client, query.Message, GetUserBasicInfo(query));
+            await SendUserInfo(context, query.Message, GetUserBasicInfo(query));
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)
@@ -57,40 +50,43 @@ namespace TelegramReceiver
         }
 
         private async Task SendUserInfo(
-            ITelegramBotClient client,
+            Context context,
             Message message,
             User user)
         {
-            ChatId contextChat = message.Chat.Id;
-            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;
-            
             var savedUser = await _savedUsersRepository.GetAsync(user);
-            
-            var text = GetText(user, savedUser.Chats.First(info => info.ChatId == connectedChat));
 
-            var inlineKeyboardMarkup = GetMarkup(user);
+            UserChatInfo chatInfo = savedUser.Chats.First(info => info.ChatId == context.ConnectedChatId);
             
-            await client.EditMessageTextAsync(
-                chatId: contextChat,
+            var text = GetText(
+                context,
+                user,
+                chatInfo);
+
+            var inlineKeyboardMarkup = GetMarkup(context, user);
+            
+            await context.Client.EditMessageTextAsync(
+                chatId: context.ContextChatId,
                 messageId: message.MessageId,
                 text: text,
                 parseMode: ParseMode.Html,
                 replyMarkup: inlineKeyboardMarkup);
         }
 
-        private static string GetText(User user, UserChatInfo info)
+        private string GetText(Context context, User user, UserChatInfo info)
         {
-            var text = new StringBuilder($"Settings for {user}:");
-            
-            text.AppendLine($"<b>User id:</b> {user.UserId}");
-            text.AppendLine($"<b>Platform:</b> {user.Platform}");
-            text.AppendLine($"<b>Display name:</b> {info.DisplayName}");
-            text.AppendLine($"<b>Max delay:</b> up to {info.Interval * 2}");
+            var text = new StringBuilder($"{context.LanguageDictionary.SettingsFor} {user}:");
+            text.AppendLine("\n");
+            text.AppendLine($"<b>{context.LanguageDictionary.UserId}:</b> {user.UserId}");
+            text.AppendLine($"<b>{context.LanguageDictionary.Platform}:</b> {user.Platform}");
+            text.AppendLine($"<b>{context.LanguageDictionary.DisplayName}:</b> {info.DisplayName}");
+            text.AppendLine($"<b>{context.LanguageDictionary.MaxDelay}:</b> {info.Interval * 2}");
+            text.AppendLine($"<b>{context.LanguageDictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
             
             return text.ToString();
         }
 
-        private InlineKeyboardMarkup GetMarkup(User user)
+        private static InlineKeyboardMarkup GetMarkup(Context context, User user)
         {
             return new(
                 new[]
@@ -98,10 +94,27 @@ namespace TelegramReceiver
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            "Set display name",
+                            context.LanguageDictionary.SetDisplayName,
                             $"{SetUserDisplayNameCommand.CallbackPath}-{user.UserId}-{user.Platform}")
                     },
-                    _backRow
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            context.LanguageDictionary.Language,
+                            $"{SetUserLanguageCommand.CallbackPath}-{user.UserId}-{user.Platform}")
+                    },
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            context.LanguageDictionary.Remove,
+                            $"{RemoveUserCommand.CallbackPath}-{user.UserId}-{user.Platform}"),                        
+                    },
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            context.LanguageDictionary.Back,
+                            UsersCommand.CallbackPath), 
+                    }
                 });
         }
     }

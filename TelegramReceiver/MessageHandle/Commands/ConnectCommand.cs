@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Common;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -9,6 +10,8 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramReceiver.Data;
 using UserDataLayer;
+using Message = Telegram.Bot.Types.Message;
+using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
@@ -29,16 +32,14 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, IObservable<Update> incoming, Update currentUpdate) = context;
-
-            Message message = currentUpdate.Message;
+            Message message = context.Update.Message;
             string[] arguments = message.Text.Split(' ');
 
             if (arguments.Length <= 1)
             {
-                await client.SendTextMessageAsync(
+                await context.Client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Supply chat id!");
+                    text: context.LanguageDictionary.NoChatId);
                 return;
             }
 
@@ -46,21 +47,21 @@ namespace TelegramReceiver
             Chat chat;
             try
             {
-                chat = await client.GetChatAsync(chatId);
+                chat = await context.Client.GetChatAsync(chatId);
             }
             catch (ChatNotFoundException)
             {
-                await client.SendTextMessageAsync(
+                await context.Client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: "Failed to find chat! (Is the bot inside this chat?)");
+                    text: context.LanguageDictionary.NoChat);
                 return;
             }
 
-            await _repository.AddOrUpdateAsync(message.From, chatId);
+            await _repository.AddOrUpdateAsync(message.From, chatId, context.Language);
 
-            await client.SendTextMessageAsync(
+            await context.Client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"Connected to {chat.Title}! ({chatId})");
+                text: $"{context.LanguageDictionary.ConnectedToChat} {chat.Title}! ({chatId})");
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Common;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using TelegramReceiver.Data;
+using Message = Telegram.Bot.Types.Message;
+using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -23,24 +26,25 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, _, Update currentUpdate) = context;
+            Message message = context.Update.Message;
+            var connection = await _repository.GetAsync(message.From);
+            string connectionChat = connection?.Chat ?? context.ContextChatId;
 
-            Message message = currentUpdate.Message;
-            var connectedChat = await _repository.GetAsync(message.From);
-
-            if (connectedChat == null ||
-                Equals((ChatId) connectedChat, (ChatId) message.Chat.Id))
+            var chatAsync = await context.Client.GetChatAsync(connectionChat);
+            
+            if (connection == null ||
+                Equals((ChatId) connectionChat, (ChatId) message.Chat.Id))
             {
-                await client.SendTextMessageAsync(
+                await context.Client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: $"Disconnected from {(await client.GetChatAsync(connectedChat)).Title}! ({connectedChat})");   
+                    text: $"{context.LanguageDictionary.DisconnectedFrom} {chatAsync.Title}! ({connection})");   
             }
 
-            await _repository.AddOrUpdateAsync(message.From, message.Chat.Id);
+            await _repository.AddOrUpdateAsync(message.From, context.ContextChatId, context.Language);
 
-            await client.SendTextMessageAsync(
-                chatId: message.Chat.Id,
-                text: $"Disconnected from {(await client.GetChatAsync(connectedChat)).Title}! ({connectedChat})");
+            await context.Client.SendTextMessageAsync(
+                chatId: context.ContextChatId,
+                text: $"{context.LanguageDictionary.DisconnectedFrom} {chatAsync.Title}! ({connection})");
         }
     }
 }

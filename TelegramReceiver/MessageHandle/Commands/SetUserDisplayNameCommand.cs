@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramReceiver.Data;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -18,7 +15,6 @@ namespace TelegramReceiver
 {
     internal class SetUserDisplayNameCommand : ICommand
     {
-        private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
 
         public const string CallbackPath = "setDisplayName";
@@ -28,61 +24,55 @@ namespace TelegramReceiver
         };
 
         public SetUserDisplayNameCommand(
-            IConnectionsRepository connectionsRepository,
             ISavedUsersRepository savedUsersRepository)
         {
-            _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
         }
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, IObservable<Update> incoming, Update currentUpdate) = context;
-            CallbackQuery query = currentUpdate.CallbackQuery;
+            CallbackQuery query = context.Update.CallbackQuery;
 
             User user = GetUserBasicInfo(query);
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(user);
+            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(context, user);
 
-            await SendRequestMessage(client, query.Message, inlineKeyboardMarkup);
+            await SendRequestMessage(context, query.Message, inlineKeyboardMarkup);
 
             // Wait for the user to reply with desired display name
             
-            var update = await incoming.FirstAsync(u => u.Type == UpdateType.Message);
+            var update = await context.IncomingUpdates.FirstAsync(u => u.Type == UpdateType.Message);
 
-            await SetDisplayName(user, update, client, inlineKeyboardMarkup);
+            await SetDisplayName(context, user, update, inlineKeyboardMarkup);
         }
 
         private async Task SetDisplayName(
+            Context context,
             User user,
             Update update,
-            ITelegramBotClient client,
             IReplyMarkup markup)
         {
-            ChatId contextChat = update.GetChatId();
-            ChatId connectedChat = await _connectionsRepository.GetAsync(update.GetUser()) ?? contextChat;
-
             SavedUser savedUser = await _savedUsersRepository.GetAsync(user);
-            UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == connectedChat);
+            UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == context.ConnectedChatId);
 
             string newDisplayName = update.Message.Text;
             chat.DisplayName = newDisplayName;
             
             await _savedUsersRepository.AddOrUpdateAsync(user, chat);
 
-            await client.SendTextMessageAsync(
-                chatId: contextChat,
-                text: $"Updated display name to {newDisplayName}",
+            await context.Client.SendTextMessageAsync(
+                chatId: context.ContextChatId,
+                text: $"{context.LanguageDictionary.UpdatedDisplayName} {newDisplayName}",
                 replyMarkup: markup);
         }
 
-        private static InlineKeyboardMarkup CreateMarkup(User user)
+        private static InlineKeyboardMarkup CreateMarkup(Context context, User user)
         {
             (string userId, Platform platform) = user;
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
-                    "Back",
+                    context.LanguageDictionary.Back,
                     $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}"));
         }
 
@@ -94,14 +84,14 @@ namespace TelegramReceiver
         }
 
         private static Task SendRequestMessage(
-            ITelegramBotClient client,
+            Context context,
             Message message,
             InlineKeyboardMarkup markup)
         {
-            return client.EditMessageTextAsync(
+            return context.Client.EditMessageTextAsync(
                 chatId: message.Chat.Id,
                 messageId: message.MessageId,
-                text: "Enter new display name",
+                text: context.LanguageDictionary.EnterNewDisplayName,
                 replyMarkup: markup);
         }
     }

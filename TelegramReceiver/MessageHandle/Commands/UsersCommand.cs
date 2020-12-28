@@ -16,10 +16,8 @@ namespace TelegramReceiver
 {
     internal class UsersCommand : ICommand
     {
-        private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly IEnumerable<InlineKeyboardButton> _addUserButton;
-        private readonly InlineKeyboardMarkup _noUsersMarkup;
+        private readonly Languages _languages;
 
         public const string CallbackPath = "home";
         
@@ -29,78 +27,117 @@ namespace TelegramReceiver
         };
 
         public UsersCommand(
-            IConnectionsRepository connectionsRepository,
-            ISavedUsersRepository savedUsersRepository)
+            ISavedUsersRepository savedUsersRepository,
+            Languages languages)
         {
-            _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
-
-            _addUserButton = new[]
-            {
-                InlineKeyboardButton.WithCallbackData("Add user", SelectPlatformCommand.CallbackPath)
-            };
-            _noUsersMarkup = new InlineKeyboardMarkup(_addUserButton);
+            _languages = languages;
         }
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, _, Update update) = context;
-            ChatId contextChat = update.GetChatId();
-            ChatId connectedChat = await _connectionsRepository.GetAsync(update.GetUser()) ?? contextChat;
-
             List<SavedUser> currentUsers = _savedUsersRepository
                 .GetAll()
                 .Where(
                     user => user.Chats
-                        .Any(chat => chat.ChatId == connectedChat))
+                        .Any(chat => chat.ChatId == context.ConnectedChatId))
                 .ToList();
 
-            (InlineKeyboardMarkup markup, string text) = Get(currentUsers);
+            (InlineKeyboardMarkup markup, string text) = Get(context, currentUsers);
 
-            if (update.Type == UpdateType.CallbackQuery)
+            if (context.Update.Type == UpdateType.CallbackQuery)
             {
-                await client.EditMessageTextAsync(
-                    chatId: contextChat,
-                    messageId: update.CallbackQuery.Message.MessageId,
+                await context.Client.EditMessageTextAsync(
+                    chatId: context.ContextChatId,
+                    messageId: context.Update.CallbackQuery.Message.MessageId,
                     text: text,
                     replyMarkup: markup);
                 return;
             }
             
-            await client.SendTextMessageAsync(
-                chatId: contextChat,
+            await context.Client.SendTextMessageAsync(
+                chatId: context.ContextChatId,
                 text: text,
                 replyMarkup: markup);
     }
 
-        private (InlineKeyboardMarkup, string) Get(IReadOnlyCollection<SavedUser> currentUsers)
+        private (InlineKeyboardMarkup, string) Get(Context context, IReadOnlyCollection<SavedUser> currentUsers)
         {
             return currentUsers.Any() 
-                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} users found") 
-                : (_noUsersMarkup, "No users found");
+                ? (
+                    GetUsersMarkup(context, currentUsers),
+                    $"{currentUsers.Count} {context.LanguageDictionary.UsersFound}") 
+                : (
+                    GetNoUsersMarkup(context),
+                    context.LanguageDictionary.NoUsersFound);
         }
 
-        private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
+        private static InlineKeyboardButton GetAddUserButton(Context context)
+        {
+            return InlineKeyboardButton.WithCallbackData(
+                context.LanguageDictionary.AddUser,
+                SelectPlatformCommand.CallbackPath);
+        }
+
+        private InlineKeyboardMarkup GetNoUsersMarkup(Context context)
+        {
+            var buttons = new[]
+            {
+                new[]
+                {
+                    GetAddUserButton(context)
+                }
+            };
+
+            return new InlineKeyboardMarkup(
+                buttons.Concat(GetLanguageButtons(context)));
+        }
+
+        private InlineKeyboardMarkup GetUsersMarkup(Context context, IEnumerable<SavedUser> users)
         {
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
-                .Select(ToButton)
+                .Select(UserToButton)
                 .Batch(2)
+                .Concat(GetLanguageButtons(context))
                 .Concat(
                     new[]
                     {
-                        _addUserButton
+                        new[]
+                        {
+                            GetAddUserButton(context)
+                        }
                     });
             
             return new InlineKeyboardMarkup(userButtons);
         }
 
-        private static InlineKeyboardButton ToButton(SavedUser user)
+        private static InlineKeyboardButton UserToButton(SavedUser user)
         {
             (string userId, Platform platform) = user.User;
 
             return InlineKeyboardButton.WithCallbackData(
                 $"{user.User}",
                 $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}");
+        }
+
+        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(Context context)
+        {
+            InlineKeyboardButton LanguageToButton(Language language)
+            {
+                return
+                    InlineKeyboardButton.WithCallbackData(
+                        _languages.Dictionary[language].LanguageString,
+                        $"{SetLanguageCommand.CallbackPath}-{Enum.GetName(language)}");
+            }
+
+            return Enum.GetValues<Language>()
+                .Except(
+                    new[]
+                    {
+                        context.Language
+                    })
+                .Select(LanguageToButton)
+                .Batch(2);
         }
     }
 }

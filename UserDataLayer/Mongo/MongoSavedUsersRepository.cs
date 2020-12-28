@@ -91,7 +91,9 @@ namespace UserDataLayer
 
         private async Task<bool> Update(SavedUser newUser, SavedUser existing)
         {
-            IEnumerable<UserChatInfo> combinedChats = existing.Chats.Concat(newUser.Chats).Distinct();
+            IEnumerable<UserChatInfo> combinedChats = existing.Chats
+                .Where(info => !newUser.Chats.Contains(info))
+                .Concat(newUser.Chats);
             
             UpdateDefinition<SavedUser> update = Builders<SavedUser>.Update
                 .Set(u => u.Version, existing.Version + 1)

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramReceiver.Data;
+using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
 {
@@ -22,23 +22,21 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            (ITelegramBotClient client, _, Update currentUpdate) = context;
-
-            Message message = currentUpdate.Message;
-            ChatId connectedChatId = await _repository.GetAsync(message.From);
-            Chat connectedChat = await client.GetChatAsync(connectedChatId);
+            Message message = context.Update.Message;
+            var connection = await _repository.GetAsync(message.From);
+            Chat connectedChat = await context.Client.GetChatAsync(connection.Chat);
 
             if (connectedChat.Type == ChatType.Private)
             {
-                await client.SendTextMessageAsync(
+                await context.Client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: $"Not connected to any external chat");
+                    text: context.LanguageDictionary.NotConnected);
                 return;
             }
             
-            await client.SendTextMessageAsync(
+            await context.Client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"Connected to {connectedChat.Title}! ({connectedChatId})");
+                text: $"{context.LanguageDictionary.ConnectedToChat} {connectedChat.Title}! ({connection.Chat})");
         }
     }
 }

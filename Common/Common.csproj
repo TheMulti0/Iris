@@ -8,4 +8,13 @@
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="en-US.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="he-IL.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

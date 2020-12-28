@@ -1,10 +1,11 @@
-﻿using MongoDB.Bson;
+﻿using Common;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Telegram.Bot.Types;
+using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver.Data
 {
-    internal class Connection
+    public class Connection
     {
         [BsonId]
         public ObjectId? _id { get; set; }
@@ -12,5 +13,7 @@ namespace TelegramReceiver.Data
         public User User { get; set; }
 
         public string Chat { get; set; }
+
+        public Language Language { get; set; }
     }
 }

@@ -52,6 +52,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
+        .AddLanguages()
         .AddSingleton<IMongoDbContext>(
             _ => new MongoDbContext(
                 mongoConfig.ConnectionString,
@@ -64,10 +65,13 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddProducer<ChatPollRequest>(producerConfig)
         .AddSingleton(telegramConfig)
         .AddSingleton<ICommand, UsersCommand>()
+        .AddSingleton<UsersCommand>()
         .AddSingleton<ICommand, SelectPlatformCommand>()
         .AddSingleton<ICommand, AddUserCommand>()
-        .AddSingleton<ICommand, ManageUserCommand>()
+        .AddSingleton<ICommand, SetLanguageCommand>()
         .AddSingleton<ICommand, SetUserDisplayNameCommand>()
+        .AddSingleton<ICommand, ManageUserCommand>()
+        .AddSingleton<ICommand, SetUserLanguageCommand>()
         .AddSingleton<ICommand, RemoveUserCommand>()
         .AddSingleton<ICommand, ConnectCommand>()
         .AddSingleton<ICommand, DisconnectCommand>()
