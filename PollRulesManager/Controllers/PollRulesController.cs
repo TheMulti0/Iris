@@ -29,7 +29,7 @@ namespace PollRulesManager
 
         private static UserPollRule ToPollRule(SavedUser user)
         {
-            IOrderedEnumerable<ChatInfo> orderedByInterval = user.Chats.OrderBy(info => info.Interval);
+            IOrderedEnumerable<UserChatInfo> orderedByInterval = user.Chats.OrderBy(info => info.Interval);
 
             return new UserPollRule(
                 user.User,

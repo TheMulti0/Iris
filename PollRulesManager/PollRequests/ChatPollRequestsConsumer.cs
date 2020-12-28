@@ -30,9 +30,9 @@ namespace PollRulesManager
 
             if (request.Request == Request.StartPoll)
             {
-                await _repository.AddOrUpdateAsync(request.PollRule.User, new ChatInfo
+                await _repository.AddOrUpdateAsync(request.PollRule.User, new UserChatInfo
                 {
-                    Chat = request.ChatId,
+                    ChatId = request.ChatId,
                     Interval = (TimeSpan) request.PollRule.Interval
                 });
             }

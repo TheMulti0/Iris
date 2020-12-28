@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -61,10 +62,12 @@ namespace TelegramReceiver
             ChatId connectedChat = await _connectionsRepository.GetAsync(update.GetUser()) ?? contextChat;
 
             SavedUser savedUser = await _savedUsersRepository.GetAsync(user);
-            ChatInfo chat = savedUser.Chats.First(info => info.Chat == connectedChat);
+            UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == connectedChat);
 
             string newDisplayName = update.Message.Text;
-            await _savedUsersRepository.AddOrUpdateAsync(user with { DisplayName = newDisplayName }, chat);
+            chat.DisplayName = newDisplayName;
+            
+            await _savedUsersRepository.AddOrUpdateAsync(user, chat);
 
             await client.SendTextMessageAsync(
                 chatId: contextChat,
@@ -86,7 +89,7 @@ namespace TelegramReceiver
         {
             string[] items = query.Data.Split("-");
             
-            return new User(items[^2], DisplayName: null, items[^1]);
+            return new User(items[^2], items[^1]);
         }
 
         private static Task SendRequestMessage(

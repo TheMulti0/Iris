@@ -84,7 +84,7 @@ namespace TelegramReceiver
             ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;;
             string messageText = message.Text;
             
-            var user = new User(messageText, messageText, platform);
+            var user = new User(messageText, platform);
             TimeSpan interval = _defaultInterval;
             
             var userPollRule = new UserPollRule(user, interval);
@@ -97,9 +97,9 @@ namespace TelegramReceiver
 
             await _savedUsersRepository.AddOrUpdateAsync(
                 user,
-                new ChatInfo
+                new UserChatInfo
                 {
-                    Chat = connectedChat,
+                    ChatId = connectedChat,
                     Interval = interval
                 });
 

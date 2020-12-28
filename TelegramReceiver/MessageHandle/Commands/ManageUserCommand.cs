@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramReceiver.Data;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -15,7 +17,8 @@ namespace TelegramReceiver
 {
     internal class ManageUserCommand : ICommand
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IConnectionsRepository _connectionsRepository;
+        private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly InlineKeyboardButton[] _backRow;
 
         public const string CallbackPath = "manageUser";
@@ -25,9 +28,11 @@ namespace TelegramReceiver
         };
 
         public ManageUserCommand(
-            ISavedUsersRepository repository)
+            IConnectionsRepository connectionsRepository,
+            ISavedUsersRepository savedUsersRepository)
         {
-            _repository = repository;
+            _connectionsRepository = connectionsRepository;
+            _savedUsersRepository = savedUsersRepository;
 
             _backRow = new[]
             {
@@ -47,40 +52,44 @@ namespace TelegramReceiver
         {
             string[] items = query.Data.Split("-");
             
-            return new User(items[^2], DisplayName: null, items[^1]);
+            return new User(items[^2], items[^1]);
         }
 
-        private Task SendUserInfo(
+        private async Task SendUserInfo(
             ITelegramBotClient client,
             Message message,
             User user)
         {
-            (string userId, string displayName, string source) = user;
+            ChatId contextChat = message.Chat.Id;
+            ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;
             
-            var text = GetText(userId, displayName, source);
+            var savedUser = await _savedUsersRepository.GetAsync(user);
+            
+            var text = GetText(user, savedUser.Chats.First(info => info.ChatId == connectedChat));
 
-            var inlineKeyboardMarkup = GetMarkup(userId, source);
+            var inlineKeyboardMarkup = GetMarkup(user);
             
-            return client.EditMessageTextAsync(
-                chatId: message.Chat.Id,
+            await client.EditMessageTextAsync(
+                chatId: contextChat,
                 messageId: message.MessageId,
                 text: text,
                 parseMode: ParseMode.Html,
                 replyMarkup: inlineKeyboardMarkup);
         }
 
-        private static string GetText(string userId, string displayName, string source)
+        private static string GetText(User user, UserChatInfo info)
         {
-            var text = new StringBuilder($"Settings for {userId}:");
+            var text = new StringBuilder($"Settings for {user}:");
             
-            text.AppendLine($"<b>User id:</b> {userId}");
-            text.AppendLine($"<b>Display name:</b> {displayName}");
-            text.AppendLine($"<b>Platform:</b> {source}");
+            text.AppendLine($"<b>User id:</b> {user.UserId}");
+            text.AppendLine($"<b>Platform:</b> {user.Source}");
+            text.AppendLine($"<b>Display name:</b> {info.DisplayName}");
+            text.AppendLine($"<b>Max delay:</b> up to {info.Interval * 2}");
             
             return text.ToString();
         }
 
-        private InlineKeyboardMarkup GetMarkup(string userId, string source)
+        private InlineKeyboardMarkup GetMarkup(User user)
         {
             return new(
                 new[]
@@ -89,7 +98,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             "Set display name",
-                            $"{SetUserDisplayNameCommand.CallbackPath}-{userId}-{source}")
+                            $"{SetUserDisplayNameCommand.CallbackPath}-{user.UserId}-{user.Source}")
                     },
                     _backRow
                 });

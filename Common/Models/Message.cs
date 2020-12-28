@@ -4,5 +4,5 @@ namespace Common
 {
     public record Message(
         Update Update,
-        List<string> DestinationChats);
+        List<UserChatInfo> DestinationChats);
 }

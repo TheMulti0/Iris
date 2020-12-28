@@ -75,7 +75,7 @@ namespace TelegramReceiver
         {
             string[] items = query.Data.Split("-");
             
-            return new User(items[^2], DisplayName: null, items[^1]);
+            return new User(items[^2], items[^1]);
         }
     }
 }

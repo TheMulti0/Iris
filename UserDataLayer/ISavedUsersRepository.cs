@@ -11,7 +11,7 @@ namespace UserDataLayer
         
         Task<SavedUser> GetAsync(User user);
         
-        Task AddOrUpdateAsync(User user, ChatInfo chat);
+        Task AddOrUpdateAsync(User user, UserChatInfo chat);
 
         Task RemoveAsync(User user, string chatId);
     }

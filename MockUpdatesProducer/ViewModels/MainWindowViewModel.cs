@@ -48,7 +48,7 @@ namespace MockUpdatesProducer
         private readonly RabbitMqPublisher _publisher;
         private readonly Dictionary<UpdateType, Update> _updates;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
-        private static readonly User User = new("mock-user", "Mock user", "Mock");
+        private static readonly User User = new("mock-user", "Mock");
 
         public MainWindowViewModel()
         {

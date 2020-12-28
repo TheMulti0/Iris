@@ -49,7 +49,7 @@ namespace TelegramReceiver
                 .GetAll()
                 .Where(
                     user => user.Chats
-                        .Any(chat => chat.Chat == connectedChat))
+                        .Any(chat => chat.ChatId == connectedChat))
                 .ToList();
 
             (InlineKeyboardMarkup markup, string text) = Get(currentUsers);
@@ -96,7 +96,7 @@ namespace TelegramReceiver
             (string userId, string source) = user.User;
 
             return InlineKeyboardButton.WithCallbackData(
-                $"{userId} ({source})",
+                $"{user.User}",
                 $"{ManageUserCommand.CallbackPath}-{userId}-{source}");
         }
     }

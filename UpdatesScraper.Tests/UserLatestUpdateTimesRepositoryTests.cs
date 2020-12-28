@@ -33,7 +33,7 @@ namespace UpdatesScraper.Tests
         [TestMethod]
         public async Task TestGetSet()
         {
-            var userId = new User("test", null, "test");
+            var userId = new User("test", "test");
             DateTime latestUpdateTime = DateTime.Parse(DateTime.Now.ToString()); // To ignore millisecond precision
             
             await _repository.AddOrUpdateAsync(userId, latestUpdateTime);

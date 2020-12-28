@@ -14,6 +14,6 @@ namespace UserDataLayer
 
         public int Version { get; set; }
 
-        public List<ChatInfo> Chats { get; set; } = new();
+        public List<UserChatInfo> Chats { get; set; } = new();
     }
 }

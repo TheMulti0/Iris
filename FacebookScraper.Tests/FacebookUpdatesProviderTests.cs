@@ -30,7 +30,7 @@ namespace FacebookScraper.Tests
         [TestMethod]
         public async Task TestGetUpdatesAsync()
         {
-            var updates = await _updatesProvider.GetUpdatesAsync(new User("Netanyahu", "Netanyahu", "Facebook"));
+            var updates = await _updatesProvider.GetUpdatesAsync(new User("Netanyahu", "Facebook"));
             
             Assert.IsNotNull(updates);
             

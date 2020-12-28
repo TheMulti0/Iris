@@ -14,8 +14,8 @@ namespace UserDataLayer
                 {
                     new()
                     {
-                        User = new User("user", "user", "mock"),
-                        Chats = new List<ChatInfo>()
+                        User = new User("user", "mock"),
+                        Chats = new List<UserChatInfo>()
                     }
                 });
         }
@@ -26,11 +26,11 @@ namespace UserDataLayer
                 new SavedUser
                 {
                     User = user,
-                    Chats = new List<ChatInfo>()
+                    Chats = new List<UserChatInfo>()
                 });
         }
 
-        public Task AddOrUpdateAsync(User user, ChatInfo chat)
+        public Task AddOrUpdateAsync(User user, UserChatInfo chat)
         {
             return Task.CompletedTask;
         }

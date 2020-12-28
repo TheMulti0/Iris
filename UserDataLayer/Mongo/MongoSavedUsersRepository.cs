@@ -31,12 +31,12 @@ namespace UserDataLayer
                 .FirstOrDefaultAsync();
         }
 
-        public async Task AddOrUpdateAsync(User user, ChatInfo chat)
+        public async Task AddOrUpdateAsync(User user, UserChatInfo chat)
         {
             var savedUser = new SavedUser
             {
                 User = user,
-                Chats = new List<ChatInfo> { chat }
+                Chats = new List<UserChatInfo> { chat }
             };
             
             SavedUser existing = await GetAsync(user);
@@ -60,7 +60,7 @@ namespace UserDataLayer
         public async Task RemoveAsync(User user, string chatId)
         {
             var fullUser = await GetAsync(user);
-            var chat = fullUser.Chats.First(info => info.Chat == chatId);
+            var chat = fullUser.Chats.First(info => info.ChatId == chatId);
 
             SavedUser existing = await GetAsync(user);
 
@@ -91,7 +91,7 @@ namespace UserDataLayer
 
         private async Task<bool> Update(SavedUser newUser, SavedUser existing)
         {
-            IEnumerable<ChatInfo> combinedChats = existing.Chats.Concat(newUser.Chats).Distinct();
+            IEnumerable<UserChatInfo> combinedChats = existing.Chats.Concat(newUser.Chats).Distinct();
             
             UpdateDefinition<SavedUser> update = Builders<SavedUser>.Update
                 .Set(u => u.Version, existing.Version + 1)

@@ -38,11 +38,11 @@ namespace TelegramSender
             
             _logger.LogInformation("Received message {}", message);
             
-            foreach (ChatId chatId in message.DestinationChats)
+            foreach (var chatInfo in message.DestinationChats)
             {
-                MessageInfo messageInfo = _messageBuilder.Build(message, chatId);
+                MessageInfo messageInfo = _messageBuilder.Build(message.Update, chatInfo);
 
-                await SendChatUpdate(message.Update, _sender, messageInfo, chatId);
+                await SendChatUpdate(message.Update, _sender, messageInfo, chatInfo.ChatId);
             }
         }
 

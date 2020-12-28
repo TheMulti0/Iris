@@ -4,7 +4,6 @@ namespace Common
 {
     public record User(
         string UserId,
-        string DisplayName,
         string Source)
     {
         public virtual bool Equals(User? other)
