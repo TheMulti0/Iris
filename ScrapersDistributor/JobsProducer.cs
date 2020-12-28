@@ -24,7 +24,9 @@ namespace ScrapersDistributor
             
             byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(user);
             
-            _publisher.Publish(user.Source, bytes);
+            _publisher.Publish(
+                JsonSerializer.Serialize(user.Platform),
+                bytes);
         }
     }
 }

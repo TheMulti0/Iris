@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using MoreLinq.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -8,6 +10,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramReceiver.Data;
 using UserDataLayer;
+using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -93,11 +96,11 @@ namespace TelegramReceiver
 
         private static InlineKeyboardButton ToButton(SavedUser user)
         {
-            (string userId, string source) = user.User;
+            (string userId, Platform platform) = user.User;
 
             return InlineKeyboardButton.WithCallbackData(
                 $"{user.User}",
-                $"{ManageUserCommand.CallbackPath}-{userId}-{source}");
+                $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}");
         }
     }
 }

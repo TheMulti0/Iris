@@ -24,10 +24,10 @@ namespace UserDataLayer
         
         public Task<SavedUser> GetAsync(User user)
         {
-            (string userId, string source) = user;
+            (string userId, Platform platform) = user;
             
             return _collection
-                .Find(savedUser => savedUser.User.UserId == userId && savedUser.User.Source == source)
+                .Find(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
                 .FirstOrDefaultAsync();
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
 using Telegram.Bot;
@@ -52,7 +53,7 @@ namespace TelegramReceiver
         {
             string[] items = query.Data.Split("-");
             
-            return new User(items[^2], items[^1]);
+            return new User(items[^2], Enum.Parse<Platform>(items[^1]));
         }
 
         private async Task SendUserInfo(
@@ -82,7 +83,7 @@ namespace TelegramReceiver
             var text = new StringBuilder($"Settings for {user}:");
             
             text.AppendLine($"<b>User id:</b> {user.UserId}");
-            text.AppendLine($"<b>Platform:</b> {user.Source}");
+            text.AppendLine($"<b>Platform:</b> {user.Platform}");
             text.AppendLine($"<b>Display name:</b> {info.DisplayName}");
             text.AppendLine($"<b>Max delay:</b> up to {info.Interval * 2}");
             
@@ -98,7 +99,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             "Set display name",
-                            $"{SetUserDisplayNameCommand.CallbackPath}-{user.UserId}-{user.Source}")
+                            $"{SetUserDisplayNameCommand.CallbackPath}-{user.UserId}-{user.Platform}")
                     },
                     _backRow
                 });

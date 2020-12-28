@@ -4,7 +4,7 @@ namespace Common
 {
     public record User(
         string UserId,
-        string Source)
+        Platform Platform)
     {
         public virtual bool Equals(User? other)
         {
@@ -16,20 +16,14 @@ namespace Common
             {
                 return true;
             }
-            return UserId == other.UserId && Source == other.Source;
+            return UserId == other.UserId && Platform == other.Platform;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(UserId, Source);
+            return HashCode.Combine(UserId, Platform);
         }
 
-        public void Deconstruct(out string userId, out string source)
-        {
-            userId = UserId;
-            source = Source;
-        }
-
-        public override string ToString() => $"{UserId} ({Source})";
+        public override string ToString() => $"{UserId} ({Platform})";
     }
 }

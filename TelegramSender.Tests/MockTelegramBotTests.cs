@@ -20,7 +20,7 @@ namespace TelegramSender.Tests
 
         private static readonly User User = new(
             "mock-user",
-            "Mock platform");
+            Platform.Facebook);
 
         private static MessagesConsumer _consumer;
         private static TestConfig _testConfig;

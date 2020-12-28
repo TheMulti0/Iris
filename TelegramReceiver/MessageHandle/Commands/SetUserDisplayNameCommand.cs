@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
 using Telegram.Bot;
@@ -77,19 +78,19 @@ namespace TelegramReceiver
 
         private static InlineKeyboardMarkup CreateMarkup(User user)
         {
-            (string userId, string source) = user;
+            (string userId, Platform platform) = user;
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
                     "Back",
-                    $"{ManageUserCommand.CallbackPath}-{userId}-{source}"));
+                    $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}"));
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)
         {
             string[] items = query.Data.Split("-");
             
-            return new User(items[^2], items[^1]);
+            return new User(items[^2], Enum.Parse<Platform>(items[^1]));
         }
 
         private static Task SendRequestMessage(

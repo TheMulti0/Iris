@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
@@ -47,7 +48,7 @@ namespace TelegramReceiver
             (ITelegramBotClient client, IObservable<Update> incoming, Update currentUpdate) = context;
             CallbackQuery query = currentUpdate.CallbackQuery;
 
-            string platform = GetPlatform(query);
+            Platform platform = GetPlatform(query);
 
             await SendRequestMessage(client, query, platform);
 
@@ -58,27 +59,27 @@ namespace TelegramReceiver
             await AddUser(client, newUpdate.Message, platform);
         }
 
-        private static string GetPlatform(CallbackQuery query)
+        private static Platform GetPlatform(CallbackQuery query)
         {
-            return query.Data
+            return Enum.Parse<Platform>(query.Data
                 .Split("-")
-                .Last();
+                .Last());
         }
 
         private static Task SendRequestMessage(
             ITelegramBotClient client,
             CallbackQuery callbackQuery,
-            string platform)
+            Platform platform)
         {
             Message message = callbackQuery.Message;
 
             return client.EditMessageTextAsync(
                 chatId: message.Chat.Id,
                 messageId: message.MessageId,
-                text: $"Enter user from {platform}");
+                text: $"Enter user from {Enum.GetName(platform)}");
         }
         
-        private async Task AddUser(ITelegramBotClient client, Message message, string platform)
+        private async Task AddUser(ITelegramBotClient client, Message message, Platform platform)
         {
             ChatId contextChat = message.Chat.Id;
             ChatId connectedChat = await _connectionsRepository.GetAsync(message.From) ?? contextChat;;

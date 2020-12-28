@@ -14,7 +14,7 @@ namespace UserDataLayer
                 {
                     new()
                     {
-                        User = new User("user", "mock"),
+                        User = new User("user", Platform.Facebook),
                         Chats = new List<UserChatInfo>()
                     }
                 });

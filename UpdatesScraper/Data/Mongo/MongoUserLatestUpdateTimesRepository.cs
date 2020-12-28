@@ -17,12 +17,12 @@ namespace UpdatesScraper
         
         public Task<UserLatestUpdateTime> GetAsync(User user)
         {
-            (string userId, string source) = user;
+            (string userId, Platform platform) = user;
             
             return _collection
                 .AsQueryable()
                 .FirstOrDefaultAsync(u => u.User.UserId == userId &&
-                                          u.User.Source == source);
+                                          u.User.Platform == platform);
         }
 
         public async Task AddOrUpdateAsync(User user, DateTime latestUpdateTime)

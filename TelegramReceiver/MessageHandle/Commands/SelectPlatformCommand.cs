@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using Message = Telegram.Bot.Types.Message;
+using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -18,12 +21,7 @@ namespace TelegramReceiver
 
         public SelectPlatformCommand()
         {
-            var platforms = new[]
-            {
-                "Facebook",
-                "Twitter",
-                "Feeds"
-            };
+            var platforms = Enum.GetNames<Platform>();
             
             IEnumerable<InlineKeyboardButton> platformButtons = platforms
                 .Select(platform => InlineKeyboardButton

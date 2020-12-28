@@ -51,7 +51,7 @@ namespace UpdatesScraper.Tests
         [Timeout(1000)]
         public async Task TestScrape()
         {
-            var first = await _scraper.ScrapeUser(new User("test","test"), CancellationToken.None)
+            var first = await _scraper.ScrapeUser(new User("test", Platform.Facebook), CancellationToken.None)
                 .FirstOrDefaultAsync();
             
             Assert.IsNotNull(first);

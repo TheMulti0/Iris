@@ -22,7 +22,7 @@ namespace TwitterScraper.Tests
         [Test]
         public async Task Test1()
         {
-            List<Update> updates = (await _twitter.GetUpdatesAsync(new User("@realDonaldTrump", "Facebook"))).ToList();
+            List<Update> updates = (await _twitter.GetUpdatesAsync(new User("@realDonaldTrump", Platform.Twitter))).ToList();
             
             Assert.IsNotNull(updates);
             CollectionAssert.AllItemsAreNotNull(updates);
