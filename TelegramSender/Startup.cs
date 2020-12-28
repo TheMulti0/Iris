@@ -47,6 +47,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesConsumer");
 
     services
+        .AddLanguages()
         .AddSingleton(telegramConfig)
         .AddSingleton<ISenderFactory, SenderFactory>()
         .AddSingleton<MessageBuilder>()

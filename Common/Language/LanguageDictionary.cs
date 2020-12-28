@@ -33,6 +33,7 @@ namespace Common
         public string Feeds { get; set; }
         public string Done { get; set; }
         public string ChooseLanguage { get; set; }
+        public string Repost { get; set; }
 
         public string GetPlatform(Platform platform)
         {

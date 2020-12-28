@@ -5,12 +5,22 @@ namespace TelegramSender
 {
     public class MessageBuilder
     {
+        private readonly Languages _languages;
+
+        public MessageBuilder(Languages languages)
+        {
+            _languages = languages;
+        }
+
         public MessageInfo Build(Update update, UserChatInfo chatInfo)
         {
-            string repostPrefix = update.Repost ? " בפרסום מחדש" : string.Empty;
+            var languageDictionary = _languages.Dictionary[chatInfo.Language];
+            
+            string repostPrefix = update.Repost 
+                ? $" {languageDictionary.Repost}" 
+                : string.Empty;
 
-            // TODO show author display name
-            var messageContent = $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({update.Source}):</a>\n\n\n{update.Content}";
+            var messageContent = $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n{update.Content}";
 
             return new MessageInfo(
                 messageContent,

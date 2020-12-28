@@ -110,7 +110,7 @@ namespace TelegramReceiver
             await context.Client.EditMessageTextAsync(
                 chatId: context.ContextChatId,
                 messageId: message.MessageId,
-                text: context.LanguageDictionary.EnterNewDisplayName,
+                text: context.LanguageDictionary.ChooseLanguage,
                 replyMarkup: markup);
         }
     }

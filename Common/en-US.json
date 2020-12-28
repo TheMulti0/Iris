@@ -24,6 +24,10 @@
     "EnterNewDisplayName": "Enter new display name",
     "EnterUserFromPlatform": "Enter user from",
     "Added": "Added",
+    "Facebook": "Facebook",
+    "Twitter": "Twitter",
+    "Feeds": "Feeds",
     "Done": "Done",
-    "ChooseLanguage": "Choose language"
+    "ChooseLanguage": "Choose language",
+    "Repost": "in a repost"
 }

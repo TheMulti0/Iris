@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,7 @@ namespace ScrapersDistributor
             byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(user);
             
             _publisher.Publish(
-                JsonSerializer.Serialize(user.Platform),
+                Enum.GetName(user.Platform),
                 bytes);
         }
     }
