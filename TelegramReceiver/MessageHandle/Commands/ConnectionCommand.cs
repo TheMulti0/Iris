@@ -8,23 +8,14 @@ namespace TelegramReceiver
 {
     internal class ConnectionCommand : ICommand
     {
-        private readonly IConnectionsRepository _repository;
-
         public ITrigger[] Triggers { get; } = {
             new MessageStartsWithTextTrigger("/connection")
         };
 
-        public ConnectionCommand(
-            IConnectionsRepository repository)
-        {
-            _repository = repository;
-        }
-
         public async Task OperateAsync(Context context)
         {
             Message message = context.Update.Message;
-            var connection = await _repository.GetAsync(message.From);
-            Chat connectedChat = await context.Client.GetChatAsync(connection.Chat);
+            Chat connectedChat = await context.Client.GetChatAsync(context.ConnectedChatId);
 
             if (connectedChat.Type == ChatType.Private)
             {
@@ -36,7 +27,7 @@ namespace TelegramReceiver
             
             await context.Client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"{context.LanguageDictionary.ConnectedToChat} {connectedChat.Title}! ({connection.Chat})");
+                text: $"{context.LanguageDictionary.ConnectedToChat} {connectedChat.Title}! ({context.ConnectedChatId})");
         }
     }
 }
