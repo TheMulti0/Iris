@@ -147,7 +147,8 @@ namespace UpdatesScraper
 
         private async ValueTask<bool> NotSent(Update update)
         {
-            return !await _sentUpdatesRepository.ExistsAsync(update.Url);
+            return update.Url != null && 
+                   !await _sentUpdatesRepository.ExistsAsync(update.Url);
         }
     }
 }
