@@ -50,9 +50,10 @@ namespace Extensions
         {
             return async message =>
             {
+                string json = "No Json";
                 try
                 {
-                    string json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
 
                     var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
                                ?? throw new NullReferenceException($"Failed to deserialize {json}");
@@ -61,7 +62,7 @@ namespace Extensions
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "");
+                    _logger.LogError(e, "Failed to parse json {}", json);
                 }
             };
         }
