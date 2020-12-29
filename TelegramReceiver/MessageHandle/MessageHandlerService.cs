@@ -94,7 +94,7 @@ namespace TelegramReceiver
                         context = await CreateContext(update, updates);
                     }
 
-                    Task.Factory.StartNew(
+                    Task.Factory.StartNew( 
                         () => command.OperateAsync(context),
                         TaskCreationOptions.AttachedToParent);
                 }

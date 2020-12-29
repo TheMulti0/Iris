@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelegramReceiver.Data;
 using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
