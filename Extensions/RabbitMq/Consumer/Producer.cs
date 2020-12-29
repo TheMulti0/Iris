@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Common;
 using Microsoft.Extensions.Logging;
 
 namespace Extensions
@@ -8,6 +9,7 @@ namespace Extensions
         private readonly RabbitMqConfig _config;
         private readonly RabbitMqPublisher _publisher;
         private readonly ILogger<Producer<T>> _logger;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public Producer(
             RabbitMqConfig config,
@@ -16,13 +18,19 @@ namespace Extensions
             _config = config;
             _publisher = new RabbitMqPublisher(config);
             _logger = logger;
+            
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters = { new MediaJsonConverter() }
+            };
+
         }
 
         public void Send(T item)
         {
             _logger.LogInformation("Sending {}", item);
-            
-            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item);
+
+            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item, _jsonSerializerOptions);
             
             _publisher.Publish(_config.Destination, bytes);
         }
