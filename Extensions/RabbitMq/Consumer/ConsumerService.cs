@@ -15,7 +15,7 @@ namespace Extensions
         private readonly RabbitMqConfig _config;
         private readonly IConsumer<T> _consumer;
         private readonly ILogger<ConsumerService<T>> _logger;
-        private JsonSerializerOptions _jsonSerializerOptions;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ConsumerService(
             RabbitMqConfig config, 
@@ -30,7 +30,7 @@ namespace Extensions
             {
                 Converters =
                 {
-                    new MediaJsonConverter()
+                    new MediaJsonConverter(), new TimeSpanConverter()
                 }
             };
 
