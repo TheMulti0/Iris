@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ScrapersDistributor
 {
@@ -11,24 +13,38 @@ namespace ScrapersDistributor
     {
         private readonly IPollRulesManagerClient _client;
         private readonly IConsumer<PollRequest> _consumer;
+        private readonly ILogger<PollRulesPollerService> _logger;
 
         public PollRulesPollerService(
             IPollRulesManagerClient client,
-            IConsumer<PollRequest> consumer)
+            IConsumer<PollRequest> consumer,
+            ILogger<PollRulesPollerService> logger)
         {
             _client = client;
             _consumer = consumer;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            List<UserPollRule> userPollRules = await _client.Get(stoppingToken);
-            foreach (UserPollRule rule in userPollRules)
+            _logger.LogInformation("Polling poll rules");
+            
+            try
             {
-                await _consumer.ConsumeAsync(
-                    new PollRequest(Request.StartPoll, rule),
-                    stoppingToken);
+                List<UserPollRule> userPollRules = await _client.Get(stoppingToken);
+            
+                foreach (UserPollRule rule in userPollRules)
+                {
+                    await _consumer.ConsumeAsync(
+                        new PollRequest(Request.StartPoll, rule),
+                        stoppingToken);
+                }
             }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to poll poll rules");
+            }
+            
         }
     }
 }
