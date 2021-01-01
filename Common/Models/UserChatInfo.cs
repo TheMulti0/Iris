@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Common
 {
     public class UserChatInfo : IEquatable<UserChatInfo>
     {
+        [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan Interval { get; set; }
 
         public string DisplayName { get; set; }

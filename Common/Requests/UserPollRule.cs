@@ -7,6 +7,7 @@ namespace Common
     {
         public User User { get; }
         
+        [JsonConverter(typeof(TimeSpanConverter))]
         public TimeSpan? Interval { get; }
 
         public UserPollRule(User user, TimeSpan? interval)
