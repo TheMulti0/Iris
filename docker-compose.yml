@@ -28,7 +28,7 @@ services:
       - mongodb_network
 
   telegramreceiver:
-    image: iris/telegramreceiver:latest
+    image: irisupdate/telegramreceiver:latest
     build:
       context: .
       dockerfile: TelegramReceiver/Dockerfile
@@ -44,7 +44,7 @@ services:
       - mongodb
 
   pollrulesmanager:
-    image: iris/pollrulesmanager:latest
+    image: irisupdate/pollrulesmanager:latest
     build:
       context: .
       dockerfile: PollRulesManager/Dockerfile
@@ -60,7 +60,7 @@ services:
       - mongodb
 
   scrapersdistributor:
-    image: iris/scrapersdistributor:latest
+    image: irisupdate/scrapersdistributor:latest
     build:
       context: .
       dockerfile: ScrapersDistributor/Dockerfile
@@ -75,7 +75,7 @@ services:
       - pollrulesmanager
 
   facebookscraper:
-    image: iris/facebookscraper:latest
+    image: irisupdate/facebookscraper:latest
     build:
       context: .
       dockerfile: FacebookScraper/Dockerfile
@@ -91,7 +91,7 @@ services:
       - mongodb
 
   twitterscraper:
-    image: iris/twitterscraper:latest
+    image: irisupdate/twitterscraper:latest
     build:
       context: .
       dockerfile: TwitterScraper/Dockerfile
@@ -107,7 +107,7 @@ services:
       - mongodb
       
   feedsscraper:
-    image: iris/feedsscraper:latest
+    image: irisupdate/feedsscraper:latest
     build:
       context: .
       dockerfile: FeedsScraper/Dockerfile
@@ -123,7 +123,7 @@ services:
       - mongodb
       
   messagesmanager:
-    image: iris/messagesmanager:latest
+    image: irisupdate/messagesmanager:latest
     build:
       context: .
       dockerfile: MessagesManager/Dockerfile
@@ -139,7 +139,7 @@ services:
       - mongodb
 
   telegramsender:
-    image: iris/telegramsender:latest
+    image: irisupdate/telegramsender:latest
     build:
       context: .
       dockerfile: TelegramSender/Dockerfile
