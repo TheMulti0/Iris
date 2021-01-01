@@ -27,6 +27,6 @@ jobs:
         name: Build and push Docker image
         uses: docker/build-push-action@v2.2.1
         with:
-          file: ./PollRulesManager/Dockerfile
+          file: ./MessagesManager/Dockerfile
           push: true
           tags: irisupdate/messagesmanager:latest  
