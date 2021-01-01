@@ -19,6 +19,7 @@ services:
     image: mongo:latest
     container_name: mongodb
     restart: always
+    command: [--auth]
     volumes:
       - ./mongodb:/data/db
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
