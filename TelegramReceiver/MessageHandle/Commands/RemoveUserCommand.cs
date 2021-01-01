@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot;
+using Extensions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramReceiver.Data;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
 {
     internal class RemoveUserCommand : ICommand
     {
-        private readonly IConnectionsRepository _connectionsRepository;
         private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IProducer<ChatPollRequest> _producer;
 
         public const string CallbackPath = "remove";
 
@@ -28,11 +22,11 @@ namespace TelegramReceiver
         };
 
         public RemoveUserCommand(
-            IConnectionsRepository connectionsRepository,
-            ISavedUsersRepository savedUsersRepository)
+            ISavedUsersRepository savedUsersRepository,
+            IProducer<ChatPollRequest> producer)
         {
-            _connectionsRepository = connectionsRepository;
             _savedUsersRepository = savedUsersRepository;
+            _producer = producer;
         }
 
         public async Task OperateAsync(Context context)
@@ -52,6 +46,14 @@ namespace TelegramReceiver
             Message message,
             InlineKeyboardMarkup markup)
         {
+            var userPollRule = new UserPollRule(user, null);
+            
+            _producer.Send(
+                new ChatPollRequest(
+                    Request.StopPoll,
+                    userPollRule,
+                    context.ConnectedChatId));
+            
             await _savedUsersRepository.RemoveAsync(user, context.ConnectedChatId);
 
             await context.Client.EditMessageTextAsync(
