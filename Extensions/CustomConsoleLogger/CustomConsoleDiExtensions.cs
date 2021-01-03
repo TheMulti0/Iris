@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Extensions
@@ -13,6 +15,19 @@ namespace Extensions
         {
             builder.Services.AddSingleton<ILoggerProvider, CustomConsoleLoggerProvider>();
             return builder;
+        }
+        
+        public static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
+        {
+            builder
+                .AddConfiguration(context.Configuration)
+                .AddCustomConsole();
+
+            if (context.Configuration.GetSection("Sentry")
+                .Exists())
+            {
+                builder.AddSentry();
+            }
         }
     }
 }

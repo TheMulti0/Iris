@@ -21,7 +21,7 @@ namespace Extensions
             
             _jsonSerializerOptions = new JsonSerializerOptions
             {
-                Converters = { new MediaJsonConverter(), new TimeSpanConverter() }
+                Converters = { new MediaJsonConverter() }
             };
 
         }

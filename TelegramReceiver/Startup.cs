@@ -30,19 +30,6 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
 }
 
-static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
-{
-    builder
-        .AddConfiguration(context.Configuration)
-        .AddCustomConsole();
-
-    if (context.Configuration.GetSection("Sentry")
-        .Exists())
-    {
-        builder.AddSentry();
-    }
-}
-
 static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
 {
     IConfiguration rootConfig = hostContext.Configuration;
@@ -82,6 +69,6 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     
 await new HostBuilder()
     .ConfigureAppConfiguration(ConfigureConfiguration)
-    .ConfigureLogging(ConfigureLogging)
+    .ConfigureLogging(CustomConsoleDiExtensions.ConfigureLogging)
     .ConfigureServices(ConfigureServices)
     .RunConsoleAsync();
