@@ -56,12 +56,26 @@ namespace TelegramReceiver
                     text: context.LanguageDictionary.NoChat);
                 return;
             }
+            
+            ChatMember[] administrators = await context.Client.GetChatAdministratorsAsync(chatId);
+
+            if (administrators.All(member => member.User.Id != message.From.Id))
+            {
+                await context.Client.SendTextMessageAsync(
+                    chatId: message.Chat.Id,
+                    text: context.LanguageDictionary.NotAdmin);
+                return;
+            }
 
             await _repository.AddOrUpdateAsync(message.From, chatId, context.Language);
 
+            string chatTitle = chat.Title != null 
+                ? $" {chat.Title}" 
+                : string.Empty;
+            
             await context.Client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
-                text: $"{context.LanguageDictionary.ConnectedToChat} {chat.Title}! ({chatId})");
+                text: $"{context.LanguageDictionary.ConnectedToChat}{chatTitle}! ({chatId})");
         }
     }
 }

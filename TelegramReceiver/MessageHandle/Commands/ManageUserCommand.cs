@@ -63,7 +63,10 @@ namespace TelegramReceiver
                 user,
                 chatInfo);
 
-            var inlineKeyboardMarkup = GetMarkup(context, user);
+            var inlineKeyboardMarkup = GetMarkup(
+                context,
+                user, 
+                chatInfo);
             
             await context.Client.EditMessageTextAsync(
                 chatId: context.ContextChatId,
@@ -75,44 +78,63 @@ namespace TelegramReceiver
 
         private string GetText(Context context, User user, UserChatInfo info)
         {
-            var text = new StringBuilder($"{context.LanguageDictionary.SettingsFor} {user}:");
+            LanguageDictionary dictionary = context.LanguageDictionary;
+            
+            var text = new StringBuilder($"{dictionary.SettingsFor} {user}:");
             text.AppendLine("\n");
-            text.AppendLine($"<b>{context.LanguageDictionary.UserId}:</b> {user.UserId}");
-            text.AppendLine($"<b>{context.LanguageDictionary.Platform}:</b> {user.Platform}");
-            text.AppendLine($"<b>{context.LanguageDictionary.DisplayName}:</b> {info.DisplayName}");
-            text.AppendLine($"<b>{context.LanguageDictionary.MaxDelay}:</b> {info.Interval * 2}");
-            text.AppendLine($"<b>{context.LanguageDictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
+            text.AppendLine($"<b>{dictionary.UserId}:</b> {user.UserId}");
+            text.AppendLine($"<b>{dictionary.Platform}:</b> {user.Platform}");
+            text.AppendLine($"<b>{dictionary.DisplayName}:</b> {info.DisplayName}");
+            text.AppendLine($"<b>{dictionary.MaxDelay}:</b> {info.Interval * 2}");
+            text.AppendLine($"<b>{dictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
+
+            string showPrefix = info.ShowPrefix ? dictionary.Enabled : dictionary.Disabled;
+            text.AppendLine($"<b>{dictionary.ShowPrefix}:</b> {showPrefix}");
             
             return text.ToString();
         }
 
-        private static InlineKeyboardMarkup GetMarkup(Context context, User user)
+        private static InlineKeyboardMarkup GetMarkup(Context context, User user, UserChatInfo info)
         {
-            return new(
+            var showPrefixPath = info.ShowPrefix
+                ? DisablePrefixCommand.CallbackPath
+                : EnablePrefixCommand.CallbackPath;
+
+            LanguageDictionary dictionary = context.LanguageDictionary;
+
+            string action = info.ShowPrefix ? dictionary.Disable : dictionary.Enable;
+            
+            return new InlineKeyboardMarkup(
                 new[]
                 {
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            context.LanguageDictionary.SetDisplayName,
+                            dictionary.SetDisplayName,
                             $"{SetUserDisplayNameCommand.CallbackPath}-{user.UserId}-{user.Platform}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            context.LanguageDictionary.Language,
+                            dictionary.SetLanguage,
                             $"{SetUserLanguageCommand.CallbackPath}-{user.UserId}-{user.Platform}")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            $"{action} {dictionary.ShowPrefix}",
+                            $"{showPrefixPath}-{user.UserId}-{user.Platform}")
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            context.LanguageDictionary.Remove,
+                            dictionary.Remove,
                             $"{RemoveUserCommand.CallbackPath}-{user.UserId}-{user.Platform}"),                        
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            context.LanguageDictionary.Back,
+                            dictionary.Back,
                             UsersCommand.CallbackPath), 
                     }
                 });

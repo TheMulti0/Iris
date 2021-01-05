@@ -28,5 +28,12 @@
     "Feeds": "פיד",
     "Done": "בוצע",
     "ChooseLanguage": "בחר שפה",
-    "Repost": "בפרסום מחדש"
+    "Repost": "בפרסום מחדש",
+    "ShowPrefix": "הצגת קידומת",
+    "NotAdmin": "אין לך הראשות ניהול בצ'אט ששלחת!",
+    "Disable": "בטל",
+    "Enable": "אפשר",
+    "Disabled": "מבוטל",
+    "Enabled": "מאופשר",
+    "SetLanguage": "קבע שפה"
 }

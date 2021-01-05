@@ -14,6 +14,8 @@ namespace Common
 
         public string ChatId { get; set; }
 
+        public bool ShowPrefix { get; set; } = true;
+
         public bool Equals(UserChatInfo other)
         {
             if (ReferenceEquals(null, other))

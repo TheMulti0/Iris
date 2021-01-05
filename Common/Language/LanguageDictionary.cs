@@ -34,6 +34,13 @@ namespace Common
         public string Done { get; set; }
         public string ChooseLanguage { get; set; }
         public string Repost { get; set; }
+        public string ShowPrefix { get; set; }
+        public string NotAdmin { get; set; }
+        public string Disable { get; set; }
+        public string Enable { get; set; }
+        public string Disabled { get; set; }
+        public string Enabled { get; set; }
+        public string SetLanguage { get; set; }
 
         public string GetPlatform(Platform platform)
         {

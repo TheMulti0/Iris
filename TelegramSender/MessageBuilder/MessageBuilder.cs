@@ -20,10 +20,13 @@ namespace TelegramSender
                 ? $" {languageDictionary.Repost}" 
                 : string.Empty;
 
-            var messageContent = $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n{update.Content}";
+            string prefix =
+                $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
+            
+            string content = update.Content;
 
             return new MessageInfo(
-                messageContent,
+                chatInfo.ShowPrefix ? prefix + content : content,
                 update.Media,
                 chatInfo.ChatId);
         }

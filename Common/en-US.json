@@ -29,5 +29,12 @@
     "Feeds": "Feeds",
     "Done": "Done",
     "ChooseLanguage": "Choose language",
-    "Repost": "in a repost"
+    "Repost": "in a repost",
+    "ShowPrefix": "Show prefix",
+    "NotAdmin": "You aren't an administrator in the sent chat!",
+    "Disable": "Disable",
+    "Enable": "Enable",
+    "Disabled": "Disabled",
+    "Enabled": "Enabled",
+    "SetLanguage": "Set language"
 }

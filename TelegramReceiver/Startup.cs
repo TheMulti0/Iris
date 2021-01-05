@@ -57,6 +57,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<ICommand, AddUserCommand>()
         .AddSingleton<ICommand, SetLanguageCommand>()
         .AddSingleton<ICommand, SetUserDisplayNameCommand>()
+        .AddSingleton<ICommand, EnablePrefixCommand>()
+        .AddSingleton<ICommand, DisablePrefixCommand>()
         .AddSingleton<ICommand, ManageUserCommand>()
         .AddSingleton<ICommand, SetUserLanguageCommand>()
         .AddSingleton<ICommand, RemoveUserCommand>()
