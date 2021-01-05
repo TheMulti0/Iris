@@ -47,6 +47,7 @@ namespace TwitterScraper
             ITweet[] tweets = await _twitterClient.Timelines.GetUserTimelineAsync(parameters);
 
             return tweets
+                .Reverse()
                 .Where(IsTweetPublishable(user.UserId))
                 .Select(ToUpdate(user));
         }
