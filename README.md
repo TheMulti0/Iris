@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/Sb7FfrL.png" width="175pt"></img>
 
-![Continuous Integration](https://github.com/TheMulti0/Iris/workflows/Continuous%20Integration/badge.svg)
+![Build and push images](https://github.com/TheMulti0/Iris/workflows/Build%20and%20push%20images/badge.svg)
 
 # Iris
 
