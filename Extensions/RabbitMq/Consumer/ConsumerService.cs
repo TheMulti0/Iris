@@ -63,6 +63,8 @@ namespace Extensions
                 catch (Exception e)
                 {
                     _logger.LogError(e, "Failed to parse json {}", json);
+    
+                    throw;
                 }
             };
         }
