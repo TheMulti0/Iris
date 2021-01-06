@@ -30,7 +30,7 @@ namespace Extensions
             {
                 Converters =
                 {
-                    new MediaJsonConverter(), new TimeSpanConverter()
+                    new MediaJsonConverter(), new TimeSpanConverter(), new NullableTimeSpanConverter()
                 }
             };
 
