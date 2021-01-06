@@ -104,6 +104,7 @@ namespace ScrapersDistributor
                     _logger.LogError(e, "Failed to send job for {}", rule);
                 }
                 
+                _logger.LogInformation("Delaying {} for another {}", rule, interval);
                 await Task.Delay(interval, token);
             }
         }
