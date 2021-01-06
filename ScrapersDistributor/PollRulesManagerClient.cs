@@ -22,7 +22,11 @@ namespace ScrapersDistributor
             
             _jsonSerializerOptions = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+                {
+                    new TimeSpanConverter(), new NullableTimeSpanConverter()
+                }
             };
         }
 
