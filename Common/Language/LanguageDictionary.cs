@@ -41,6 +41,7 @@ namespace Common
         public string Disabled { get; set; }
         public string Enabled { get; set; }
         public string SetLanguage { get; set; }
+        public string ShowSuffix { get; set; }
 
         public string GetPlatform(Platform platform)
         {

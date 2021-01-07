@@ -36,5 +36,6 @@
     "Enable": "Enable",
     "Disabled": "Disabled",
     "Enabled": "Enabled",
-    "SetLanguage": "Set language"
+    "SetLanguage": "Set language",
+    "ShowSuffix": "Show suffix"
 }

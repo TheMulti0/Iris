@@ -15,6 +15,8 @@ namespace Common
 
         public bool ShowPrefix { get; set; } = true;
 
+        public bool ShowSuffix { get; set; }
+
         public bool Equals(UserChatInfo other)
         {
             if (ReferenceEquals(null, other))

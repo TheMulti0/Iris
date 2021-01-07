@@ -23,12 +23,35 @@ namespace TelegramSender
             string prefix =
                 $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
             
-            string content = update.Content;
+            string suffix = $"\n\n\n{update.Url}";
+
+            string message = GetMessage(update, chatInfo, prefix, suffix);
 
             return new MessageInfo(
-                chatInfo.ShowPrefix ? prefix + content : content,
+                message,
                 update.Media,
                 chatInfo.ChatId);
+        }
+
+        private static string GetMessage(Update update, UserChatInfo chatInfo, string prefix, string suffix)
+        {
+            string message;
+            
+            if (chatInfo.ShowPrefix)
+            {
+                message = prefix + update.Content;
+            }
+            else
+            {
+                message = update.Content;
+            }
+
+            if (chatInfo.ShowSuffix)
+            {
+                message += suffix;
+            }
+
+            return message;
         }
     }
 }
