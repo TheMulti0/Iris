@@ -68,7 +68,7 @@ namespace FacebookScraper
                 return photos;
             }
 
-            var video = new LowQualityVideo(
+            Video video = new LowQualityVideo(
                 post.VideoUrl,
                 post.PostUrl,
                 post.VideoThumbnailUrl);
