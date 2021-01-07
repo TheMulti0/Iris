@@ -99,10 +99,15 @@ namespace TelegramReceiver
             var showPrefixPath = info.ShowPrefix
                 ? DisablePrefixCommand.CallbackPath
                 : EnablePrefixCommand.CallbackPath;
+            
+            var showSuffixPath = info.ShowPrefix
+                ? DisableSuffixCommand.CallbackPath
+                : EnableSuffixCommand.CallbackPath;
 
             LanguageDictionary dictionary = context.LanguageDictionary;
 
-            string action = info.ShowPrefix ? dictionary.Disable : dictionary.Enable;
+            string prefixAction = info.ShowPrefix ? dictionary.Disable : dictionary.Enable;
+            string suffixAction = info.ShowSuffix ? dictionary.Disable : dictionary.Enable;
             
             return new InlineKeyboardMarkup(
                 new[]
@@ -122,8 +127,14 @@ namespace TelegramReceiver
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            $"{action} {dictionary.ShowPrefix}",
+                            $"{prefixAction} {dictionary.ShowPrefix}",
                             $"{showPrefixPath}-{user.UserId}-{user.Platform}")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            $"{suffixAction} {dictionary.ShowSuffix}",
+                            $"{showSuffixPath}-{user.UserId}-{user.Platform}")
                     },
                     new []
                     {
