@@ -91,6 +91,9 @@ namespace TelegramReceiver
             string showPrefix = info.ShowPrefix ? dictionary.Enabled : dictionary.Disabled;
             text.AppendLine($"<b>{dictionary.ShowPrefix}:</b> {showPrefix}");
             
+            string showSuffix = info.ShowSuffix ? dictionary.Enabled : dictionary.Disabled;
+            text.AppendLine($"<b>{dictionary.ShowSuffix}:</b> {showSuffix}");
+            
             return text.ToString();
         }
 
