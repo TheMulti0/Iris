@@ -9,6 +9,16 @@ namespace Common
 {
     public class MediaJsonConverter : JsonConverter<IMedia>
     {
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+        public MediaJsonConverter()
+        {
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                Converters = { new TimeSpanConverter(), new NullableTimeSpanConverter() }
+            };
+        }
+
         private const string TypeDiscriminator = "type";
 
         public override IMedia Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -49,7 +59,7 @@ namespace Common
                 dictionary.Add(property.Name, property.GetValue(value));
             }
             
-            JsonSerializer.Serialize(writer, dictionary);
+            JsonSerializer.Serialize(writer, dictionary, _jsonSerializerOptions);
         }
     }
 }
