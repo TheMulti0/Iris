@@ -57,9 +57,9 @@ namespace ScrapersDistributor
 
             var cts = new CancellationTokenSource();
             
-            var userTask = Task.Factory.StartNew(
+            Task userTask = Task.Run(
                 () => PeriodicallySendJobs(rule, cts.Token),
-                TaskCreationOptions.AttachedToParent);
+                cts.Token);
 
             var operation = new RunningOperation(
                 userTask,
