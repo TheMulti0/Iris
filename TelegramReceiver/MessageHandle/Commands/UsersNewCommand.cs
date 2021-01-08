@@ -22,6 +22,7 @@ namespace TelegramReceiver
         private readonly ChatId _connectedChat;
         private readonly Language _language;
         private readonly LanguageDictionary _dictionary;
+        
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
@@ -32,7 +33,6 @@ namespace TelegramReceiver
         {
             (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
             
-            _dictionary = context.LanguageDictionary;
             _savedUsersRepository = savedUsersRepository;
             _languages = languages;
         }
@@ -122,7 +122,7 @@ namespace TelegramReceiver
 
             return InlineKeyboardButton.WithCallbackData(
                 $"{user.User}",
-                $"{Route.ManageUser.ToString()}-{userId}-{Enum.GetName(platform)}");
+                $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
         }
 
         private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons()

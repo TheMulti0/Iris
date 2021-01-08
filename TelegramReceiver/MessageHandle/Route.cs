@@ -6,7 +6,7 @@
         Test,
         Settings,
         Users,
-        ManageUser,
+        User,
         SetLanguage
     }
 }

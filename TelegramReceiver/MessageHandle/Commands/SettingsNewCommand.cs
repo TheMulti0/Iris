@@ -9,7 +9,6 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using UserDataLayer;
 using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
@@ -20,21 +19,12 @@ namespace TelegramReceiver
         private readonly Update _update;
         private readonly ChatId _contextChat;
         private readonly ChatId _connectedChat;
-        private readonly Language _language;
         private readonly LanguageDictionary _dictionary;
-        private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly Languages _languages;
 
         public SettingsNewCommand(
-            Context context,
-            ISavedUsersRepository savedUsersRepository,
-            Languages languages)
+            Context context)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
-            
-            _dictionary = context.LanguageDictionary;
-            _savedUsersRepository = savedUsersRepository;
-            _languages = languages;
+            (_client, _, _update, _contextChat, _connectedChat, _, _dictionary) = context;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)

@@ -18,6 +18,19 @@ namespace TelegramReceiver
             }
         }
         
+        public static int GetMessageId(this Update update)
+        {
+            switch (update.Type)
+            {
+                case UpdateType.Message:
+                    return update.Message.MessageId;
+                case UpdateType.CallbackQuery:
+                    return update.CallbackQuery.Message.MessageId;
+                default:
+                    return 1;
+            }
+        }
+        
         public static User GetUser(this Update update)
         {
             switch (update.Type)

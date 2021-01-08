@@ -23,15 +23,29 @@ namespace TelegramReceiver
         private readonly Languages _languages;
         private readonly ILogger<CommandExecutor> _logger;
         
-        private static readonly Dictionary<Route?, string> Routes;
+        private static readonly Dictionary<Route?, string> CallbackQueryRoutes;
+        private static readonly Dictionary<Route, string[]> CommandRoutes;
 
         static CommandExecutor()
         {
-            Routes = Enum
+            CallbackQueryRoutes = Enum
                 .GetValues<Route>()
                 .ToDictionary(
                     route => route as Route?,
                     route => route.ToString());
+
+            CommandRoutes = new Dictionary<Route, string[]>
+            {
+                {
+                    Route.Settings,
+                    new[]
+                    {
+                        "/s",
+                        "/settings",
+                        "/manage"
+                    }
+                }
+            };
         }
 
         public CommandExecutor(
@@ -55,7 +69,7 @@ namespace TelegramReceiver
         {
             try
             {
-                AsyncLazy<Context> context = new AsyncLazy<Context>(
+                var context = new AsyncLazy<Context>(
                     () => CreateContext(update, updates));
 
                 Route? route = GetRoute(update);
@@ -77,7 +91,7 @@ namespace TelegramReceiver
             }
             catch (Exception e)
             {
-                _logger.LogError("Failed to process Telegram update", e);
+                _logger.LogError(e, "Failed to process Telegram update");
             }
         }
 
@@ -103,12 +117,19 @@ namespace TelegramReceiver
             switch (update.Type)
             {
                 case UpdateType.CallbackQuery:
-                    return Routes
-                        .FirstOrDefault(pair => update.CallbackQuery.Data.StartsWith(pair.Value)).Key;
+                    
+                    return CallbackQueryRoutes
+                        .FirstOrDefault(
+                            pair => update.CallbackQuery.Data.StartsWith(pair.Value))
+                        .Key;
 
                 case UpdateType.Message:
-                    return Routes
-                        .FirstOrDefault(pair => update.Message.Text.StartsWith($"/{pair.Value.ToLower()}")).Key;
+                    
+                    return CommandRoutes.FirstOrDefault(
+                        pair => pair.Value
+                            .Contains(
+                                update.Message.Text.Split(' ').FirstOrDefault()))
+                        .Key;
             }
 
             return null;
@@ -146,11 +167,15 @@ namespace TelegramReceiver
                 case Route.Settings:
                     return _commandFactory.Create<SettingsNewCommand>(context);
                 
+                case Route.User:
+                    return _commandFactory.Create<UserNewCommand>(context);
+                
                 case Route.Users:
                     return _commandFactory.Create<UsersNewCommand>(context);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(route), route, null);
             }
-            
-            return null;
         }
     }
 }
