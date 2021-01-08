@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Types;
 using TelegramReceiver.Data;
 using Update = Telegram.Bot.Types.Update;
 
@@ -70,66 +69,8 @@ namespace TelegramReceiver
 
             await foreach (Update update in asyncEnumerable)
             {
-                await _commandExecutor.ProcessUpdate(update, updates, token);
+                Task.Run(() => _commandExecutor.ProcessUpdate(update, updates, token));
             }
-        }
-
-        private async Task OnUpdate(
-            Update update,
-            IObservable<Update> updates)
-        {
-            Context context = null;
-
-            foreach (ICommand command in _commands)
-            {
-                bool shouldTrigger = command.Triggers
-                    .Any(trigger => trigger.ShouldTrigger(update));
-
-                if (!shouldTrigger)
-                {
-                    continue;
-                }
-                
-                try
-                {
-                    if (context == null)
-                    {
-                        context = await CreateContext(update, updates);
-                    }
-
-                    Task.Factory.StartNew( 
-                        () => command.OperateAsync(context),
-                        TaskCreationOptions.AttachedToParent);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Failed to execute command");
-                }
-            }
-        }
-
-        private async Task<Context> CreateContext(
-            Update update,
-            IObservable<Update> updates)
-        {
-            ChatId contextChatId = update.GetChatId();
-
-            IObservable<Update> incomingUpdatesFromChat = updates
-                .Where(
-                    u => u.GetChatId()
-                        .GetHashCode() == contextChatId.GetHashCode());
-
-            Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
-
-            var context = new Context(
-                _client,
-                incomingUpdatesFromChat,
-                update,
-                contextChatId,
-                connection?.Chat ?? contextChatId,
-                connection?.Language ?? Language.English,
-                _languages.Dictionary[connection?.Language ?? Language.English]);
-            return context;
         }
 
         public override void Dispose()

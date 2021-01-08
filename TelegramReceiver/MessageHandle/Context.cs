@@ -3,6 +3,7 @@ using Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Update = Telegram.Bot.Types.Update;
+using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -13,5 +14,8 @@ namespace TelegramReceiver
         ChatId ContextChatId,
         ChatId ConnectedChatId,
         Language Language,
-        LanguageDictionary LanguageDictionary);
+        LanguageDictionary LanguageDictionary)
+    {
+        public User SelectedSavedUser { get; init; }
+    }
 }

@@ -6,8 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
+using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using TelegramReceiver.Data;
 using Update = Telegram.Bot.Types.Update;
 
@@ -16,20 +18,31 @@ namespace TelegramReceiver
     public class CommandExecutor
     {
         private readonly ITelegramBotClient _client;
-        private readonly IEnumerable<ICommand> _commands;
+        private readonly CommandFactory _commandFactory;
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly Languages _languages;
         private readonly ILogger<CommandExecutor> _logger;
+        
+        private static readonly Dictionary<Route?, string> Routes;
+
+        static CommandExecutor()
+        {
+            Routes = Enum
+                .GetValues<Route>()
+                .ToDictionary(
+                    route => route as Route?,
+                    route => route.ToString());
+        }
 
         public CommandExecutor(
             TelegramConfig config,
-            IEnumerable<ICommand> commands,
+            CommandFactory commandFactory,
             IConnectionsRepository connectionsRepository,
             Languages languages,
             ILogger<CommandExecutor> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
-            _commands = commands;
+            _commandFactory = commandFactory;
             _connectionsRepository = connectionsRepository;
             _languages = languages;
             _logger = logger;
@@ -40,20 +53,65 @@ namespace TelegramReceiver
             IObservable<Update> updates,
             CancellationToken token)
         {
-            Task<Context> context = CreateContext(update, updates);
-
-            foreach (ICommand command in _commands)
+            try
             {
-                bool shouldTrigger = command.Triggers
-                    .Any(trigger => trigger.ShouldTrigger(update));
+                AsyncLazy<Context> context = new AsyncLazy<Context>(
+                    () => CreateContext(update, updates));
 
-                if (!shouldTrigger)
+                Route? route = GetRoute(update);
+
+                while (route != null)
                 {
-                    continue;
+                    var newRoute = await ExecuteCommand(
+                        route,
+                        await context,
+                        token);
+
+                    // If the route is not back update to the new route
+                    // If the route is back then the previous route will be invoked in the loop
+                    if (newRoute != Route.Back)
+                    {
+                        route = newRoute;
+                    }
                 }
-                
-                ExecuteCommand(command, await context);
             }
+            catch (Exception e)
+            {
+                _logger.LogError("Failed to process Telegram update", e);
+            }
+        }
+
+        private async Task<Route?> ExecuteCommand(
+            Route? route,
+            Context context,
+            CancellationToken token)
+        {
+            if (route == null)
+            {
+                return null;
+            }
+
+            INewCommand newCommand = CreateCommand((Route) route, context);
+
+            var result = await newCommand.ExecuteAsync(token);
+
+            return result.Route;
+        }
+
+        private static Route? GetRoute(Update update)
+        {
+            switch (update.Type)
+            {
+                case UpdateType.CallbackQuery:
+                    return Routes
+                        .FirstOrDefault(pair => update.CallbackQuery.Data.StartsWith(pair.Value)).Key;
+
+                case UpdateType.Message:
+                    return Routes
+                        .FirstOrDefault(pair => update.Message.Text.StartsWith($"/{pair.Value.ToLower()}")).Key;
+            }
+
+            return null;
         }
 
         private async Task<Context> CreateContext(
@@ -64,8 +122,7 @@ namespace TelegramReceiver
 
             IObservable<Update> incomingUpdatesFromChat = updates
                 .Where(
-                    u => u.GetChatId()
-                        .GetHashCode() == contextChatId.GetHashCode());
+                    u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
 
             Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
 
@@ -79,18 +136,21 @@ namespace TelegramReceiver
                 _languages.Dictionary[connection?.Language ?? Language.English]);
         }
 
-        private void ExecuteCommand(ICommand command, Context context)
+        private INewCommand CreateCommand(Route route, Context context)
         {
-            try
+            switch (route)
             {
-                Task.Factory.StartNew(
-                    () => command.OperateAsync(context),
-                    TaskCreationOptions.AttachedToParent);
+                case Route.Test:
+                    return _commandFactory.Create<TestCommand>(context);
+                
+                case Route.Settings:
+                    return _commandFactory.Create<SettingsNewCommand>(context);
+                
+                case Route.Users:
+                    return _commandFactory.Create<UsersNewCommand>(context);
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to execute command");
-            }
+            
+            return null;
         }
     }
 }

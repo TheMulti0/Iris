@@ -68,6 +68,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     }
 
     services
+        .AddSingleton<CommandFactory>()
         .AddSingleton<CommandExecutor>()
         .AddHostedService<MessageHandlerService>()
         .BuildServiceProvider();
