@@ -18,6 +18,7 @@ namespace TelegramReceiver
     public class MessageHandlerService : BackgroundService
     {
         private readonly ITelegramBotClient _client;
+        private readonly CommandExecutor _commandExecutor;
         private readonly IEnumerable<ICommand> _commands;
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly Languages _languages;
@@ -25,12 +26,14 @@ namespace TelegramReceiver
 
         public MessageHandlerService(
             TelegramConfig config,
+            CommandExecutor commandExecutor,
             IEnumerable<ICommand> commands,
             IConnectionsRepository connectionsRepository,
             Languages languages,
             ILogger<MessageHandlerService> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
+            _commandExecutor = commandExecutor;
             _commands = commands;
             _connectionsRepository = connectionsRepository;
             _languages = languages;
@@ -67,7 +70,7 @@ namespace TelegramReceiver
 
             await foreach (Update update in asyncEnumerable)
             {
-                await OnUpdate(update, updates);
+                await _commandExecutor.ProcessUpdate(update, updates, token);
             }
         }
 
