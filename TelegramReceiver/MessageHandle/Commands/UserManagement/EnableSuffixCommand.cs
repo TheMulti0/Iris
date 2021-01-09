@@ -8,17 +8,17 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class DisableSuffixCommand : ICommand
+    internal class EnableSuffixCommand : ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 
-        public const string CallbackPath = "disableSuffix";
+        public const string CallbackPath = "enableSuffix";
 
         public ITrigger[] Triggers { get; } = {
             new StartsWithCallbackTrigger(CallbackPath)
         };
 
-        public DisableSuffixCommand(
+        public EnableSuffixCommand(
             ISavedUsersRepository savedUsersRepository)
         {
             _savedUsersRepository = savedUsersRepository;
@@ -26,20 +26,20 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            CallbackQuery query = context.Update.CallbackQuery;
+            CallbackQuery query = context.Trigger.CallbackQuery;
 
             User user = GetUserBasicInfo(query);
 
             SavedUser savedUser = await _savedUsersRepository.GetAsync(user);
             UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == context.ConnectedChatId);
 
-            chat.ShowSuffix = false;
+            chat.ShowSuffix = true;
             
             await _savedUsersRepository.AddOrUpdateAsync(user, chat);
 
             await context.Client.SendTextMessageAsync(
                 chatId: context.ContextChatId,
-                text: context.LanguageDictionary.Disabled);
+                text: context.LanguageDictionary.Enabled);
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)

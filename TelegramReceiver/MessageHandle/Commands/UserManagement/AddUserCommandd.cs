@@ -15,7 +15,7 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class AddUserNewCommand : INewCommand
+    internal class AddUserCommandd : ICommandd
     {
         private readonly Context _context;
         
@@ -31,7 +31,7 @@ namespace TelegramReceiver
         private readonly IProducer<ChatPollRequest> _producer;
         private readonly TimeSpan _defaultInterval;
 
-        public AddUserNewCommand(
+        public AddUserCommandd(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer,
@@ -64,8 +64,8 @@ namespace TelegramReceiver
             await AddUser(message, user);
 
             return new RedirectResult(
-                Route.Back,
-                _context with { Update = nextMessage, SelectedSavedUser = user });
+                Route.User,
+                _context with { Trigger = null, SelectedSavedUser = user });
         }
 
         private static Platform GetPlatform(CallbackQuery query)

@@ -15,25 +15,24 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class UserNewCommand : INewCommand
+    internal class UserCommandd : ICommandd
     {
         private readonly ITelegramBotClient _client;
         private readonly Update _update;
         private readonly ChatId _contextChat;
         private readonly ChatId _connectedChat;
-        private readonly Language _language;
         private readonly LanguageDictionary _dictionary;
         private readonly User _user;
         
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
-        public UserNewCommand(
+        public UserCommandd(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             Languages languages)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
+            (_client, _, _update, _contextChat, _connectedChat, _, _dictionary) = context;
 
             _user = context.SelectedSavedUser ?? GetUserBasicInfo(_update.CallbackQuery);
             
@@ -46,18 +45,30 @@ namespace TelegramReceiver
             var savedUser = await _savedUsersRepository.GetAsync(_user);
 
             UserChatInfo chatInfo = savedUser.Chats.First(info => info.ChatId == _connectedChat);
-            
+
             var text = GetText(chatInfo);
 
             var inlineKeyboardMarkup = GetMarkup(chatInfo);
-            
-            await _client.EditMessageTextAsync(
-                chatId: _contextChat,
-                messageId: _update.GetMessageId(),
-                text: text,
-                parseMode: ParseMode.Html,
-                replyMarkup: inlineKeyboardMarkup,
-                cancellationToken: token);
+
+            if (_update == null)
+            {
+                await _client.SendTextMessageAsync(
+                    chatId: _contextChat,
+                    text: text,
+                    parseMode: ParseMode.Html,
+                    replyMarkup: inlineKeyboardMarkup,
+                    cancellationToken: token);
+            }
+            else
+            {
+                await _client.EditMessageTextAsync(
+                    chatId: _contextChat,
+                    messageId: _update.GetMessageId(),
+                    text: text,
+                    parseMode: ParseMode.Html,
+                    replyMarkup: inlineKeyboardMarkup,
+                    cancellationToken: token);
+            }
 
             return new EmptyResult();
         }
@@ -71,10 +82,10 @@ namespace TelegramReceiver
 
         private string GetText(UserChatInfo info)
         {
-            var text = new StringBuilder($"{_dictionary.SettingsFor} {_user}:");
+            var text = new StringBuilder($"{_dictionary.SettingsFor} {_user.UserId}:");
             text.AppendLine("\n");
             text.AppendLine($"<b>{_dictionary.UserId}:</b> {_user.UserId}");
-            text.AppendLine($"<b>{_dictionary.Platform}:</b> {_user.Platform}");
+            text.AppendLine($"<b>{_dictionary.Platform}:</b> {_dictionary.GetPlatform(_user.Platform)}");
             text.AppendLine($"<b>{_dictionary.DisplayName}:</b> {info.DisplayName}");
             text.AppendLine($"<b>{_dictionary.MaxDelay}:</b> {info.Interval * 2}");
             text.AppendLine($"<b>{_dictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
@@ -134,7 +145,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             _dictionary.Remove,
-                            $"{RemoveUserCommand.CallbackPath}-{userInfo}"),                        
+                            $"{Route.RemoveUser}-{userInfo}"),                        
                     },
                     new []
                     {

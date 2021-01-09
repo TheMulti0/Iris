@@ -32,7 +32,7 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            Message message = context.Update.Message;
+            Message message = context.Trigger.Message;
             string[] arguments = message.Text.Split(' ');
 
             if (arguments.Length <= 1)

@@ -26,7 +26,7 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            Message message = context.Update.Message;
+            Message message = context.Trigger.Message;
 
             var chatAsync = await context.Client.GetChatAsync(context.ConnectedChatId);
             

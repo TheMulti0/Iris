@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Common;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using UserDataLayer;
 using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class EnablePrefixCommand : ICommand
+    internal class DisableSuffixCommand : ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 
-        public const string CallbackPath = "enablePrefix";
+        public const string CallbackPath = "disableSuffix";
 
         public ITrigger[] Triggers { get; } = {
             new StartsWithCallbackTrigger(CallbackPath)
         };
 
-        public EnablePrefixCommand(
+        public DisableSuffixCommand(
             ISavedUsersRepository savedUsersRepository)
         {
             _savedUsersRepository = savedUsersRepository;
@@ -28,20 +26,20 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            CallbackQuery query = context.Update.CallbackQuery;
+            CallbackQuery query = context.Trigger.CallbackQuery;
 
             User user = GetUserBasicInfo(query);
 
             SavedUser savedUser = await _savedUsersRepository.GetAsync(user);
             UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == context.ConnectedChatId);
 
-            chat.ShowPrefix = true;
+            chat.ShowSuffix = false;
             
             await _savedUsersRepository.AddOrUpdateAsync(user, chat);
 
             await context.Client.SendTextMessageAsync(
                 chatId: context.ContextChatId,
-                text: context.LanguageDictionary.Enabled);
+                text: context.LanguageDictionary.Disabled);
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)

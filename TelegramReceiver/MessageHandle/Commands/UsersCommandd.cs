@@ -14,7 +14,7 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class UsersNewCommand : INewCommand
+    internal class UsersCommandd : ICommandd
     {
         private readonly ITelegramBotClient _client;
         private readonly Update _update;
@@ -26,7 +26,7 @@ namespace TelegramReceiver
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
-        public UsersNewCommand(
+        public UsersCommandd(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             Languages languages)
@@ -81,7 +81,7 @@ namespace TelegramReceiver
         {
             return InlineKeyboardButton.WithCallbackData(
                 _dictionary.AddUser,
-                SelectPlatformCommand.CallbackPath);
+                Route.SelectPlatform.ToString());
         }
 
         private InlineKeyboardMarkup GetNoUsersMarkup()

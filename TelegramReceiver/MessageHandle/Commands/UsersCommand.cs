@@ -45,11 +45,11 @@ namespace TelegramReceiver
 
             (InlineKeyboardMarkup markup, string text) = Get(context, currentUsers);
 
-            if (context.Update.Type == UpdateType.CallbackQuery)
+            if (context.Trigger.Type == UpdateType.CallbackQuery)
             {
                 await context.Client.EditMessageTextAsync(
                     chatId: context.ContextChatId,
-                    messageId: context.Update.CallbackQuery.Message.MessageId,
+                    messageId: context.Trigger.CallbackQuery.Message.MessageId,
                     text: text,
                     replyMarkup: markup);
                 return;
@@ -76,7 +76,7 @@ namespace TelegramReceiver
         {
             return InlineKeyboardButton.WithCallbackData(
                 context.LanguageDictionary.AddUser,
-                SelectPlatformCommand.CallbackPath);
+                Route.SelectPlatform.ToString());
         }
 
         private InlineKeyboardMarkup GetNoUsersMarkup(Context context)

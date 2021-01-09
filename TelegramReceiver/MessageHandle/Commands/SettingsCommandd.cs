@@ -13,7 +13,7 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class SettingsNewCommand : INewCommand
+    internal class SettingsCommandd : ICommandd
     {
         private readonly ITelegramBotClient _client;
         private readonly Update _update;
@@ -21,7 +21,7 @@ namespace TelegramReceiver
         private readonly ChatId _connectedChat;
         private readonly LanguageDictionary _dictionary;
 
-        public SettingsNewCommand(
+        public SettingsCommandd(
             Context context)
         {
             (_client, _, _update, _contextChat, _connectedChat, _, _dictionary) = context;

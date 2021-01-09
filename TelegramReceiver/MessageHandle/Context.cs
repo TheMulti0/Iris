@@ -15,13 +15,15 @@ namespace TelegramReceiver
     public record Context(
         ITelegramBotClient Client,
         IObservable<Update> IncomingUpdates,
-        Update Update,
+        Update Trigger,
         ChatId ContextChatId,
         ChatId ConnectedChatId,
         Language Language,
         LanguageDictionary LanguageDictionary)
     {
         public User SelectedSavedUser { get; init; }
+
+        public Chat ConnectedChat { get; init; }
 
         public Task<Update> NextMessageTask { get; } =
             IncomingUpdates

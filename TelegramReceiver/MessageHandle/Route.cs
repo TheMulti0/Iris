@@ -3,10 +3,15 @@
     public enum Route
     {
         Back,
-        Test,
+        Connect,
+        Disconnect,
+        Connection,
         Settings,
         Users,
         User,
+        AddUser,
+        RemoveUser,
+        SelectPlatform,
         SetLanguage
     }
 }

@@ -13,7 +13,7 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            Message message = context.Update.Message;
+            Message message = context.Trigger.Message;
             Chat connectedChat = await context.Client.GetChatAsync(context.ConnectedChatId);
 
             if (connectedChat.Type == ChatType.Private)

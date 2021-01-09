@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
-using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -24,7 +23,7 @@ namespace TelegramReceiver
         private readonly ILogger<CommandExecutor> _logger;
         
         private static readonly Dictionary<Route?, string> CallbackQueryRoutes;
-        private static readonly Dictionary<Route, string[]> CommandRoutes;
+        private static readonly Dictionary<Route?, string[]> CommandRoutes;
 
         static CommandExecutor()
         {
@@ -34,7 +33,7 @@ namespace TelegramReceiver
                     route => route as Route?,
                     route => route.ToString());
 
-            CommandRoutes = new Dictionary<Route, string[]>
+            CommandRoutes = new Dictionary<Route?, string[]>
             {
                 {
                     Route.Settings,
@@ -43,6 +42,13 @@ namespace TelegramReceiver
                         "/s",
                         "/settings",
                         "/manage"
+                    }
+                },
+                {
+                    Route.Users,
+                    new[]
+                    {
+                        "/users"
                     }
                 }
             };
@@ -69,24 +75,27 @@ namespace TelegramReceiver
         {
             try
             {
-                var context = new AsyncLazy<Context>(
-                    () => CreateContext(update, updates));
-
                 Route? route = GetRoute(update);
+                if (route == null)
+                {
+                    return;
+                }
 
+                Context context = await CreateContext(update, updates);
                 while (route != null)
                 {
-                    var newRoute = await ExecuteCommand(
+                    IRedirectResult result = await ExecuteCommand(
                         route,
-                        await context,
+                        context,
                         token);
 
-                    // If the route is not back update to the new route
                     // If the route is back then the previous route will be invoked in the loop
-                    if (newRoute != Route.Back)
+                    if (result.Route != Route.Back)
                     {
-                        route = newRoute;
+                        route = result.Route;
                     }
+
+                    context = result.Context;
                 }
             }
             catch (Exception e)
@@ -95,7 +104,7 @@ namespace TelegramReceiver
             }
         }
 
-        private async Task<Route?> ExecuteCommand(
+        private Task<IRedirectResult> ExecuteCommand(
             Route? route,
             Context context,
             CancellationToken token)
@@ -105,11 +114,11 @@ namespace TelegramReceiver
                 return null;
             }
 
-            INewCommand newCommand = CreateCommand((Route) route, context);
+            Type type = GetCommandType((Route) route);
 
-            var result = await newCommand.ExecuteAsync(token);
+            ICommandd commandd = _commandFactory.Create(type, context);
 
-            return result.Route;
+            return commandd.ExecuteAsync(token);
         }
 
         private static Route? GetRoute(Update update)
@@ -157,25 +166,45 @@ namespace TelegramReceiver
                 _languages.Dictionary[connection?.Language ?? Language.English]);
         }
 
-        private INewCommand CreateCommand(Route route, Context context)
+        private static Type GetCommandType(Route route)
         {
             switch (route)
             {
-                case Route.Test:
-                    return _commandFactory.Create<TestCommand>(context);
-                
                 case Route.Settings:
-                    return _commandFactory.Create<SettingsNewCommand>(context);
-                
-                case Route.User:
-                    return _commandFactory.Create<UserNewCommand>(context);
+                    return typeof(SettingsCommandd);
                 
                 case Route.Users:
-                    return _commandFactory.Create<UsersNewCommand>(context);
+                    return typeof(UsersCommandd);
+                
+                case Route.User:
+                    return typeof(UserCommandd);
+
+                case Route.AddUser:
+                    return typeof(AddUserCommandd);
+                
+                case Route.RemoveUser:
+                    return typeof(RemoveUserCommandd);
+                
+                case Route.SelectPlatform:
+                    return typeof(SelectPlatformCommandd);
+
+                case Route.Connect:
+                    return typeof(ConnectCommandd);
+                
+                case Route.Disconnect:
+                    return typeof(DisconnectCommandd);
+                
+                case Route.Connection:
+                    return typeof(ConnectionCommandd);
+                
+                case Route.SetLanguage:
+                    break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(route), route, null);
             }
+
+            return null;
         }
     }
 }

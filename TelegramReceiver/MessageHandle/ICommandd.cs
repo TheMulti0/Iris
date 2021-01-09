@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TelegramReceiver
 {
-    public interface INewCommand
+    public interface ICommandd
     {
         Task<IRedirectResult> ExecuteAsync(CancellationToken token);
     }

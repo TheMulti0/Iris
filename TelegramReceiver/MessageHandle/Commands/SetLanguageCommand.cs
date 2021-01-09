@@ -33,12 +33,12 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            CallbackQuery query = context.Update.CallbackQuery;
+            CallbackQuery query = context.Trigger.CallbackQuery;
 
             Language language = GetLanguage(query);
 
             await _connectionsRepository.AddOrUpdateAsync(
-                    context.Update.GetUser(),
+                    context.Trigger.GetUser(),
                     context.ConnectedChatId,
                     language);
             

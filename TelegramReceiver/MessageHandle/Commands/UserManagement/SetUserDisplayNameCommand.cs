@@ -31,7 +31,7 @@ namespace TelegramReceiver
 
         public async Task OperateAsync(Context context)
         {
-            CallbackQuery query = context.Update.CallbackQuery;
+            CallbackQuery query = context.Trigger.CallbackQuery;
 
             User user = GetUserBasicInfo(query);
 
