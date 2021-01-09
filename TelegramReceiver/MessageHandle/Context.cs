@@ -14,20 +14,27 @@ namespace TelegramReceiver
 {
     public record Context(
         ITelegramBotClient Client,
-        IObservable<Update> IncomingUpdates,
+        Task<Update> NextUpdate,
         Update Trigger,
         ChatId ContextChatId,
         ChatId ConnectedChatId,
         Language Language,
         LanguageDictionary LanguageDictionary)
     {
-        public User SelectedSavedUser { get; init; }
+        public User SelectedUser { get; init; } = GetUserBasicInfo(Trigger?.CallbackQuery);
 
         public Chat ConnectedChat { get; init; }
-
-        public Task<Update> NextMessageTask { get; } =
-            IncomingUpdates
-                .FirstAsync(update => update.Type == UpdateType.Message)
-                .ToTask();
+        
+        private static User GetUserBasicInfo(CallbackQuery query)
+        {
+            if (query == null)
+            {
+                return null;
+            } 
+            
+            string[] items = query.Data.Split("-");
+            
+            return new User(items[^2], Enum.Parse<Platform>(items[^1]));
+        }
     }
 }

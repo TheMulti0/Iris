@@ -7,11 +7,13 @@
         Disconnect,
         Connection,
         Settings,
+        Language,
         Users,
         User,
         AddUser,
         RemoveUser,
         SelectPlatform,
-        SetLanguage
+        SetUserDisplayName,
+        SetUserLanguage
     }
 }

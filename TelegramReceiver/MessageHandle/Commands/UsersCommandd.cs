@@ -14,25 +14,16 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class UsersCommandd : ICommandd
+    internal class UsersCommandd : BaseCommandd, ICommandd
     {
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly ChatId _connectedChat;
-        private readonly Language _language;
-        private readonly LanguageDictionary _dictionary;
-        
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
         public UsersCommandd(
             Context context,
             ISavedUsersRepository savedUsersRepository,
-            Languages languages)
+            Languages languages) : base(context)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
-            
             _savedUsersRepository = savedUsersRepository;
             _languages = languages;
         }
@@ -43,16 +34,16 @@ namespace TelegramReceiver
                 .GetAll()
                 .Where(
                     user => user.Chats
-                        .Any(chat => chat.ChatId == _connectedChat))
+                        .Any(chat => chat.ChatId == ConnectedChat))
                 .ToList();
 
             (InlineKeyboardMarkup markup, string text) = GetMessageDetails(currentUsers);
 
-            if (_update.Type == UpdateType.CallbackQuery)
+            if (Trigger.Type == UpdateType.CallbackQuery)
             {
-                await _client.EditMessageTextAsync(
-                    chatId: _contextChat,
-                    messageId: _update.CallbackQuery.Message.MessageId,
+                await Client.EditMessageTextAsync(
+                    chatId: ContextChat,
+                    messageId: Trigger.CallbackQuery.Message.MessageId,
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: token);
@@ -60,8 +51,8 @@ namespace TelegramReceiver
             }
             else
             {
-                await _client.SendTextMessageAsync(
-                    chatId: _contextChat,
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: token);
@@ -73,14 +64,14 @@ namespace TelegramReceiver
         private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SavedUser> currentUsers)
         {
             return currentUsers.Any() 
-                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} {_dictionary.UsersFound}") 
-                : (GetNoUsersMarkup(), _dictionary.NoUsersFound);
+                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} {Dictionary.UsersFound}") 
+                : (GetNoUsersMarkup(), Dictionary.NoUsersFound);
         }
 
         private InlineKeyboardButton GetAddUserButton()
         {
             return InlineKeyboardButton.WithCallbackData(
-                _dictionary.AddUser,
+                Dictionary.AddUser,
                 Route.SelectPlatform.ToString());
         }
 
@@ -132,14 +123,14 @@ namespace TelegramReceiver
                 return
                     InlineKeyboardButton.WithCallbackData(
                         _languages.Dictionary[language].LanguageString,
-                        $"{Route.SetLanguage.ToString()}-{Enum.GetName(language)}");
+                        $"{Route.Language.ToString()}-{Enum.GetName(language)}");
             }
 
             return Enum.GetValues<Language>()
                 .Except(
                     new[]
                     {
-                        _language
+                        Language
                     })
                 .Select(LanguageToButton)
                 .Batch(2);

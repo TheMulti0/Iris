@@ -4,56 +4,42 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
-using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class UserCommandd : ICommandd
+    internal class UserCommandd : BaseCommandd, ICommandd
     {
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly ChatId _connectedChat;
-        private readonly LanguageDictionary _dictionary;
-        private readonly User _user;
-        
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
         public UserCommandd(
             Context context,
             ISavedUsersRepository savedUsersRepository,
-            Languages languages)
+            Languages languages) : base(context)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _, _dictionary) = context;
-
-            _user = context.SelectedSavedUser ?? GetUserBasicInfo(_update.CallbackQuery);
-            
             _savedUsersRepository = savedUsersRepository;
             _languages = languages;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var savedUser = await _savedUsersRepository.GetAsync(_user);
+            var savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
 
-            UserChatInfo chatInfo = savedUser.Chats.First(info => info.ChatId == _connectedChat);
+            UserChatInfo chatInfo = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
             var text = GetText(chatInfo);
 
             var inlineKeyboardMarkup = GetMarkup(chatInfo);
 
-            if (_update == null)
+            if (Trigger == null)
             {
-                await _client.SendTextMessageAsync(
-                    chatId: _contextChat,
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
                     text: text,
                     parseMode: ParseMode.Html,
                     replyMarkup: inlineKeyboardMarkup,
@@ -61,9 +47,9 @@ namespace TelegramReceiver
             }
             else
             {
-                await _client.EditMessageTextAsync(
-                    chatId: _contextChat,
-                    messageId: _update.GetMessageId(),
+                await Client.EditMessageTextAsync(
+                    chatId: ContextChat,
+                    messageId: Trigger.GetMessageId(),
                     text: text,
                     parseMode: ParseMode.Html,
                     replyMarkup: inlineKeyboardMarkup,
@@ -82,19 +68,19 @@ namespace TelegramReceiver
 
         private string GetText(UserChatInfo info)
         {
-            var text = new StringBuilder($"{_dictionary.SettingsFor} {_user.UserId}:");
+            var text = new StringBuilder($"{Dictionary.SettingsFor} {SelectedUser.UserId}:");
             text.AppendLine("\n");
-            text.AppendLine($"<b>{_dictionary.UserId}:</b> {_user.UserId}");
-            text.AppendLine($"<b>{_dictionary.Platform}:</b> {_dictionary.GetPlatform(_user.Platform)}");
-            text.AppendLine($"<b>{_dictionary.DisplayName}:</b> {info.DisplayName}");
-            text.AppendLine($"<b>{_dictionary.MaxDelay}:</b> {info.Interval * 2}");
-            text.AppendLine($"<b>{_dictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
+            text.AppendLine($"<b>{Dictionary.UserId}:</b> {SelectedUser.UserId}");
+            text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(SelectedUser.Platform)}");
+            text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {info.DisplayName}");
+            text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {info.Interval * 2}");
+            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
 
-            string showPrefix = info.ShowPrefix ? _dictionary.Enabled : _dictionary.Disabled;
-            text.AppendLine($"<b>{_dictionary.ShowPrefix}:</b> {showPrefix}");
+            string showPrefix = info.ShowPrefix ? Dictionary.Enabled : Dictionary.Disabled;
+            text.AppendLine($"<b>{Dictionary.ShowPrefix}:</b> {showPrefix}");
             
-            string showSuffix = info.ShowSuffix ? _dictionary.Enabled : _dictionary.Disabled;
-            text.AppendLine($"<b>{_dictionary.ShowSuffix}:</b> {showSuffix}");
+            string showSuffix = info.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
+            text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
             
             return text.ToString();
         }
@@ -109,10 +95,10 @@ namespace TelegramReceiver
                 ? DisableSuffixCommand.CallbackPath
                 : EnableSuffixCommand.CallbackPath;
 
-            string prefixAction = info.ShowPrefix ? _dictionary.Disable : _dictionary.Enable;
-            string suffixAction = info.ShowSuffix ? _dictionary.Disable : _dictionary.Enable;
+            string prefixAction = info.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
+            string suffixAction = info.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
 
-            string userInfo = $"{_user.UserId}-{_user.Platform}";
+            string userInfo = $"{SelectedUser.UserId}-{SelectedUser.Platform}";
             
             return new InlineKeyboardMarkup(
                 new[]
@@ -120,37 +106,37 @@ namespace TelegramReceiver
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            _dictionary.SetDisplayName,
-                            $"{SetUserDisplayNameCommand.CallbackPath}-{userInfo}")
+                            Dictionary.SetDisplayName,
+                            $"{Route.SetUserDisplayName}-{userInfo}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            _dictionary.SetLanguage,
-                            $"{SetUserLanguageCommand.CallbackPath}-{userInfo}")
+                            Dictionary.SetLanguage,
+                            $"{Route.SetUserLanguage}-{userInfo}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            $"{prefixAction} {_dictionary.ShowPrefix}",
+                            $"{prefixAction} {Dictionary.ShowPrefix}",
                             $"{showPrefixPath}-{userInfo}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            $"{suffixAction} {_dictionary.ShowSuffix}",
+                            $"{suffixAction} {Dictionary.ShowSuffix}",
                             $"{showSuffixPath}-{userInfo}")
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            _dictionary.Remove,
+                            Dictionary.Remove,
                             $"{Route.RemoveUser}-{userInfo}"),                        
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData(
-                            _dictionary.Back,
+                            Dictionary.Back,
                             Route.Users.ToString()), 
                     }
                 });

@@ -79,7 +79,7 @@ namespace TelegramReceiver
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
                     _dictionary.Back,
-                    $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}"));
+                    $"{Route.User}-{userId}-{Enum.GetName(platform)}"));
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -150,15 +151,16 @@ namespace TelegramReceiver
         {
             ChatId contextChatId = update.GetChatId();
 
-            IObservable<Update> incomingUpdatesFromChat = updates
-                .Where(
-                    u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
+            Task<Update> nextUpdate = updates
+                .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode())
+                .FirstOrDefaultAsync(u => GetRoute(u) == null)
+                .ToTask();
 
             Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
 
             return new Context(
                 _client,
-                incomingUpdatesFromChat,
+                nextUpdate,
                 update,
                 contextChatId,
                 connection?.Chat ?? contextChatId,
@@ -197,9 +199,12 @@ namespace TelegramReceiver
                 case Route.Connection:
                     return typeof(ConnectionCommandd);
                 
-                case Route.SetLanguage:
+                case Route.Language:
                     break;
 
+                case Route.SetUserDisplayName:
+                    return typeof(SetUserDisplayNameCommandd);
+                
                 default:
                     throw new ArgumentOutOfRangeException(nameof(route), route, null);
             }

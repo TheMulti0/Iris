@@ -11,37 +11,27 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class ConnectCommandd : ICommandd
+    internal class ConnectCommandd : BaseCommandd, ICommandd
     {
-        private readonly Context _context;
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly Language _language;
-        private readonly LanguageDictionary _dictionary;
-
         private readonly IConnectionsRepository _repository;
 
         public ConnectCommandd(
             Context context,
-            IConnectionsRepository repository)
+            IConnectionsRepository repository): base(context)
         {
-            _context = context;
-            
-            (_client, _, _update, _contextChat, _, _language, _dictionary) = context;
             _repository = repository;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            Message message = _update.Message;
+            Message message = Trigger.Message;
             string[] arguments = message.Text.Split(' ');
 
             if (arguments.Length <= 1)
             {
-                await _client.SendTextMessageAsync(
+                await Client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
-                    text: _dictionary.NoChatId,
+                    text: Dictionary.NoChatId,
                     cancellationToken: token);
                 return new EmptyResult();
             }
@@ -50,40 +40,40 @@ namespace TelegramReceiver
             Chat chat;
             try
             {
-                chat = await _client.GetChatAsync(chatId, token);
+                chat = await Client.GetChatAsync(chatId, token);
             }
             catch (ChatNotFoundException)
             {
-                await _client.SendTextMessageAsync(
-                    chatId: _contextChat,
-                    text: _dictionary.NoChat,
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: Dictionary.NoChat,
                     cancellationToken: token);
                 return new EmptyResult();
             }
             
-            ChatMember[] administrators = await _client.GetChatAdministratorsAsync(chatId, token);
+            ChatMember[] administrators = await Client.GetChatAdministratorsAsync(chatId, token);
 
             if (administrators.All(member => member.User.Id != message.From.Id))
             {
-                await _client.SendTextMessageAsync(
-                    chatId: _contextChat,
-                    text: _dictionary.NotAdmin,
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: Dictionary.NotAdmin,
                     cancellationToken: token);
                 return new EmptyResult();
             }
 
-            await _repository.AddOrUpdateAsync(message.From, chatId, _language);
+            await _repository.AddOrUpdateAsync(message.From, chatId, Language);
 
             string chatTitle = chat.Title != null 
                 ? $" {chat.Title}" 
                 : string.Empty;
             
-            await _client.SendTextMessageAsync(
-                chatId: _contextChat,
-                text: $"{_dictionary.ConnectedToChat}{chatTitle}! ({chatId})",
+            await Client.SendTextMessageAsync(
+                chatId: ContextChat,
+                text: $"{Dictionary.ConnectedToChat}{chatTitle}! ({chatId})",
                 cancellationToken: token);
 
-            return new RedirectResult(Route.Connection, _context with { ConnectedChatId = chat });
+            return new RedirectResult(Route.Connection, Context with { ConnectedChatId = chat });
         }
     }
 }

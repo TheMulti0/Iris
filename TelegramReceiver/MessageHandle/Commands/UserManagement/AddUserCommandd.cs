@@ -15,18 +15,8 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class AddUserCommandd : ICommandd
+    internal class AddUserCommandd : BaseCommandd, ICommandd
     {
-        private readonly Context _context;
-        
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly ChatId _connectedChat;
-        private readonly Language _language;
-        private readonly LanguageDictionary _dictionary;
-        private readonly Task<Update> _nextMessageTask;
-
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
         private readonly TimeSpan _defaultInterval;
@@ -35,14 +25,8 @@ namespace TelegramReceiver
             Context context,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer,
-            TelegramConfig config)
+            TelegramConfig config) : base(context)
         {
-            _context = context;
-            
-            (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
-            _nextMessageTask = context.NextMessageTask;
-            
-            _dictionary = context.LanguageDictionary;
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
             _defaultInterval = config.DefaultInterval;
@@ -50,22 +34,28 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            CallbackQuery query = _update.CallbackQuery;
+            CallbackQuery query = Trigger.CallbackQuery;
 
             Platform platform = GetPlatform(query);
 
-            await SendRequestMessage(platform);
+            await SendRequestMessage(platform, token);
 
             // Wait for the user to reply with desired answer
-            Update nextMessage = await _nextMessageTask;
-            Message message = nextMessage.Message;
+            Update nextUpdate = await NextUpdate;
+
+            if (nextUpdate.Type != UpdateType.Message)
+            {
+                return new EmptyResult();
+            }
+            
+            Message message = nextUpdate.Message;
             
             var user = new User(message.Text, platform);
-            await AddUser(message, user);
+            await AddUser(message, user, token);
 
             return new RedirectResult(
                 Route.User,
-                _context with { Trigger = null, SelectedSavedUser = user });
+                Context with { Trigger = null, SelectedUser = user });
         }
 
         private static Platform GetPlatform(CallbackQuery query)
@@ -74,17 +64,20 @@ namespace TelegramReceiver
         }
 
         private Task SendRequestMessage(
-            Platform platform)
+            Platform platform,
+            CancellationToken token)
         {
-            return _client.EditMessageTextAsync(
-                chatId: _contextChat,
-                messageId: _update.GetMessageId(),
-                text: $"{_dictionary.EnterUserFromPlatform} {_dictionary.GetPlatform(platform)}");
+            return Client.EditMessageTextAsync(
+                chatId: ContextChat,
+                messageId: Trigger.GetMessageId(),
+                text: $"{Dictionary.EnterUserFromPlatform} {Dictionary.GetPlatform(platform)}",
+                cancellationToken: token);
         }
         
         private async Task AddUser(
             Message message,
-            User user)
+            User user,
+            CancellationToken token)
         {   
             TimeSpan interval = _defaultInterval;
             
@@ -94,22 +87,23 @@ namespace TelegramReceiver
                 new ChatPollRequest(
                     Request.StartPoll,
                     userPollRule,
-                    _connectedChat));
+                    ConnectedChat));
 
             await _savedUsersRepository.AddOrUpdateAsync(
                 user,
                 new UserChatInfo
                 {
-                    ChatId = _connectedChat,
+                    ChatId = ConnectedChat,
                     Interval = interval,
                     DisplayName = user.UserId,
-                    Language = _language
+                    Language = Language
                 });
 
-            await _client.SendTextMessageAsync(
-                chatId: _contextChat,
-                text: $"{_dictionary.Added} {user.UserId}",
-                replyToMessageId: message.MessageId);
+            await Client.SendTextMessageAsync(
+                chatId: ContextChat,
+                text: $"{Dictionary.Added} {user.UserId}",
+                replyToMessageId: message.MessageId,
+                cancellationToken: token);
         }
     }
 }

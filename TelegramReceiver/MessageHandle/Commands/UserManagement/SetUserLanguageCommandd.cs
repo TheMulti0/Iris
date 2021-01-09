@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
@@ -10,12 +9,11 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class SetUserLanguageCommand : ICommand
+    internal class SetUserLanguageCommandd : ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
@@ -26,7 +24,7 @@ namespace TelegramReceiver
             new StartsWithCallbackTrigger(CallbackPath)
         };
 
-        public SetUserLanguageCommand(
+        public SetUserLanguageCommandd(
             ISavedUsersRepository savedUsersRepository,
             Languages languages)
         {

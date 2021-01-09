@@ -1,55 +1,39 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Common;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 using TelegramReceiver.Data;
-using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class DisconnectCommandd : ICommandd
+    internal class DisconnectCommandd : BaseCommandd, ICommandd
     {
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly ChatId _connectedChat;
-        private readonly Language _language;
-        private readonly LanguageDictionary _dictionary;
-        private readonly Chat _connectedChatInfo;
-        
         private readonly IConnectionsRepository _repository;
 
         public DisconnectCommandd(
             Context context,
-            IConnectionsRepository repository)
+            IConnectionsRepository repository) : base(context)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _language, _dictionary) = context;
-
-            _connectedChatInfo = context.ConnectedChat;
-            
             _repository = repository;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var connectedChatInfo = _connectedChatInfo ?? await _client.GetChatAsync(_connectedChat, token);
+            var connectedChatInfo = Context.ConnectedChat ?? await Client.GetChatAsync(ConnectedChat, token);
             
-            if (Equals(_contextChat, _connectedChat))
+            if (Equals(ConnectedChat, ContextChat))
             {
-                await _client.SendTextMessageAsync(
-                    chatId: _connectedChat,
-                    text: $"{_dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({_connectedChat})",
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: $"{Dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({ConnectedChat})",
                     cancellationToken: token);
 
                 return new EmptyResult();
             }
 
-            await _repository.AddOrUpdateAsync(_update.GetUser(), _contextChat, _language);
+            await _repository.AddOrUpdateAsync(Trigger.GetUser(), ContextChat, Language);
 
-            await _client.SendTextMessageAsync(
-                chatId: _contextChat,
-                text: $"{_dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({_connectedChat})",
+            await Client.SendTextMessageAsync(
+                chatId: ContextChat,
+                text: $"{Dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({ConnectedChat})",
                 cancellationToken: token);
             
             return new EmptyResult();
