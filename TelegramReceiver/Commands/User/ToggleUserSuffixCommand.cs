@@ -6,7 +6,7 @@ using UserDataLayer;
 
 namespace TelegramReceiver
 {
-    internal class ToggleUserSuffixCommand : BaseCommandd, ICommand
+    internal class ToggleUserSuffixCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 

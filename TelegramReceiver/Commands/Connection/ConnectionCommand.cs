@@ -8,7 +8,7 @@ using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
 {
-    internal class ConnectionCommand : BaseCommandd, ICommand
+    internal class ConnectionCommand : BaseCommand, ICommand
     {
         public ConnectionCommand(Context context): base(context)
         {
@@ -25,7 +25,7 @@ namespace TelegramReceiver
                     text: Dictionary.NotConnected,
                     cancellationToken: token);
                 
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
             
             await Client.SendTextMessageAsync(
@@ -33,7 +33,7 @@ namespace TelegramReceiver
                 text: $"{Dictionary.ConnectedToChat} {connectedChatInfo.Title}! ({ConnectedChat})",
                 cancellationToken: token);
             
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
     }
 }

@@ -15,7 +15,7 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class AddUserCommand : BaseCommandd, ICommand
+    internal class AddUserCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
@@ -45,7 +45,7 @@ namespace TelegramReceiver
 
             if (nextUpdate.Type != UpdateType.Message)
             {
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
             
             Message message = nextUpdate.Message;

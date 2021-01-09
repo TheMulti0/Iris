@@ -12,7 +12,7 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class UserCommand : BaseCommandd, ICommand
+    internal class UserCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
@@ -56,7 +56,7 @@ namespace TelegramReceiver
                     cancellationToken: token);
             }
 
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
 
         private static User GetUserBasicInfo(CallbackQuery query)

@@ -9,7 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using TelegramReceiver.Data;
 using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver

@@ -5,13 +5,12 @@ using Common;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using TelegramReceiver.Data;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class ConnectCommand : BaseCommandd, ICommand
+    internal class ConnectCommand : BaseCommand, ICommand
     {
         private readonly IConnectionsRepository _repository;
 
@@ -33,7 +32,7 @@ namespace TelegramReceiver
                     chatId: message.Chat.Id,
                     text: Dictionary.NoChatId,
                     cancellationToken: token);
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
 
             var chatId = (ChatId) arguments[1];
@@ -48,7 +47,7 @@ namespace TelegramReceiver
                     chatId: ContextChat,
                     text: Dictionary.NoChat,
                     cancellationToken: token);
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
             
             ChatMember[] administrators = await Client.GetChatAdministratorsAsync(chatId, token);
@@ -59,7 +58,7 @@ namespace TelegramReceiver
                     chatId: ContextChat,
                     text: Dictionary.NotAdmin,
                     cancellationToken: token);
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
 
             await _repository.AddOrUpdateAsync(message.From, chatId, Language);

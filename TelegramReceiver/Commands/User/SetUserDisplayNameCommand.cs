@@ -13,7 +13,7 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class SetUserDisplayNameCommand : BaseCommandd, ICommand
+    internal class SetUserDisplayNameCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 

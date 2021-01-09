@@ -3,7 +3,7 @@ using Common;
 using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
-namespace TelegramReceiver.Data
+namespace TelegramReceiver
 {
     public interface IConnectionsRepository
     {

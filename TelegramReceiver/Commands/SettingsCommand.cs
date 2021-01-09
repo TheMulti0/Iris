@@ -13,7 +13,7 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class SettingsCommand : BaseCommandd, ICommand
+    internal class SettingsCommand : BaseCommand, ICommand
     {
         public SettingsCommand(Context context) : base(context)
         {
@@ -45,7 +45,7 @@ namespace TelegramReceiver
                     cancellationToken: token);
             }
 
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
 
         private InlineKeyboardMarkup GetMarkup()

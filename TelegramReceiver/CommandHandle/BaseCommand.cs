@@ -7,7 +7,7 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    public abstract class BaseCommandd
+    public abstract class BaseCommand
     {
         protected readonly Context Context;
         protected readonly ITelegramBotClient Client;
@@ -19,7 +19,7 @@ namespace TelegramReceiver
         protected readonly LanguageDictionary Dictionary;
         protected readonly User SelectedUser;
         
-        protected BaseCommandd(Context context)
+        protected BaseCommand(Context context)
         {
             Context = context;
             

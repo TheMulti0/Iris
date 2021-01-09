@@ -12,7 +12,7 @@ using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
 {
-    internal class SetUserLanguageCommand : BaseCommandd, ICommand
+    internal class SetUserLanguageCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
@@ -43,7 +43,7 @@ namespace TelegramReceiver
 
             if (update.CallbackQuery?.Data?.StartsWith(Route.User.ToString()) == true)
             {
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
 
             await SetLanguage(

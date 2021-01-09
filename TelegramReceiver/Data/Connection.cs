@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using User = Telegram.Bot.Types.User;
 
-namespace TelegramReceiver.Data
+namespace TelegramReceiver
 {
     public class Connection
     {

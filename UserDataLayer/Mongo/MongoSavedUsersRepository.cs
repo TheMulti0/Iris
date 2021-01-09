@@ -59,22 +59,19 @@ namespace UserDataLayer
 
         public async Task RemoveAsync(User user, string chatId)
         {
-            var fullUser = await GetAsync(user);
-            var chat = fullUser.Chats.First(info => info.ChatId == chatId);
-
             SavedUser existing = await GetAsync(user);
+            if (existing == null)
+            {
+                return;
+            }
+            
+            UserChatInfo chat = existing.Chats.First(info => info.ChatId == chatId);
 
             if (existing.Chats.Contains(chat) && existing.Chats.Count == 1)
             {
-                bool removeSuccess;
-                do
-                {
-                    DeleteResult result = await _collection.DeleteOneAsync(
-                        savedUser => savedUser.Version == existing.Version && savedUser.User == user);
-                    
-                    removeSuccess = result.IsAcknowledged && result.DeletedCount > 0;
-                }
-                while (!removeSuccess);
+                await Remove(user, existing);
+
+                return;
             }
 
             existing.Chats.Remove(chat);
@@ -87,6 +84,21 @@ namespace UserDataLayer
                     await GetAsync(user));
             }
             while (!updateSuccess);
+        }
+
+        private async Task Remove(User user, SavedUser existing)
+        {
+            bool removeSuccess;
+            do
+            {
+                existing = await GetAsync(user);
+
+                DeleteResult result = await _collection.DeleteOneAsync(
+                    s => s.Version == existing.Version && s.User == user);
+
+                removeSuccess = result.IsAcknowledged && result.DeletedCount > 0;
+            }
+            while (!removeSuccess);
         }
 
         private async Task<bool> Update(SavedUser newUser, SavedUser existing)

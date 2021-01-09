@@ -14,7 +14,7 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class UsersCommand : BaseCommandd, ICommand
+    internal class UsersCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
@@ -58,7 +58,7 @@ namespace TelegramReceiver
                     cancellationToken: token);
             }
 
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
 
         private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SavedUser> currentUsers)

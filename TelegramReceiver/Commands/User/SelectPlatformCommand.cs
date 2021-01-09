@@ -33,7 +33,7 @@ namespace TelegramReceiver
                 replyMarkup: GetMarkup(),
                 cancellationToken: token);
 
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
         
         private InlineKeyboardMarkup GetMarkup()

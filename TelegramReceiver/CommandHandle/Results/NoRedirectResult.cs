@@ -1,6 +1,6 @@
 ﻿namespace TelegramReceiver
 {
-    public class EmptyResult : IRedirectResult
+    public class NoRedirectResult : IRedirectResult
     {
         public Route? Route { get; }
         

@@ -5,7 +5,7 @@ using MongoDB.Driver.Linq;
 using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
-namespace TelegramReceiver.Data
+namespace TelegramReceiver
 {
     internal class MongoConnectionsRepository : IConnectionsRepository
     {

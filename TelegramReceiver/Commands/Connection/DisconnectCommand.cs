@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using TelegramReceiver.Data;
 
 namespace TelegramReceiver
 {
-    internal class DisconnectCommand : BaseCommandd, ICommand
+    internal class DisconnectCommand : BaseCommand, ICommand
     {
         private readonly IConnectionsRepository _repository;
 
@@ -26,7 +25,7 @@ namespace TelegramReceiver
                     text: $"{Dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({ConnectedChat})",
                     cancellationToken: token);
 
-                return new EmptyResult();
+                return new NoRedirectResult();
             }
 
             await _repository.AddOrUpdateAsync(Trigger.GetUser(), ContextChat, Language);
@@ -36,7 +35,7 @@ namespace TelegramReceiver
                 text: $"{Dictionary.DisconnectedFrom} {connectedChatInfo.Title}! ({ConnectedChat})",
                 cancellationToken: token);
             
-            return new EmptyResult();
+            return new NoRedirectResult();
         }
     }
 }

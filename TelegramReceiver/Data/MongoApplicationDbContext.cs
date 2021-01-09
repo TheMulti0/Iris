@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDbGenericRepository;
 
-namespace TelegramReceiver.Data
+namespace TelegramReceiver
 {
     internal class MongoApplicationDbContext
     {
