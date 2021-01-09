@@ -11,7 +11,7 @@
         User,
         AddUser,
         RemoveUser,
-        SelectPlatform,
+        Platforms,
         SetUserDisplayName,
         SetUserLanguage,
         ToggleUserPrefix,

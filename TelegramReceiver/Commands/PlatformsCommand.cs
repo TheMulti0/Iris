@@ -5,24 +5,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramReceiver
 {
-    internal class SelectPlatformCommand : BaseCommand, ICommand
+    internal class PlatformsCommand : BaseCommand, ICommand
     {
-        public SelectPlatformCommand(Context context): base(context)
+        public PlatformsCommand(Context context): base(context)
         {
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            await Client.EditMessageTextAsync(
-                chatId: ContextChat,
-                messageId: Trigger.GetMessageId(),
-                text: Dictionary.SelectPlatform,
-                replyMarkup: GetMarkup(),
-                cancellationToken: token);
+            if (Trigger.Type == UpdateType.CallbackQuery)
+            {
+                await Client.EditMessageTextAsync(
+                    chatId: ContextChat,
+                    messageId: Trigger.GetMessageId(),
+                    text: Dictionary.SelectPlatform,
+                    replyMarkup: GetMarkup(),
+                    cancellationToken: token);
+                
+            }
+            else
+            {
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: Dictionary.SelectPlatform,
+                    replyMarkup: GetMarkup(),
+                    cancellationToken: token);
+            }
 
             return new NoRedirectResult();
         }
@@ -33,7 +46,7 @@ namespace TelegramReceiver
             {
                 return InlineKeyboardButton.WithCallbackData(
                     Dictionary.GetPlatform(platform),
-                    $"{Route.AddUser.ToString()}-{Enum.GetName(platform)}");
+                    $"{Route.Subscriptions}-{Enum.GetName(platform)}");
             }
             
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = Enum.GetValues<Platform>()
@@ -46,7 +59,7 @@ namespace TelegramReceiver
                         {
                             InlineKeyboardButton.WithCallbackData(
                                 Dictionary.Back,
-                                Route.Subscriptions.ToString())                            
+                                Route.Settings.ToString())                            
                         }
                     });
             

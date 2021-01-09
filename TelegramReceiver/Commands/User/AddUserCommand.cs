@@ -8,6 +8,7 @@ using Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
@@ -34,10 +35,8 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            CallbackQuery query = Trigger.CallbackQuery;
-
-            Platform platform = GetPlatform(query);
-
+            Platform platform = SelectedPlatform ?? throw new NullReferenceException();
+            
             await SendRequestMessage(platform, token);
 
             // Wait for the user to reply with desired answer
@@ -58,19 +57,23 @@ namespace TelegramReceiver
                 Context with { Trigger = null, SelectedUser = user });
         }
 
-        private static Platform GetPlatform(CallbackQuery query)
-        {
-            return Enum.Parse<Platform>(query.Data.Split("-").Last());
-        }
-
         private Task SendRequestMessage(
             Platform platform,
             CancellationToken token)
         {
+            var inlineKeyboardMarkup = new InlineKeyboardMarkup(new []
+            {
+                InlineKeyboardButton
+                    .WithCallbackData(
+                        Dictionary.Back, 
+                        $"{Route.Subscriptions}-{SelectedPlatform}"), 
+            });
+            
             return Client.EditMessageTextAsync(
                 chatId: ContextChat,
                 messageId: Trigger.GetMessageId(),
                 text: $"{Dictionary.EnterUserFromPlatform} {Dictionary.GetPlatform(platform)}",
+                replyMarkup: inlineKeyboardMarkup,
                 cancellationToken: token);
         }
         

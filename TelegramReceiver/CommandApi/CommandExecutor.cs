@@ -45,7 +45,7 @@ namespace TelegramReceiver
                     }
                 },
                 {
-                    Route.Subscriptions,
+                    Route.Platforms,
                     new[]
                     {
                         "/subscriptions"
@@ -211,8 +211,8 @@ namespace TelegramReceiver
                 case Route.RemoveUser:
                     return typeof(RemoveUserCommand);
                 
-                case Route.SelectPlatform:
-                    return typeof(SelectPlatformCommand);
+                case Route.Platforms:
+                    return typeof(PlatformsCommand);
 
                 case Route.Connect:
                     return typeof(ConnectCommand);

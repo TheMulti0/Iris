@@ -27,8 +27,8 @@ namespace TelegramReceiver
             List<SavedUser> currentUsers = _savedUsersRepository
                 .GetAll()
                 .Where(
-                    user => user.Chats
-                        .Any(chat => chat.ChatId == ConnectedChat))
+                    user => user.User.Platform == SelectedPlatform &&
+                            user.Chats.Any(chat => chat.ChatId == ConnectedChat))
                 .ToList();
 
             (InlineKeyboardMarkup markup, string text) = GetMessageDetails(currentUsers);
@@ -57,60 +57,50 @@ namespace TelegramReceiver
 
         private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SavedUser> currentUsers)
         {
+            var platform = Dictionary.GetPlatform(SelectedPlatform ?? throw new NullReferenceException());
+            
             return currentUsers.Any() 
-                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} {Dictionary.UsersFound}") 
-                : (GetNoUsersMarkup(), Dictionary.NoUsersFound);
-        }
-
-        private InlineKeyboardButton GetAddUserButton()
-        {
-            return InlineKeyboardButton.WithCallbackData(
-                Dictionary.AddUser,
-                Route.SelectPlatform.ToString());
+                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} {Dictionary.UsersFound} ({platform})") 
+                : (GetNoUsersMarkup(), $"{Dictionary.NoUsersFound} ({platform})");
         }
 
         private InlineKeyboardMarkup GetNoUsersMarkup()
         {
-            var buttons = new[]
-            {
-                new[]
-                {
-                    GetAddUserButton()
-                }
-            };
-
-            return new InlineKeyboardMarkup(buttons);
+            return new(GetConstantButtons());
         }
 
         private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
         {
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
                 .Select(UserToButton)
-                .Batch(2)
-                .Concat(
-                    new[]
-                    {
-                        new[]
-                        {
-                            GetAddUserButton()
-                        },
-                        new[]
-                        {
-                            InlineKeyboardButton.WithCallbackData(
-                                Dictionary.Back,
-                                Route.Settings.ToString()), 
-                        }
-                    });
+                .Batch(1)
+                .Concat(GetConstantButtons());
             
             return new InlineKeyboardMarkup(userButtons);
         }
+
+        private InlineKeyboardButton[][] GetConstantButtons() => new[]
+        {
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.AddUser,
+                    $"{Route.AddUser}-{SelectedPlatform}")
+            },
+            new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.Back,
+                    Route.Platforms.ToString()), 
+            }
+        };
 
         private static InlineKeyboardButton UserToButton(SavedUser user)
         {
             (string userId, Platform platform) = user.User;
 
             return InlineKeyboardButton.WithCallbackData(
-                $"{user.User}",
+                $"{user.User.UserId}",
                 $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
         }
     }

@@ -22,11 +22,11 @@ namespace TelegramReceiver
         Language Language,
         LanguageDictionary LanguageDictionary)
     {
-        public User SelectedUser { get; init; } = GetUserBasicInfo(Trigger?.CallbackQuery);
+        public User SelectedUser { get; init; } = ExtractUser(Trigger?.CallbackQuery);
 
         public Chat ConnectedChat { get; init; }
         
-        private static User GetUserBasicInfo(CallbackQuery query)
+        private static User ExtractUser(CallbackQuery query)
         {
             try
             {

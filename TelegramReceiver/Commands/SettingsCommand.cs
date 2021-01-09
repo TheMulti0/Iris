@@ -53,7 +53,7 @@ namespace TelegramReceiver
             InlineKeyboardButton[] buttons = {
                 InlineKeyboardButton.WithCallbackData(
                     $"{Dictionary.UsersFound}",
-                    Route.Subscriptions.ToString()),
+                    Route.Platforms.ToString()),
 
                 InlineKeyboardButton.WithCallbackData(
                     $"{Dictionary.Language}",

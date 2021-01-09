@@ -119,7 +119,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             Dictionary.Back,
-                            Route.Subscriptions.ToString()), 
+                            $"{Route.Subscriptions}-{SelectedPlatform}") 
                     }
                 });
         }
