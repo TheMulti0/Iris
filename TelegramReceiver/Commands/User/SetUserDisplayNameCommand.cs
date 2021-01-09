@@ -68,7 +68,7 @@ namespace TelegramReceiver
             Update update)
         {
             SavedUser savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
-            UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
             string newDisplayName = update.Message.Text;
             chat.DisplayName = newDisplayName;

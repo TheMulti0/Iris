@@ -31,11 +31,11 @@ namespace TelegramReceiver
             CallbackQuery query = Trigger.CallbackQuery;
 
             var savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
-            UserChatInfo userChatInfo = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription userChatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
             
             await SendRequestMessage(
                 query.Message,
-                userChatInfo);
+                userChatSubscription);
 
             // Wait for the user to reply with desired display name
             
@@ -47,21 +47,21 @@ namespace TelegramReceiver
             }
 
             await SetLanguage(
-                userChatInfo,
+                userChatSubscription,
                 Enum.Parse<Language>(update.CallbackQuery.Data));
 
             return new RedirectResult(Route.User);
         }
 
         private async Task SetLanguage(
-            UserChatInfo chat,
+            UserChatSubscription chat,
             Language language)
         {
             chat.Language = language;
             await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
         }
         
-        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(UserChatInfo info)
+        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(UserChatSubscription subscription)
         {
             InlineKeyboardButton LanguageToButton(Language language)
             {
@@ -75,14 +75,14 @@ namespace TelegramReceiver
                 .Except(
                     new[]
                     {
-                        info.Language
+                        subscription.Language
                     })
                 .Select(LanguageToButton)
                 .Batch(2);
         }
 
         private async Task SendRequestMessage(
-            Message message, UserChatInfo chat)
+            Message message, UserChatSubscription chat)
         {
             var markup = new InlineKeyboardMarkup(
                 GetLanguageButtons(chat));

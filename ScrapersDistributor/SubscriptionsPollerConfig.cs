@@ -1,6 +1,6 @@
 ﻿namespace ScrapersDistributor
 {
-    internal class PollRulesPollerConfig
+    internal class SubscriptionsPollerConfig
     {
         public string ManagerUrl { get; set; }
     }

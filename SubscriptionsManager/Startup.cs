@@ -14,7 +14,7 @@ using Microsoft.OpenApi.Models;
 using MongoDbGenericRepository;
 using UserDataLayer;
 
-namespace PollRulesManager
+namespace SubscriptionsManager
 {
     public class Startup
     {
@@ -40,12 +40,9 @@ namespace PollRulesManager
                 .AddSingleton(mongoConfig)
                 .AddSingleton<MongoApplicationDbContext>()
                 .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
-                .AddSingleton<IProducer<PollRequest>, PollRequestsProducer>(
-                    provider => new PollRequestsProducer(
-                        producerConfig,
-                        provider.GetService<ILogger<PollRequestsProducer>>()))
-                .AddSingleton<IConsumer<ChatPollRequest>, ChatPollRequestsConsumer>()
-                .AddConsumerService<ChatPollRequest>(consumerConfig);
+                .AddProducer<SubscriptionRequest>(producerConfig)
+                .AddSingleton<IConsumer<ChatSubscriptionRequest>, ChatSubscriptionRequestsConsumer>()
+                .AddConsumerService<ChatSubscriptionRequest>(consumerConfig);
             
             services.AddControllers();
             services.AddSwaggerGen(
@@ -55,7 +52,7 @@ namespace PollRulesManager
                         "v1",
                         new OpenApiInfo
                         {
-                            Title = "PollRulesManager",
+                            Title = "SubscriptionsManager",
                             Version = "v1"
                         });
                 });
@@ -68,7 +65,7 @@ namespace PollRulesManager
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PollRulesManager v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SubscriptionsManager"));
             }
 
             app.UseHttpsRedirection();

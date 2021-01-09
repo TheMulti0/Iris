@@ -44,15 +44,15 @@ services:
       - rabbitmq
       - mongodb
 
-  pollrulesmanager:
-    image: irisupdate/pollrulesmanager:latest
+  subscriptionsmanager:
+    image: irisupdate/subscriptionsmanager:latest
     build:
       context: .
-      dockerfile: PollRulesManager/Dockerfile
-    container_name: pollrulesmanager
+      dockerfile: SubscriptionsManager/Dockerfile
+    container_name: subscriptionsmanager
     restart: always
     volumes:
-      - './PollRulesManager/appsettings.json:/app/appsettings.json'
+      - './SubscriptionsManager/appsettings.json:/app/appsettings.json'
     networks:
       - rabbitmq_network
       - mongodb_network
@@ -73,7 +73,7 @@ services:
       - rabbitmq_network
     depends_on:
       - rabbitmq
-      - pollrulesmanager
+      - subscriptionsmanager
 
   facebookscraper:
     image: irisupdate/facebookscraper:latest

@@ -37,7 +37,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     IConfiguration rootConfig = hostContext.Configuration;
 
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
-    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("ChatPollRequestsProducer");
+    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("SubscriptionRequestsProducer");
     var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
@@ -51,7 +51,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
         .AddSingleton<TelegramReceiver.MongoApplicationDbContext>()
         .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>()
-        .AddProducer<ChatPollRequest>(producerConfig)
+        .AddProducer<ChatSubscriptionRequest>(producerConfig)
         .AddSingleton(telegramConfig)
         .AddSingleton<CommandFactory>()
         .AddSingleton<CommandExecutor>()

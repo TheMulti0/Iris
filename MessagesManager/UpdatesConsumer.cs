@@ -30,7 +30,7 @@ namespace MessagesManager
             _logger.LogInformation("Received update {}", update);
 
             SavedUser savedUser = await _repository.GetAsync(update.Author);
-            List<UserChatInfo> destinationChats = savedUser.Chats.ToList();
+            List<UserChatSubscription> destinationChats = savedUser.Chats.ToList();
             
             _producer.Send(
                 new Message(

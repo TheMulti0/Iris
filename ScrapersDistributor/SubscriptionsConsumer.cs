@@ -8,39 +8,39 @@ using Microsoft.Extensions.Logging;
 
 namespace ScrapersDistributor
 {
-    internal class PollRequestsConsumer : IConsumer<PollRequest>
+    internal class SubscriptionsConsumer : IConsumer<SubscriptionRequest>
     {
         private record RunningOperation(
             Task Task,
             CancellationTokenSource TokenSource);
         
         private readonly IProducer<User> _producer;
-        private readonly ConcurrentDictionary<UserPollRule, RunningOperation> _userPollOperations = new();
-        private readonly ILogger<PollRequestsConsumer> _logger;
+        private readonly ConcurrentDictionary<Subscription, RunningOperation> _userSubscriptionsOperations = new();
+        private readonly ILogger<SubscriptionsConsumer> _logger;
 
-        public PollRequestsConsumer(
+        public SubscriptionsConsumer(
             IProducer<User> producer,
-            ILogger<PollRequestsConsumer> logger)
+            ILogger<SubscriptionsConsumer> logger)
         {
             _producer = producer;
             _logger = logger;
         }
         
-        public Task ConsumeAsync(PollRequest request, CancellationToken token)
+        public Task ConsumeAsync(SubscriptionRequest request, CancellationToken token)
         {
             try
             {
                 _logger.LogInformation("Received poll request {}", request);
                 
-                (Request type, UserPollRule rule) = request;
+                (SubscriptionType type, Subscription rule) = request;
                 
-                if (type == Request.StartPoll)
+                if (type == SubscriptionType.Subscribe)
                 {
-                    AddUserPollRule(rule);
+                    AddUserSubscription(rule);
                 }
                 else
                 {
-                    RemoveUserPollRule(rule);
+                    RemoveUserSubscription(rule);
                 }
             }
             catch (Exception e)
@@ -51,37 +51,37 @@ namespace ScrapersDistributor
             return Task.CompletedTask;
         }
 
-        private void AddUserPollRule(UserPollRule rule)
+        private void AddUserSubscription(Subscription subscription)
         {
-            _logger.LogInformation("Adding user poll rule {}", rule);
+            _logger.LogInformation("Adding user subscription {}", subscription);
 
             var cts = new CancellationTokenSource();
             
             Task userTask = Task.Run(
-                () => PeriodicallySendJobs(rule, cts.Token),
+                () => PeriodicallySendJobs(subscription, cts.Token),
                 cts.Token);
 
             var operation = new RunningOperation(
                 userTask,
                 cts);
 
-            _userPollOperations.AddOrUpdate(
-                rule,
+            _userSubscriptionsOperations.AddOrUpdate(
+                subscription,
                 _ => operation,
                 (_, _) => operation);
         }
 
-        private void RemoveUserPollRule(UserPollRule rule)
+        private void RemoveUserSubscription(Subscription subscription)
         {
-            _logger.LogInformation("Removing user poll rule {}", rule);
+            _logger.LogInformation("Removing user subscription {}", subscription);
             
-            _userPollOperations.TryRemove(rule, out RunningOperation operation);
+            _userSubscriptionsOperations.TryRemove(subscription, out RunningOperation operation);
             
             operation?.TokenSource.Cancel();
         }
 
         private async Task PeriodicallySendJobs(
-            UserPollRule rule,
+            Subscription rule,
             CancellationToken token)
         {
             (User user, TimeSpan? i) = rule;

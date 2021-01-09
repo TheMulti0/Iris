@@ -77,8 +77,8 @@ jobs:
           push: true
           tags: irisupdate/messagesmanager:latest  
           
-  pollrulesmanager:
-    name: Build and push PollRulesManager image
+  subscriptionsmanager:
+    name: Build and push SubscriptionsManager image
     runs-on: ubuntu-latest
 
     steps:
@@ -96,9 +96,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.2.1
         with:
-          file: ./PollRulesManager/Dockerfile
+          file: ./SubscriptionsManager/Dockerfile
           push: true
-          tags: irisupdate/pollrulesmanager:latest  
+          tags: irisupdate/subscriptionsmanager:latest  
           
   scrapersdistributor:
     name: Build and push ScrapersDistributor image

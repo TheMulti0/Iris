@@ -24,7 +24,7 @@ namespace TelegramSender.Tests
 
         private static MessagesConsumer _consumer;
         private static TestConfig _testConfig;
-        private readonly UserChatInfo _userChatInfo = new(){ ChatId = _testConfig.ChatId };
+        private readonly UserChatSubscription _userChatSubscription = new(){ ChatId = _testConfig.ChatId };
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -66,9 +66,9 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo>
+                    new List<UserChatSubscription>
                     {
-                        _userChatInfo
+                        _userChatSubscription
                     }),
                 CancellationToken.None);
             
@@ -93,7 +93,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -112,7 +112,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -138,7 +138,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -159,7 +159,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -182,7 +182,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
 
             await _consumer.FlushAsync();
@@ -205,7 +205,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -231,7 +231,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();
@@ -258,7 +258,7 @@ namespace TelegramSender.Tests
             await _consumer.ConsumeAsync(
                 new Message(
                     update,
-                    new List<UserChatInfo> { _userChatInfo }),
+                    new List<UserChatSubscription> { _userChatSubscription }),
                 CancellationToken.None);
             
             await _consumer.FlushAsync();

@@ -18,13 +18,13 @@ namespace TelegramReceiver
     internal class AddUserCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly IProducer<ChatPollRequest> _producer;
+        private readonly IProducer<ChatSubscriptionRequest> _producer;
         private readonly TimeSpan _defaultInterval;
 
         public AddUserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
-            IProducer<ChatPollRequest> producer,
+            IProducer<ChatSubscriptionRequest> producer,
             TelegramConfig config) : base(context)
         {
             _savedUsersRepository = savedUsersRepository;
@@ -81,17 +81,17 @@ namespace TelegramReceiver
         {   
             TimeSpan interval = _defaultInterval;
             
-            var userPollRule = new UserPollRule(user, interval);
+            var subscription = new Subscription(user, interval);
 
             _producer.Send(
-                new ChatPollRequest(
-                    Request.StartPoll,
-                    userPollRule,
+                new ChatSubscriptionRequest(
+                    SubscriptionType.Subscribe,
+                    subscription,
                     ConnectedChat));
 
             await _savedUsersRepository.AddOrUpdateAsync(
                 user,
-                new UserChatInfo
+                new UserChatSubscription
                 {
                     ChatId = ConnectedChat,
                     Interval = interval,

@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagesManager", "Messages
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrapersDistributor", "ScrapersDistributor\ScrapersDistributor.csproj", "{B39D1018-25CB-47DC-8012-CE2E83C200E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PollRulesManager", "PollRulesManager\PollRulesManager.csproj", "{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubscriptionsManager", "SubscriptionsManager\SubscriptionsManager.csproj", "{06B3B914-AA4F-4FB5-9EFA-88F82339F0DC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramReceiver", "TelegramReceiver\TelegramReceiver.csproj", "{885765AF-ADBC-4F36-A5DE-65B92770DB51}"
 EndProject

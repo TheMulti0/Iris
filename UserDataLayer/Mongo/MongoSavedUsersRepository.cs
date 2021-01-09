@@ -31,12 +31,12 @@ namespace UserDataLayer
                 .FirstOrDefaultAsync();
         }
 
-        public async Task AddOrUpdateAsync(User user, UserChatInfo chat)
+        public async Task AddOrUpdateAsync(User user, UserChatSubscription chat)
         {
             var savedUser = new SavedUser
             {
                 User = user,
-                Chats = new List<UserChatInfo> { chat }
+                Chats = new List<UserChatSubscription> { chat }
             };
             
             SavedUser existing = await GetAsync(user);
@@ -65,7 +65,7 @@ namespace UserDataLayer
                 return;
             }
             
-            UserChatInfo chat = existing.Chats.First(info => info.ChatId == chatId);
+            UserChatSubscription chat = existing.Chats.First(info => info.ChatId == chatId);
 
             if (existing.Chats.Contains(chat) && existing.Chats.Count == 1)
             {
@@ -103,7 +103,7 @@ namespace UserDataLayer
 
         private async Task<bool> Update(SavedUser newUser, SavedUser existing)
         {
-            IEnumerable<UserChatInfo> combinedChats = existing.Chats
+            IEnumerable<UserChatSubscription> combinedChats = existing.Chats
                 .Where(info => !newUser.Chats.Contains(info))
                 .Concat(newUser.Chats);
             

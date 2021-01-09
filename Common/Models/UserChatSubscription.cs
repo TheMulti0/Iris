@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Common
 {
-    public class UserChatInfo : IEquatable<UserChatInfo>
+    public class UserChatSubscription : IEquatable<UserChatSubscription>
     {
         public TimeSpan Interval { get; set; }
 
@@ -17,7 +17,7 @@ namespace Common
 
         public bool ShowSuffix { get; set; }
 
-        public bool Equals(UserChatInfo other)
+        public bool Equals(UserChatSubscription other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -32,8 +32,8 @@ namespace Common
 
         public override int GetHashCode() => HashCode.Combine(Interval, ChatId);
 
-        public static bool operator ==(UserChatInfo left, UserChatInfo right) => Equals(left, right);
+        public static bool operator ==(UserChatSubscription left, UserChatSubscription right) => Equals(left, right);
 
-        public static bool operator !=(UserChatInfo left, UserChatInfo right) => !Equals(left, right);
+        public static bool operator !=(UserChatSubscription left, UserChatSubscription right) => !Equals(left, right);
     }
 }

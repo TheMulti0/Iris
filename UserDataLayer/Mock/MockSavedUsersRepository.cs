@@ -15,7 +15,7 @@ namespace UserDataLayer
                     new()
                     {
                         User = new User("user", Platform.Facebook),
-                        Chats = new List<UserChatInfo>()
+                        Chats = new List<UserChatSubscription>()
                     }
                 });
         }
@@ -26,11 +26,11 @@ namespace UserDataLayer
                 new SavedUser
                 {
                     User = user,
-                    Chats = new List<UserChatInfo>()
+                    Chats = new List<UserChatSubscription>()
                 });
         }
 
-        public Task AddOrUpdateAsync(User user, UserChatInfo chat)
+        public Task AddOrUpdateAsync(User user, UserChatSubscription chat)
         {
             return Task.CompletedTask;
         }

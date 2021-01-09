@@ -30,20 +30,20 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("PollRequestsConsumer"); 
+    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("SubscriptionsConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqConfig>("JobsProducer"); 
-    var pollerConfig = rootConfig.GetSection<PollRulesPollerConfig>("PollRulesPoller"); 
+    var pollerConfig = rootConfig.GetSection<SubscriptionsPollerConfig>("SubscriptionsPoller"); 
 
     services
         .AddSingleton<IProducer<User>, JobsProducer>(
             provider => new JobsProducer(
                 producerConfig,
                 provider.GetService<ILogger<JobsProducer>>()))
-        .AddSingleton<IConsumer<PollRequest>, PollRequestsConsumer>()
-        .AddConsumerService<PollRequest>(consumerConfig)
+        .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionsConsumer>()
+        .AddConsumerService<SubscriptionRequest>(consumerConfig)
         .AddSingleton(pollerConfig)
-        .AddSingleton<IPollRulesManagerClient, PollRulesManagerClient>()
-        .AddHostedService<PollRulesPollerService>()
+        .AddSingleton<ISubscriptionsManagerClient, SubscriptionsManagerClient>()
+        .AddHostedService<SubscriptionsPollerService>()
         .BuildServiceProvider();
 }
     

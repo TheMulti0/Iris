@@ -16,12 +16,12 @@ namespace TelegramReceiver
     internal class RemoveUserCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly IProducer<ChatPollRequest> _producer;
+        private readonly IProducer<ChatSubscriptionRequest> _producer;
 
         public RemoveUserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
-            IProducer<ChatPollRequest> producer): base(context)
+            IProducer<ChatSubscriptionRequest> producer): base(context)
         {
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
@@ -46,11 +46,11 @@ namespace TelegramReceiver
             InlineKeyboardMarkup markup,
             CancellationToken token)
         {
-            var userPollRule = new UserPollRule(user, null);
+            var userPollRule = new Subscription(user, null);
             
             _producer.Send(
-                new ChatPollRequest(
-                    Request.StopPoll,
+                new ChatSubscriptionRequest(
+                    SubscriptionType.Unsubscribe,
                     userPollRule,
                     ConnectedChat));
             

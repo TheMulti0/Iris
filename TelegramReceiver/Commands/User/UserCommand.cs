@@ -30,11 +30,11 @@ namespace TelegramReceiver
         {
             var savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
 
-            UserChatInfo chatInfo = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
-            var text = GetText(chatInfo);
+            var text = GetText(chatSubscription);
 
-            var inlineKeyboardMarkup = GetMarkup(chatInfo);
+            var inlineKeyboardMarkup = GetMarkup(chatSubscription);
 
             if (Trigger == null)
             {
@@ -66,29 +66,29 @@ namespace TelegramReceiver
             return new User(items[^2], Enum.Parse<Platform>(items[^1]));
         }
 
-        private string GetText(UserChatInfo info)
+        private string GetText(UserChatSubscription subscription)
         {
             var text = new StringBuilder($"{Dictionary.SettingsFor} {SelectedUser.UserId}:");
             text.AppendLine("\n");
             text.AppendLine($"<b>{Dictionary.UserId}:</b> {SelectedUser.UserId}");
             text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(SelectedUser.Platform)}");
-            text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {info.DisplayName}");
-            text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {info.Interval * 2}");
-            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[info.Language].LanguageString}");
+            text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {subscription.DisplayName}");
+            text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {subscription.Interval * 2}");
+            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
 
-            string showPrefix = info.ShowPrefix ? Dictionary.Enabled : Dictionary.Disabled;
+            string showPrefix = subscription.ShowPrefix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowPrefix}:</b> {showPrefix}");
             
-            string showSuffix = info.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
+            string showSuffix = subscription.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
             
             return text.ToString();
         }
 
-        private InlineKeyboardMarkup GetMarkup(UserChatInfo info)
+        private InlineKeyboardMarkup GetMarkup(UserChatSubscription subscription)
         {
-            string prefixAction = info.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
-            string suffixAction = info.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
+            string prefixAction = subscription.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
+            string suffixAction = subscription.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
 
             string userInfo = $"{SelectedUser.UserId}-{SelectedUser.Platform}";
             

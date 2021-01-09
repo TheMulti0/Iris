@@ -60,7 +60,7 @@
             "arguments": {}
         },
         {
-            "name": "chatPollRequests",
+            "name": "subscriptionRequests",
             "vhost": "/",
             "durable": true,
             "auto_delete": false,
@@ -83,7 +83,7 @@
     ],
     "exchanges": [
         {
-            "name": "chatPollRequests",
+            "name": "subscriptionRequests",
             "vhost": "/",
             "type": "direct",
             "durable": true,

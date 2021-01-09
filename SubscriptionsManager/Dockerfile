@@ -7,19 +7,19 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["PollRulesManager/PollRulesManager.csproj", "PollRulesManager/"]
+COPY ["SubscriptionsManager/SubscriptionsManager.csproj", "SubscriptionsManager/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
 COPY ["UserDataLayer/UserDataLayer.csproj", "UserDataLayer/"]
-RUN dotnet restore "PollRulesManager/PollRulesManager.csproj"
+RUN dotnet restore "SubscriptionsManager/SubscriptionsManager.csproj"
 COPY . .
-WORKDIR "/src/PollRulesManager"
-RUN dotnet build "PollRulesManager.csproj" -c Release -o /app/build
+WORKDIR "/src/SubscriptionsManager"
+RUN dotnet build "SubscriptionsManager.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "PollRulesManager.csproj" -c Release -o /app/publish
+RUN dotnet publish "SubscriptionsManager.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PollRulesManager.dll"]
+ENTRYPOINT ["dotnet", "SubscriptionsManager.dll"]

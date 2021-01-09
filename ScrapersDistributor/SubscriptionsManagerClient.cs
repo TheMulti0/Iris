@@ -8,12 +8,12 @@ using Common;
 
 namespace ScrapersDistributor
 {
-    internal class PollRulesManagerClient : IPollRulesManagerClient
+    internal class SubscriptionsManagerClient : ISubscriptionsManagerClient
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public PollRulesManagerClient(PollRulesPollerConfig config)
+        public SubscriptionsManagerClient(SubscriptionsPollerConfig config)
         {
             _client = new HttpClient
             {
@@ -30,11 +30,11 @@ namespace ScrapersDistributor
             };
         }
 
-        public async Task<List<UserPollRule>> Get(CancellationToken token)
+        public async Task<List<Subscription>> Get(CancellationToken token)
         {
-            string response = await _client.GetStringAsync("pollRules", token);
+            string response = await _client.GetStringAsync("subscriptions", token);
 
-            return JsonSerializer.Deserialize<List<UserPollRule>>(response, _jsonSerializerOptions);
+            return JsonSerializer.Deserialize<List<Subscription>>(response, _jsonSerializerOptions);
         }
     }
 }

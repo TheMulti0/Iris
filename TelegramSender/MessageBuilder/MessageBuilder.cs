@@ -12,32 +12,32 @@ namespace TelegramSender
             _languages = languages;
         }
 
-        public MessageInfo Build(Update update, UserChatInfo chatInfo)
+        public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {
-            var languageDictionary = _languages.Dictionary[chatInfo.Language];
+            var languageDictionary = _languages.Dictionary[chatSubscription.Language];
             
             string repostPrefix = update.Repost 
                 ? $" {languageDictionary.Repost}" 
                 : string.Empty;
 
             string prefix =
-                $"<a href=\"{update.Url}\">{chatInfo.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
+                $"<a href=\"{update.Url}\">{chatSubscription.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
             
             string suffix = $"\n\n\n{update.Url}";
 
-            string message = GetMessage(update, chatInfo, prefix, suffix);
+            string message = GetMessage(update, chatSubscription, prefix, suffix);
 
             return new MessageInfo(
                 message,
                 update.Media,
-                chatInfo.ChatId);
+                chatSubscription.ChatId);
         }
 
-        private static string GetMessage(Update update, UserChatInfo chatInfo, string prefix, string suffix)
+        private static string GetMessage(Update update, UserChatSubscription chatSubscription, string prefix, string suffix)
         {
             string message;
             
-            if (chatInfo.ShowPrefix)
+            if (chatSubscription.ShowPrefix)
             {
                 message = prefix + update.Content;
             }
@@ -46,7 +46,7 @@ namespace TelegramSender
                 message = update.Content;
             }
 
-            if (chatInfo.ShowSuffix)
+            if (chatSubscription.ShowSuffix)
             {
                 message += suffix;
             }

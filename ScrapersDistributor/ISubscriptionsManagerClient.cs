@@ -5,8 +5,8 @@ using Common;
 
 namespace ScrapersDistributor
 {
-    public interface IPollRulesManagerClient
+    public interface ISubscriptionsManagerClient
     {
-        Task<List<UserPollRule>> Get(CancellationToken token);
+        Task<List<Subscription>> Get(CancellationToken token);
     }
 }

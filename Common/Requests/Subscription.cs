@@ -3,14 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace Common
 {
-    public record UserPollRule
+    public record Subscription
     {
         public User User { get; }
         
         [JsonConverter(typeof(NullableTimeSpanConverter))]
         public TimeSpan? Interval { get; }
 
-        public UserPollRule(User user, TimeSpan? interval)
+        public Subscription(User user, TimeSpan? interval)
         {
             User = user;
             Interval = interval;
