@@ -52,10 +52,24 @@ namespace TelegramReceiver
                     }
                 },
                 {
-                    Route.Language,
+                    Route.Connect,
                     new[]
                     {
-                        "/language"
+                        "/connect"
+                    }
+                },
+                {
+                    Route.Connection,
+                    new[]
+                    {
+                        "/connection"
+                    }
+                },
+                {
+                    Route.Disconnect,
+                    new[]
+                    {
+                        "/disconnect"
                     }
                 }
             };
