@@ -7,6 +7,7 @@
         Connection,
         Settings,
         Language,
+        NewLanguage,
         Users,
         User,
         AddUser,

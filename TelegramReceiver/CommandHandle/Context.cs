@@ -14,7 +14,8 @@ namespace TelegramReceiver
 {
     public record Context(
         ITelegramBotClient Client,
-        Task<Update> NextUpdate,
+        Task<Update> NextMessage,
+        Task<Update> NextCallbackQuery,
         Update Trigger,
         ChatId ContextChatId,
         ChatId ConnectedChatId,
@@ -27,14 +28,16 @@ namespace TelegramReceiver
         
         private static User GetUserBasicInfo(CallbackQuery query)
         {
-            if (query == null || !query.Data.Contains('-'))
+            try
+            {
+                string[] items = query.Data.Split("-");
+            
+                return new User(items[^2], Enum.Parse<Platform>(items[^1]));
+            }
+            catch
             {
                 return null;
-            } 
-            
-            string[] items = query.Data.Split("-");
-            
-            return new User(items[^2], Enum.Parse<Platform>(items[^1]));
+            }
         }
     }
 }

@@ -11,7 +11,8 @@ namespace TelegramReceiver
     {
         protected readonly Context Context;
         protected readonly ITelegramBotClient Client;
-        protected readonly Task<Update> NextUpdate;
+        protected readonly Task<Update> NextMessage;
+        protected readonly Task<Update> NextCallbackQuery;
         protected readonly Update Trigger;
         protected readonly ChatId ContextChat;
         protected readonly ChatId ConnectedChat;
@@ -23,11 +24,9 @@ namespace TelegramReceiver
         {
             Context = context;
             
-            (Client, NextUpdate, Trigger, ContextChat, ConnectedChat, Language, Dictionary) = context;
+            (Client, NextMessage, NextCallbackQuery, Trigger, ContextChat, ConnectedChat, Language, Dictionary) = context;
 
             SelectedUser = context.SelectedUser;
         }
-        
-        
     }
 }

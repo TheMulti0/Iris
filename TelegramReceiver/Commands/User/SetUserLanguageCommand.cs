@@ -39,9 +39,9 @@ namespace TelegramReceiver
 
             // Wait for the user to reply with desired display name
             
-            var update = await NextUpdate;
+            var update = await NextCallbackQuery;
 
-            if (update.CallbackQuery?.Data?.StartsWith(Route.User.ToString()) == true)
+            if (update.CallbackQuery.Data.StartsWith(Route.User.ToString()))
             {
                 return new NoRedirectResult();
             }

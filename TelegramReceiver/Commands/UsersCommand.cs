@@ -5,12 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
-using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -85,8 +82,7 @@ namespace TelegramReceiver
                 }
             };
 
-            return new InlineKeyboardMarkup(
-                buttons.Concat(GetLanguageButtons()));
+            return new InlineKeyboardMarkup(buttons);
         }
 
         private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
@@ -94,7 +90,6 @@ namespace TelegramReceiver
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
                 .Select(UserToButton)
                 .Batch(2)
-                .Concat(GetLanguageButtons())
                 .Concat(
                     new[]
                     {
@@ -114,26 +109,6 @@ namespace TelegramReceiver
             return InlineKeyboardButton.WithCallbackData(
                 $"{user.User}",
                 $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
-        }
-
-        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons()
-        {
-            InlineKeyboardButton LanguageToButton(Language language)
-            {
-                return
-                    InlineKeyboardButton.WithCallbackData(
-                        _languages.Dictionary[language].LanguageString,
-                        $"{Route.Language.ToString()}-{Enum.GetName(language)}");
-            }
-
-            return Enum.GetValues<Language>()
-                .Except(
-                    new[]
-                    {
-                        Language
-                    })
-                .Select(LanguageToButton)
-                .Batch(2);
         }
     }
 }

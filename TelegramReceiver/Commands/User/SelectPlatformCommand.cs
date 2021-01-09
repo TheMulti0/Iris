@@ -5,31 +5,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
-using Telegram.Bot;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramReceiver
 {
-    internal class SelectPlatformCommand : ICommand
+    internal class SelectPlatformCommand : BaseCommand, ICommand
     {
-        private readonly ITelegramBotClient _client;
-        private readonly Telegram.Bot.Types.Update _update;
-        private readonly ChatId _contextChat;
-        private readonly LanguageDictionary _dictionary;
-
-        public SelectPlatformCommand(
-            Context context)
+        public SelectPlatformCommand(Context context): base(context)
         {
-            (_client, _, _update, _contextChat, _, _, _dictionary) = context;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            await _client.EditMessageTextAsync(
-                chatId: _contextChat,
-                messageId: _update.GetMessageId(),
-                text: _dictionary.SelectPlatform,
+            await Client.EditMessageTextAsync(
+                chatId: ContextChat,
+                messageId: Trigger.GetMessageId(),
+                text: Dictionary.SelectPlatform,
                 replyMarkup: GetMarkup(),
                 cancellationToken: token);
 
@@ -41,7 +32,7 @@ namespace TelegramReceiver
             InlineKeyboardButton ToButton(Platform platform)
             {
                 return InlineKeyboardButton.WithCallbackData(
-                    _dictionary.GetPlatform(platform),
+                    Dictionary.GetPlatform(platform),
                     $"{Route.AddUser.ToString()}-{Enum.GetName(platform)}");
             }
             
@@ -54,7 +45,7 @@ namespace TelegramReceiver
                         new []
                         {
                             InlineKeyboardButton.WithCallbackData(
-                                _dictionary.Back,
+                                Dictionary.Back,
                                 Route.Users.ToString())                            
                         }
                     });

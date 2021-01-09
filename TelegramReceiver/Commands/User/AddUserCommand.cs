@@ -41,7 +41,7 @@ namespace TelegramReceiver
             await SendRequestMessage(platform, token);
 
             // Wait for the user to reply with desired answer
-            Update nextUpdate = await NextUpdate;
+            Update nextUpdate = await NextMessage;
 
             if (nextUpdate.Type != UpdateType.Message)
             {

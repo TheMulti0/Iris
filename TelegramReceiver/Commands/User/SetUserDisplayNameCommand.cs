@@ -34,7 +34,7 @@ namespace TelegramReceiver
 
             // Wait for the user to reply with desired display name
 
-            var update = await NextUpdate;
+            var update = await NextMessage;
 
             await SetDisplayName(update);
 

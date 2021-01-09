@@ -13,31 +13,23 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class RemoveUserCommand : ICommand
+    internal class RemoveUserCommand : BaseCommand, ICommand
     {
-        private readonly ITelegramBotClient _client;
-        private readonly Update _update;
-        private readonly ChatId _contextChat;
-        private readonly ChatId _connectedChat;
-        private readonly LanguageDictionary _dictionary;
-        
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
 
         public RemoveUserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
-            IProducer<ChatPollRequest> producer)
+            IProducer<ChatPollRequest> producer): base(context)
         {
-            (_client, _, _update, _contextChat, _connectedChat, _, _dictionary) = context;
-            
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
         }
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            CallbackQuery query = _update.CallbackQuery;
+            CallbackQuery query = Trigger.CallbackQuery;
             
             User user = GetUserBasicInfo(query);
 
@@ -60,14 +52,14 @@ namespace TelegramReceiver
                 new ChatPollRequest(
                     Request.StopPoll,
                     userPollRule,
-                    _connectedChat));
+                    ConnectedChat));
             
-            await _savedUsersRepository.RemoveAsync(user, _connectedChat);
+            await _savedUsersRepository.RemoveAsync(user, ConnectedChat);
 
-            await _client.EditMessageTextAsync(
+            await Client.EditMessageTextAsync(
                 messageId: message.MessageId,
-                chatId: _contextChat,
-                text: $"{_dictionary.Removed} ({user.UserId})",
+                chatId: ContextChat,
+                text: $"{Dictionary.Removed} ({user.UserId})",
                 replyMarkup: markup,
                 cancellationToken: token);
         }
@@ -78,7 +70,7 @@ namespace TelegramReceiver
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
-                    _dictionary.Back,
+                    Dictionary.Back,
                     $"{Route.User}-{userId}-{Enum.GetName(platform)}"));
         }
 

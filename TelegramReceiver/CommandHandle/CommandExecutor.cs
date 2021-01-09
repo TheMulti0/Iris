@@ -50,6 +50,13 @@ namespace TelegramReceiver
                     {
                         "/users"
                     }
+                },
+                {
+                    Route.Language,
+                    new[]
+                    {
+                        "/language"
+                    }
                 }
             };
         }
@@ -145,16 +152,25 @@ namespace TelegramReceiver
         {
             ChatId contextChatId = update.GetChatId();
 
-            Task<Update> nextUpdate = updates
-                .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode())
+            IObservable<Update> chatUpdates = updates
+                .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
+            
+            Task<Update> nextMessage = chatUpdates
+                .Where(u => u.Type == UpdateType.Message)
                 .FirstOrDefaultAsync(u => GetRoute(u) == null)
+                .ToTask();
+
+            Task<Update> nextCallbackQuery = chatUpdates
+                .Where(u => u.Type == UpdateType.CallbackQuery)
+                .FirstOrDefaultAsync()
                 .ToTask();
 
             Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
 
             return new Context(
                 _client,
-                nextUpdate,
+                nextMessage,
+                nextCallbackQuery,
                 update,
                 contextChatId,
                 connection?.Chat ?? contextChatId,
@@ -194,7 +210,7 @@ namespace TelegramReceiver
                     return typeof(ConnectionCommand);
                 
                 case Route.Language:
-                    break;
+                    return typeof(LanguageCommand);
 
                 case Route.SetUserDisplayName:
                     return typeof(SetUserDisplayNameCommand);
@@ -211,8 +227,6 @@ namespace TelegramReceiver
                 default:
                     throw new ArgumentOutOfRangeException(nameof(route), route, null);
             }
-
-            return null;
         }
     }
 }
