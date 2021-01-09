@@ -8,9 +8,9 @@ using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
 {
-    internal class ConnectionCommandd : BaseCommandd, ICommandd
+    internal class ConnectionCommand : BaseCommandd, ICommand
     {
-        public ConnectionCommandd(Context context): base(context)
+        public ConnectionCommand(Context context): base(context)
         {
         }
 

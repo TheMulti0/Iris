@@ -4,11 +4,11 @@ using TelegramReceiver.Data;
 
 namespace TelegramReceiver
 {
-    internal class DisconnectCommandd : BaseCommandd, ICommandd
+    internal class DisconnectCommand : BaseCommandd, ICommand
     {
         private readonly IConnectionsRepository _repository;
 
-        public DisconnectCommandd(
+        public DisconnectCommand(
             Context context,
             IConnectionsRepository repository) : base(context)
         {

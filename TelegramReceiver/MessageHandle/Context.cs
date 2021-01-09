@@ -27,7 +27,7 @@ namespace TelegramReceiver
         
         private static User GetUserBasicInfo(CallbackQuery query)
         {
-            if (query == null)
+            if (query == null || !query.Data.Contains('-'))
             {
                 return null;
             } 

@@ -12,12 +12,12 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class UserCommandd : BaseCommandd, ICommandd
+    internal class UserCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
-        public UserCommandd(
+        public UserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             Languages languages) : base(context)
@@ -87,14 +87,6 @@ namespace TelegramReceiver
 
         private InlineKeyboardMarkup GetMarkup(UserChatInfo info)
         {
-            var showPrefixPath = info.ShowPrefix
-                ? DisablePrefixCommand.CallbackPath
-                : EnablePrefixCommand.CallbackPath;
-            
-            var showSuffixPath = info.ShowPrefix
-                ? DisableSuffixCommand.CallbackPath
-                : EnableSuffixCommand.CallbackPath;
-
             string prefixAction = info.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
             string suffixAction = info.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
 
@@ -119,13 +111,13 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{prefixAction} {Dictionary.ShowPrefix}",
-                            $"{showPrefixPath}-{userInfo}")
+                            $"{Route.ToggleUserPrefix}-{userInfo}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{suffixAction} {Dictionary.ShowSuffix}",
-                            $"{showSuffixPath}-{userInfo}")
+                            $"{Route.ToggleUserSuffix}-{userInfo}")
                     },
                     new []
                     {

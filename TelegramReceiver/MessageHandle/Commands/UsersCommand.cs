@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
@@ -8,103 +9,98 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramReceiver.Data;
 using UserDataLayer;
 using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class UsersCommand : ICommand
+    internal class UsersCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
-        public const string CallbackPath = "home";
-        
-        public ITrigger[] Triggers { get; } = {
-            new MessageTextTrigger("/start"),
-            new CallbackTrigger(CallbackPath)
-        };
-
         public UsersCommand(
+            Context context,
             ISavedUsersRepository savedUsersRepository,
-            Languages languages)
+            Languages languages) : base(context)
         {
             _savedUsersRepository = savedUsersRepository;
             _languages = languages;
         }
 
-        public async Task OperateAsync(Context context)
+        public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
             List<SavedUser> currentUsers = _savedUsersRepository
                 .GetAll()
                 .Where(
                     user => user.Chats
-                        .Any(chat => chat.ChatId == context.ConnectedChatId))
+                        .Any(chat => chat.ChatId == ConnectedChat))
                 .ToList();
 
-            (InlineKeyboardMarkup markup, string text) = Get(context, currentUsers);
+            (InlineKeyboardMarkup markup, string text) = GetMessageDetails(currentUsers);
 
-            if (context.Trigger.Type == UpdateType.CallbackQuery)
+            if (Trigger.Type == UpdateType.CallbackQuery)
             {
-                await context.Client.EditMessageTextAsync(
-                    chatId: context.ContextChatId,
-                    messageId: context.Trigger.CallbackQuery.Message.MessageId,
+                await Client.EditMessageTextAsync(
+                    chatId: ContextChat,
+                    messageId: Trigger.GetMessageId(),
                     text: text,
-                    replyMarkup: markup);
-                return;
+                    replyMarkup: markup,
+                    cancellationToken: token);
+                
             }
-            
-            await context.Client.SendTextMessageAsync(
-                chatId: context.ContextChatId,
-                text: text,
-                replyMarkup: markup);
-    }
+            else
+            {
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: text,
+                    replyMarkup: markup,
+                    cancellationToken: token);
+            }
 
-        private (InlineKeyboardMarkup, string) Get(Context context, IReadOnlyCollection<SavedUser> currentUsers)
-        {
-            return currentUsers.Any() 
-                ? (
-                    GetUsersMarkup(context, currentUsers),
-                    $"{currentUsers.Count} {context.LanguageDictionary.UsersFound}") 
-                : (
-                    GetNoUsersMarkup(context),
-                    context.LanguageDictionary.NoUsersFound);
+            return new EmptyResult();
         }
 
-        private static InlineKeyboardButton GetAddUserButton(Context context)
+        private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SavedUser> currentUsers)
+        {
+            return currentUsers.Any() 
+                ? (GetUsersMarkup(currentUsers), $"{currentUsers.Count} {Dictionary.UsersFound}") 
+                : (GetNoUsersMarkup(), Dictionary.NoUsersFound);
+        }
+
+        private InlineKeyboardButton GetAddUserButton()
         {
             return InlineKeyboardButton.WithCallbackData(
-                context.LanguageDictionary.AddUser,
+                Dictionary.AddUser,
                 Route.SelectPlatform.ToString());
         }
 
-        private InlineKeyboardMarkup GetNoUsersMarkup(Context context)
+        private InlineKeyboardMarkup GetNoUsersMarkup()
         {
             var buttons = new[]
             {
                 new[]
                 {
-                    GetAddUserButton(context)
+                    GetAddUserButton()
                 }
             };
 
             return new InlineKeyboardMarkup(
-                buttons.Concat(GetLanguageButtons(context)));
+                buttons.Concat(GetLanguageButtons()));
         }
 
-        private InlineKeyboardMarkup GetUsersMarkup(Context context, IEnumerable<SavedUser> users)
+        private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
         {
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
                 .Select(UserToButton)
                 .Batch(2)
-                .Concat(GetLanguageButtons(context))
+                .Concat(GetLanguageButtons())
                 .Concat(
                     new[]
                     {
                         new[]
                         {
-                            GetAddUserButton(context)
+                            GetAddUserButton()
                         }
                     });
             
@@ -117,24 +113,24 @@ namespace TelegramReceiver
 
             return InlineKeyboardButton.WithCallbackData(
                 $"{user.User}",
-                $"{ManageUserCommand.CallbackPath}-{userId}-{Enum.GetName(platform)}");
+                $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
         }
 
-        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(Context context)
+        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons()
         {
             InlineKeyboardButton LanguageToButton(Language language)
             {
                 return
                     InlineKeyboardButton.WithCallbackData(
                         _languages.Dictionary[language].LanguageString,
-                        $"{SetLanguageCommand.CallbackPath}-{Enum.GetName(language)}");
+                        $"{Route.Language.ToString()}-{Enum.GetName(language)}");
             }
 
             return Enum.GetValues<Language>()
                 .Except(
                     new[]
                     {
-                        context.Language
+                        Language
                     })
                 .Select(LanguageToButton)
                 .Batch(2);

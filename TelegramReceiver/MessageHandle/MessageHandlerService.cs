@@ -18,24 +18,15 @@ namespace TelegramReceiver
     {
         private readonly ITelegramBotClient _client;
         private readonly CommandExecutor _commandExecutor;
-        private readonly IEnumerable<ICommand> _commands;
-        private readonly IConnectionsRepository _connectionsRepository;
-        private readonly Languages _languages;
         private readonly ILogger<MessageHandlerService> _logger;
 
         public MessageHandlerService(
             TelegramConfig config,
             CommandExecutor commandExecutor,
-            IEnumerable<ICommand> commands,
-            IConnectionsRepository connectionsRepository,
-            Languages languages,
             ILogger<MessageHandlerService> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
             _commandExecutor = commandExecutor;
-            _commands = commands;
-            _connectionsRepository = connectionsRepository;
-            _languages = languages;
             _logger = logger;
         }
 

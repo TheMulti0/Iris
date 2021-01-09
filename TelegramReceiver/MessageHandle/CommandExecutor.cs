@@ -76,27 +76,22 @@ namespace TelegramReceiver
         {
             try
             {
-                Route? route = GetRoute(update);
-                if (route == null)
+                Route? lastRoute = GetRoute(update);
+                if (lastRoute == null)
                 {
                     return;
                 }
 
                 Context context = await CreateContext(update, updates);
-                while (route != null)
+                while (lastRoute != null)
                 {
                     IRedirectResult result = await ExecuteCommand(
-                        route,
+                        lastRoute,
                         context,
                         token);
 
-                    // If the route is back then the previous route will be invoked in the loop
-                    if (result.Route != Route.Back)
-                    {
-                        route = result.Route;
-                    }
-
-                    context = result.Context;
+                    lastRoute = result.Route;
+                    context = result.Context ?? context;
                 }
             }
             catch (Exception e)
@@ -117,9 +112,9 @@ namespace TelegramReceiver
 
             Type type = GetCommandType((Route) route);
 
-            ICommandd commandd = _commandFactory.Create(type, context);
+            ICommand command = _commandFactory.Create(type, context);
 
-            return commandd.ExecuteAsync(token);
+            return command.ExecuteAsync(token);
         }
 
         private static Route? GetRoute(Update update)
@@ -173,46 +168,46 @@ namespace TelegramReceiver
             switch (route)
             {
                 case Route.Settings:
-                    return typeof(SettingsCommandd);
+                    return typeof(SettingsCommand);
                 
                 case Route.Users:
-                    return typeof(UsersCommandd);
+                    return typeof(UsersCommand);
                 
                 case Route.User:
-                    return typeof(UserCommandd);
+                    return typeof(UserCommand);
 
                 case Route.AddUser:
-                    return typeof(AddUserCommandd);
+                    return typeof(AddUserCommand);
                 
                 case Route.RemoveUser:
-                    return typeof(RemoveUserCommandd);
+                    return typeof(RemoveUserCommand);
                 
                 case Route.SelectPlatform:
-                    return typeof(SelectPlatformCommandd);
+                    return typeof(SelectPlatformCommand);
 
                 case Route.Connect:
-                    return typeof(ConnectCommandd);
+                    return typeof(ConnectCommand);
                 
                 case Route.Disconnect:
-                    return typeof(DisconnectCommandd);
+                    return typeof(DisconnectCommand);
                 
                 case Route.Connection:
-                    return typeof(ConnectionCommandd);
+                    return typeof(ConnectionCommand);
                 
                 case Route.Language:
                     break;
 
                 case Route.SetUserDisplayName:
-                    return typeof(SetUserDisplayNameCommandd);
+                    return typeof(SetUserDisplayNameCommand);
                 
                 case Route.SetUserLanguage:
-                    return typeof(SetUserLanguageCommandd);
+                    return typeof(SetUserLanguageCommand);
                 
                 case Route.ToggleUserPrefix:
-                    return typeof(ToggleUserPrefixCommandd);
+                    return typeof(ToggleUserPrefixCommand);
                 
                 case Route.ToggleUserSuffix:
-                    return typeof(ToggleUserSuffixCommandd);
+                    return typeof(ToggleUserSuffixCommand);
                 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(route), route, null);

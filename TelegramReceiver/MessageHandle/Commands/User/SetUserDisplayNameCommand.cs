@@ -13,11 +13,11 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class SetUserDisplayNameCommandd : BaseCommandd, ICommandd
+    internal class SetUserDisplayNameCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 
-        public SetUserDisplayNameCommandd(
+        public SetUserDisplayNameCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository) : base(context)
         {
@@ -36,9 +36,9 @@ namespace TelegramReceiver
 
             var update = await NextUpdate;
 
-            await SetDisplayName(update, inlineKeyboardMarkup, token);
+            await SetDisplayName(update);
 
-            return new RedirectResult(Route.Back, Context with { Trigger = null });
+            return new RedirectResult(Route.User);
         }
 
         private InlineKeyboardMarkup CreateMarkup()
@@ -65,9 +65,7 @@ namespace TelegramReceiver
         }
 
         private async Task SetDisplayName(
-            Update update,
-            IReplyMarkup markup,
-            CancellationToken token)
+            Update update)
         {
             SavedUser savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
             UserChatInfo chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
@@ -76,12 +74,6 @@ namespace TelegramReceiver
             chat.DisplayName = newDisplayName;
             
             await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
-
-            await Client.SendTextMessageAsync(
-                chatId: ContextChat,
-                text: $"{Dictionary.UpdatedDisplayName} {newDisplayName}",
-                replyMarkup: markup,
-                cancellationToken: token);
         }
     }
 }

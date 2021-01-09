@@ -11,11 +11,11 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class ConnectCommandd : BaseCommandd, ICommandd
+    internal class ConnectCommand : BaseCommandd, ICommand
     {
         private readonly IConnectionsRepository _repository;
 
-        public ConnectCommandd(
+        public ConnectCommand(
             Context context,
             IConnectionsRepository repository): base(context)
         {

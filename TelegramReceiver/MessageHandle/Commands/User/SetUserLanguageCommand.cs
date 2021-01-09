@@ -12,12 +12,12 @@ using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver
 {
-    internal class SetUserLanguageCommandd : BaseCommandd, ICommandd
+    internal class SetUserLanguageCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly Languages _languages;
 
-        public SetUserLanguageCommandd(
+        public SetUserLanguageCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             Languages languages) : base(context)
@@ -50,7 +50,7 @@ namespace TelegramReceiver
                 userChatInfo,
                 Enum.Parse<Language>(update.CallbackQuery.Data));
 
-            return new RedirectResult(Route.User, Context with { Trigger = null });
+            return new RedirectResult(Route.User);
         }
 
         private async Task SetLanguage(
@@ -59,10 +59,6 @@ namespace TelegramReceiver
         {
             chat.Language = language;
             await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
-
-            await Client.SendTextMessageAsync(
-                chatId: ContextChat,
-                text: $"{Dictionary.Done}");
         }
         
         private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(UserChatInfo info)

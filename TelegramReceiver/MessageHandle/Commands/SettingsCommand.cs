@@ -13,9 +13,9 @@ using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
-    internal class SettingsCommandd : BaseCommandd, ICommandd
+    internal class SettingsCommand : BaseCommandd, ICommand
     {
-        public SettingsCommandd(Context context) : base(context)
+        public SettingsCommand(Context context) : base(context)
         {
         }
 

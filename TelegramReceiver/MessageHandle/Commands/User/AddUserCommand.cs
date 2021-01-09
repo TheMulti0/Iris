@@ -15,13 +15,13 @@ using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class AddUserCommandd : BaseCommandd, ICommandd
+    internal class AddUserCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatPollRequest> _producer;
         private readonly TimeSpan _defaultInterval;
 
-        public AddUserCommandd(
+        public AddUserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatPollRequest> producer,

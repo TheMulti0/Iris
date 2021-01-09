@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace TelegramReceiver
 {
     public interface ICommand
     {
-        ITrigger[] Triggers { get; }
-
-        Task OperateAsync(Context context);
+        Task<IRedirectResult> ExecuteAsync(CancellationToken token);
     }
 }

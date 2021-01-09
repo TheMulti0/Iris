@@ -7,11 +7,11 @@ using UserDataLayer;
 
 namespace TelegramReceiver
 {
-    internal class ToggleUserPrefixCommandd : BaseCommandd, ICommandd
+    internal class ToggleUserPrefixCommand : BaseCommandd, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
 
-        public ToggleUserPrefixCommandd(
+        public ToggleUserPrefixCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository) : base(context)
         {
@@ -27,12 +27,7 @@ namespace TelegramReceiver
             
             await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
 
-            await Client.SendTextMessageAsync(
-                chatId: ContextChat,
-                text: Dictionary.Enabled, 
-                cancellationToken: token);
-
-            return new RedirectResult(Route.User, Context with { Trigger = null });
+            return new RedirectResult(Route.User);
         }
     }
 }

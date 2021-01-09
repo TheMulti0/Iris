@@ -12,14 +12,14 @@ namespace TelegramReceiver
             _serviceProvider = serviceProvider;
         }
 
-        public ICommandd Create<TCommand>(Context context) where TCommand : ICommandd
+        public ICommand Create<TCommand>(Context context) where TCommand : ICommand
         {
             return ActivatorUtilities.CreateInstance<TCommand>(
                 _serviceProvider,
                 context);
         }
         
-        public ICommandd Create(Type type, Context context)
+        public ICommand Create(Type type, Context context)
         {
             if (! type.IsAssignableTo(typeof(ICommand)))
             {
@@ -29,7 +29,7 @@ namespace TelegramReceiver
             return ActivatorUtilities.CreateInstance(
                 _serviceProvider,
                 type,
-                context) as ICommandd;
+                context) as ICommand;
         }
     }
 }

@@ -54,20 +54,6 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>()
         .AddProducer<ChatPollRequest>(producerConfig)
         .AddSingleton(telegramConfig)
-        .AddSingleton<UsersCommand>();
-
-    Type commandType = typeof(ICommand);
-    IEnumerable<Type> commands = commandType.Assembly
-        .GetTypes()
-        .Where(
-            t => t.IsAssignableTo(commandType) && t.IsClass);
-    
-    foreach (Type command in commands)
-    {
-        services.AddSingleton(commandType, command);
-    }
-
-    services
         .AddSingleton<CommandFactory>()
         .AddSingleton<CommandExecutor>()
         .AddHostedService<MessageHandlerService>()

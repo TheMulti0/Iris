@@ -11,14 +11,14 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramReceiver
 {
-    internal class SelectPlatformCommandd : ICommandd
+    internal class SelectPlatformCommand : ICommand
     {
         private readonly ITelegramBotClient _client;
         private readonly Telegram.Bot.Types.Update _update;
         private readonly ChatId _contextChat;
         private readonly LanguageDictionary _dictionary;
 
-        public SelectPlatformCommandd(
+        public SelectPlatformCommand(
             Context context)
         {
             (_client, _, _update, _contextChat, _, _, _dictionary) = context;
