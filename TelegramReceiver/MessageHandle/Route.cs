@@ -14,6 +14,8 @@
         RemoveUser,
         SelectPlatform,
         SetUserDisplayName,
-        SetUserLanguage
+        SetUserLanguage,
+        ToggleUserPrefix,
+        ToggleUserSuffix
     }
 }

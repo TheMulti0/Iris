@@ -205,6 +205,15 @@ namespace TelegramReceiver
                 case Route.SetUserDisplayName:
                     return typeof(SetUserDisplayNameCommandd);
                 
+                case Route.SetUserLanguage:
+                    return typeof(SetUserLanguageCommandd);
+                
+                case Route.ToggleUserPrefix:
+                    return typeof(ToggleUserPrefixCommandd);
+                
+                case Route.ToggleUserSuffix:
+                    return typeof(ToggleUserSuffixCommandd);
+                
                 default:
                     throw new ArgumentOutOfRangeException(nameof(route), route, null);
             }
