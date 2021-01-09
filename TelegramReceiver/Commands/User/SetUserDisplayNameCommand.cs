@@ -38,7 +38,7 @@ namespace TelegramReceiver
 
             await SetDisplayName(update);
 
-            return new RedirectResult(Route.User);
+            return new RedirectResult(Route.User, Context with { Trigger = null });
         }
 
         private InlineKeyboardMarkup CreateMarkup()
