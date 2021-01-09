@@ -30,7 +30,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("SubscriptionsConsumer"); 
+    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("PollRequestsConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqConfig>("JobsProducer"); 
     var pollerConfig = rootConfig.GetSection<SubscriptionsPollerConfig>("SubscriptionsPoller"); 
 
