@@ -29,24 +29,18 @@ namespace TelegramReceiver
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            CallbackQuery query = Trigger.CallbackQuery;
-            
-            User user = GetUserBasicInfo(query);
+            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup();
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(user);
+            await Remove(inlineKeyboardMarkup, token);
 
-            await Remove(user, query.Message, inlineKeyboardMarkup, token);
-
-            return new RedirectResult(Route.Users);
+            return new RedirectResult(Route.Subscriptions);
         }
 
         private async Task Remove(
-            User user,
-            Message message,
             InlineKeyboardMarkup markup,
             CancellationToken token)
         {
-            var userPollRule = new Subscription(user, null);
+            var userPollRule = new Subscription(SelectedUser, null);
             
             _producer.Send(
                 new ChatSubscriptionRequest(
@@ -54,33 +48,24 @@ namespace TelegramReceiver
                     userPollRule,
                     ConnectedChat));
             
-            await _savedUsersRepository.RemoveAsync(user, ConnectedChat);
+            await _savedUsersRepository.RemoveAsync(SelectedUser, ConnectedChat);
 
             await Client.EditMessageTextAsync(
-                messageId: message.MessageId,
+                messageId: Trigger.GetMessageId(),
                 chatId: ContextChat,
-                text: $"{Dictionary.Removed} ({user.UserId})",
+                text: $"{Dictionary.Removed} ({SelectedUser.UserId})",
                 replyMarkup: markup,
                 cancellationToken: token);
         }
 
-        private InlineKeyboardMarkup CreateMarkup(User user)
+        private InlineKeyboardMarkup CreateMarkup()
         {
-            (string userId, Platform platform) = user;
+            (string userId, Platform platform) = SelectedUser;
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Back,
                     $"{Route.User}-{userId}-{Enum.GetName(platform)}"));
-        }
-
-        private static User GetUserBasicInfo(CallbackQuery query)
-        {
-            string[] items = query.Data.Split("-");
-            
-            return new User(
-                items[^2],
-                Enum.Parse<Platform>(items[^1]));
         }
     }
 }

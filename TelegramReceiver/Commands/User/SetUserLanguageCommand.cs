@@ -78,7 +78,17 @@ namespace TelegramReceiver
                         subscription.Language
                     })
                 .Select(LanguageToButton)
-                .Batch(2);
+                .Batch(2)
+                .Concat(
+                    new []
+                    {
+                        new[]
+                        {
+                            InlineKeyboardButton.WithCallbackData(
+                                Dictionary.Back,
+                                $"{Route.User}-{SelectedUser.UserId}-{Enum.GetName(SelectedUser.Platform)}"),                             
+                        } 
+                    });
         }
 
         private async Task SendRequestMessage(

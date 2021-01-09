@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -57,13 +54,6 @@ namespace TelegramReceiver
             }
 
             return new NoRedirectResult();
-        }
-
-        private static User GetUserBasicInfo(CallbackQuery query)
-        {
-            string[] items = query.Data.Split("-");
-            
-            return new User(items[^2], Enum.Parse<Platform>(items[^1]));
         }
 
         private string GetText(UserChatSubscription subscription)
@@ -129,7 +119,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             Dictionary.Back,
-                            Route.Users.ToString()), 
+                            Route.Subscriptions.ToString()), 
                     }
                 });
         }

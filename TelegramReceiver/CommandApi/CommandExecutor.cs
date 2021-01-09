@@ -45,10 +45,10 @@ namespace TelegramReceiver
                     }
                 },
                 {
-                    Route.Users,
+                    Route.Subscriptions,
                     new[]
                     {
-                        "/users"
+                        "/subscriptions"
                     }
                 },
                 {
@@ -178,15 +178,15 @@ namespace TelegramReceiver
                 _languages.Dictionary[connection?.Language ?? Language.English]);
         }
 
-        private static Type GetCommandType(Route route)
+        private Type GetCommandType(Route route)
         {
             switch (route)
             {
                 case Route.Settings:
                     return typeof(SettingsCommand);
                 
-                case Route.Users:
-                    return typeof(UsersCommand);
+                case Route.Subscriptions:
+                    return typeof(SubscriptionsCommand);
                 
                 case Route.User:
                     return typeof(UserCommand);
@@ -225,7 +225,8 @@ namespace TelegramReceiver
                     return typeof(ToggleUserSuffixCommand);
                 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(route), route, null);
+                    _logger.LogError("Failed to find correct command for route {}", route);
+                    return null;
             }
         }
     }

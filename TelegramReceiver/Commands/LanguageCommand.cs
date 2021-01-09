@@ -32,12 +32,12 @@ namespace TelegramReceiver
 
             Update update = await NextCallbackQuery;
 
-            if (update.CallbackQuery.Data.StartsWith(Route.User.ToString()))
+            if (update.CallbackQuery.Data.StartsWith(Route.Settings.ToString()))
             {
                 return new NoRedirectResult();
             }
 
-            Language language = GetLanguage(update.CallbackQuery);
+            var language = Enum.Parse<Language>(update.CallbackQuery.Data);
 
             await _connectionsRepository.AddOrUpdateAsync(
                 update.GetUser(),
@@ -82,7 +82,7 @@ namespace TelegramReceiver
                 return
                     InlineKeyboardButton.WithCallbackData(
                         _languages.Dictionary[language].LanguageString,
-                        $"{Route.NewLanguage.ToString()}-{Enum.GetName(language)}");
+                        Enum.GetName(language));
             }
 
             return Enum.GetValues<Language>()

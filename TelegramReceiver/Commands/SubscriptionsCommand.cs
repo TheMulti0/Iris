@@ -11,18 +11,15 @@ using UserDataLayer;
 
 namespace TelegramReceiver
 {
-    internal class UsersCommand : BaseCommand, ICommand
+    internal class SubscriptionsCommand : BaseCommand, ICommand
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
-        private readonly Languages _languages;
 
-        public UsersCommand(
+        public SubscriptionsCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository,
-            Languages languages) : base(context)
+            ISavedUsersRepository savedUsersRepository) : base(context)
         {
             _savedUsersRepository = savedUsersRepository;
-            _languages = languages;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
@@ -96,6 +93,12 @@ namespace TelegramReceiver
                         new[]
                         {
                             GetAddUserButton()
+                        },
+                        new[]
+                        {
+                            InlineKeyboardButton.WithCallbackData(
+                                Dictionary.Back,
+                                Route.Settings.ToString()), 
                         }
                     });
             
