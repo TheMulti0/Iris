@@ -143,7 +143,7 @@
             "vhost": "/",
             "destination": "updates",
             "destination_type": "queue",
-            "routing_key": "update",
+            "routing_key": "",
             "arguments": {}
         },
         {
@@ -151,7 +151,7 @@
             "vhost": "/",
             "destination": "chatPollRequests",
             "destination_type": "queue",
-            "routing_key": "chatPollRequests",
+            "routing_key": "",
             "arguments": {}
         },
         {
@@ -183,7 +183,15 @@
             "vhost": "/",
             "destination": "messages",
             "destination_type": "queue",
-            "routing_key": "messages",
+            "routing_key": "",
+            "arguments": {}
+        },
+        {
+            "source": "subscriptionRequests",
+            "vhost": "/",
+            "destination": "subscriptionRequests",
+            "destination_type": "queue",
+            "routing_key": "",
             "arguments": {}
         },
         {
@@ -191,7 +199,7 @@
             "vhost": "/",
             "destination": "pollRequests",
             "destination_type": "queue",
-            "routing_key": "pollRequests",
+            "routing_key": "",
             "arguments": {}
         },
         {
@@ -199,7 +207,7 @@
             "vhost": "/",
             "destination": "updates",
             "destination_type": "queue",
-            "routing_key": "updates",
+            "routing_key": "",
             "arguments": {}
         }
     ]
