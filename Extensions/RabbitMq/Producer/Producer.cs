@@ -32,7 +32,7 @@ namespace Extensions
 
             byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item, _jsonSerializerOptions);
             
-            _publisher.Publish(_config.Destination, bytes);
+            _publisher.Publish(string.Empty, bytes);
         }
     }
 }
