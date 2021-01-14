@@ -139,22 +139,28 @@ namespace TelegramReceiver
 
         private static Route? GetRoute(Update update)
         {
-            switch (update.Type)
+            try
             {
-                case UpdateType.CallbackQuery:
+                switch (update.Type)
+                {
+                    case UpdateType.CallbackQuery:
                     
-                    return CallbackQueryRoutes
-                        .FirstOrDefault(
-                            pair => update.CallbackQuery.Data.StartsWith(pair.Value))
-                        .Key;
+                        return CallbackQueryRoutes
+                            .First(
+                                pair => update.CallbackQuery.Data.StartsWith(pair.Value))
+                            .Key;
 
-                case UpdateType.Message:
+                    case UpdateType.Message:
                     
-                    return CommandRoutes.FirstOrDefault(
-                        pair => pair.Value
-                            .Contains(
-                                update.Message.Text.Split(' ').FirstOrDefault()))
-                        .Key;
+                        return CommandRoutes.First(
+                            pair => pair.Value
+                                .Contains(
+                                    update.Message.Text.Split(' ').FirstOrDefault()))
+                            .Key;
+                }
+            }
+            catch
+            {
             }
 
             return null;
