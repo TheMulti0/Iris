@@ -35,10 +35,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var pollerConfig = rootConfig.GetSection<SubscriptionsPollerConfig>("SubscriptionsPoller"); 
 
     services
-        .AddSingleton<IProducer<User>, JobsProducer>(
-            provider => new JobsProducer(
-                producerConfig,
-                provider.GetService<ILogger<JobsProducer>>()))
+        .AddProducer<User>(producerConfig)
         .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionsConsumer>()
         .AddConsumerService<SubscriptionRequest>(consumerConfig)
         .AddSingleton(pollerConfig)

@@ -97,7 +97,7 @@ namespace ScrapersDistributor
             {
                 try
                 {
-                    _producer.Send(user);
+                    _producer.Send(user, Enum.GetName(user.Platform));
                 }
                 catch (Exception e)
                 {

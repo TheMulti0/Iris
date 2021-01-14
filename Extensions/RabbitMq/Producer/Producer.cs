@@ -26,13 +26,13 @@ namespace Extensions
 
         }
 
-        public void Send(T item)
+        public void Send(T item, string routingKey = "")
         {
             _logger.LogInformation("Sending {}", item);
 
             byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item, _jsonSerializerOptions);
             
-            _publisher.Publish(string.Empty, bytes);
+            _publisher.Publish(routingKey, bytes);
         }
     }
 }
