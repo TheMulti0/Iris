@@ -7,5 +7,7 @@ namespace Extensions
         public Uri ConnectionString { get; set; }
 
         public string Destination { get; set; }
+
+        public bool AckOnlyOnSuccess { get; set; }
     }
 }

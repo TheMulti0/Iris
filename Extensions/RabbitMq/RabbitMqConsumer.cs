@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -8,38 +8,65 @@ namespace Extensions
 {
     public class RabbitMqConsumer : IDisposable
     {
-        private readonly IConnection _connection;
-        private readonly IModel _model;
+        private IConnection _connection;
+        private IModel _channel;
+        private readonly CancellationTokenSource _cts = new();
+        private readonly RabbitMqConfig _config;
+        private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
 
         public RabbitMqConsumer(
             RabbitMqConfig config,
             Func<BasicDeliverEventArgs, Task> onMessage)
         {
+            _config = config;
+            _onMessage = onMessage;
+
+            Connect(config);
+        }
+
+        private void Connect(RabbitMqConfig config)
+        {
             var factory = new ConnectionFactory
             {
-                Uri = config.ConnectionString,
-                DispatchConsumersAsync = true
+                Uri = config.ConnectionString
             };
-            
+
             _connection = factory.CreateConnection();
-            _model = _connection.CreateModel();
-            
-            var consumer = new AsyncEventingBasicConsumer(_model);
+            _channel = _connection.CreateModel();
 
-            consumer.Received += async (_, message) =>
+            var consumer = new EventingBasicConsumer(_channel);
+
+            consumer.Received += (_, message) =>
             {
-                await onMessage(message);
-
-                _model.BasicAck(message.DeliveryTag, false);
+                Task.Run(() => Consume(message), _cts.Token);
             };
 
-            _model.BasicConsume(config.Destination, false, consumer);
+            _channel.BasicConsume(config.Destination, false, consumer);
+        }
+
+        private async Task Consume(BasicDeliverEventArgs message)
+        {
+            try
+            {
+                await _onMessage(message);
+            }
+            catch
+            {
+                if (_config.AckOnlyOnSuccess)
+                {
+                    return;
+                }
+            }
+            
+            _channel.BasicAck(message.DeliveryTag, false);
         }
 
         public void Dispose()
         {
-            _model.Close();
-            _model?.Dispose();
+            _cts.Cancel();
+            
+            _channel.Close();
+            _channel?.Dispose();
             
             _connection?.Close();
             _connection?.Dispose();

@@ -7,7 +7,7 @@ namespace Extensions
     {
         private readonly RabbitMqConfig _config;
         private readonly IConnection _connection;
-        private readonly IModel _model;
+        private readonly IModel _channel;
 
         public RabbitMqPublisher(RabbitMqConfig config)
         {
@@ -19,19 +19,20 @@ namespace Extensions
             };
             
             _connection = factory.CreateConnection();
-            _model = _connection.CreateModel();
+            _channel = _connection.CreateModel();
         }
         
         public void Publish(string key, byte[] value)
         {
-            _model.BasicPublish(_config.Destination, key, body: value);
+            _channel.BasicPublish(_config.Destination, key, body: value);
         }
 
         public void Dispose()
         {
+            _channel?.Dispose();
+
             _connection?.Close();
             _connection?.Dispose();
-            _model?.Dispose();
         }
     }
 }
