@@ -10,7 +10,7 @@ namespace UpdatesScraper.Tests
         private readonly Subject<Update> _updates = new();
         public IObservable<Update> Updates => _updates;
         
-        public void Send(Update update)
+        public void Send(Update update, string routingKey = "")
         {
             _updates.OnNext(update);
         }
