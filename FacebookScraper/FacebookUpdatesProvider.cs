@@ -68,9 +68,8 @@ namespace FacebookScraper
                 return photos;
             }
 
-            Video video = new LowQualityVideo(
+            Video video = new Video(
                 post.VideoUrl,
-                post.PostUrl,
                 post.VideoThumbnailUrl);
 
             return photos

@@ -143,6 +143,9 @@ namespace TelegramSender
 
                     return video;
                 
+                case BytesPhoto p:
+                    return new InputMediaPhoto(new InputMedia(new MemoryStream(p.Bytes), "Photo"));
+                
                 default:
                     return new InputMediaPhoto(inputMedia);
             }

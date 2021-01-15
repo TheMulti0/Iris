@@ -20,6 +20,8 @@ namespace Common
         
         public string Source { get; init; }
 
+        public byte[] Screenshot { get; set; }
+
         public override string ToString()
         {
             return $"{Url} (By {Author}, Media length: {Media?.Count}, Repost: {Repost})";

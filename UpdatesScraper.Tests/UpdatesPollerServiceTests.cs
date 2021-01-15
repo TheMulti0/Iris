@@ -30,7 +30,6 @@ namespace UpdatesScraper.Tests
                 .AddUpdatesScraperMockRepositories()
                 .AddSingleton<IProducer<Update>, MockUpdatesProducer>()
                 .AddSingleton<IUpdatesProvider, MockUpdatesProvider>()
-                .AddVideoExtractor(new VideoExtractorConfig())
                 .AddUpdatesScraper(pollerConfig);
             
             var services = addHostedService

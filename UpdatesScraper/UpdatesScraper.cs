@@ -15,7 +15,6 @@ namespace UpdatesScraper
         private readonly IUpdatesProvider _updatesProvider;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
-        private readonly VideoExtractor _videoExtractor;
         private readonly ILogger<UpdatesScraper> _logger;
 
         public UpdatesScraper(
@@ -23,14 +22,12 @@ namespace UpdatesScraper
             IUpdatesProvider updatesProvider,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
-            VideoExtractor videoExtractor,
             ILogger<UpdatesScraper> logger)
         {
             _config = config;
             _updatesProvider = updatesProvider;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
-            _videoExtractor = videoExtractor;
             _logger = logger;
         }
         
@@ -62,56 +59,12 @@ namespace UpdatesScraper
 
             UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(user);
 
-            ConfiguredCancelableAsyncEnumerable<Update> newUpdates = GetNewUpdates(sortedUpdates, userLatestUpdateTime)
-                .WithCancellation(cancellationToken);
+            var newUpdates = GetNewUpdates(sortedUpdates, userLatestUpdateTime);
 
-            await foreach (Update update in newUpdates)
+            await foreach (Update update in newUpdates.WithCancellation(cancellationToken))
             {
-                yield return update.Media?.Any() == true
-                    ? await WithExtractedVideo(update, cancellationToken) 
-                    : update;
+                yield return update;
             }
-        }
-
-        private async ValueTask<Update> WithExtractedVideo(Update update, CancellationToken cancellationToken)
-        {
-            var newMedia = await update.Media.ToAsyncEnumerable()
-                .SelectAwaitWithCancellation(ExtractVideo)
-                .ToListAsync(cancellationToken);
-
-            return update with { Media = newMedia };
-        }
-
-        private async ValueTask<IMedia> ExtractVideo(
-            IMedia media, CancellationToken cancellationToken)
-        {
-            if (media is not LowQualityVideo video)
-            {
-                return media;
-            }
-            
-            try
-            {
-                return await GetExtractedVideo(video);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to extract video of url {}", video.Url);
-            }
-
-            return media;
-        }
-
-        private async Task<IMedia> GetExtractedVideo(LowQualityVideo old)
-        {
-            Video extracted = await _videoExtractor.ExtractVideo(old.RequestUrl);
-            
-            if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
-            {
-                return extracted with { ThumbnailUrl = old.ThumbnailUrl };
-            }
-            
-            return extracted;
         }
 
         private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(User user)

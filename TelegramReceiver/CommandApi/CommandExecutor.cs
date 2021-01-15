@@ -244,6 +244,9 @@ namespace TelegramReceiver
                 case Route.ToggleUserSuffix:
                     return typeof(ToggleUserSuffixCommand);
                 
+                case Route.ToggleUserSendScreenshotOnly:
+                    return typeof(ToggleUserSendScreenshotOnlyCommand);
+                
                 default:
                     _logger.LogError("Failed to find correct command for route {}", route);
                     return null;

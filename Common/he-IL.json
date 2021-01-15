@@ -36,5 +36,6 @@
     "Disabled": "מבוטל",
     "Enabled": "מאופשר",
     "SetLanguage": "קבע שפה",
-    "ShowSuffix": "הצגת סיומת"
+    "ShowSuffix": "הצגת סיומת",
+    "SendScreenshotOnly": "שלח צילום מסך בלבד"
 }

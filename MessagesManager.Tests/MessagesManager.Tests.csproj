@@ -14,13 +14,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\MessagesManager\MessagesManager.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TwitterScraper\TwitterScraper.csproj" />
+      <None Update="extract_video_prod.py">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

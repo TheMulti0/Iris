@@ -17,6 +17,8 @@ namespace Common
 
         public bool ShowSuffix { get; set; }
 
+        public bool SendScreenshotOnly { get; set; }
+
         public bool Equals(UserChatSubscription other)
         {
             if (ReferenceEquals(null, other))

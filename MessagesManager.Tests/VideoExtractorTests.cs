@@ -2,7 +2,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UpdatesScraper.Tests
+namespace MessagesManager.Tests
 {
     
     [TestClass]

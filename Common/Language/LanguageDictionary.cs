@@ -42,6 +42,7 @@ namespace Common
         public string Enabled { get; set; }
         public string SetLanguage { get; set; }
         public string ShowSuffix { get; set; }
+        public string SendScreenshotOnly { get; set; }
 
         public string GetPlatform(Platform platform)
         {

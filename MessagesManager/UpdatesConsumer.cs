@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,15 +14,21 @@ namespace MessagesManager
     {
         private readonly IProducer<Message> _producer;
         private readonly ISavedUsersRepository _repository;
+        private readonly VideoExtractor _videoExtractor;
+        private readonly Screenshotter _screenshotter;
         private readonly ILogger<UpdatesConsumer> _logger;
 
         public UpdatesConsumer(
             IProducer<Message> producer,
             ISavedUsersRepository repository,
+            VideoExtractor videoExtractor,
+            Screenshotter screenshotter,
             ILogger<UpdatesConsumer> logger)
         {
             _producer = producer;
             _repository = repository;
+            _videoExtractor = videoExtractor;
+            _screenshotter = screenshotter;
             _logger = logger;
         }
 
@@ -31,11 +38,73 @@ namespace MessagesManager
 
             SavedUser savedUser = await _repository.GetAsync(update.Author);
             List<UserChatSubscription> destinationChats = savedUser.Chats.ToList();
-            
+
+            Update newUpdate = await ModifiedUpdate(update, destinationChats, token);
+
             _producer.Send(
                 new Message(
-                    update,
+                    newUpdate,
                     destinationChats));
+        }
+
+        private async Task<Update> ModifiedUpdate(
+            Update update,
+            IEnumerable<UserChatSubscription> destinationChats,
+            CancellationToken token)
+        {
+            List<IMedia> media = await WithExtractedVideos(update.Url, update.Media, token);
+
+            if (!destinationChats.Any(subscription => subscription.SendScreenshotOnly))
+            {
+                return update with { Media = media };
+            }
+            
+            byte[] screenshot = await _screenshotter.ScreenshotAsync(update);
+
+            return update with { Media = media, Screenshot = screenshot };
+        }
+
+        private async Task<List<IMedia>> WithExtractedVideos(
+            string updateUrl,
+            IEnumerable<IMedia> media,
+            CancellationToken cancellationToken)
+        {
+            return await media
+                .ToAsyncEnumerable()
+                .SelectAwait(m => ExtractVideo(updateUrl, m))
+                .ToListAsync(cancellationToken);
+        }
+
+        private async ValueTask<IMedia> ExtractVideo(
+            string updateUrl, IMedia media)
+        {
+            if (media is not Video video)
+            {
+                return media;
+            }
+            
+            try
+            {
+                return await GetExtractedVideo(updateUrl, video);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to extract video of url {}", video.Url);
+            }
+
+            return media;
+        }
+
+        private async Task<IMedia> GetExtractedVideo(string updateUrl, Video old)
+        {
+            Video extracted = await _videoExtractor.ExtractVideo(updateUrl);
+            
+            if (extracted.ThumbnailUrl == null && old.ThumbnailUrl != null)
+            {
+                return extracted with { ThumbnailUrl = old.ThumbnailUrl };
+            }
+            
+            return extracted;
         }
     }
 }

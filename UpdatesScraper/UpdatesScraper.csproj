@@ -17,10 +17,4 @@
         <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="extract_video.py">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>

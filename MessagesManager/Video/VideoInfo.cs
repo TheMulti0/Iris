@@ -1,6 +1,6 @@
 using System;
 
-namespace UpdatesScraper
+namespace MessagesManager
 {
     public record VideoInfo(
         string Url,

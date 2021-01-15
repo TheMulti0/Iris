@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
-namespace UpdatesScraper
+namespace MessagesManager
 {
     internal static class JsonElementExtensions
     {

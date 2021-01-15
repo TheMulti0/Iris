@@ -72,6 +72,9 @@ namespace TelegramReceiver
             string showSuffix = subscription.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
             
+            string sendScreenshotOnly = subscription.SendScreenshotOnly ? Dictionary.Enabled : Dictionary.Disabled;
+            text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {showSuffix}");
+            
             return text.ToString();
         }
 
@@ -79,6 +82,7 @@ namespace TelegramReceiver
         {
             string prefixAction = subscription.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
             string suffixAction = subscription.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
+            string screenshotAction = subscription.SendScreenshotOnly ? Dictionary.Disable : Dictionary.Enable;
 
             string userInfo = $"{SelectedUser.UserId}-{SelectedUser.Platform}";
             
@@ -108,6 +112,12 @@ namespace TelegramReceiver
                         InlineKeyboardButton.WithCallbackData(
                             $"{suffixAction} {Dictionary.ShowSuffix}",
                             $"{Route.ToggleUserSuffix}-{userInfo}")
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(
+                            $"{screenshotAction} {Dictionary.SendScreenshotOnly}",
+                            $"{Route.ToggleUserSendScreenshotOnly}-{userInfo}")
                     },
                     new []
                     {

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TwitterScraper.Tests
 {
+    [TestClass]
     public class TwitterUpdatesProviderTests
     {
         private readonly TwitterUpdatesProvider _twitter;
@@ -19,7 +20,7 @@ namespace TwitterScraper.Tests
                     File.ReadAllText("appsettings.json")));
         }
 
-        [Test]
+        [TestMethod]
         public async Task Test1()
         {
             List<Update> updates = (await _twitter.GetUpdatesAsync(new User("themulti0", Platform.Twitter))).ToList();

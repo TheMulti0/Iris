@@ -37,5 +37,6 @@
     "Disabled": "Disabled",
     "Enabled": "Enabled",
     "SetLanguage": "Set language",
-    "ShowSuffix": "Show suffix"
+    "ShowSuffix": "Show suffix",
+    "SendScreenshotOnly": "Send screenshot only"
 }

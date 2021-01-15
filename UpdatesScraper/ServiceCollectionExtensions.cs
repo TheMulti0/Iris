@@ -39,7 +39,6 @@ namespace UpdatesScraper
             return services
                 .AddProducer<Update>(producerConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
-                .AddVideoExtractor(videoExtractorConfig)
                 .AddUpdatesScraper(scraperConfig)
                 .AddJobsConsumer(consumerConfig);
         }
@@ -79,15 +78,6 @@ namespace UpdatesScraper
             return services
                 .AddSingleton(config)
                 .AddSingleton<IUpdatesProvider, TProvider>();
-        }
-
-        public static IServiceCollection AddVideoExtractor(
-            this IServiceCollection services,
-            VideoExtractorConfig config)
-        {
-            return services
-                .AddSingleton(config)
-                .AddSingleton<VideoExtractor>();
         }
 
         public static IServiceCollection AddUpdatesScraper(

@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
 
-namespace UpdatesScraper
+namespace MessagesManager
 {
     public class VideoExtractor
     {

@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TwitterScraper.Tests
 {
+    [TestClass]
     public class UrlExpanderTests
     {
         private readonly UrlExpander _expander;
@@ -12,7 +13,7 @@ namespace TwitterScraper.Tests
             _expander = new UrlExpander();
         }
 
-        [Test]
+        [TestMethod]
         public async Task TestTwitterShortenedUrl()
         {
             const string url = "https://t.co/QOSO1d4kY3";
@@ -23,7 +24,7 @@ namespace TwitterScraper.Tests
             Assert.AreNotEqual(url, expanded);
         }
         
-        [Test]
+        [TestMethod]
         public async Task TestTwitterShortenedFacebookPostUrl()
         {
             const string url = "https://t.co/Po1PsWNB49";

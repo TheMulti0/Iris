@@ -15,6 +15,7 @@
         SetUserDisplayName,
         SetUserLanguage,
         ToggleUserPrefix,
-        ToggleUserSuffix
+        ToggleUserSuffix,
+        ToggleUserSendScreenshotOnly
     }
 }

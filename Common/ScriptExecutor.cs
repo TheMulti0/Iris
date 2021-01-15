@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UpdatesScraper
+namespace Common
 {
     public static class ScriptExecutor
     {

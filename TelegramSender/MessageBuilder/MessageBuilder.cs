@@ -25,6 +25,20 @@ namespace TelegramSender
             
             string suffix = $"\n\n\n{update.Url}";
 
+            if (chatSubscription.SendScreenshotOnly && update.Screenshot != null)
+            {
+                string prefixx = chatSubscription.ShowPrefix
+                    ? prefix
+                    : string.Empty;
+
+                string msg = prefixx + (chatSubscription.ShowSuffix ? suffix : string.Empty);
+                
+                return new MessageInfo(
+                    msg,
+                    new []{ new BytesPhoto(update.Screenshot) },
+                    chatSubscription.ChatId);
+            }
+
             string message = GetMessage(update, chatSubscription, prefix, suffix);
 
             return new MessageInfo(

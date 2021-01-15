@@ -35,6 +35,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("UpdatesConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesProducer");
     var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
+    var videoExtractorConfig = rootConfig.GetSection<VideoExtractorConfig>("VideoExtractor");
 
     services
         .AddSingleton<IMongoDbContext>(
@@ -45,6 +46,8 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
         .AddProducer<Message>(producerConfig)
+        .AddSingleton(_ => new VideoExtractor(videoExtractorConfig))
+        .AddSingleton<Screenshotter>()
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
         .AddConsumerService<Update>(consumerConfig)
         .BuildServiceProvider();
