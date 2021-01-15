@@ -28,9 +28,9 @@ namespace TwitterScraper
         {
             _twitterClient = new TwitterClient(
                 config.ConsumerKey,
-                config.ConsumerSecret,
-                config.AccessToken,
-                config.AccessTokenSecret);
+                config.ConsumerSecret);
+
+            _twitterClient.Auth.InitializeClientBearerTokenAsync().Wait();
 
             _urlExpander = new UrlExpander();
 
