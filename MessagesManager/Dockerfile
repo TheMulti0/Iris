@@ -20,4 +20,14 @@ RUN dotnet publish "MessagesManager.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+COPY --from=build /src/MessagesManager/package.json .
+RUN apt-get update -y && apt-get install npm -y
+RUN npm install
+
+COPY --from=build /src/MessagesManager/requirements.txt .
+RUN apt-get update -y && apt-get install python3-pip -y
+RUN pip3 install --upgrade pip
+RUN pip3 install -r "requirements.txt"
+
 ENTRYPOINT ["dotnet", "MessagesManager.dll"]
