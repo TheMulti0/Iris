@@ -73,7 +73,7 @@ namespace TelegramReceiver
             text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
             
             string sendScreenshotOnly = subscription.SendScreenshotOnly ? Dictionary.Enabled : Dictionary.Disabled;
-            text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {showSuffix}");
+            text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {sendScreenshotOnly}");
             
             return text.ToString();
         }
