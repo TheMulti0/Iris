@@ -18,16 +18,32 @@ FROM build AS publish
 RUN dotnet publish "MessagesManager.csproj" -c Release -o /app/publish
 
 FROM base AS final
+
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-COPY --from=build /src/MessagesManager/package.json .
-RUN apt-get update -y && apt-get install npm -y
-RUN npm install
 
 COPY --from=build /src/MessagesManager/requirements.txt .
 RUN apt-get update -y && apt-get install python3-pip -y
 RUN pip3 install --upgrade pip
 RUN pip3 install -r "requirements.txt"
+
+COPY --from=build /src/MessagesManager/package.json .
+RUN apt-get install npm -y
+RUN npm install
+
+ARG CHROME_VERSION="87.0.4280.141-1"
+RUN apt-get -f install && apt-get -y install wget gnupg2 apt-utils
+RUN wget --no-verbose -O /tmp/chrome.deb http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+    && apt-get update \
+    && apt-get install -y /tmp/chrome.deb --no-install-recommends --allow-downgrades fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
+    && rm /tmp/chrome.deb
+    
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser/Downloads \
+    && chown -R pptruser:pptruser /home/pptruser
+RUN chown -R pptruser:pptruser /app
+    
+ENV PUPPETEER_EXECUTABLE_PATH "/usr/bin/google-chrome-stable"
+USER pptruser
 
 ENTRYPOINT ["dotnet", "MessagesManager.dll"]
