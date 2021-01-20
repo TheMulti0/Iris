@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -33,13 +34,23 @@ namespace UserDataLayer
 
         public async Task AddOrUpdateAsync(User user, UserChatSubscription chat)
         {
+            SavedUser existing = await GetAsync(user);
+
+            if (existing?.Chats.Contains(chat) == true)
+            {
+                return;
+            }
+
+            var thisChat = new List<UserChatSubscription> { chat };
+            
+            List<UserChatSubscription> userChatSubscriptions = 
+                existing?.Chats?.Concat(thisChat).ToList() ?? thisChat;
+
             var savedUser = new SavedUser
             {
                 User = user,
-                Chats = new List<UserChatSubscription> { chat }
+                Chats = userChatSubscriptions
             };
-            
-            SavedUser existing = await GetAsync(user);
             
             if (existing == null)
             {
@@ -103,13 +114,9 @@ namespace UserDataLayer
 
         private async Task<bool> Update(SavedUser newUser, SavedUser existing)
         {
-            IEnumerable<UserChatSubscription> combinedChats = existing.Chats
-                .Where(info => !newUser.Chats.Contains(info))
-                .Concat(newUser.Chats);
-            
             UpdateDefinition<SavedUser> update = Builders<SavedUser>.Update
                 .Set(u => u.Version, existing.Version + 1)
-                .Set(u => u.Chats, combinedChats);
+                .Set(u => u.Chats, newUser.Chats);
 
             UpdateResult result = await _collection
                 .UpdateOneAsync(
