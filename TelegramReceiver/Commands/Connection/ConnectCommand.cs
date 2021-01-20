@@ -63,16 +63,7 @@ namespace TelegramReceiver
 
             await _repository.AddOrUpdateAsync(message.From, chatId, Language);
 
-            string chatTitle = chat.Title != null 
-                ? $" {chat.Title}" 
-                : string.Empty;
-            
-            await Client.SendTextMessageAsync(
-                chatId: ContextChat,
-                text: $"{Dictionary.ConnectedToChat}{chatTitle}! ({chatId})",
-                cancellationToken: token);
-
-            return new RedirectResult(Route.Connection, Context with { ConnectedChatId = chat });
+            return new RedirectResult(Route.Connection, Context with { ConnectedChatId = chat, ConnectedChat = chat });
         }
     }
 }
