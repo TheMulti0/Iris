@@ -30,7 +30,7 @@ namespace TelegramReceiver
             
             await Client.SendTextMessageAsync(
                 chatId: ContextChat,
-                text: $"{Dictionary.ConnectedToChat} {connectedChatInfo.Title}! ({ConnectedChat})",
+                text: $"{Dictionary.ConnectedToChat} {GetChatTitle(connectedChatInfo)}",
                 cancellationToken: token);
             
             return new NoRedirectResult();

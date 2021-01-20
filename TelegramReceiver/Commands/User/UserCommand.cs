@@ -58,7 +58,7 @@ namespace TelegramReceiver
 
         private string GetText(UserChatSubscription subscription)
         {
-            var text = new StringBuilder($"{Dictionary.SettingsFor} {SelectedUser.UserId}:");
+            var text = new StringBuilder($"{Dictionary.SettingsFor} {subscription.DisplayName}:");
             text.AppendLine("\n");
             text.AppendLine($"<b>{Dictionary.UserId}:</b> {SelectedUser.UserId}");
             text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(SelectedUser.Platform)}");

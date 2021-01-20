@@ -24,7 +24,6 @@ namespace Common
         public string Remove { get; set; }
         public string Removed { get; set; }
         public string SelectPlatform { get; set; }
-        public string UpdatedDisplayName { get; set; }
         public string EnterNewDisplayName { get; set; }
         public string EnterUserFromPlatform { get; set; }
         public string Added { get; set; }
@@ -43,6 +42,8 @@ namespace Common
         public string SetLanguage { get; set; }
         public string ShowSuffix { get; set; }
         public string SendScreenshotOnly { get; set; }
+        public string PrivateDm { get; set; }
+        public string Subscriptions { get; set; }
 
         public string GetPlatform(Platform platform)
         {

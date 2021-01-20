@@ -2,7 +2,7 @@
     "LanguageString": "English",
     "AddUser": "Add user",
     "UsersFound": "users found",
-    "NoUsersFound": "No user\\s found",
+    "NoUsersFound": "No users found",
     "NoChatId": "Supply chat id!",
     "NoChat": "Failed to find chat! (Is the bot inside this chat?)",
     "ConnectedToChat": "Connected to",
@@ -20,7 +20,6 @@
     "Removed": "Removed user",
     "SelectPlatform": "Select a platform",
     "Enter": "Select a platform",
-    "UpdatedDisplayName": "Updated display name to",
     "EnterNewDisplayName": "Enter new display name",
     "EnterUserFromPlatform": "Enter user from",
     "Added": "Added",
@@ -38,5 +37,7 @@
     "Enabled": "Enabled",
     "SetLanguage": "Set language",
     "ShowSuffix": "Show suffix",
-    "SendScreenshotOnly": "Send screenshot only"
+    "SendScreenshotOnly": "Send screenshot only",
+    "PrivateDm": "Private DM",
+    "Subscriptions": "Subscriptions"
 }

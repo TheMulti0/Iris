@@ -21,9 +21,9 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var chat = await Client.GetChatAsync(ConnectedChat, token);
-
-            string text = $"{Dictionary.SettingsFor} {chat.Title}";
+            Chat connectedChatInfo = Context.ConnectedChat ?? await Client.GetChatAsync(ConnectedChat, token);
+            
+            string text = $"{Dictionary.SettingsFor} {GetChatTitle(connectedChatInfo)}";
             var markup = GetMarkup();
 
             if (Trigger.Type == UpdateType.CallbackQuery)
@@ -52,7 +52,7 @@ namespace TelegramReceiver
         {
             InlineKeyboardButton[] buttons = {
                 InlineKeyboardButton.WithCallbackData(
-                    $"{Dictionary.UsersFound}",
+                    $"{Dictionary.Subscriptions}",
                     Route.Platforms.ToString()),
 
                 InlineKeyboardButton.WithCallbackData(
@@ -60,7 +60,7 @@ namespace TelegramReceiver
                     Route.Language.ToString())
             };
 
-            return new InlineKeyboardMarkup(buttons.Batch(3));
+            return new InlineKeyboardMarkup(buttons.Batch(1));
         }
     }
 }

@@ -36,15 +36,7 @@ namespace UserDataLayer
         {
             SavedUser existing = await GetAsync(user);
 
-            if (existing?.Chats.Contains(chat) == true)
-            {
-                return;
-            }
-
-            var thisChat = new List<UserChatSubscription> { chat };
-            
-            List<UserChatSubscription> userChatSubscriptions = 
-                existing?.Chats?.Concat(thisChat).ToList() ?? thisChat;
+            List<UserChatSubscription> userChatSubscriptions = GetSubscriptions(existing, chat);
 
             var savedUser = new SavedUser
             {
@@ -66,6 +58,27 @@ namespace UserDataLayer
                     await GetAsync(user));
             }
             while (!updateSuccess);
+        }
+
+        private static List<UserChatSubscription> GetSubscriptions(
+            SavedUser existing,
+            UserChatSubscription chat)
+        {
+            var thisChat = new List<UserChatSubscription> { chat };
+
+            if (existing == null)
+            {
+                return thisChat;
+            }
+
+            if (!existing.Chats.Contains(chat))
+            {
+                return existing.Chats.Concat(thisChat).ToList();
+            }
+            
+            existing.Chats[existing.Chats.IndexOf(chat)] = chat;
+
+            return existing.Chats;
         }
 
         public async Task RemoveAsync(User user, string chatId)

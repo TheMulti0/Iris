@@ -47,5 +47,12 @@ namespace TelegramReceiver
                 return null;
             }
         }
+
+        protected string GetChatTitle(Chat connectedChat)
+        {
+            return string.IsNullOrEmpty(connectedChat?.Title) 
+                ? Dictionary.PrivateDm 
+                : $"{connectedChat.Title}\n({connectedChat.Id})";
+        } 
     }
 }

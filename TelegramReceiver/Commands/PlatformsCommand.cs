@@ -51,17 +51,14 @@ namespace TelegramReceiver
             
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = Enum.GetValues<Platform>()
                 .Select(ToButton)
-                .Batch(2)
                 .Concat(
                     new[]
                     {
-                        new []
-                        {
-                            InlineKeyboardButton.WithCallbackData(
-                                Dictionary.Back,
-                                Route.Settings.ToString())                            
-                        }
-                    });
+                        InlineKeyboardButton.WithCallbackData(
+                            Dictionary.Back,
+                            Route.Settings.ToString())          
+                    })
+                .Batch(1);
             
             return new InlineKeyboardMarkup(userButtons);
         }

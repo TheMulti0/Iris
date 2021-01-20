@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Update = Telegram.Bot.Types.Update;
@@ -92,23 +91,13 @@ namespace TelegramReceiver
                         Language
                     })
                 .Select(LanguageToButton)
-                .Batch(2)
                 .Concat(
                     new []
                     { 
-                        new []
-                        {
-                            InlineKeyboardButton
-                                .WithCallbackData(Dictionary.Back, Route.Settings.ToString())
-                        } 
-                    });
-        }
-
-        private static Language GetLanguage(CallbackQuery query)
-        {
-            string[] items = query.Data.Split("-");
-            
-            return Enum.Parse<Language>(items.Last());
+                        InlineKeyboardButton
+                            .WithCallbackData(Dictionary.Back, Route.Settings.ToString())
+                    })
+                .Batch(1);
         }
     }
 }

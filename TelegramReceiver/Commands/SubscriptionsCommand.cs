@@ -73,34 +73,30 @@ namespace TelegramReceiver
         {
             IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
                 .Select(UserToButton)
-                .Batch(1)
-                .Concat(GetConstantButtons());
+                .Concat(GetConstantButtons())
+                .Batch(1);
             
             return new InlineKeyboardMarkup(userButtons);
         }
 
-        private InlineKeyboardButton[][] GetConstantButtons() => new[]
+        private InlineKeyboardButton[] GetConstantButtons() => new[]
         {
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.AddUser,
-                    $"{Route.AddUser}-{SelectedPlatform}")
-            },
-            new[]
-            {
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.Back,
-                    Route.Platforms.ToString()), 
-            }
+            InlineKeyboardButton.WithCallbackData(
+                Dictionary.AddUser,
+                $"{Route.AddUser}-{SelectedPlatform}"),
+            InlineKeyboardButton.WithCallbackData(
+                Dictionary.Back,
+                Route.Platforms.ToString())
         };
 
-        private static InlineKeyboardButton UserToButton(SavedUser user)
+        private InlineKeyboardButton UserToButton(SavedUser user)
         {
             (string userId, Platform platform) = user.User;
 
+            UserChatSubscription chatSubscription = user.Chats.First(subscription => subscription.ChatId == ConnectedChat);
+            
             return InlineKeyboardButton.WithCallbackData(
-                $"{user.User.UserId}",
+                $"{chatSubscription.DisplayName}",
                 $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
         }
     }
