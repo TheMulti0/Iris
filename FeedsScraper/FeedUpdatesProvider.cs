@@ -12,26 +12,16 @@ namespace FeedsScraper
 {
     public class FeedUpdatesProvider : IUpdatesProvider
     {
-        private readonly UpdatesProviderBaseConfig _config;
-
-        public FeedUpdatesProvider(
-            UpdatesProviderBaseConfig config)
-        {
-            _config = config;
-        }
-        
         public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
             // userId is treated as url to the feed
             Feed feed = await FeedReader.ReadAsync(user.UserId);
 
             return feed.Items.Select(
-                ToUpdate(
-                    user,
-                    _config.Name));
+                ToUpdate(user));
         }
 
-        private Func<FeedItem, Update> ToUpdate(User feed, string source)
+        private Func<FeedItem, Update> ToUpdate(User feed)
         {
             return item => new Update
             {
@@ -40,8 +30,7 @@ namespace FeedsScraper
                 CreationDate = item.PublishingDate,
                 Url = item.Link,
                 Media = GetMedia(item),
-                Repost = false,
-                Source = source
+                Repost = false
             };
         }
 

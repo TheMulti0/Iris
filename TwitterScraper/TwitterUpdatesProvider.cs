@@ -69,8 +69,7 @@ namespace TwitterScraper
                 CreationDate = tweet.CreatedAt.DateTime,
                 Url = tweet.Url,
                 Media = GetMedia(tweet).ToList(),
-                Repost = tweet.IsRetweet,
-                Source = _config.Name
+                Repost = tweet.IsRetweet
             };
         }
 

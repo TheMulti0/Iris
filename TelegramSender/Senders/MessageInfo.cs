@@ -11,7 +11,8 @@ namespace TelegramSender
         ChatId ChatId,
         CancellationToken CancellationToken = default,
         int ReplyMessageId = 0,
-        bool DownloadMedia = false)
+        bool DownloadMedia = false,
+        bool DisableWebPagePreview = true)
     {
         public bool FitsInOneTextMessage => Message.Length <= TelegramConstants.MaxTextMessageLength;
 

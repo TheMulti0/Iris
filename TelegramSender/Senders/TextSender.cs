@@ -35,7 +35,7 @@ namespace TelegramSender
                 chatId: message.ChatId,
                 text: message.Message,
                 parseMode: TelegramConstants.MessageParseMode,
-                disableWebPagePreview: TelegramConstants.DisableWebPagePreview,
+                disableWebPagePreview: message.DisableWebPagePreview,
                 replyToMessageId: message.ReplyMessageId,
                 cancellationToken: message.CancellationToken
             );

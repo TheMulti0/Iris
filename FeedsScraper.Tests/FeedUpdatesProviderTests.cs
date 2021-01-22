@@ -14,7 +14,7 @@ namespace FeedsScraper.Tests
 
         public FeedUpdatesProviderTests()
         {
-            _provider = new FeedUpdatesProvider(new UpdatesProviderBaseConfig{ Name = "rss" });
+            _provider = new FeedUpdatesProvider();
         }
 
         [TestMethod]

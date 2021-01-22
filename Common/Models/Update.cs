@@ -17,9 +17,9 @@ namespace Common
         public List<IMedia> Media { get; init; }
 
         public bool Repost { get; init; }
-        
-        public string Source { get; init; }
 
+        public bool IsLive { get; set; }
+        
         public byte[] Screenshot { get; set; }
 
         public override string ToString()

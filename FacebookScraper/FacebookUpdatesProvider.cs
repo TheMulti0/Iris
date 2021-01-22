@@ -13,14 +13,11 @@ namespace FacebookScraper
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
-        private readonly UpdatesProviderBaseConfig _config;
         private readonly ILogger<FacebookUpdatesProvider> _logger;
 
         public FacebookUpdatesProvider(
-            UpdatesProviderBaseConfig config,
             ILogger<FacebookUpdatesProvider> logger)
         {
-            _config = config;
             _logger = logger;
         }
 
@@ -45,7 +42,7 @@ namespace FacebookScraper
             return Enumerable.Empty<Update>();
         }
 
-        private Func<Post, Update> ToUpdate(User user)
+        private static Func<Post, Update> ToUpdate(User user)
         {
             return post => new Update
             {
@@ -55,7 +52,7 @@ namespace FacebookScraper
                 Url = post.PostUrl,
                 Media = GetMedia(post).ToList(),
                 Repost = post.Text == post.SharedText,
-                Source = _config.Name
+                IsLive = post.IsLive
             };
         }
 
@@ -68,7 +65,12 @@ namespace FacebookScraper
                 return photos;
             }
 
-            Video video = new Video(
+            if (post.IsLive)
+            {
+                return new List<IMedia>();
+            }
+            
+            var video = new Video(
                 post.VideoUrl,
                 post.VideoThumbnailUrl);
 

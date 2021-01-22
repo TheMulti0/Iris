@@ -15,13 +15,11 @@ namespace TelegramSender
         public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {
             var languageDictionary = _languages.Dictionary[chatSubscription.Language];
-            
-            string repostPrefix = update.Repost 
-                ? $" {languageDictionary.Repost}" 
-                : string.Empty;
+
+            string typePrefix = GetTypePrefix(update, languageDictionary);
 
             string prefix =
-                $"<a href=\"{update.Url}\">{chatSubscription.DisplayName}{repostPrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
+                $"<a href=\"{update.Url}\">{chatSubscription.DisplayName}{typePrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
             
             string suffix = $"\n\n\n{update.Url}";
 
@@ -44,7 +42,21 @@ namespace TelegramSender
             return new MessageInfo(
                 message,
                 update.Media,
-                chatSubscription.ChatId);
+                chatSubscription.ChatId,
+                DisableWebPagePreview: !update.IsLive);
+        }
+
+        private static string GetTypePrefix(Update update, LanguageDictionary languageDictionary)
+        {
+            if (update.Repost)
+            {
+                return $" {languageDictionary.Repost}";
+            }
+            if (update.IsLive)
+            {
+                return $" {languageDictionary.Live}";
+            }
+            return string.Empty;
         }
 
         private static string GetMessage(Update update, UserChatSubscription chatSubscription, string prefix, string suffix)

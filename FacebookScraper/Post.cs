@@ -33,5 +33,7 @@ namespace FacebookScraper
         [JsonProperty("user_id")]
             string UserId,
         [JsonProperty("images")]
-            string[] Images);
+            string[] Images,
+        [JsonProperty("is_live")]
+            bool IsLive);
 }

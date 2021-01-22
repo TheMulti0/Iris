@@ -44,6 +44,7 @@ namespace Common
         public string SendScreenshotOnly { get; set; }
         public string PrivateDm { get; set; }
         public string Subscriptions { get; set; }
+        public string Live { get; set; }
 
         public string GetPlatform(Platform platform)
         {

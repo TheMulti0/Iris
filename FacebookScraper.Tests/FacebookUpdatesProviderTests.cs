@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -23,18 +24,17 @@ namespace FacebookScraper.Tests
                 });
             
             _updatesProvider = new FacebookUpdatesProvider(
-                new UpdatesProviderBaseConfig { Name = "Facebook" },
                 loggerFactory.CreateLogger<FacebookUpdatesProvider>());
         }
 
         [TestMethod]
         public async Task TestGetUpdatesAsync()
         {
-            var updates = await _updatesProvider.GetUpdatesAsync(new User("Netanyahu", Platform.Facebook));
+            List<Update> updates = (await _updatesProvider.GetUpdatesAsync(new User("Netanyahu", Platform.Facebook)))?.ToList();
             
             Assert.IsNotNull(updates);
-            
-            CollectionAssert.AllItemsAreNotNull(updates.ToList());
+
+            CollectionAssert.AllItemsAreNotNull(updates);
         }
     }
 }
