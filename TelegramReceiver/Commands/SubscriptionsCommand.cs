@@ -65,24 +65,35 @@ namespace TelegramReceiver
 
         private InlineKeyboardMarkup GetNoUsersMarkup()
         {
-            return new(GetConstantButtons());
+            return new(
+                GetAddUserButton()
+                    .Concat(GetBackButton())
+                    .Batch(1));
         }
 
-        private InlineKeyboardMarkup GetUsersMarkup(IEnumerable<SavedUser> users)
+        private InlineKeyboardMarkup GetUsersMarkup(IReadOnlyCollection<SavedUser> users)
         {
-            IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = users
+            IEnumerable<InlineKeyboardButton> userButtons = users
                 .Select(UserToButton)
-                .Concat(GetConstantButtons())
-                .Batch(1);
+                .ToList();
             
-            return new InlineKeyboardMarkup(userButtons);
+            if (users.Count <= 4 && !IsSuperUser)
+            {
+                userButtons = userButtons.Concat(GetAddUserButton());
+            }
+            
+            return new InlineKeyboardMarkup(userButtons.Concat(GetBackButton()).Batch(1));
         }
 
-        private InlineKeyboardButton[] GetConstantButtons() => new[]
+        private InlineKeyboardButton[] GetAddUserButton() => new[]
         {
             InlineKeyboardButton.WithCallbackData(
                 Dictionary.AddUser,
-                $"{Route.AddUser}-{SelectedPlatform}"),
+                $"{Route.AddUser}-{SelectedPlatform}")
+        };
+
+        private InlineKeyboardButton[] GetBackButton() => new[]
+        {
             InlineKeyboardButton.WithCallbackData(
                 Dictionary.Back,
                 Route.Platforms.ToString())

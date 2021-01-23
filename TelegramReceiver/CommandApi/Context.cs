@@ -20,7 +20,8 @@ namespace TelegramReceiver
         ChatId ContextChatId,
         ChatId ConnectedChatId,
         Language Language,
-        LanguageDictionary LanguageDictionary)
+        LanguageDictionary LanguageDictionary,
+        bool IsSuperUser)
     {
         public User SelectedUser { get; init; } = ExtractUser(Trigger?.CallbackQuery);
         

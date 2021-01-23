@@ -49,18 +49,15 @@ namespace TelegramReceiver
                     $"{Route.Subscriptions}-{Enum.GetName(platform)}");
             }
             
-            IEnumerable<IEnumerable<InlineKeyboardButton>> userButtons = Enum.GetValues<Platform>()
+            IEnumerable<IEnumerable<InlineKeyboardButton>> platformButtons = Enum.GetValues<Platform>()
+                .Except(new []
+                {
+                    Platform.Feeds
+                })
                 .Select(ToButton)
-                .Concat(
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            Dictionary.Back,
-                            Route.Settings.ToString())          
-                    })
                 .Batch(1);
             
-            return new InlineKeyboardMarkup(userButtons);
+            return new InlineKeyboardMarkup(platformButtons);
         }
     }
 }

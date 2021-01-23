@@ -17,6 +17,7 @@ namespace TelegramReceiver
     public class CommandExecutor
     {
         private readonly ITelegramBotClient _client;
+        private readonly TelegramConfig _config;
         private readonly CommandFactory _commandFactory;
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly Languages _languages;
@@ -84,6 +85,7 @@ namespace TelegramReceiver
             ILogger<CommandExecutor> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
+            _config = config;
             _commandFactory = commandFactory;
             _connectionsRepository = connectionsRepository;
             _languages = languages;
@@ -186,7 +188,8 @@ namespace TelegramReceiver
                 contextChatId,
                 connection?.Chat ?? contextChatId,
                 connection?.Language ?? Language.English,
-                _languages.Dictionary[connection?.Language ?? Language.English]);
+                _languages.Dictionary[connection?.Language ?? Language.English],
+                _config.SuperUsers.Contains(update.GetUser()?.Username));
         }
 
         private static async Task<Update> GetNextMessage(IObservable<Update> chatUpdates)

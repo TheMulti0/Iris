@@ -73,7 +73,7 @@ namespace TelegramReceiver
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, SelectedUser = request });
+                Context with { Trigger = null, SelectedUser = user });
         }
 
         private Task SendRequestMessage(

@@ -7,5 +7,7 @@ namespace TelegramReceiver
         public string AccessToken { get; set; }
 
         public TimeSpan DefaultInterval { get; set; }
+
+        public string[] SuperUsers { get; set; } = new string[0];
     }
 }

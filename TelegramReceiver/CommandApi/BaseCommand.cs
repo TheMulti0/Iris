@@ -20,6 +20,7 @@ namespace TelegramReceiver
         protected readonly ChatId ConnectedChat;
         protected readonly Language Language;
         protected readonly LanguageDictionary Dictionary;
+        protected readonly bool IsSuperUser;
         protected readonly User SelectedUser;
         protected readonly Platform? SelectedPlatform;
         
@@ -27,7 +28,7 @@ namespace TelegramReceiver
         {
             Context = context;
             
-            (Client, NextMessage, NextCallbackQuery, Trigger, ContextChat, ConnectedChat, Language, Dictionary) = context;
+            (Client, NextMessage, NextCallbackQuery, Trigger, ContextChat, ConnectedChat, Language, Dictionary, IsSuperUser) = context;
 
             SelectedUser = context.SelectedUser;
 

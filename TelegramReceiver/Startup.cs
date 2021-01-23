@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using TelegramReceiver;
+using TwitterScraper;
 using UserDataLayer;
 using MongoApplicationDbContext = UserDataLayer.MongoApplicationDbContext;
 
@@ -41,10 +42,11 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
+    var twitterConfig = rootConfig.GetSection<TwitterUpdatesProviderConfig>("Twitter");
 
     AddMongoDbRepositories(services, mongoConfig);
     AddRabbitMq(services, connectionConfig, producerConfig);
-    AddValidators(services);
+    AddValidators(services, twitterConfig);
     AddCommandHandling(services, telegramConfig);
     
     services
@@ -78,13 +80,19 @@ static IServiceCollection AddRabbitMq(
 }
 
 static IServiceCollection AddValidators(
-    IServiceCollection services)
+    IServiceCollection services,
+    TwitterUpdatesProviderConfig twitterConfig)
 {
     return services
         .AddSingleton<FacebookUpdatesProvider>()
         .AddSingleton<FacebookValidator>()
         .AddSingleton(
-            provider => new UserValidator(provider.GetService<FacebookValidator>()));
+            _ => new TwitterUpdatesProvider(twitterConfig))
+        .AddSingleton<TwitterValidator>()
+        .AddSingleton(
+            provider => new UserValidator(
+                provider.GetService<FacebookValidator>(),
+                provider.GetService<TwitterValidator>()));
 }
 
 static IServiceCollection AddCommandHandling(

@@ -9,13 +9,18 @@ namespace TelegramReceiver
         private readonly Dictionary<Platform, IPlatformValidator> _validators;
 
         public UserValidator(
-            FacebookValidator facebook)
+            FacebookValidator facebook,
+            TwitterValidator twitter)
         {
             _validators = new Dictionary<Platform, IPlatformValidator>
             {
                 {
                     Platform.Facebook,
                     facebook
+                },
+                {
+                    Platform.Twitter,
+                    twitter
                 }
             };
         }
