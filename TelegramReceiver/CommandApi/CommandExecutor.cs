@@ -38,12 +38,25 @@ namespace TelegramReceiver
             CommandRoutes = new Dictionary<Route?, string[]>
             {
                 {
+                    Route.Start,
+                    new []
+                    {
+                        "/start"
+                    }
+                },
+                {
                     Route.Settings,
                     new[]
                     {
-                        "/s",
                         "/settings",
                         "/manage"
+                    }
+                },
+                {
+                    Route.Language,
+                    new[]
+                    {
+                        "/language"
                     }
                 },
                 {
@@ -227,6 +240,9 @@ namespace TelegramReceiver
         {
             switch (route)
             {
+                case Route.Start:
+                    return typeof(StartCommand);
+                
                 case Route.Settings:
                     return typeof(SettingsCommand);
                 

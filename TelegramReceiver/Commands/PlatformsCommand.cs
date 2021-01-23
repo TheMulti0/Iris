@@ -55,6 +55,12 @@ namespace TelegramReceiver
                     Platform.Feeds
                 })
                 .Select(ToButton)
+                .Concat(new []
+                {
+                    InlineKeyboardButton.WithCallbackData(
+                        Dictionary.Back,
+                        Route.Settings.ToString()), 
+                })
                 .Batch(1);
             
             return new InlineKeyboardMarkup(platformButtons);

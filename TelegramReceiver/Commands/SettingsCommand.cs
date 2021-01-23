@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common;
 using MoreLinq.Extensions;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -34,7 +31,6 @@ namespace TelegramReceiver
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: token);
-                
             }
             else
             {

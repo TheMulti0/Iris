@@ -46,6 +46,7 @@ namespace Common
         public string Subscriptions { get; set; }
         public string Live { get; set; }
         public string UserNotFound { get; set; }
+        public string Start { get; set; }
 
         public string GetPlatform(Platform platform)
         {

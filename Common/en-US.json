@@ -19,7 +19,6 @@
     "Remove": "Remove",
     "Removed": "Removed user",
     "SelectPlatform": "Select a platform",
-    "Enter": "Select a platform",
     "EnterNewDisplayName": "Enter new display name",
     "EnterUserFromPlatform": "Enter user from",
     "Added": "Added",
@@ -41,5 +40,6 @@
     "PrivateDm": "Private DM",
     "Subscriptions": "Subscriptions",
     "Live": "in a live stream",
-    "UserNotFound": "User not found!"
+    "UserNotFound": "User not found!",
+    "Start": "Welcome to @IrisUpdateBot!\r\nThe automatic social-media update bot, made by @themulti0\r\n\r\nHere are the list of commands available:\r\n\r\n/settings - Manage settings for connected chat\r\n\r\n/subscriptions - Jump straight ahead to managing specifically platform subscriptions (possible to enter from /settings)\r\n\r\n/language - Jump straight ahead to changing the interface's language (possible to enter from /settings)\r\n\r\n/connect - Connect to a specific chat\r\n\r\n/connection - Display current connected chat\r\n\r\n/disconnect - Disconnect from connected chat, connect back to this DM chat"
 }
