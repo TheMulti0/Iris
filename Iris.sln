@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramSender.Tests", "Tel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions.Tests", "Extensions.Tests\Extensions.Tests.csproj", "{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockUpdatesProducer", "MockUpdatesProducer\MockUpdatesProducer.csproj", "{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdatesScraper", "UpdatesScraper\UpdatesScraper.csproj", "{391D2F02-2E02-4992-8AA4-5B367C82C67B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FacebookScraper", "FacebookScraper\FacebookScraper.csproj", "{16CBBE91-5418-4886-9605-F73EAC56996B}"
@@ -71,10 +69,6 @@ Global
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F337226-8A0E-45D6-9A3D-EA9DC4D7DE58}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC21EB8-6503-4324-8B44-5F84DF2FBF3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{391D2F02-2E02-4992-8AA4-5B367C82C67B}.Release|Any CPU.ActiveCfg = Release|Any CPU
