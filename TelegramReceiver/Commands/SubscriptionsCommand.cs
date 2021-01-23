@@ -33,7 +33,7 @@ namespace TelegramReceiver
 
             (InlineKeyboardMarkup markup, string text) = GetMessageDetails(currentUsers);
 
-            if (Trigger.Type == UpdateType.CallbackQuery)
+            if (Trigger?.Type == UpdateType.CallbackQuery)
             {
                 await Client.EditMessageTextAsync(
                     chatId: ContextChat,
@@ -41,7 +41,6 @@ namespace TelegramReceiver
                     text: text,
                     replyMarkup: markup,
                     cancellationToken: token);
-                
             }
             else
             {

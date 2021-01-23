@@ -23,6 +23,8 @@ namespace TelegramReceiver
         LanguageDictionary LanguageDictionary)
     {
         public User SelectedUser { get; init; } = ExtractUser(Trigger?.CallbackQuery);
+        
+        public Platform? SelectedPlatform { get; init; }
 
         public Chat ConnectedChat { get; init; }
         

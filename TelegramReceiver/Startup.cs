@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Common;
 using Extensions;
+using FacebookScraper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,29 +37,65 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
-    var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
+    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
-    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
+    var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
 
+    AddMongoDbRepositories(services, mongoConfig);
+    AddRabbitMq(services, connectionConfig, producerConfig);
+    AddValidators(services);
+    AddCommandHandling(services, telegramConfig);
+    
     services
         .AddLanguages()
-        .AddSingleton<IMongoDbContext>(
-            _ => new MongoDbContext(
-                mongoConfig.ConnectionString,
-                mongoConfig.DatabaseName))
-        .AddSingleton(mongoConfig)
+        .BuildServiceProvider();
+}
+
+static IServiceCollection AddMongoDbRepositories(
+    IServiceCollection services,
+    MongoDbConfig config)
+{
+    return services.AddSingleton<IMongoDbContext>(
+        _ => new MongoDbContext(
+            config.ConnectionString,
+            config.DatabaseName))
+        .AddSingleton(config)
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
         .AddSingleton<TelegramReceiver.MongoApplicationDbContext>()
-        .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>()
+        .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>();
+}
+
+static IServiceCollection AddRabbitMq(
+    IServiceCollection services, 
+    RabbitMqConnectionConfig connectionConfig,
+    RabbitMqProducerConfig producerConfig)
+{
+    return services
         .AddRabbitMqConnection(connectionConfig)
-        .AddProducer<ChatSubscriptionRequest>(producerConfig)
+        .AddProducer<ChatSubscriptionRequest>(producerConfig);
+}
+
+static IServiceCollection AddValidators(
+    IServiceCollection services)
+{
+    return services
+        .AddSingleton<FacebookUpdatesProvider>()
+        .AddSingleton<FacebookValidator>()
+        .AddSingleton(
+            provider => new UserValidator(provider.GetService<FacebookValidator>()));
+}
+
+static IServiceCollection AddCommandHandling(
+    IServiceCollection services, 
+    TelegramConfig telegramConfig)
+{
+    return services
         .AddSingleton(telegramConfig)
         .AddSingleton<CommandFactory>()
         .AddSingleton<CommandExecutor>()
-        .AddHostedService<MessageHandlerService>()
-        .BuildServiceProvider();
+        .AddHostedService<MessageHandlerService>();
 }
     
 await new HostBuilder()

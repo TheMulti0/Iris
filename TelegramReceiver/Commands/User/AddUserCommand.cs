@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
@@ -20,16 +21,19 @@ namespace TelegramReceiver
     {
         private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IProducer<ChatSubscriptionRequest> _producer;
+        private readonly UserValidator _validator;
         private readonly TimeSpan _defaultInterval;
 
         public AddUserCommand(
             Context context,
             ISavedUsersRepository savedUsersRepository,
             IProducer<ChatSubscriptionRequest> producer,
+            UserValidator validator,
             TelegramConfig config) : base(context)
         {
             _savedUsersRepository = savedUsersRepository;
             _producer = producer;
+            _validator = validator;
             _defaultInterval = config.DefaultInterval;
         }
 
@@ -42,19 +46,34 @@ namespace TelegramReceiver
             // Wait for the user to reply with desired answer
             Update nextUpdate = await NextMessage;
 
-            if (nextUpdate.Type != UpdateType.Message)
+            if (nextUpdate == null)
             {
                 return new NoRedirectResult();
             }
             
             Message message = nextUpdate.Message;
             
-            var user = new User(message.Text, platform);
+            var request = new User(message.Text, platform);
+            var user = await _validator.ValidateAsync(request);
+
+            if (user == null)
+            {
+                await Client.SendTextMessageAsync(
+                    chatId: ContextChat,
+                    text: Dictionary.UserNotFound,
+                    replyToMessageId: message.MessageId,
+                    cancellationToken: token);
+                
+                return new RedirectResult(
+                    Route.Subscriptions,
+                    Context with { Trigger = null, SelectedPlatform = SelectedPlatform });
+            }
+            
             await AddUser(message, user, token);
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, SelectedUser = user });
+                Context with { Trigger = null, SelectedUser = request });
         }
 
         private Task SendRequestMessage(

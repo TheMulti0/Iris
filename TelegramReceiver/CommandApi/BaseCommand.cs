@@ -31,7 +31,7 @@ namespace TelegramReceiver
 
             SelectedUser = context.SelectedUser;
 
-            SelectedPlatform = SelectedUser?.Platform ?? ExtractPlatform(Trigger?.CallbackQuery);
+            SelectedPlatform = context.SelectedPlatform ?? SelectedUser?.Platform ?? ExtractPlatform(Trigger?.CallbackQuery);
         }
 
         private static Platform? ExtractPlatform(CallbackQuery query)
