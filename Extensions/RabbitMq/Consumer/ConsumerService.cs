@@ -6,23 +6,27 @@ using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Extensions
 {
     public class ConsumerService<T> : BackgroundService
     {
-        private readonly RabbitMqConfig _config;
+        private readonly RabbitMqConsumerConfig _config;
+        private readonly IModel _channel;
         private readonly IConsumer<T> _consumer;
         private readonly ILogger<ConsumerService<T>> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ConsumerService(
-            RabbitMqConfig config, 
+            RabbitMqConsumerConfig config,
+            IModel channel,
             IConsumer<T> consumer,
             ILogger<ConsumerService<T>> logger)
         {
             _config = config;
+            _channel = channel;
             _consumer = consumer;
             _logger = logger;
             
@@ -38,7 +42,7 @@ namespace Extensions
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var consumer = new RabbitMqConsumer(_config, OnMessage(stoppingToken));
+            var consumer = new RabbitMqConsumer(_config, _channel, OnMessage(stoppingToken));
 
             // Dispose the consumer when service is stopped
             stoppingToken.Register(() => consumer.Dispose());

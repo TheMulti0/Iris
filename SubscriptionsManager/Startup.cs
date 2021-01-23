@@ -28,8 +28,9 @@ namespace SubscriptionsManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var consumerConfig = Configuration.GetSection<RabbitMqConfig>("ChatSubscriptionRequestsConsumer"); 
-            var producerConfig = Configuration.GetSection<RabbitMqConfig>("PollRequestsProducer");
+            var connectionConfig = Configuration.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
+            var consumerConfig = Configuration.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
+            var producerConfig = Configuration.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
             var mongoConfig = Configuration.GetSection<MongoDbConfig>("MongoDb");
 
             services
@@ -40,6 +41,7 @@ namespace SubscriptionsManager
                 .AddSingleton(mongoConfig)
                 .AddSingleton<MongoApplicationDbContext>()
                 .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+                .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<SubscriptionRequest>(producerConfig)
                 .AddSingleton<IConsumer<ChatSubscriptionRequest>, ChatSubscriptionRequestsConsumer>()
                 .AddConsumerService<ChatSubscriptionRequest>(consumerConfig);

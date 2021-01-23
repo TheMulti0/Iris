@@ -8,32 +8,25 @@ namespace Extensions
 {
     public class RabbitMqConsumer : IDisposable
     {
-        private IConnection _connection;
-        private IModel _channel;
         private readonly CancellationTokenSource _cts = new();
-        private readonly RabbitMqConfig _config;
+        private readonly RabbitMqConsumerConfig _config;
+        private readonly IModel _channel;
         private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
 
         public RabbitMqConsumer(
-            RabbitMqConfig config,
+            RabbitMqConsumerConfig config,
+            IModel channel,
             Func<BasicDeliverEventArgs, Task> onMessage)
         {
             _config = config;
+            _channel = channel;
             _onMessage = onMessage;
 
             Connect(config);
         }
 
-        private void Connect(RabbitMqConfig config)
+        private void Connect(RabbitMqConsumerConfig config)
         {
-            var factory = new ConnectionFactory
-            {
-                Uri = config.ConnectionString
-            };
-
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-
             var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += (_, message) =>
@@ -41,7 +34,7 @@ namespace Extensions
                 Task.Run(() => Consume(message), _cts.Token);
             };
 
-            _channel.BasicConsume(config.Destination, false, consumer);
+            _channel.BasicConsume(config.Queue, false, consumer);
         }
 
         private async Task Consume(BasicDeliverEventArgs message)
@@ -64,12 +57,6 @@ namespace Extensions
         public void Dispose()
         {
             _cts.Cancel();
-            
-            _channel.Close();
-            _channel?.Dispose();
-            
-            _connection?.Close();
-            _connection?.Dispose();
         }
     }
 }

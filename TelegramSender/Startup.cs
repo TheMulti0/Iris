@@ -31,9 +31,11 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     IConfiguration rootConfig = hostContext.Configuration;
 
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("MessagesConsumer");
+    var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
+    var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
 
     services
+        .AddRabbitMqConnection(connectionConfig)
         .AddLanguages()
         .AddSingleton(telegramConfig)
         .AddSingleton<ISenderFactory, SenderFactory>()

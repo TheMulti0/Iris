@@ -5,7 +5,6 @@ using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using ScrapersDistributor;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
@@ -30,11 +29,13 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
-    var consumerConfig = rootConfig.GetSection<RabbitMqConfig>("PollRequestsConsumer"); 
-    var producerConfig = rootConfig.GetSection<RabbitMqConfig>("JobsProducer"); 
+    var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
+    var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
+    var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer"); 
     var pollerConfig = rootConfig.GetSection<SubscriptionsPollerConfig>("SubscriptionsPoller"); 
 
     services
+        .AddRabbitMqConnection(connectionConfig)
         .AddProducer<User>(producerConfig)
         .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionsConsumer>()
         .AddConsumerService<SubscriptionRequest>(consumerConfig)

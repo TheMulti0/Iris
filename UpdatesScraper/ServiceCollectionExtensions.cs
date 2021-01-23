@@ -16,27 +16,28 @@ namespace UpdatesScraper
         {
             return services.AddUpdatesScraper<TProvider>(
                 configuration.GetSection<MongoDbConfig>("MongoDb"),
-                configuration.GetSection<RabbitMqConfig>("UpdatesProducer"),
+                configuration.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"),
+                configuration.GetSection<RabbitMqProducerConfig>("RabbitMqProducer"),
                 configuration.GetSection<UpdatesProviderBaseConfig>("UpdatesProvider"),
-                configuration.GetSection<VideoExtractorConfig>("VideoExtractor"),
                 configuration.GetSection<ScraperConfig>("Scraper"),
-                configuration.GetSection<RabbitMqConfig>("JobsConsumer"));
+                configuration.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"));
         }
 
         public static IServiceCollection AddUpdatesScraper<TProvider>(
             this IServiceCollection services,
             MongoDbConfig mongoDbConfig,
-            RabbitMqConfig producerConfig,
+            RabbitMqConnectionConfig connectionConfig,
+            RabbitMqProducerConfig producerConfig,
             UpdatesProviderBaseConfig updatesProviderBaseConfig,
-            VideoExtractorConfig videoExtractorConfig,
             ScraperConfig scraperConfig,
-            RabbitMqConfig consumerConfig) where TProvider : class, IUpdatesProvider
+            RabbitMqConsumerConfig consumerConfig) where TProvider : class, IUpdatesProvider
         {
             services = mongoDbConfig != null 
                 ? services.AddUpdatesScraperMongoRepositories(mongoDbConfig) 
                 : services.AddUpdatesScraperMockRepositories();
 
             return services
+                .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<Update>(producerConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
                 .AddUpdatesScraper(scraperConfig)
@@ -91,7 +92,7 @@ namespace UpdatesScraper
 
         public static IServiceCollection AddJobsConsumer(
             this IServiceCollection services,
-            RabbitMqConfig config)
+            RabbitMqConsumerConfig config)
         {
             return services
                 .AddSingleton(config)

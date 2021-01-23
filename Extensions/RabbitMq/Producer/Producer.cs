@@ -1,22 +1,22 @@
 ﻿using System.Text.Json;
 using Common;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 
 namespace Extensions
 {
     public class Producer<T> : IProducer<T>
     {
-        private readonly RabbitMqConfig _config;
         private readonly RabbitMqPublisher _publisher;
         private readonly ILogger<Producer<T>> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public Producer(
-            RabbitMqConfig config,
+            RabbitMqProducerConfig config,
+            IModel channel,
             ILogger<Producer<T>> logger)
         {
-            _config = config;
-            _publisher = new RabbitMqPublisher(config);
+            _publisher = new RabbitMqPublisher(config, channel);
             _logger = logger;
             
             _jsonSerializerOptions = new JsonSerializerOptions
