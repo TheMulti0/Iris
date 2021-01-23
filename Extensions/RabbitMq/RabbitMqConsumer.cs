@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -12,29 +13,28 @@ namespace Extensions
         private readonly RabbitMqConsumerConfig _config;
         private readonly IModel _channel;
         private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
+        private readonly ILogger<RabbitMqConsumer> _logger;
+        private readonly EventingBasicConsumer _consumer;
 
         public RabbitMqConsumer(
             RabbitMqConsumerConfig config,
             IModel channel,
-            Func<BasicDeliverEventArgs, Task> onMessage)
+            Func<BasicDeliverEventArgs, Task> onMessage,
+            ILogger<RabbitMqConsumer> logger)
         {
             _config = config;
             _channel = channel;
             _onMessage = onMessage;
+            _logger = logger;
+            _consumer = new EventingBasicConsumer(_channel);
 
-            Connect(config);
+            _consumer.Received += Received;
+            _channel.BasicConsume(config.Queue, false, _consumer);
         }
 
-        private void Connect(RabbitMqConsumerConfig config)
+        private void Received(object _, BasicDeliverEventArgs message)
         {
-            var consumer = new EventingBasicConsumer(_channel);
-
-            consumer.Received += (_, message) =>
-            {
-                Task.Run(() => Consume(message), _cts.Token);
-            };
-
-            _channel.BasicConsume(config.Queue, false, consumer);
+            Task.Run(() => Consume(message), _cts.Token);
         }
 
         private async Task Consume(BasicDeliverEventArgs message)
@@ -43,8 +43,10 @@ namespace Extensions
             {
                 await _onMessage(message);
             }
-            catch
+            catch (Exception e)
             {
+                _logger.LogError(e, "Failed to consume message");
+                
                 if (_config.AckOnlyOnSuccess)
                 {
                     return;
@@ -56,6 +58,8 @@ namespace Extensions
 
         public void Dispose()
         {
+            _consumer.Received -= Received;
+
             _cts.Cancel();
         }
     }

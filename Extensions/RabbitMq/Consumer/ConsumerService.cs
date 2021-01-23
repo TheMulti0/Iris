@@ -16,6 +16,7 @@ namespace Extensions
         private readonly RabbitMqConsumerConfig _config;
         private readonly IModel _channel;
         private readonly IConsumer<T> _consumer;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger<ConsumerService<T>> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
@@ -23,12 +24,13 @@ namespace Extensions
             RabbitMqConsumerConfig config,
             IModel channel,
             IConsumer<T> consumer,
-            ILogger<ConsumerService<T>> logger)
+            ILoggerFactory loggerFactory)
         {
             _config = config;
             _channel = channel;
             _consumer = consumer;
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<ConsumerService<T>>();
             
             _jsonSerializerOptions = new JsonSerializerOptions
             {
@@ -42,7 +44,11 @@ namespace Extensions
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var consumer = new RabbitMqConsumer(_config, _channel, OnMessage(stoppingToken));
+            var consumer = new RabbitMqConsumer(
+                _config,
+                _channel,
+                OnMessage(stoppingToken),
+                _loggerFactory.CreateLogger<RabbitMqConsumer>());
 
             // Dispose the consumer when service is stopped
             stoppingToken.Register(() => consumer.Dispose());

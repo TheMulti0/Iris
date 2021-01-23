@@ -1,8 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Extensions.Tests
@@ -12,26 +20,32 @@ namespace Extensions.Tests
     {
         private const string UpdateContent = "This is a test!";
 
-        private static RabbitMqConfig _publisherConfig;
-        private static RabbitMqConfig _consumerConfig;
+        private static RabbitMqProducerConfig _producerConfig;
+        private static RabbitMqConsumerConfig _consumerConfig;
         private static ILoggerFactory _loggerFactory;
-
-        private const string Exchange = "amq.topic";
+        private static IModel _channel;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            _publisherConfig = new RabbitMqConfig
+            _producerConfig = new RabbitMqProducerConfig
             {
-                ConnectionString = new Uri("amqp://guest:guest@localhost:5672//"),
-                Destination = "amq.topic"
+                Exchange = "updates"
             };
             
-            _consumerConfig = new RabbitMqConfig
+            _consumerConfig = new RabbitMqConsumerConfig
             {
-                ConnectionString = new Uri("amqp://guest:guest@localhost:5672//"),
-                Destination = "updates"
+                Queue = "updates"
             };
+
+            var connectionFactory = new ConnectionFactory
+            {
+                Uri = new Uri("amqp://guest:guest@localhost:5672//")
+            };
+            
+            _channel = connectionFactory
+                .CreateConnection()
+                .CreateModel();
             
             _loggerFactory = LoggerFactory.Create(
                 builder => builder.AddTestsLogging(context));
@@ -40,40 +54,55 @@ namespace Extensions.Tests
         [TestMethod]
         public async Task TestPublishConsume()
         {
-            PublishOneMessage(UpdateContent);
+            var update = await ConsumeProducedUpdate();
             
-            BasicDeliverEventArgs firstMessage = null;
-
-            Task OnMessage(BasicDeliverEventArgs args)
-            {
-                firstMessage = args;
-                return Task.CompletedTask;
-            }
-
-            Consume(OnMessage);
-            await Task.Delay(1000);            
-            var update = JsonSerializer.Deserialize<Update>(firstMessage.Body.Span);
-
             Assert.AreEqual(UpdateContent, update.Content);
         }
 
-        private static void Consume(Func<BasicDeliverEventArgs, Task> onMessage)
+        private static async Task<Update> ConsumeProducedUpdate()
         {
-            var consumer = new RabbitMqConsumer(_consumerConfig, onMessage);
+            var cs = new TaskCompletionSource<BasicDeliverEventArgs>();
+
+            Task OnMessage(BasicDeliverEventArgs args)
+            {
+                cs.TrySetResult(args);
+
+                return Task.CompletedTask;
+            }
+            
+            PublishOneMessage(UpdateContent);
+            RabbitMqConsumer consumer = Consume(OnMessage);
+            BasicDeliverEventArgs message = await cs.Task;
+            
+            var update = JsonSerializer.Deserialize<Update>(message.Body.Span.ToArray());
+            
+            consumer.Dispose(); // Stop receiving messages in this scope
+
+            return update;
+        }
+        
+        private static RabbitMqConsumer Consume(Func<BasicDeliverEventArgs, Task> onMessage)
+        {
+            return new RabbitMqConsumer(
+                _consumerConfig,
+                _channel,
+                onMessage,
+                _loggerFactory.CreateLogger<RabbitMqConsumer>());
         }
 
         private static void PublishOneMessage(string updateContent)
         {
-            var producer = new RabbitMqPublisher(_publisherConfig);
+            var producer = new Producer<Update>(
+                _producerConfig,
+                _channel,
+                _loggerFactory.CreateLogger<Producer<Update>>());
 
             var update = new Update
             {
                 Content = updateContent
             };
             
-            producer.Publish(
-                "update",
-                JsonSerializer.SerializeToUtf8Bytes(update));
+            producer.Send(update);
         }
 
         private class Update

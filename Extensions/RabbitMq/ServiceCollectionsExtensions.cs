@@ -51,7 +51,7 @@ namespace Extensions
                     config,
                     provider.GetService<IModel>(),
                     provider.GetService<IConsumer<T>>(),
-                    provider.GetService<ILogger<ConsumerService<T>>>());
+                    provider.GetService<ILoggerFactory>());
             }
 
             return services.AddHostedService(CreateService);
