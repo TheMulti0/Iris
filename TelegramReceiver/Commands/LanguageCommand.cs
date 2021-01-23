@@ -30,8 +30,8 @@ namespace TelegramReceiver
             await SendLanguageList(token);
 
             Update update = await NextCallbackQuery;
-
-            if (update.CallbackQuery.Data.StartsWith(Route.Settings.ToString()))
+            
+            if (update == null || update.CallbackQuery.Data.StartsWith(Route.Settings.ToString()))
             {
                 return new NoRedirectResult();
             }

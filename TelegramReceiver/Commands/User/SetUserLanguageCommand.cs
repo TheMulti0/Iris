@@ -41,7 +41,7 @@ namespace TelegramReceiver
             
             var update = await NextCallbackQuery;
 
-            if (update.CallbackQuery.Data.StartsWith(Route.User.ToString()))
+            if (update == null || update.CallbackQuery.Data.StartsWith(Route.User.ToString()))
             {
                 return new NoRedirectResult();
             }

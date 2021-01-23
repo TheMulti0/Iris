@@ -24,6 +24,7 @@ namespace TelegramReceiver
         
         private static readonly Dictionary<Route?, string> CallbackQueryRoutes;
         private static readonly Dictionary<Route?, string[]> CommandRoutes;
+        private static readonly TimeSpan ReactionTimeout = TimeSpan.FromMinutes(5);
 
         static CommandExecutor()
         {
@@ -174,28 +175,49 @@ namespace TelegramReceiver
 
             IObservable<Update> chatUpdates = updates
                 .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
-            
-            Task<Update> nextMessage = chatUpdates
-                .Where(u => u.Type == UpdateType.Message)
-                .FirstOrDefaultAsync(u => GetRoute(u) == null)
-                .ToTask();
-
-            Task<Update> nextCallbackQuery = chatUpdates
-                .Where(u => u.Type == UpdateType.CallbackQuery)
-                .FirstOrDefaultAsync()
-                .ToTask();
 
             Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
 
             return new Context(
                 _client,
-                nextMessage,
-                nextCallbackQuery,
+                GetNextMessage(chatUpdates),
+                GetNextCallbackQuery(chatUpdates),
                 update,
                 contextChatId,
                 connection?.Chat ?? contextChatId,
                 connection?.Language ?? Language.English,
                 _languages.Dictionary[connection?.Language ?? Language.English]);
+        }
+
+        private static async Task<Update> GetNextMessage(IObservable<Update> chatUpdates)
+        {
+            Update nextUpdate = await chatUpdates
+                .FirstOrDefaultAsync()
+                .Timeout(ReactionTimeout);
+
+            if (nextUpdate != null &&
+                nextUpdate.Type == UpdateType.Message &&
+                GetRoute(nextUpdate) == null)
+            {
+                return nextUpdate;
+            }
+
+            return null;
+        }
+
+        private static async Task<Update> GetNextCallbackQuery(IObservable<Update> chatUpdates)
+        {
+            Update nextUpdate = await chatUpdates
+                .FirstOrDefaultAsync()
+                .Timeout(ReactionTimeout);
+
+            if (nextUpdate != null &&
+                nextUpdate.Type == UpdateType.CallbackQuery)
+            {
+                return nextUpdate;
+            }
+
+            return null;
         }
 
         private Type GetCommandType(Route route)
@@ -217,7 +239,7 @@ namespace TelegramReceiver
                 case Route.RemoveUser:
                     return typeof(RemoveUserCommand);
                 
-                case Route.Platforms:
+                case Route.Platforms: 
                     return typeof(PlatformsCommand);
 
                 case Route.Connect:

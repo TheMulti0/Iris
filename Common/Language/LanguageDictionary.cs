@@ -45,6 +45,7 @@ namespace Common
         public string PrivateDm { get; set; }
         public string Subscriptions { get; set; }
         public string Live { get; set; }
+        public string UserNotFound { get; set; }
 
         public string GetPlatform(Platform platform)
         {

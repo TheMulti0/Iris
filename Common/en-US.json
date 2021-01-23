@@ -40,5 +40,6 @@
     "SendScreenshotOnly": "Send screenshot only",
     "PrivateDm": "Private DM",
     "Subscriptions": "Subscriptions",
-    "Live": "in a live stream"
+    "Live": "in a live stream",
+    "UserNotFound": "User not found!"
 }

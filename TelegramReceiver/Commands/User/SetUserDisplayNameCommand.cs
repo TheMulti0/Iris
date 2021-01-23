@@ -36,6 +36,11 @@ namespace TelegramReceiver
 
             var update = await NextMessage;
 
+            if (update == null)
+            {
+                return new NoRedirectResult();
+            }
+
             await SetDisplayName(update);
 
             return new RedirectResult(Route.User, Context with { Trigger = null });

@@ -39,5 +39,6 @@
     "SendScreenshotOnly": "שליחת צילום מסך בלבד",
     "PrivateDm": "השיחה הפרטית הנוכחית",
     "Subscriptions": "רשימת המנויים",
-    "Live": "בשידור חי"
+    "Live": "בשידור חי",
+    "UserNotFound": "המשתמש לא נמצא!"
 }
