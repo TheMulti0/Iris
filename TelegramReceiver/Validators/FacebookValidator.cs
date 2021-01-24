@@ -9,7 +9,7 @@ namespace TelegramReceiver
 {
     internal class FacebookValidator : IPlatformValidator
     {
-        private const string FacebookUserNamePattern = @"(https?:\/\/(www\.)?(m.)?facebook.com\/)?(?<userName>[\w\d]+)";
+        private const string FacebookUserNamePattern = @"(https?:\/\/(www\.)?(m.)?facebook.com\/)?(?<userName>[\w\d.]+)";
         private static readonly Regex FacebookUserNameRegex = new(FacebookUserNamePattern);
         
         private readonly FacebookUpdatesProvider _facebook;
