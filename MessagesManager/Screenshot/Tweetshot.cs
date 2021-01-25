@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 
@@ -10,16 +11,26 @@ namespace MessagesManager
     {
         private const string TweetUrlPattern = @"^http(s)?:\/\/twitter\.com\/(?:#!\/)?(?<userId>\w+)\/status(es)?\/(?<tweetId>\d+)$";
         private static readonly Regex TweetUrlRegex = new(TweetUrlPattern);
-        
+        private static readonly SemaphoreSlim TweetshotLock = new(1, 1); 
+
         public static async Task<byte[]> ScreenshotAsync(
             string url,
             int scale = 2,
             bool darkMode = false,
             int quality = 100)
         {
-            await ExecuteScreenshotAsync(url, scale, darkMode, quality);
+            await TweetshotLock.WaitAsync();
 
-            return await ReadScreenshotAsync(url, darkMode);
+            try
+            {
+                await ExecuteScreenshotAsync(url, scale, darkMode, quality);
+
+                return await ReadScreenshotAsync(url, darkMode);
+            }
+            finally
+            {
+                TweetshotLock.Release();
+            }
         }
 
         private static async Task ExecuteScreenshotAsync(string url, int scale, bool darkMode, int quality)
