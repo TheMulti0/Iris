@@ -19,11 +19,12 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
     string basePath = Path.Combine(
         Directory.GetCurrentDirectory(),
         Environment.GetEnvironmentVariable("CONFIG_DIRECTORY") ?? string.Empty);
-    
+
     builder
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
-        .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
+        .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
+        .AddEnvironmentVariables();
 }
 
 static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)

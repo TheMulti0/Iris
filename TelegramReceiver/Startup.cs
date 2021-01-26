@@ -31,7 +31,8 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
     builder
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
-        .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true); // Overrides default appsettings.json
+        .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
+        .AddEnvironmentVariables();
 }
 
 static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
