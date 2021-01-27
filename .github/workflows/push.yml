@@ -1,7 +1,9 @@
 ﻿name: Build and push images
 
-on: push
-
+on:
+  push:
+    branches: [ master ]
+    
 jobs:
   facebookscraper:
     name: Build and push FacebookScraper image
