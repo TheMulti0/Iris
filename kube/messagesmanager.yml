@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: messagesmanager
+  name: messagesmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messagesmanager
+  template:
+    metadata:
+      labels:
+        app: messagesmanager
+    spec:
+      containers:
+        - image: irisupdate/messagesmanager:latest
+          imagePullPolicy: "Always"
+          name: messagesmanager
+          env:
+            - name: MongoDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: usersdbsecrets
+                  key: connectionstring
+      restartPolicy: Always

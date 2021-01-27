@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: telegramreceiver
+  name: telegramreceiver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegramreceiver
+  template:
+    metadata:
+      labels:
+        app: telegramreceiver
+    spec:
+      containers:
+        - image: irisupdate/telegramreceiver:latest
+          imagePullPolicy: "Always"
+          name: telegramreceiver
+          env:
+            - name: MongoDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: usersdbsecrets
+                  key: connectionstring
+            - name: Telegram__AccessToken
+              valueFrom:
+                secretKeyRef:
+                  name: telegramsecrets
+                  key: accesstoken
+            - name: Twitter__ConsumerKey
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: consumerkey
+            - name: Twitter__ConsumerSecret
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: consumersecret
+      restartPolicy: Always
