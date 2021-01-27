@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: feedssecrets
+type: Opaque
+stringData:
+  name: feeds
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: feedsscraper
+  name: feedsscraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feedsscraper
+  template:
+    metadata:
+      labels:
+        app: feedsscraper
+    spec:
+      containers:
+        - image: irisupdate/feedsscraper:latest
+          imagePullPolicy: "Always"
+          name: feedsscraper
+          env:
+            - name: UpdatesProvider__Name
+              valueFrom:
+                secretKeyRef:
+                  name: feedssecrets
+                  key: name
+      restartPolicy: Always

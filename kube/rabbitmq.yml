@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+data:
+  rabbitmq.config: "[\n\t{ rabbit, [\n\t\t{ loopback_users, [ ] },\n\t\t{ tcp_listeners, [ 5672 ] },\n\t\t{ ssl_listeners, [ ] },\n\t\t{ default_pass, <<\"guest\">> },\n\t\t{ default_user, <<\"guest\">> },\n\t\t{ hipe_compile, false }\n\t] },\n\t{ rabbitmq_management, [\n\t\t{ listener, [\n\t\t\t{ port, 15672 },\n\t\t\t{ ssl, false }\n\t\t] },\n\t\t{ load_definitions, \"/etc/rabbitmq/definitions.json\" }\n\t] }\n].\n"
+  definitions.json: "{\r\n    \"rabbit_version\": \"3.6.16\",\r\n    \"users\": [\r\n        {\r\n            \"name\": \"guest\",\r\n            \"password_hash\": \"ekzcaWW9vGAsO56JRa4ib+pSoue0LwT8aAbUlKrCjh9Srrdm\",\r\n            \"hashing_algorithm\": \"rabbit_password_hashing_sha256\",\r\n            \"tags\": \"administrator\"\r\n        }\r\n    ],\r\n    \"vhosts\": [\r\n        {\r\n            \"name\": \"/\"\r\n        }\r\n    ],\r\n    \"permissions\": [\r\n        {\r\n            \"user\": \"guest\",\r\n            \"vhost\": \"/\",\r\n            \"configure\": \".*\",\r\n            \"write\": \".*\",\r\n            \"read\": \".*\"\r\n        }\r\n    ],\r\n    \"parameters\": [],\r\n    \"global_parameters\": [\r\n        {\r\n            \"name\": \"cluster_name\",\r\n            \"value\": \"rabbit@b2ac7a3834a5\"\r\n        }\r\n    ],\r\n    \"policies\": [],\r\n    \"queues\": [\r\n        {\r\n            \"name\": \"updates\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"feedsJobs\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"pollRequests\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"facebookJobs\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"subscriptionRequests\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"messages\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"twitterJobs\",\r\n            \"vhost\": \"/\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"arguments\": {}\r\n        }\r\n    ],\r\n    \"exchanges\": [\r\n        {\r\n            \"name\": \"subscriptionRequests\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"pollRequests\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"Facebook\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"updates\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"jobs\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"name\": \"messages\",\r\n            \"vhost\": \"/\",\r\n            \"type\": \"direct\",\r\n            \"durable\": true,\r\n            \"auto_delete\": false,\r\n            \"internal\": false,\r\n            \"arguments\": {}\r\n        }\r\n    ],\r\n    \"bindings\": [\r\n        {\r\n            \"source\": \"amq.topic\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"updates\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"chatPollRequests\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"chatPollRequests\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"jobs\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"facebookJobs\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"Facebook\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"jobs\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"feedsJobs\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"Feeds\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"jobs\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"twitterJobs\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"Twitter\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"messages\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"messages\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"subscriptionRequests\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"subscriptionRequests\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"pollRequests\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"pollRequests\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        },\r\n        {\r\n            \"source\": \"updates\",\r\n            \"vhost\": \"/\",\r\n            \"destination\": \"updates\",\r\n            \"destination_type\": \"queue\",\r\n            \"routing_key\": \"\",\r\n            \"arguments\": {}\r\n        }\r\n    ]\r\n}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rabbitmq
+  name: rabbitmq
+spec:
+  ports:
+    - name: "5672"
+      port: 5672
+      targetPort: 5672
+    - name: "15672"
+      port: 15672
+      targetPort: 15672
+  selector:
+    app: rabbitmq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rabbitmq
+  name: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - env:
+            - name: AMQP_URL
+              value: amqp://rabbitmq?connection_attempts=5&retry_delay=5
+          name: rabbitmq
+          image: rabbitmq:3.6-management-alpine
+          volumeMounts:
+            - name: config
+              mountPath: /etc/rabbitmq/definitions.json
+              subPath: definitions.json
+            - name: config
+              mountPath: /etc/rabbitmq/rabbitmq.config
+              subPath: rabbitmq.config
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          resources: { }
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: rabbitmq-config

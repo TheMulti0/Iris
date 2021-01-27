@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: telegramsender
+  name: telegramsender
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegramsender
+  template:
+    metadata:
+      labels:
+        app: telegramsender
+    spec:
+      containers:
+        - image: irisupdate/telegramsender:latest
+          imagePullPolicy: "Always"
+          name: telegramsender
+          env:
+            - name: Telegram__AccessToken
+              valueFrom:
+                secretKeyRef:
+                  name: telegramsecrets
+                  key: accesstoken
+      restartPolicy: Always
