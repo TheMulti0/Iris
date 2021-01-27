@@ -18,6 +18,10 @@
         <DependentUpon>Dockerfile</DependentUpon>
         <Link>.dockerignore</Link>
       </None>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
