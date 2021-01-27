@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: facebooksecrets
+type: Opaque
+stringData:
+  name: facebook
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: facebookscraper
+  name: facebookscraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: facebookscraper
+  template:
+    metadata:
+      labels:
+        app: facebookscraper
+    spec:
+      containers:
+        - image: irisupdate/facebookscraper:latest
+          imagePullPolicy: "Always"
+          name: facebookscraper
+          env:
+            - name: UpdatesProvider__Name
+              valueFrom:
+                secretKeyRef:
+                  name: facebooksecrets
+                  key: name
+      restartPolicy: Always
