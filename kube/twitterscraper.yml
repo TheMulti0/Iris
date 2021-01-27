@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: twittersecrets
+type: Opaque
+stringData:
+  consumerkey: key
+  consumersecret: secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: twitterscraper
+  name: twitterscraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: twitterscraper
+  template:
+    metadata:
+      labels:
+        app: twitterscraper
+    spec:
+      containers:
+        - image: irisupdate/twitterscraper:latest
+          imagePullPolicy: ""
+          name: twitterscraper
+          env:
+            - name: UpdatesProvider__ConsumerKey
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: consumerkey
+            - name: UpdatesProvider__ConsumerSecret
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: consumersecret
+      restartPolicy: Always

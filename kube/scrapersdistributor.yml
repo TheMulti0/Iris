@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: scrapersdistributor
+  name: scrapersdistributor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scrapersdistributor
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: scrapersdistributor
+    spec:
+      containers:
+      - image: irisupdate/scrapersdistributor:latest
+        imagePullPolicy: "Always"
+        name: scrapersdistributor
+      restartPolicy: Always
