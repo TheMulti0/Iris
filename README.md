@@ -25,6 +25,8 @@ All of the components use RabbitMQ for communication.
 
 [This is a deployed working example, Iris is configured to send tweets and posts of the Israeli 'Yamina' party candidates.](https://t.me/YaminaUpdates)
 
+The code of Iris belongs to TheMulti0, and use of it should be done only with his confirmation.
+
 ### Architecture
 
 <img src="https://i.imgur.com/Wtp5MgL.png"></img>
