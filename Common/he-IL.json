@@ -3,7 +3,7 @@
     "AddUser": "הוסף משתמש",
     "UsersFound": "משתמש\\ים נמצאו",
     "NoUsersFound": "לא נמצאו משתמשים",
-    "NoChatId": "שלח קוד צ'אט!",
+    "NoChatId": "כלול קוד צ'אט בהודעה!",
     "NoChat": "הצ'אט לא נמצא! (ודא שהבוט נוכח בצ'אט)",
     "ConnectedToChat": "מחובר ל-",
     "NotConnected": "לא מחובר לאף צ'אט",

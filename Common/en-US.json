@@ -3,7 +3,7 @@
     "AddUser": "Add user",
     "UsersFound": "users found",
     "NoUsersFound": "No users found",
-    "NoChatId": "Supply chat id!",
+    "NoChatId": "Please supply a chat id in your message!",
     "NoChat": "Failed to find chat! (Is the bot inside this chat?)",
     "ConnectedToChat": "Connected to",
     "NotConnected": "Not connected to any external chat",
