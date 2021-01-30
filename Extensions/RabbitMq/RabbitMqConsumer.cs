@@ -15,6 +15,8 @@ namespace Extensions
         private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
         private readonly ILogger<RabbitMqConsumer> _logger;
         private readonly EventingBasicConsumer _consumer;
+        private readonly string _consumerId;
+        private readonly Guid guid = Guid.NewGuid();
 
         public RabbitMqConsumer(
             RabbitMqConsumerConfig config,
@@ -29,7 +31,7 @@ namespace Extensions
             _consumer = new EventingBasicConsumer(_channel);
 
             _consumer.Received += Received;
-            _channel.BasicConsume(config.Queue, false, _consumer);
+            _consumerId = _channel.BasicConsume(config.Queue, false, _consumer);
         }
 
         private void Received(object _, BasicDeliverEventArgs message)
@@ -59,6 +61,7 @@ namespace Extensions
         public void Dispose()
         {
             _consumer.Received -= Received;
+            _channel.BasicCancel(_consumerId);
 
             _cts.Cancel();
         }

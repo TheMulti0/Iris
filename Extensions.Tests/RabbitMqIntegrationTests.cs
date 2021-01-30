@@ -54,9 +54,14 @@ namespace Extensions.Tests
         [TestMethod]
         public async Task TestPublishConsume()
         {
-            var update = await ConsumeProducedUpdate();
+            _channel.QueuePurge("updates");
             
-            Assert.AreEqual(UpdateContent, update.Content);
+            for (int i = 0; i < 50; i++)
+            {
+                var update = await ConsumeProducedUpdate();
+            
+                Assert.AreEqual(UpdateContent, update.Content);    
+            }
         }
 
         private static async Task<Update> ConsumeProducedUpdate()
