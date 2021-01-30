@@ -56,7 +56,7 @@ namespace Extensions.Tests
         {
             _channel.QueuePurge("updates");
             
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 100; i++)
             {
                 var update = await ConsumeProducedUpdate();
             
@@ -70,7 +70,9 @@ namespace Extensions.Tests
 
             Task OnMessage(BasicDeliverEventArgs args)
             {
-                cs.TrySetResult(args);
+                byte[] body = args.Body.ToArray();
+                Console.WriteLine("callback " + body[0].ToString());
+                cs.TrySetResult(new BasicDeliverEventArgs(args.ConsumerTag, args.DeliveryTag, args.Redelivered, args.Exchange, args.RoutingKey, args.BasicProperties, body));
 
                 return Task.CompletedTask;
             }
@@ -78,8 +80,10 @@ namespace Extensions.Tests
             PublishOneMessage(UpdateContent);
             RabbitMqConsumer consumer = Consume(OnMessage);
             BasicDeliverEventArgs message = await cs.Task;
-            
-            var update = JsonSerializer.Deserialize<Update>(message.Body.Span.ToArray());
+
+            byte[] body = message.Body.ToArray();
+            Console.WriteLine("after callback" + body[0].ToString());
+            var update = JsonSerializer.Deserialize<Update>(body);
             
             consumer.Dispose(); // Stop receiving messages in this scope
 
