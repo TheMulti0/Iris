@@ -31,9 +31,7 @@ namespace Extensions
         {
             _logger.LogInformation("Sending {}", item);
 
-            string json = JsonSerializer.Serialize(item, _jsonSerializerOptions);
-
-            byte[] bytes = new UTF8Encoding(false).GetBytes(json);
+            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item, _jsonSerializerOptions);
             
             _publisher.Publish(routingKey, bytes);
         }
