@@ -63,7 +63,11 @@ namespace Extensions
                 string json = "No Json";
                 try
                 {
-                    json = Encoding.UTF8.GetString(message.Body.Span.ToArray());
+                    ReadOnlyMemory<byte> readOnlyMemory = message.Body;
+                    
+                    byte[] bytes = readOnlyMemory.ToArray();
+
+                    json = new UTF8Encoding(false).GetString(bytes);
 
                     var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
                                ?? throw new NullReferenceException($"Failed to deserialize {json}");

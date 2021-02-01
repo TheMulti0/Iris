@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using Common;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -30,7 +31,9 @@ namespace Extensions
         {
             _logger.LogInformation("Sending {}", item);
 
-            byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(item, _jsonSerializerOptions);
+            string json = JsonSerializer.Serialize(item, _jsonSerializerOptions);
+
+            byte[] bytes = new UTF8Encoding(false).GetBytes(json);
             
             _publisher.Publish(routingKey, bytes);
         }
