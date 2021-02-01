@@ -76,8 +76,9 @@ namespace TelegramReceiver
             IEnumerable<InlineKeyboardButton> userButtons = users
                 .Select(UserToButton)
                 .ToList();
-            
-            if (users.Count <= 4 && !IsSuperUser)
+
+            bool canAddUsers = users.Count <= 4 || IsSuperUser;
+            if (canAddUsers)
             {
                 userButtons = userButtons.Concat(GetAddUserButton());
             }
