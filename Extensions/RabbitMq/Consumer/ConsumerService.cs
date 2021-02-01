@@ -60,17 +60,22 @@ namespace Extensions
         {
             return async message =>
             {
+                string json = "No Json";
                 try
                 {
-                    var item = JsonSerializer.Deserialize<T>(message.Body.Span, _jsonSerializerOptions)
-                               ?? throw new NullReferenceException($"Failed to deserialize");
+                    ReadOnlyMemory<byte> readOnlyMemory = message.Body;
+                    
+                    byte[] bytes = readOnlyMemory.ToArray();
+
+                    json = new UTF8Encoding(true).GetString(bytes);
+
+                    var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
+                               ?? throw new NullReferenceException($"Failed to deserialize {json}");
                     
                     await _consumer.ConsumeAsync(item, token);
                 }
                 catch (Exception e)
                 {
-                    string json = Encoding.UTF8.GetString(message.Body.Span);
-                    
                     _logger.LogError(e, "Failed to parse json {}", json);
     
                     throw;
