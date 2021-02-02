@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -11,6 +10,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Update = Telegram.Bot.Types.Update;
+using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver
 {
@@ -191,7 +191,8 @@ namespace TelegramReceiver
             IObservable<Update> chatUpdates = updates
                 .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
 
-            Connection connection = await _connectionsRepository.GetAsync(update.GetUser());
+            User user = update.GetUser();
+            Connection connection = await GetConnectionAsync(user, contextChatId);
 
             return new Context(
                 _client,
@@ -202,7 +203,27 @@ namespace TelegramReceiver
                 connection?.Chat ?? contextChatId,
                 connection?.Language ?? Language.English,
                 _languages.Dictionary[connection?.Language ?? Language.English],
-                _config.SuperUsers.Contains(update.GetUser()?.Username));
+                _config.SuperUsers.Contains(user?.Username));
+        }
+
+        private async Task<Connection> GetConnectionAsync(User user, ChatId contextChatId)
+        {
+            Connection connection = await _connectionsRepository.GetAsync(user);
+
+            if (connection != null)
+            {
+                return connection;
+            }
+            
+            await _connectionsRepository
+                .AddOrUpdateAsync(user, contextChatId, Language.English);
+
+            return new Connection
+            {
+                User = user,
+                Chat = contextChatId,
+                Language = Language.English
+            };
         }
 
         private static async Task<Update> GetNextMessage(IObservable<Update> chatUpdates)
