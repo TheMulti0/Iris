@@ -15,7 +15,9 @@ namespace Extensions
             {
                 var factory = new ConnectionFactory
                 {
-                    Uri = config.ConnectionString
+                    Uri = config.ConnectionString,
+                    DispatchConsumersAsync = true,
+                    ConsumerDispatchConcurrency = config.ConcurrencyLevel
                 };
                 
                 return factory

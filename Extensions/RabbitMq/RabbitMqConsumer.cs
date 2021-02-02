@@ -14,9 +14,8 @@ namespace Extensions
         private readonly IModel _channel;
         private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
         private readonly ILogger<RabbitMqConsumer> _logger;
-        private readonly EventingBasicConsumer _consumer;
+        private readonly AsyncEventingBasicConsumer _consumer;
         private readonly string _consumerId;
-        private readonly Guid guid = Guid.NewGuid();
 
         public RabbitMqConsumer(
             RabbitMqConsumerConfig config,
@@ -28,22 +27,17 @@ namespace Extensions
             _channel = channel;
             _onMessage = onMessage;
             _logger = logger;
-            _consumer = new EventingBasicConsumer(_channel);
+            _consumer = new AsyncEventingBasicConsumer(_channel);
 
             _consumer.Received += Received;
             _consumerId = _channel.BasicConsume(config.Queue, false, _consumer);
         }
 
-        private void Received(object _, BasicDeliverEventArgs message)
-        {
-            Task.Run(() => Consume(message), _cts.Token);
-        }
-
-        private async Task Consume(BasicDeliverEventArgs message)
+        private async Task Received(object _, BasicDeliverEventArgs message)
         {
             try
             {
-                await _onMessage(message);
+                await _onMessage(message); // TODO Implement cancellation
             }
             catch (Exception e)
             {
