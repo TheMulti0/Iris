@@ -97,24 +97,27 @@ namespace TelegramReceiver
             CancellationToken token)
         {   
             TimeSpan interval = _defaultInterval;
-            
+
             var subscription = new Subscription(user, interval);
 
-            _producer.Send(
-                new ChatSubscriptionRequest(
-                    SubscriptionType.Subscribe,
-                    subscription,
-                    ConnectedChat));
+            if (! await _savedUsersRepository.ExistsAsync(user))
+            {
+                _producer.Send(
+                    new ChatSubscriptionRequest(
+                        SubscriptionType.Subscribe,
+                        subscription,
+                        ConnectedChat));
+            }
+            
+            var chatSubscription = new UserChatSubscription
+            {
+                ChatId = ConnectedChat,
+                Interval = interval,
+                DisplayName = user.UserId,
+                Language = Language
+            };
 
-            await _savedUsersRepository.AddOrUpdateAsync(
-                user,
-                new UserChatSubscription
-                {
-                    ChatId = ConnectedChat,
-                    Interval = interval,
-                    DisplayName = user.UserId,
-                    Language = Language
-                });
+            await _savedUsersRepository.AddOrUpdateAsync(user, chatSubscription);
 
             await Client.SendTextMessageAsync(
                 chatId: ContextChat,

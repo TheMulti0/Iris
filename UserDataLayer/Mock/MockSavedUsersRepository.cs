@@ -8,6 +8,8 @@ namespace UserDataLayer
 {
     public class MockSavedUsersRepository : ISavedUsersRepository
     {
+        public Task<bool> ExistsAsync(User user) => Task.FromResult(false);
+
         public IQueryable<SavedUser> GetAll()
         {
             return new EnumerableQuery<SavedUser>(

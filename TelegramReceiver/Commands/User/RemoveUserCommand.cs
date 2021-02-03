@@ -36,13 +36,16 @@ namespace TelegramReceiver
         {
             var userPollRule = new Subscription(user, null);
             
-            _producer.Send(
-                new ChatSubscriptionRequest(
-                    SubscriptionType.Unsubscribe,
-                    userPollRule,
-                    ConnectedChat));
-            
             await _savedUsersRepository.RemoveAsync(user, ConnectedChat);
+
+            if (! await _savedUsersRepository.ExistsAsync(user))
+            {
+                _producer.Send(
+                    new ChatSubscriptionRequest(
+                        SubscriptionType.Unsubscribe,
+                        userPollRule,
+                        ConnectedChat));                
+            }
         }
     }
 }

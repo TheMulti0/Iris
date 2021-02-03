@@ -8,6 +8,8 @@ namespace UserDataLayer
 {
     public interface ISavedUsersRepository
     {
+        Task<bool> ExistsAsync(User user);
+        
         IQueryable<SavedUser> GetAll();
         
         Task<SavedUser> GetAsync(ObjectId id);

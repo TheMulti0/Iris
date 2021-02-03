@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace UserDataLayer
 {
@@ -16,6 +17,16 @@ namespace UserDataLayer
             _collection = context.SavedUsers;
         }
 
+        public Task<bool> ExistsAsync(User user)
+        {
+            (string userId, Platform platform) = user;
+            
+            return _collection
+                .AsQueryable()
+                .Where(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
+                .AnyAsync();
+        }
+
         public IQueryable<SavedUser> GetAll()
         {
             return _collection
@@ -25,7 +36,8 @@ namespace UserDataLayer
         public Task<SavedUser> GetAsync(ObjectId id)
         {
             return _collection
-                .Find(savedUser => savedUser.Id == id)
+                .AsQueryable()
+                .Where(savedUser => savedUser.Id == id)
                 .FirstOrDefaultAsync();
         }
 
@@ -34,7 +46,8 @@ namespace UserDataLayer
             (string userId, Platform platform) = user;
             
             return _collection
-                .Find(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
+                .AsQueryable()
+                .Where(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
                 .FirstOrDefaultAsync();
         }
 
