@@ -52,7 +52,7 @@ namespace MessagesManager
             IEnumerable<UserChatSubscription> destinationChats,
             CancellationToken token)
         {
-            List<IMedia> media = await WithExtractedVideos(update.Url, update.Media, token);
+            List<IMedia> media = await WithExtractedVideos(update, token);
 
             if (!destinationChats.Any(subscription => subscription.SendScreenshotOnly))
             {
@@ -65,13 +65,17 @@ namespace MessagesManager
         }
 
         private async Task<List<IMedia>> WithExtractedVideos(
-            string updateUrl,
-            IEnumerable<IMedia> media,
+            Update update,
             CancellationToken cancellationToken)
         {
-            return await media
+            if (update.Author.Platform == Platform.Twitter)
+            {
+                return update.Media;
+            }
+            
+            return await update.Media
                 .ToAsyncEnumerable()
-                .SelectAwait(m => ExtractVideo(updateUrl, m))
+                .SelectAwait(m => ExtractVideo(update.Url, m))
                 .ToListAsync(cancellationToken);
         }
 
