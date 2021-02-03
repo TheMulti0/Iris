@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Common;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace UserDataLayer
 {
@@ -22,7 +21,14 @@ namespace UserDataLayer
             return _collection
                 .AsQueryable();
         }
-        
+
+        public Task<SavedUser> GetAsync(ObjectId id)
+        {
+            return _collection
+                .Find(savedUser => savedUser.Id == id)
+                .FirstOrDefaultAsync();
+        }
+
         public Task<SavedUser> GetAsync(User user)
         {
             (string userId, Platform platform) = user;

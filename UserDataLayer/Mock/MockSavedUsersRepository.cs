@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using MongoDB.Bson;
 
 namespace UserDataLayer
 {
@@ -19,7 +20,16 @@ namespace UserDataLayer
                     }
                 });
         }
-        
+
+        public Task<SavedUser> GetAsync(ObjectId id)
+        {
+            return Task.FromResult(
+                new SavedUser
+                {
+                    Chats = new List<UserChatSubscription>()
+                });
+        }
+
         public Task<SavedUser> GetAsync(User user)
         {
             return Task.FromResult(
