@@ -8,18 +8,18 @@ using Update = Common.Update;
 
 namespace UpdatesScraper
 {
-    public class JobsConsumer : IConsumer<User>
+    public class PollJobsConsumer : IConsumer<PollJob>
     {
         private readonly UpdatesScraper _scraper;
         private readonly IProducer<Update> _producer;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
-        private readonly ILogger<JobsConsumer> _logger;
+        private readonly ILogger<PollJobsConsumer> _logger;
 
-        public JobsConsumer(
+        public PollJobsConsumer(
             UpdatesScraper scraper,
             IProducer<Update> producer,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
-            ILogger<JobsConsumer> logger)
+            ILogger<PollJobsConsumer> logger)
         {
             _scraper = scraper;
             _producer = producer;
@@ -27,11 +27,26 @@ namespace UpdatesScraper
             _logger = logger;
         }
 
-        public async Task ConsumeAsync(User user, CancellationToken token)
+        public async Task ConsumeAsync(PollJob pollJob, CancellationToken token)
         {
-            _logger.LogInformation("Received poll job for {}", user);
+            _logger.LogInformation("Received poll job {}", pollJob);
 
-            bool foundUpdates = false;
+            var user = pollJob.User;
+
+            if (pollJob.MinimumEarliestUpdateTime != null)
+            {
+                var updateTime = await _userLatestUpdateTimesRepository.GetAsync(user);
+
+                long latestTicks = Math.Max(
+                    updateTime.LatestUpdateTime.Ticks,
+                    (long) pollJob.MinimumEarliestUpdateTime?.Ticks);
+                
+                await _userLatestUpdateTimesRepository.AddOrUpdateAsync(
+                    user,
+                    new DateTime(latestTicks));
+            }
+            
+            var foundUpdates = false;
             
             await foreach (Update update in _scraper.ScrapeUser(user, token))
             {

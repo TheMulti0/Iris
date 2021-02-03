@@ -14,12 +14,12 @@ namespace ScrapersDistributor
             Task Task,
             CancellationTokenSource TokenSource);
         
-        private readonly IProducer<User> _producer;
+        private readonly IProducer<PollJob> _producer;
         private readonly ConcurrentDictionary<Subscription, RunningOperation> _userSubscriptionsOperations = new();
         private readonly ILogger<SubscriptionsConsumer> _logger;
 
         public SubscriptionsConsumer(
-            IProducer<User> producer,
+            IProducer<PollJob> producer,
             ILogger<SubscriptionsConsumer> logger)
         {
             _producer = producer;
@@ -84,28 +84,44 @@ namespace ScrapersDistributor
             Subscription rule,
             CancellationToken token)
         {
-            (User user, TimeSpan? i) = rule;
+            (User user, TimeSpan? interval) = rule;
 
-            if (i == null)
+            if (interval == null)
             {
                 return;
             }
 
-            var interval = (TimeSpan) i;
-            
+            var pollJob = new PollJob(user, DateTime.Now);
+            _producer.Send(pollJob, Enum.GetName(user.Platform));
+
+            await SendDelayLoop(
+                rule,
+                new PollJob(user, null),
+                Enum.GetName(user.Platform),
+                (TimeSpan) interval,
+                token);
+        }
+
+        private async Task SendDelayLoop(
+            Subscription subscription,
+            PollJob pollJob,
+            string platformName,
+            TimeSpan interval,
+            CancellationToken token)
+        {
             while (true)
             {
+                _logger.LogInformation("Delaying {} for another {}", subscription, interval);
+                await Task.Delay(interval, token);
+
                 try
                 {
-                    _producer.Send(user, Enum.GetName(user.Platform));
+                    _producer.Send(pollJob, platformName);
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Failed to send job for {}", rule);
+                    _logger.LogError(e, "Failed to send job for {}", subscription);
                 }
-                
-                _logger.LogInformation("Delaying {} for another {}", user, interval);
-                await Task.Delay(interval, token);
             }
         }
     }

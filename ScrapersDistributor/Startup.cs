@@ -37,7 +37,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 
     services
         .AddRabbitMqConnection(connectionConfig)
-        .AddProducer<User>(producerConfig)
+        .AddProducer<PollJob>(producerConfig)
         .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionsConsumer>()
         .AddConsumerService<SubscriptionRequest>(consumerConfig)
         .AddSingleton(pollerConfig)

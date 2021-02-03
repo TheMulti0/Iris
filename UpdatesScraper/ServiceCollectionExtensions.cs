@@ -2,7 +2,6 @@ using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using UpdatesScraper.Mock;
 
@@ -41,7 +40,7 @@ namespace UpdatesScraper
                 .AddProducer<Update>(producerConfig)
                 .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
                 .AddUpdatesScraper(scraperConfig)
-                .AddJobsConsumer(consumerConfig);
+                .AddPollJobsConsumer(consumerConfig);
         }
 
         public static IServiceCollection AddUpdatesScraperMongoRepositories(
@@ -90,14 +89,14 @@ namespace UpdatesScraper
                 .AddSingleton<UpdatesScraper>();
         }
 
-        public static IServiceCollection AddJobsConsumer(
+        public static IServiceCollection AddPollJobsConsumer(
             this IServiceCollection services,
             RabbitMqConsumerConfig config)
         {
             return services
                 .AddSingleton(config)
-                .AddSingleton<IConsumer<User>, JobsConsumer>()
-                .AddConsumerService<User>(config);
+                .AddSingleton<IConsumer<PollJob>, PollJobsConsumer>()
+                .AddConsumerService<PollJob>(config);
         }
     }
 }
