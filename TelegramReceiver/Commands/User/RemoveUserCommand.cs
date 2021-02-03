@@ -1,14 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
-using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 using User = Common.User;
 
 namespace TelegramReceiver
@@ -29,18 +23,18 @@ namespace TelegramReceiver
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup();
+            var user = (await SavedUser).User;
 
-            await Remove(inlineKeyboardMarkup, token);
+            await Remove(user);
 
-            return new RedirectResult(Route.Subscriptions);
+            return new RedirectResult(
+                Route.Subscriptions,
+                Context with { SelectedPlatform = user.Platform });
         }
 
-        private async Task Remove(
-            InlineKeyboardMarkup markup,
-            CancellationToken token)
+        private async Task Remove(User user)
         {
-            var userPollRule = new Subscription(SelectedUser, null);
+            var userPollRule = new Subscription(user, null);
             
             _producer.Send(
                 new ChatSubscriptionRequest(
@@ -48,24 +42,7 @@ namespace TelegramReceiver
                     userPollRule,
                     ConnectedChat));
             
-            await _savedUsersRepository.RemoveAsync(SelectedUser, ConnectedChat);
-
-            await Client.EditMessageTextAsync(
-                messageId: Trigger.GetMessageId(),
-                chatId: ContextChat,
-                text: $"{Dictionary.Removed} ({SelectedUser.UserId})",
-                replyMarkup: markup,
-                cancellationToken: token);
-        }
-
-        private InlineKeyboardMarkup CreateMarkup()
-        {
-            (string userId, Platform platform) = SelectedUser;
-            
-            return new InlineKeyboardMarkup(
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.Back,
-                    $"{Route.User}-{userId}-{Enum.GetName(platform)}"));
+            await _savedUsersRepository.RemoveAsync(user, ConnectedChat);
         }
     }
 }

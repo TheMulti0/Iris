@@ -9,6 +9,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
+using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -29,17 +30,18 @@ namespace TelegramReceiver
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
             CallbackQuery query = Trigger.CallbackQuery;
-
-            var savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
+            var savedUser = await SavedUser;
+            
             UserChatSubscription userChatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
             
             await SendRequestMessage(
                 query.Message,
+                savedUser,
                 userChatSubscription);
 
             // Wait for the user to reply with desired display name
             
-            var update = await NextCallbackQuery;
+            var update = await GetNextCallbackQuery();
 
             if (update == null || update.CallbackQuery.Data.StartsWith(Route.User.ToString()))
             {
@@ -47,21 +49,31 @@ namespace TelegramReceiver
             }
 
             await SetLanguage(
+                savedUser.User,
                 userChatSubscription,
                 Enum.Parse<Language>(update.CallbackQuery.Data));
 
             return new RedirectResult(Route.User);
         }
 
-        private async Task SetLanguage(
-            UserChatSubscription chat,
-            Language language)
+        private async Task SendRequestMessage(
+            Message message, 
+            SavedUser savedUser,
+            UserChatSubscription chat)
         {
-            chat.Language = language;
-            await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
+            var markup = new InlineKeyboardMarkup(
+                GetLanguageButtons(savedUser, chat));
+            
+            await Client.EditMessageTextAsync(
+                chatId: ContextChat,
+                messageId: message.MessageId,
+                text: Dictionary.ChooseLanguage,
+                replyMarkup: markup);
         }
-        
-        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(UserChatSubscription subscription)
+
+        private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(
+            SavedUser savedUser,
+            UserChatSubscription subscription)
         {
             InlineKeyboardButton LanguageToButton(Language language)
             {
@@ -86,22 +98,18 @@ namespace TelegramReceiver
                         {
                             InlineKeyboardButton.WithCallbackData(
                                 Dictionary.Back,
-                                $"{Route.User}-{SelectedUser.UserId}-{Enum.GetName(SelectedUser.Platform)}"),                             
+                                $"{Route.User}-{savedUser.Id}"),                             
                         } 
                     });
         }
 
-        private async Task SendRequestMessage(
-            Message message, UserChatSubscription chat)
+        private async Task SetLanguage(
+            User user,
+            UserChatSubscription chat,
+            Language language)
         {
-            var markup = new InlineKeyboardMarkup(
-                GetLanguageButtons(chat));
-            
-            await Client.EditMessageTextAsync(
-                chatId: ContextChat,
-                messageId: message.MessageId,
-                text: Dictionary.ChooseLanguage,
-                replyMarkup: markup);
+            chat.Language = language;
+            await _savedUsersRepository.AddOrUpdateAsync(user, chat);
         }
     }
 }

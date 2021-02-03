@@ -86,6 +86,15 @@ namespace TelegramReceiver
             return new InlineKeyboardMarkup(userButtons.Concat(GetBackButton()).Batch(1));
         }
 
+        private InlineKeyboardButton UserToButton(SavedUser user)
+        {
+            UserChatSubscription chatSubscription = user.Chats.First(subscription => subscription.ChatId == ConnectedChat);
+            
+            return InlineKeyboardButton.WithCallbackData(
+                $"{chatSubscription.DisplayName}",
+                $"{Route.User.ToString()}-{user.Id}");
+        }
+
         private InlineKeyboardButton[] GetAddUserButton() => new[]
         {
             InlineKeyboardButton.WithCallbackData(
@@ -99,16 +108,5 @@ namespace TelegramReceiver
                 Dictionary.Back,
                 Route.Platforms.ToString())
         };
-
-        private InlineKeyboardButton UserToButton(SavedUser user)
-        {
-            (string userId, Platform platform) = user.User;
-
-            UserChatSubscription chatSubscription = user.Chats.First(subscription => subscription.ChatId == ConnectedChat);
-            
-            return InlineKeyboardButton.WithCallbackData(
-                $"{chatSubscription.DisplayName}",
-                $"{Route.User.ToString()}-{userId}-{Enum.GetName(platform)}");
-        }
     }
 }

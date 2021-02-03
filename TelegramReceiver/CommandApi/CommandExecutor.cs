@@ -6,9 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
+using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using UserDataLayer;
 using Update = Telegram.Bot.Types.Update;
 using User = Telegram.Bot.Types.User;
 
@@ -19,6 +22,7 @@ namespace TelegramReceiver
         private readonly ITelegramBotClient _client;
         private readonly TelegramConfig _config;
         private readonly CommandFactory _commandFactory;
+        private readonly ISavedUsersRepository _savedUsersRepository;
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly Languages _languages;
         private readonly ILogger<CommandExecutor> _logger;
@@ -93,6 +97,7 @@ namespace TelegramReceiver
         public CommandExecutor(
             TelegramConfig config,
             CommandFactory commandFactory,
+            ISavedUsersRepository savedUsersRepository,
             IConnectionsRepository connectionsRepository,
             Languages languages,
             ILogger<CommandExecutor> logger)
@@ -100,6 +105,7 @@ namespace TelegramReceiver
             _client = new TelegramBotClient(config.AccessToken);
             _config = config;
             _commandFactory = commandFactory;
+            _savedUsersRepository = savedUsersRepository;
             _connectionsRepository = connectionsRepository;
             _languages = languages;
             _logger = logger;
@@ -196,8 +202,9 @@ namespace TelegramReceiver
 
             return new Context(
                 _client,
-                GetNextMessage(chatUpdates),
-                GetNextCallbackQuery(chatUpdates),
+                new AsyncLazy<SavedUser>(() => GetSavedUser(update)),
+                () => GetNextMessage(chatUpdates),
+                () => GetNextCallbackQuery(chatUpdates),
                 update,
                 contextChatId,
                 connection?.Chat ?? contextChatId,
@@ -205,7 +212,7 @@ namespace TelegramReceiver
                 _languages.Dictionary[connection?.Language ?? Language.English],
                 _config.SuperUsers.Contains(user?.Username));
         }
-
+        
         private async Task<Connection> GetConnectionAsync(User user, ChatId contextChatId)
         {
             Connection connection = await _connectionsRepository.GetAsync(user);
@@ -224,6 +231,33 @@ namespace TelegramReceiver
                 Chat = contextChatId,
                 Language = Language.English
             };
+        }
+
+        private async Task<SavedUser> GetSavedUser(Update update)
+        {
+            ObjectId id = GetUserId(update);
+            
+            if (id == ObjectId.Empty)
+            {
+                return null;
+            }
+
+            SavedUser savedUser = await _savedUsersRepository.GetAsync(id);
+            return savedUser;
+        }
+
+        private static ObjectId GetUserId(Update update)
+        {
+            try
+            {
+                string[] items = update.CallbackQuery.Data.Split("-");
+
+                return new ObjectId(items[^1]);
+            }
+            catch
+            {
+                return ObjectId.Empty;
+            }
         }
 
         private static async Task<Update> GetNextMessage(IObservable<Update> chatUpdates)

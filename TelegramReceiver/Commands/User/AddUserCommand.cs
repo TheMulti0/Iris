@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using Nito.AsyncEx;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
 using Message = Telegram.Bot.Types.Message;
@@ -44,7 +39,7 @@ namespace TelegramReceiver
             await SendRequestMessage(platform, token);
 
             // Wait for the user to reply with desired answer
-            Update nextUpdate = await NextMessage;
+            Update nextUpdate = await GetNextMessage();
 
             if (nextUpdate == null)
             {
@@ -73,7 +68,7 @@ namespace TelegramReceiver
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, SelectedUser = user });
+                Context with { Trigger = null, SavedUser = new AsyncLazy<SavedUser>(() => _savedUsersRepository.GetAsync(user)) });
         }
 
         private Task SendRequestMessage(

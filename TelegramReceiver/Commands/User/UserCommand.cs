@@ -25,13 +25,13 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
+            SavedUser savedUser = await SavedUser;
 
             UserChatSubscription chatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
-            var text = GetText(chatSubscription);
+            var text = GetText(savedUser.User, chatSubscription);
 
-            var inlineKeyboardMarkup = GetMarkup(chatSubscription);
+            var inlineKeyboardMarkup = GetMarkup(savedUser, chatSubscription);
 
             if (Trigger == null)
             {
@@ -56,12 +56,12 @@ namespace TelegramReceiver
             return new NoRedirectResult();
         }
 
-        private string GetText(UserChatSubscription subscription)
+        private string GetText(User user, UserChatSubscription subscription)
         {
             var text = new StringBuilder($"{Dictionary.SettingsFor} {subscription.DisplayName}:");
             text.AppendLine("\n");
-            text.AppendLine($"<b>{Dictionary.UserId}:</b> {SelectedUser.UserId}");
-            text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(SelectedUser.Platform)}");
+            text.AppendLine($"<b>{Dictionary.UserId}:</b> {user.UserId}");
+            text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(user.Platform)}");
             text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {subscription.DisplayName}");
             text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {subscription.Interval * 2}");
             text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
@@ -71,21 +71,26 @@ namespace TelegramReceiver
             
             string showSuffix = subscription.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
+
+            if (SelectedPlatform != Platform.Twitter)
+            {
+                return text.ToString();
+            }
             
             string sendScreenshotOnly = subscription.SendScreenshotOnly ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {sendScreenshotOnly}");
-            
+
             return text.ToString();
         }
 
-        private InlineKeyboardMarkup GetMarkup(UserChatSubscription subscription)
+        private InlineKeyboardMarkup GetMarkup(
+            SavedUser savedUser,
+            UserChatSubscription subscription)
         {
             string prefixAction = subscription.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
             string suffixAction = subscription.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
             string screenshotAction = subscription.SendScreenshotOnly ? Dictionary.Disable : Dictionary.Enable;
 
-            string userInfo = $"{SelectedUser.UserId}-{SelectedUser.Platform}";
-            
             return new InlineKeyboardMarkup(
                 new[]
                 {
@@ -93,37 +98,37 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             Dictionary.SetDisplayName,
-                            $"{Route.SetUserDisplayName}-{userInfo}")
+                            $"{Route.SetUserDisplayName}-{savedUser.Id}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
                             Dictionary.SetLanguage,
-                            $"{Route.SetUserLanguage}-{userInfo}")
+                            $"{Route.SetUserLanguage}-{savedUser.Id}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{prefixAction} {Dictionary.ShowPrefix}",
-                            $"{Route.ToggleUserPrefix}-{userInfo}")
+                            $"{Route.ToggleUserPrefix}-{savedUser.Id}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{suffixAction} {Dictionary.ShowSuffix}",
-                            $"{Route.ToggleUserSuffix}-{userInfo}")
+                            $"{Route.ToggleUserSuffix}-{savedUser.Id}")
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{screenshotAction} {Dictionary.SendScreenshotOnly}",
-                            $"{Route.ToggleUserSendScreenshotOnly}-{userInfo}")
+                            $"{Route.ToggleUserSendScreenshotOnly}-{savedUser.Id}")
                     },
                     new []
                     {
                         InlineKeyboardButton.WithCallbackData(
                             Dictionary.Remove,
-                            $"{Route.RemoveUser}-{userInfo}"),                        
+                            $"{Route.RemoveUser}-{savedUser.Id}"),                        
                     },
                     new []
                     {

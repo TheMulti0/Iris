@@ -29,7 +29,7 @@ namespace TelegramReceiver
         {
             await SendLanguageList(token);
 
-            Update update = await NextCallbackQuery;
+            Update update = await GetNextCallbackQuery();
             
             if (update == null || update.CallbackQuery.Data.StartsWith(Route.Settings.ToString()))
             {

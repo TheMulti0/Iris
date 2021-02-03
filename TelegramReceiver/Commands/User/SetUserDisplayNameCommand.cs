@@ -27,28 +27,29 @@ namespace TelegramReceiver
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
             CallbackQuery query = Trigger.CallbackQuery;
+            var savedUser = await SavedUser;
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup();
+            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(savedUser.User);
 
             await SendRequestMessage(query.Message, inlineKeyboardMarkup, token);
 
             // Wait for the user to reply with desired display name
 
-            var update = await NextMessage;
+            var update = await GetNextMessage();
 
             if (update == null)
             {
                 return new NoRedirectResult();
             }
 
-            await SetDisplayName(update);
+            await SetDisplayName(savedUser, update);
 
             return new RedirectResult(Route.User, Context with { Trigger = null });
         }
 
-        private InlineKeyboardMarkup CreateMarkup()
+        private InlineKeyboardMarkup CreateMarkup(User user)
         {
-            (string userId, Platform platform) = SelectedUser;
+            (string userId, Platform platform) = user;
             
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
@@ -70,15 +71,15 @@ namespace TelegramReceiver
         }
 
         private async Task SetDisplayName(
+            SavedUser savedUser,
             Update update)
         {
-            SavedUser savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
             UserChatSubscription chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
             string newDisplayName = update.Message.Text;
             chat.DisplayName = newDisplayName;
             
-            await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
+            await _savedUsersRepository.AddOrUpdateAsync(savedUser.User, chat);
         }
     }
 }

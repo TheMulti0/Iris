@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using UserDataLayer;
 using Update = Telegram.Bot.Types.Update;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -13,26 +14,26 @@ namespace TelegramReceiver
     {
         protected readonly Context Context;
         protected readonly ITelegramBotClient Client;
-        protected readonly Task<Update> NextMessage;
-        protected readonly Task<Update> NextCallbackQuery;
+        protected readonly AsyncLazy<SavedUser> SavedUser;
+        protected readonly Func<Task<Update>> GetNextMessage;
+        protected readonly Func<Task<Update>> GetNextCallbackQuery;
         protected readonly Update Trigger;
         protected readonly ChatId ContextChat;
         protected readonly ChatId ConnectedChat;
         protected readonly Language Language;
         protected readonly LanguageDictionary Dictionary;
         protected readonly bool IsSuperUser;
-        protected readonly User SelectedUser;
         protected readonly Platform? SelectedPlatform;
         
         protected BaseCommand(Context context)
         {
             Context = context;
             
-            (Client, NextMessage, NextCallbackQuery, Trigger, ContextChat, ConnectedChat, Language, Dictionary, IsSuperUser) = context;
+            (Client, SavedUser, GetNextMessage, GetNextCallbackQuery, Trigger, ContextChat, ConnectedChat, Language, Dictionary, IsSuperUser) = context;
 
-            SelectedUser = context.SelectedUser;
-
-            SelectedPlatform = context.SelectedPlatform ?? SelectedUser?.Platform ?? ExtractPlatform(Trigger?.CallbackQuery);
+            SelectedPlatform = context.SelectedPlatform 
+                               ?? ExtractPlatform(Trigger?.CallbackQuery) 
+                               ?? SavedUser.Task.Result?.User?.Platform;
         }
 
         private static Platform? ExtractPlatform(CallbackQuery query)

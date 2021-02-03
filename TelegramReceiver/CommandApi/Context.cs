@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using Common;
+using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Message = Telegram.Bot.Types.Message;
+using UserDataLayer;
 using Update = Telegram.Bot.Types.Update;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
     public record Context(
         ITelegramBotClient Client,
-        Task<Update> NextMessage,
-        Task<Update> NextCallbackQuery,
+        AsyncLazy<SavedUser> SavedUser, 
+        Func<Task<Update>> GetNextMessage,
+        Func<Task<Update>> GetNextCallbackQuery,
         Update Trigger,
         ChatId ContextChatId,
         ChatId ConnectedChatId,
@@ -23,24 +21,8 @@ namespace TelegramReceiver
         LanguageDictionary LanguageDictionary,
         bool IsSuperUser)
     {
-        public User SelectedUser { get; init; } = ExtractUser(Trigger?.CallbackQuery);
-        
         public Platform? SelectedPlatform { get; init; }
 
         public Chat ConnectedChat { get; init; }
-        
-        private static User ExtractUser(CallbackQuery query)
-        {
-            try
-            {
-                string[] items = query.Data.Split("-");
-            
-                return new User(items[^2], Enum.Parse<Platform>(items[^1]));
-            }
-            catch
-            {
-                return null;
-            }
-        }
     }
 }

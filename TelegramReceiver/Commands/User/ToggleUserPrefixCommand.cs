@@ -20,12 +20,12 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            SavedUser savedUser = await _savedUsersRepository.GetAsync(SelectedUser);
+            SavedUser savedUser = await SavedUser;
             UserChatSubscription chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
             chat.ShowPrefix = !chat.ShowPrefix;
             
-            await _savedUsersRepository.AddOrUpdateAsync(SelectedUser, chat);
+            await _savedUsersRepository.AddOrUpdateAsync(savedUser.User, chat);
 
             return new RedirectResult(Route.User);
         }
