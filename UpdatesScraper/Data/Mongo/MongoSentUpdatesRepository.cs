@@ -15,7 +15,7 @@ namespace UpdatesScraper
         {
             _collection = context.SentUpdates;
 
-            if (!_collection.Indexes.List().Any()) // There shouldn't be more than one index in the collection
+            if (_collection.Indexes.List().ToList().Count < 2) // There shouldn't be more than two indices in the collection
             {
                 CreateExpirationIndex(config);
             }
