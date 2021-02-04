@@ -37,9 +37,12 @@ namespace UpdatesScraper
             {
                 var updateTime = await _userLatestUpdateTimesRepository.GetAsync(user);
 
+                long? latestUpdateTimeTicks = updateTime?.LatestUpdateTime.Ticks;
+                long? minimumUpdateTimeTicks = pollJob.MinimumEarliestUpdateTime?.Ticks;
+                
                 long latestTicks = Math.Max(
-                    updateTime.LatestUpdateTime.Ticks,
-                    (long) pollJob.MinimumEarliestUpdateTime?.Ticks);
+                    latestUpdateTimeTicks ?? 0,
+                    (long) minimumUpdateTimeTicks);
                 
                 await _userLatestUpdateTimesRepository.AddOrUpdateAsync(
                     user,
