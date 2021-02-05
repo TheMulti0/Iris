@@ -98,7 +98,7 @@ namespace TelegramReceiver
         {   
             TimeSpan interval = _defaultInterval;
 
-            var subscription = new Subscription(user, interval);
+            var subscription = new Subscription(user, interval, DateTime.Now);
 
             if (! await _savedUsersRepository.ExistsAsync(user))
             {

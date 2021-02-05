@@ -36,7 +36,7 @@ namespace Common
             
             using Process process = Process.Start(startInfo);
 
-            await process.WaitForExitAsync(token);
+            token.Register(() => process.Kill());
             
             string output = await process.StandardOutput.ReadToEndAsync();
             if (string.IsNullOrEmpty(output))

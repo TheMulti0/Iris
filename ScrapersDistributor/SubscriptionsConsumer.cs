@@ -26,7 +26,9 @@ namespace ScrapersDistributor
             _logger = logger;
         }
         
-        public Task ConsumeAsync(SubscriptionRequest request, CancellationToken token)
+        public Task ConsumeAsync(
+            SubscriptionRequest request,
+            CancellationToken token)
         {
             try
             {
@@ -91,13 +93,19 @@ namespace ScrapersDistributor
                 return;
             }
 
-            var pollJob = new PollJob(user, DateTime.Now);
-            _producer.Send(pollJob, Enum.GetName(user.Platform));
+            var platformName = Enum.GetName(user.Platform);
+            
+            if (rule.MinimumEarliestUpdateTime != null)
+            {
+                _producer.Send(
+                    new PollJob(user, rule.MinimumEarliestUpdateTime),
+                    platformName);
+            }
 
             await SendDelayLoop(
                 rule,
                 new PollJob(user, null),
-                Enum.GetName(user.Platform),
+                platformName,
                 (TimeSpan) interval,
                 token);
         }
@@ -111,17 +119,10 @@ namespace ScrapersDistributor
         {
             while (true)
             {
+                _producer.Send(pollJob, platformName);
+                
                 _logger.LogInformation("Delaying {} for another {}", subscription, interval);
                 await Task.Delay(interval, token);
-
-                try
-                {
-                    _producer.Send(pollJob, platformName);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Failed to send job for {}", subscription);
-                }
             }
         }
     }
