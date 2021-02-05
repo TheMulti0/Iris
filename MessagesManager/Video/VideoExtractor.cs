@@ -88,6 +88,7 @@ namespace MessagesManager
             var output
                 = await ScriptExecutor.ExecutePython(
                 "extract_video.py",
+                token: default,
                 url,
                 _config.FormatRequest,
                 _config.UserName,

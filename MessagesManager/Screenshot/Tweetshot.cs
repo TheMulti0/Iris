@@ -35,11 +35,14 @@ namespace MessagesManager
 
         private static async Task ExecuteScreenshotAsync(string url, int scale, bool darkMode, int quality)
         {
+            var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            
             try
             {
                 await ScriptExecutor.Execute(
                     "node",
                     "tweet-shot.js",
+                    token: cts.Token,
                     $"--url {url}",
                     $"--scale {scale}",
                     darkMode ? "--dark-mode" : string.Empty,

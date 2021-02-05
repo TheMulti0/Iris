@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Common
@@ -10,14 +12,16 @@ namespace Common
     {
         public static Task<string> ExecutePython(
             string fileName,
+            CancellationToken token = default,
             params object[] parameters)
         {
-            return Execute("python3", fileName, parameters);
+            return Execute("python", fileName, token, parameters);
         }
         
         public static async Task<string> Execute(
             string command,
             string fileName,
+            CancellationToken token = default,
             params object[] parameters)
         {
             var arguments = new[] { fileName }
@@ -32,7 +36,9 @@ namespace Common
             
             using Process process = Process.Start(startInfo);
 
-            string output = await process?.StandardOutput?.ReadToEndAsync();
+            await process.WaitForExitAsync(token);
+            
+            string output = await process.StandardOutput.ReadToEndAsync();
             if (string.IsNullOrEmpty(output))
             {
                 throw new InvalidOperationException("Failed to execute script (no output)");

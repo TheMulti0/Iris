@@ -29,7 +29,7 @@ namespace FacebookScraper
             {
                 // TODO make page count an optional configurable field
                 string response = await ScriptExecutor.ExecutePython(
-                    scriptName, user.UserId, 1);
+                    scriptName, token: default, user.UserId, 1);
                 
                 return JsonConvert.DeserializeObject<Post[]>(response)
                     .Select(ToUpdate(user));
