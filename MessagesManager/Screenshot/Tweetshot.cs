@@ -48,7 +48,7 @@ namespace MessagesManager
                     darkMode ? "--dark-mode" : string.Empty,
                     $"--quality {quality}");
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
             }
         }
