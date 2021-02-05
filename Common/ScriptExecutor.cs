@@ -15,7 +15,7 @@ namespace Common
             CancellationToken token = default,
             params object[] parameters)
         {
-            return Execute("python", fileName, token, parameters);
+            return Execute("python3", fileName, token, parameters);
         }
         
         public static async Task<string> Execute(
