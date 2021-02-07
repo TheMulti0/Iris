@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using MoreLinq.Extensions;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using UserDataLayer;
@@ -29,26 +31,26 @@ namespace TelegramReceiver
 
             UserChatSubscription chatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
 
-            var text = GetText(savedUser.User, chatSubscription);
+            string text = GetText(savedUser.User, chatSubscription);
 
-            var inlineKeyboardMarkup = GetMarkup(savedUser, chatSubscription);
+            InlineKeyboardMarkup inlineKeyboardMarkup = GetMarkup(savedUser, chatSubscription);
 
             if (Trigger == null)
             {
                 await Client.SendTextMessageAsync(
-                    chatId: ContextChat,
-                    text: text,
-                    parseMode: ParseMode.Html,
+                    ContextChat,
+                    text,
+                    ParseMode.Html,
                     replyMarkup: inlineKeyboardMarkup,
                     cancellationToken: token);
             }
             else
             {
                 await Client.EditMessageTextAsync(
-                    chatId: ContextChat,
-                    messageId: Trigger.GetMessageId(),
-                    text: text,
-                    parseMode: ParseMode.Html,
+                    ContextChat,
+                    Trigger.GetMessageId(),
+                    text,
+                    ParseMode.Html,
                     replyMarkup: inlineKeyboardMarkup,
                     cancellationToken: token);
             }
@@ -64,11 +66,12 @@ namespace TelegramReceiver
             text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(user.Platform)}");
             text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {subscription.DisplayName}");
             text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {subscription.Interval * 2}");
-            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
+            text.AppendLine(
+                $"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
 
             string showPrefix = subscription.ShowPrefix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowPrefix}:</b> {showPrefix}");
-            
+
             string showSuffix = subscription.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
 
@@ -76,7 +79,7 @@ namespace TelegramReceiver
             {
                 return text.ToString();
             }
-            
+
             string sendScreenshotOnly = subscription.SendScreenshotOnly ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {sendScreenshotOnly}");
 
@@ -91,52 +94,40 @@ namespace TelegramReceiver
             string suffixAction = subscription.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
             string screenshotAction = subscription.SendScreenshotOnly ? Dictionary.Disable : Dictionary.Enable;
 
-            return new InlineKeyboardMarkup(
-                new[]
-                {
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            Dictionary.SetDisplayName,
-                            $"{Route.SetUserDisplayName}-{savedUser.Id}")
-                    },
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            Dictionary.SetLanguage,
-                            $"{Route.SetUserLanguage}-{savedUser.Id}")
-                    },
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            $"{prefixAction} {Dictionary.ShowPrefix}",
-                            $"{Route.ToggleUserPrefix}-{savedUser.Id}")
-                    },
-                    new[]
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            $"{suffixAction} {Dictionary.ShowSuffix}",
-                            $"{Route.ToggleUserSuffix}-{savedUser.Id}")
-                    },
-                    new[]
+            IEnumerable<InlineKeyboardButton> buttons = new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.SetDisplayName,
+                    $"{Route.SetUserDisplayName}-{savedUser.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.SetLanguage,
+                    $"{Route.SetUserLanguage}-{savedUser.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    $"{prefixAction} {Dictionary.ShowPrefix}",
+                    $"{Route.ToggleUserPrefix}-{savedUser.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    $"{suffixAction} {Dictionary.ShowSuffix}",
+                    $"{Route.ToggleUserSuffix}-{savedUser.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.Remove,
+                    $"{Route.RemoveUser}-{savedUser.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.Back,
+                    $"{Route.Subscriptions}-{SelectedPlatform}")
+            };
+
+            if (SelectedPlatform == Platform.Twitter)
+            {
+                buttons = buttons.Concat(
+                    new [] 
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{screenshotAction} {Dictionary.SendScreenshotOnly}",
-                            $"{Route.ToggleUserSendScreenshotOnly}-{savedUser.Id}")
-                    },
-                    new []
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            Dictionary.Remove,
-                            $"{Route.RemoveUser}-{savedUser.Id}"),                        
-                    },
-                    new []
-                    {
-                        InlineKeyboardButton.WithCallbackData(
-                            Dictionary.Back,
-                            $"{Route.Subscriptions}-{SelectedPlatform}") 
-                    }
-                });
+                            $"{Route.ToggleUserSendScreenshotOnly}-{savedUser.Id}") 
+                    });
+            }
+            
+            return new InlineKeyboardMarkup(buttons.Batch(1));
         }
     }
 }

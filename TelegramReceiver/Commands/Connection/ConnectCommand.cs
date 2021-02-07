@@ -1,12 +1,9 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common;
-using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Message = Telegram.Bot.Types.Message;
-using Update = Telegram.Bot.Types.Update;
 
 namespace TelegramReceiver
 {
@@ -61,9 +58,10 @@ namespace TelegramReceiver
                 return new NoRedirectResult();
             }
 
-            await _repository.AddOrUpdateAsync(message.From, chatId, Language);
+            Connection.Chat = chatId; 
+            await _repository.AddOrUpdateAsync(message.From, Connection);
 
-            return new RedirectResult(Route.Connection, Context with { ConnectedChatId = chat, ConnectedChat = chat });
+            return new RedirectResult(Route.Connection, Context with { Connection = Connection, ConnectedChat = chat });
         }
     }
 }

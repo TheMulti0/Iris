@@ -38,16 +38,17 @@ namespace TelegramReceiver
 
             var language = Enum.Parse<Language>(update.CallbackQuery.Data);
 
+            Connection.Language = language;
+
             await _connectionsRepository.AddOrUpdateAsync(
                 update.GetUser(),
-                ConnectedChat,
-                language);
+                Connection);
             
             LanguageDictionary newLanguageDictionary = _languages.Dictionary[language];
 
             return new RedirectResult(
                 Route.Settings,
-                Context with { Language = language, LanguageDictionary = newLanguageDictionary });
+                Context with { Connection = Connection, Dictionary = newLanguageDictionary});
         }
 
         private async Task SendLanguageList(CancellationToken token)

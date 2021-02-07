@@ -41,5 +41,10 @@
     "Subscriptions": "Subscriptions",
     "Live": "in a live stream",
     "UserNotFound": "User not found!",
-    "Start": "Welcome to @IrisUpdateBot!\r\nThe automatic social-media update bot, made by @themulti0\r\n\r\nHere are the list of commands available:\r\n\r\n/settings - Manage settings for connected chat\r\n\r\n/subscriptions - Jump straight ahead to managing specifically platform subscriptions (possible to enter from /settings)\r\n\r\n/language - Jump straight ahead to changing the interface's language (possible to enter from /settings)\r\n\r\n/connect - Connect to a specific chat\r\n\r\n/connection - Display current connected chat\r\n\r\n/disconnect - Disconnect from connected chat, connect back to this DM chat"
+    "Start": "Welcome to @IrisUpdateBot!\r\nThe automatic social-media update bot, made by @themulti0\r\n\r\nHere are the list of commands available:\r\n\r\n/settings - Manage settings for connected chat\r\n\r\n/subscriptions - Jump straight ahead to managing specifically platform subscriptions (possible to enter from /settings)\r\n\r\n/language - Jump straight ahead to changing the interface's language (possible to enter from /settings)\r\n\r\n/connect - Connect to a specific chat\r\n\r\n/connection - Display current connected chat\r\n\r\n/disconnect - Disconnect from connected chat, connect back to this DM chat",
+    "Accept": "Accept",
+    "Decline": "Decline",
+    "YouMustAgreeToTos": "In order to use this bot you must agree to the terms of service",
+    "Tos": "...",
+    "ThanksForCheckingOut": "Thanks for checking out Iris!"
 }

@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
-using Common;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver
@@ -23,26 +21,24 @@ namespace TelegramReceiver
                 .FirstOrDefaultAsync(c => c.User.Id == user.Id);
         }
 
-        public async Task AddOrUpdateAsync(User user, ChatId chatId, Language language)
+        public async Task AddOrUpdateAsync(User user, IConnectionProperties properties)
         {
-            var connection = new Connection
-            {
-                User = user,
-                Chat = chatId
-            };
-
             var existingConnection = await GetAsync(user);
-            string existingChatId = existingConnection?.Chat;
+            var connection = new Connection(properties)
+            {
+                User = user
+            };
             
-            if (existingChatId == null)
+            if (existingConnection == null)
             {
                 await _collection.InsertOneAsync(connection);
                 return;
             }
 
             UpdateDefinition<Connection> update = Builders<Connection>.Update
-                .Set(c => c.Chat, (string) chatId)
-                .Set(c => c.Language, language);
+                .Set(c => c.Chat, connection.Chat)
+                .Set(c => c.Language, connection.Language)
+                .Set(c => c.HasAgreedToTos, connection.HasAgreedToTos);
             
             await _collection.UpdateOneAsync(
                 c => c.User == user,

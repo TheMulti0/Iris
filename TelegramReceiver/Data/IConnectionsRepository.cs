@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Common;
-using Telegram.Bot.Types;
 using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver
@@ -9,6 +7,6 @@ namespace TelegramReceiver
     {
         Task<Connection> GetAsync(User user);
         
-        Task AddOrUpdateAsync(User user, ChatId chatId, Language language);
+        Task AddOrUpdateAsync(User user, IConnectionProperties properties);
     }
 }

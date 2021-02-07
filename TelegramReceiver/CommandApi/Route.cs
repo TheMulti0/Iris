@@ -17,6 +17,9 @@
         SetUserLanguage,
         ToggleUserPrefix,
         ToggleUserSuffix,
-        ToggleUserSendScreenshotOnly
+        ToggleUserSendScreenshotOnly,
+        SendTos,
+        AcceptTos,
+        DeclineTos
     }
 }

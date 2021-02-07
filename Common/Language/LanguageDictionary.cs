@@ -47,6 +47,11 @@ namespace Common
         public string Live { get; set; }
         public string UserNotFound { get; set; }
         public string Start { get; set; }
+        public string Accept { get; set; }
+        public string Decline { get; set; }
+        public string YouMustAgreeToTos { get; set; }
+        public string Tos { get; set; }
+        public string ThanksForCheckingOut { get; set; }
 
         public string GetPlatform(Platform platform)
         {

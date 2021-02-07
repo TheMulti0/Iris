@@ -28,7 +28,8 @@ namespace TelegramReceiver
                 return new NoRedirectResult();
             }
 
-            await _repository.AddOrUpdateAsync(Trigger.GetUser(), ContextChat, Language);
+            Connection.Chat = ContextChat;
+            await _repository.AddOrUpdateAsync(Trigger.GetUser(), Connection);
 
             await Client.SendTextMessageAsync(
                 chatId: ContextChat,

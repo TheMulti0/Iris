@@ -125,6 +125,11 @@ namespace TelegramReceiver
                 }
 
                 Context context = await CreateContext(update, updates);
+                if (!context.Connection.HasAgreedToTos)
+                {
+                    lastRoute = Route.SendTos;
+                }
+                
                 while (lastRoute != null)
                 {
                     IRedirectResult result = await ExecuteCommand(
@@ -207,8 +212,7 @@ namespace TelegramReceiver
                 () => GetNextCallbackQuery(chatUpdates),
                 update,
                 contextChatId,
-                connection?.Chat ?? contextChatId,
-                connection?.Language ?? Language.English,
+                connection,
                 _languages.Dictionary[connection?.Language ?? Language.English],
                 _config.SuperUsers.Contains(user?.Username));
         }
@@ -221,15 +225,19 @@ namespace TelegramReceiver
             {
                 return connection;
             }
+
+            var connectionProperties = new ConnectionProperties
+            {
+                Language = Language.English,
+                Chat = contextChatId
+            };
             
             await _connectionsRepository
-                .AddOrUpdateAsync(user, contextChatId, Language.English);
+                .AddOrUpdateAsync(user, connectionProperties);
 
-            return new Connection
+            return new Connection(connectionProperties)
             {
-                User = user,
-                Chat = contextChatId,
-                Language = Language.English
+                User = user
             };
         }
 
@@ -342,6 +350,15 @@ namespace TelegramReceiver
                 
                 case Route.ToggleUserSendScreenshotOnly:
                     return typeof(ToggleUserSendScreenshotOnlyCommand);
+                
+                case Route.SendTos:
+                    return typeof(SendTosCommand);
+                
+                case Route.AcceptTos:
+                    return typeof(AcceptTosCommand);
+                
+                case Route.DeclineTos:
+                    return typeof(DeclineTosCommand);
                 
                 default:
                     _logger.LogError("Failed to find correct command for route {}", route);
