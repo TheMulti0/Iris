@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot.Types.Enums;
 
 namespace TelegramReceiver
 {
@@ -20,6 +21,12 @@ namespace TelegramReceiver
             await _connectionsRepository.AddOrUpdateAsync(
                 Trigger.GetUser(),
                 Connection);
+            
+            await Client.EditMessageTextAsync(
+                chatId: ContextChat,
+                messageId: Trigger.GetMessageId(),
+                text: Dictionary.ThanksNowYouCanUse,
+                cancellationToken: token);
 
             return new NoRedirectResult();
         }

@@ -125,10 +125,10 @@ namespace TelegramReceiver
                 }
 
                 Context context = await CreateContext(update, updates);
-                if (!context.Connection.HasAgreedToTos)
-                {
-                    lastRoute = Route.SendTos;
-                }
+                // if (!context.Connection.HasAgreedToTos && lastRoute != Route.AcceptTos && lastRoute != Route.DeclineTos)
+                // {
+                //     lastRoute = Route.SendTos;
+                // }
                 
                 while (lastRoute != null)
                 {

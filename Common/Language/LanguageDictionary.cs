@@ -52,6 +52,7 @@ namespace Common
         public string YouMustAgreeToTos { get; set; }
         public string Tos { get; set; }
         public string ThanksForCheckingOut { get; set; }
+        public string ThanksNowYouCanUse { get; set; }
 
         public string GetPlatform(Platform platform)
         {

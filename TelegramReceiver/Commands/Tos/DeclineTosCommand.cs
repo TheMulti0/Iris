@@ -18,7 +18,6 @@ namespace TelegramReceiver
                 chatId: ContextChat,
                 messageId: Trigger.GetMessageId(),
                 text: Dictionary.ThanksForCheckingOut,
-                parseMode: ParseMode.Html,
                 cancellationToken: token);
             
             return new NoRedirectResult();
