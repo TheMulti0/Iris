@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    </PropertyGroup>
+      <UserSecretsId>115ec9f3-87cf-4cca-b08b-701104e77f99</UserSecretsId>
+  </PropertyGroup>
     
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />

@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using Common;
 using Extensions;
 using FacebookScraper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using TelegramReceiver;
 using TwitterScraper;
@@ -32,6 +28,7 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
+        .AddUserSecrets<TelegramConfig>()
         .AddEnvironmentVariables();
 }
 
