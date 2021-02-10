@@ -86,17 +86,6 @@ namespace TelegramSender
 
         private async Task SendUnsafeAsync(MessageInfo message)
         {
-            foreach (var m in message.Media)
-            {
-                if (m is not Video)
-                {
-                    continue;
-                }
-                
-                Console.WriteLine("Video");
-                Console.WriteLine(m.Url);
-            }
-            
             List<IAlbumInputMedia> telegramMedia = await message.Media
                 .ToAsyncEnumerable()
                 .SelectAwait(media => ToAlbumInputMediaAsync(message, media))

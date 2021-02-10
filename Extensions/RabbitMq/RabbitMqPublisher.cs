@@ -19,8 +19,6 @@ namespace Extensions
         
         public void Publish(string key, byte[] value)
         {
-            Console.WriteLine("\n\n" + Encoding.UTF8.GetString(value) + "\n");
-
             _channel.BasicPublish(_config.Exchange, key, body: value);
         }
     }
