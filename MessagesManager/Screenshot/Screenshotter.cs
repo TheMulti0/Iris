@@ -9,8 +9,8 @@ namespace MessagesManager
         {
             switch (update.Author.Platform)
             {
-                case Platform.Twitter:
-                    return await Tweetshot.ScreenshotAsync(update.Url);
+                // case Platform.Twitter:
+                //     return await Tweetshot.ScreenshotAsync(update.Url);
                     
                 default:
                     return null;
