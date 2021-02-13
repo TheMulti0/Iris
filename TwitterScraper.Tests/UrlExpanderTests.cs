@@ -22,6 +22,7 @@ namespace TwitterScraper.Tests
             
             Assert.IsNotNull(expanded);
             Assert.AreNotEqual(url, expanded);
+            Assert.AreEqual("https://twitter.com/moran_ynet/status/1333356000351576064", expanded);
         }
         
         [TestMethod]
@@ -32,7 +33,8 @@ namespace TwitterScraper.Tests
             var expanded = await _expander.ExpandAsync(url);
             
             Assert.IsNotNull(expanded);
-            Assert.AreEqual(url, expanded);
+            Assert.AreNotEqual(url, expanded);
+            Assert.AreEqual("https://www.facebook.com/396697410351933/posts/3669190506435924/?d=n", expanded);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace TwitterScraper
@@ -11,31 +11,26 @@ namespace TwitterScraper
 
         public UrlExpander()
         {
-            _httpClient = new HttpClient();
+            var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            };
+            
+            _httpClient = new HttpClient(handler);
         }
 
         public async Task<string> ExpandAsync(string url)
         {
-            string result = await _httpClient.GetStringAsync($"{TwitterConstants.LinkunshortenBaseUrl}/link?url={url}");
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
 
-            var response = JsonSerializer.Deserialize<LinkUnshortenResponse>(result, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            });
+            bool wasRedirected = response.StatusCode == HttpStatusCode.Redirect ||
+                                 response.StatusCode == HttpStatusCode.Moved ||
+                                 response.StatusCode == HttpStatusCode.MovedPermanently;
+            Uri actualUrl = response.Headers.Location;
 
-            if (response == null ||
-                response.RedirectUrl == TwitterConstants.FacebookIncorrectRedirectUrl)
-            {
-                return url;
-            }
-
-            string[] possibleUrls = 
-            {
-                response.RedirectUrl,
-                response.Title
-            };
-            
-            return possibleUrls.FirstOrDefault(u => u != null && u != TwitterConstants.TwitterBaseDomain);
+            return wasRedirected && actualUrl != null
+                ? actualUrl.ToString()
+                : url;
         }
     }
 }
