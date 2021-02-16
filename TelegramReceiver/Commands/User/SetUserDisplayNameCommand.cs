@@ -27,9 +27,8 @@ namespace TelegramReceiver
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
             CallbackQuery query = Trigger.CallbackQuery;
-            var savedUser = await SavedUser;
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(savedUser.User);
+            InlineKeyboardMarkup inlineKeyboardMarkup = CreateMarkup(await SavedUser);
 
             await SendRequestMessage(query.Message, inlineKeyboardMarkup, token);
 
@@ -42,19 +41,17 @@ namespace TelegramReceiver
                 return new NoRedirectResult();
             }
 
-            await SetDisplayName(savedUser, update);
+            await SetDisplayName(await SavedUser, update);
 
             return new RedirectResult(Route.User, Context with { Trigger = null });
         }
 
-        private InlineKeyboardMarkup CreateMarkup(User user)
+        private InlineKeyboardMarkup CreateMarkup(SavedUser user)
         {
-            (string userId, Platform platform) = user;
-            
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Back,
-                    $"{Route.User}-{userId}-{Enum.GetName(platform)}"));
+                    $"{Route.User}-{user.Id}"));
         }
 
         private Task SendRequestMessage(
