@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserDataLayer", "UserDataLa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagesManager.Tests", "MessagesManager.Tests\MessagesManager.Tests.csproj", "{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramReceiver.Tests", "TelegramReceiver.Tests\TelegramReceiver.Tests.csproj", "{A48DDDF8-19FE-4439-B01A-0859891D37C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

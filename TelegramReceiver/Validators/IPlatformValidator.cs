@@ -5,6 +5,6 @@ namespace TelegramReceiver
 {
     internal interface IPlatformValidator
     {
-        Task<User> ValidateAsync(User request);
+        Task<User> ValidateAsync(string userId);
     }
 }

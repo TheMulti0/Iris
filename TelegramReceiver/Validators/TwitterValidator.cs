@@ -3,12 +3,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
-using FacebookScraper;
 using TwitterScraper;
 
 namespace TelegramReceiver
 {
-    internal class TwitterValidator : IPlatformValidator
+    public class TwitterValidator : IPlatformValidator
     {
         private const string TwitterUserNamePattern = @"(https?:\/\/(www\.)?(m.)?twitter.com\/)?(?<userName>[\w\d-_]+)";
         private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
@@ -20,16 +19,16 @@ namespace TelegramReceiver
             _twitter = twitter;
         }
 
-        public async Task<User> ValidateAsync(User request)
+        public async Task<User> ValidateAsync(string userId)
         {
-            Group group = TwitterUserNameRegex.Match(request.UserId)?.Groups["userName"];
+            Group group = TwitterUserNameRegex.Match(userId)?.Groups["userName"];
 
-            if (!@group.Success)
+            if (!group.Success)
             {
                 return null;
             }
 
-            User newUser = request with { UserId = @group.Value };
+            User newUser = new User(group.Value, Platform.Facebook);
             
             IEnumerable<Update> updates = await _twitter.GetUpdatesAsync(newUser);
 

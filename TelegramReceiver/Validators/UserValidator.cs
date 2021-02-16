@@ -27,7 +27,7 @@ namespace TelegramReceiver
         
         public Task<User> ValidateAsync(User request)
         {
-            return _validators[request.Platform].ValidateAsync(request);
+            return _validators[request.Platform].ValidateAsync(request.UserId);
         }
     }
 
