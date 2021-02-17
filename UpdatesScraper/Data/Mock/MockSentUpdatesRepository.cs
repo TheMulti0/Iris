@@ -22,5 +22,10 @@ namespace UpdatesScraper.Mock
         {
             return Task.CompletedTask;
         }
+
+        public Task RemoveAsync(string url)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

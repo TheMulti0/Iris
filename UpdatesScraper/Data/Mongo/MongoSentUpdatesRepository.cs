@@ -53,5 +53,12 @@ namespace UpdatesScraper
             
             await _collection.InsertOneAsync(sentUpdate);
         }
+
+        public async Task RemoveAsync(string url)
+        {
+            await _collection.DeleteOneAsync(
+                new FilterDefinitionBuilder<SentUpdate>()
+                    .Eq(s => s.Url, url));
+        }
     }
 }

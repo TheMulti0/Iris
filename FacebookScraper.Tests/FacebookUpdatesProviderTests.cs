@@ -36,5 +36,15 @@ namespace FacebookScraper.Tests
 
             CollectionAssert.AllItemsAreNotNull(updates);
         }
+
+        [TestMethod]
+        public async Task TestNoUpdatesAsync()
+        {
+            List<Update> updates = (await _updatesProvider.GetUpdatesAsync(new User("thisactuallyisaninvalidfacebookuseraccountforthesakeoftesting", Platform.Facebook)))?.ToList();
+            
+            Assert.IsNotNull(updates);
+
+            CollectionAssert.AllItemsAreNotNull(updates);
+        }
     }
 }

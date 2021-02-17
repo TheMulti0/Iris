@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
@@ -19,18 +20,19 @@ namespace TwitterScraper
 {
     public class TwitterUpdatesProvider : IUpdatesProvider
     {
-        private readonly ITwitterClient _twitterClient;
+        internal ITwitterClient TwitterClient { get; }
+        
         private readonly UrlExpander _urlExpander;
         private readonly TwitterUpdatesProviderConfig _config;
 
         public TwitterUpdatesProvider(
             TwitterUpdatesProviderConfig config)
         {
-            _twitterClient = new TwitterClient(
+            TwitterClient = new TwitterClient(
                 config.ConsumerKey,
                 config.ConsumerSecret);
 
-            _twitterClient.Auth.InitializeClientBearerTokenAsync().Wait();
+            TwitterClient.Auth.InitializeClientBearerTokenAsync().Wait();
 
             _urlExpander = new UrlExpander();
 
@@ -44,7 +46,7 @@ namespace TwitterScraper
                 PageSize = 10,
                 TweetMode = TweetMode.Extended
             };
-            ITweet[] tweets = await _twitterClient.Timelines.GetUserTimelineAsync(parameters);
+            ITweet[] tweets = await TwitterClient.Timelines.GetUserTimelineAsync(parameters);
 
             return tweets
                 .Reverse()
@@ -73,7 +75,7 @@ namespace TwitterScraper
             };
         }
 
-        private string CleanText(string text)
+        internal string CleanText(string text)
         {
             string withExpandedUrls = Regex.Replace(
                 text,
@@ -84,7 +86,7 @@ namespace TwitterScraper
                 withExpandedUrls,
                 new[]
                 {
-                    @"pic.twitter.com/\S+",
+                    @"(https://)?pic.twitter.com/\S+",
                     $@"(({TwitterConstants.TwitterBaseUrl}|{TwitterConstants.TwitterBaseUrlWww})/.+/status/\d+/(photo|video)/\d)"
                 },
                 string.Empty);
@@ -99,13 +101,13 @@ namespace TwitterScraper
             
             foreach (string pattern in patterns)
             {
-                newestText = Regex.Replace(input, pattern, replacement);
+                newestText = Regex.Replace(newestText, pattern, replacement);
             }
 
             return newestText;
         }
         
-        private static IEnumerable<IMedia> GetMedia(ITweet tweet)
+        internal static IEnumerable<IMedia> GetMedia(ITweet tweet)
         {
             List<IMediaEntity> medias = tweet.ExtendedTweet?.ExtendedEntities?.Medias 
                                         ?? tweet.Media 

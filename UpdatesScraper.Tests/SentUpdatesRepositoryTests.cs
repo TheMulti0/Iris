@@ -33,10 +33,17 @@ namespace UpdatesScraper.Tests
         public async Task TestGetSet()
         {
             const string url = "https://test.com";
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (await _repository.ExistsAsync(url))
+                {
+                    await _repository.RemoveAsync(url);
+                }
+                await _repository.AddAsync(url);
             
-            await _repository.AddAsync(url);
-            
-            Assert.IsTrue(await _repository.ExistsAsync(url));
+                Assert.IsTrue(await _repository.ExistsAsync(url));                
+            }
         }
     }
 }

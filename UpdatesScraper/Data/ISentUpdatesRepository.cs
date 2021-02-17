@@ -7,5 +7,7 @@ namespace UpdatesScraper
         Task<bool> ExistsAsync(string url);
 
         Task AddAsync(string url);
+
+        Task RemoveAsync(string url);
     }
 }
