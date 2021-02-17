@@ -30,7 +30,7 @@ namespace Extensions
             _consumer = new AsyncEventingBasicConsumer(_channel);
 
             _consumer.Received += Received;
-            _consumerId = _channel.BasicConsume(config.Queue, false, _consumer);
+            _consumerId = _channel.BasicConsume(config.Queue, !_config.AckOnlyOnSuccess, _consumer);
         }
 
         private async Task Received(object _, BasicDeliverEventArgs message)
@@ -48,8 +48,11 @@ namespace Extensions
                     return;
                 }
             }
-            
-            _channel.BasicAck(message.DeliveryTag, false);
+
+            if (_config.AckOnlyOnSuccess)
+            {
+                _channel.BasicAck(message.DeliveryTag, false);
+            }
         }
 
         public void Dispose()
