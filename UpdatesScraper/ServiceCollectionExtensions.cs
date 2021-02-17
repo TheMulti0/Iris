@@ -17,7 +17,6 @@ namespace UpdatesScraper
                 configuration.GetSection<MongoDbConfig>("MongoDb"),
                 configuration.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"),
                 configuration.GetSection<RabbitMqProducerConfig>("RabbitMqProducer"),
-                configuration.GetSection<UpdatesProviderBaseConfig>("UpdatesProvider"),
                 configuration.GetSection<ScraperConfig>("Scraper"),
                 configuration.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"));
         }
@@ -27,7 +26,6 @@ namespace UpdatesScraper
             MongoDbConfig mongoDbConfig,
             RabbitMqConnectionConfig connectionConfig,
             RabbitMqProducerConfig producerConfig,
-            UpdatesProviderBaseConfig updatesProviderBaseConfig,
             ScraperConfig scraperConfig,
             RabbitMqConsumerConfig consumerConfig) where TProvider : class, IUpdatesProvider
         {
@@ -38,7 +36,7 @@ namespace UpdatesScraper
             return services
                 .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<Update>(producerConfig)
-                .AddUpdatesProvider<TProvider>(updatesProviderBaseConfig)
+                .AddUpdatesProvider<TProvider>()
                 .AddUpdatesScraper(scraperConfig)
                 .AddPollJobsConsumer(consumerConfig);
         }
@@ -72,11 +70,9 @@ namespace UpdatesScraper
         }
 
         public static IServiceCollection AddUpdatesProvider<TProvider>(
-            this IServiceCollection services,
-            UpdatesProviderBaseConfig config) where TProvider : class, IUpdatesProvider
+            this IServiceCollection services) where TProvider : class, IUpdatesProvider
         {
             return services
-                .AddSingleton(config)
                 .AddSingleton<IUpdatesProvider, TProvider>();
         }
 

@@ -9,7 +9,8 @@ namespace UpdatesScraper.Tests
     [TestClass]
     public class SentUpdatesRepositoryTests
     {
-        private static ISentUpdatesRepository _repository;
+        private static MongoApplicationDbContext _dbContext;
+        private static MongoDbConfig _config;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -23,26 +24,51 @@ namespace UpdatesScraper.Tests
                         DatabaseName = "test"
                     })
                 .AddSingleton<MongoApplicationDbContext>()
-                .AddSingleton<ISentUpdatesRepository, MongoSentUpdatesRepository>()
                 .BuildServiceProvider();
 
-            _repository = services.GetService<ISentUpdatesRepository>();
+            _dbContext = services.GetService<MongoApplicationDbContext>();
+            _config = services.GetService<MongoDbConfig>();
         }
 
         [TestMethod]
-        public async Task TestGetSet()
+        public async Task TestGetSetNoIndexCreation()
         {
             const string url = "https://test.com";
 
+            var repository = new MongoSentUpdatesRepository(
+                _dbContext,
+                _config);
+
+            await _dbContext.SentUpdates.Indexes.DropAllAsync();
+
+            repository.CreateExpirationIndex(_config);
+            
+            await TestGetSet(url, repository);
+        }
+
+        [TestMethod]
+        public async Task TestGetSetWithIndexCreation()
+        {
+            const string url = "https://test.com";
+
+            await _dbContext.SentUpdates.Indexes.DropAllAsync();
+            
+            await TestGetSet(url, new MongoSentUpdatesRepository(
+                                      _dbContext,
+                                      _config));
+        }
+
+        private static async Task TestGetSet(string url, ISentUpdatesRepository repository)
+        {
             for (int i = 0; i < 2; i++)
             {
-                if (await _repository.ExistsAsync(url))
+                if (await repository.ExistsAsync(url))
                 {
-                    await _repository.RemoveAsync(url);
+                    await repository.RemoveAsync(url);
                 }
-                await _repository.AddAsync(url);
-            
-                Assert.IsTrue(await _repository.ExistsAsync(url));                
+                await repository.AddAsync(url);
+
+                Assert.IsTrue(await repository.ExistsAsync(url));
             }
         }
     }

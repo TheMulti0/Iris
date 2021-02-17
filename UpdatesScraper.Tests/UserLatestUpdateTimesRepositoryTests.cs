@@ -36,6 +36,7 @@ namespace UpdatesScraper.Tests
             var userId = new User("test", Platform.Facebook);
             DateTime latestUpdateTime = DateTime.Parse(DateTime.Now.ToString()); // To ignore millisecond precision
             
+            await _repository.AddOrUpdateAsync(userId, latestUpdateTime.Add(TimeSpan.FromDays(1)));
             await _repository.AddOrUpdateAsync(userId, latestUpdateTime);
             
             UserLatestUpdateTime userLatestUpdateTime = await _repository.GetAsync(userId);

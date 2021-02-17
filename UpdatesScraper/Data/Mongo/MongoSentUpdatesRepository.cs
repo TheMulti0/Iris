@@ -21,7 +21,7 @@ namespace UpdatesScraper
             }
         }
 
-        private void CreateExpirationIndex(MongoDbConfig config)
+        internal void CreateExpirationIndex(MongoDbConfig config)
         {
             IndexKeysDefinition<SentUpdate> keys = Builders<SentUpdate>.IndexKeys
                 .Ascending(update => update.SentAt);

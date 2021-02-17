@@ -1,8 +1,6 @@
-﻿using UpdatesScraper;
-
-namespace TwitterScraper
+﻿namespace TwitterScraper
 {
-    public class TwitterUpdatesProviderConfig : UpdatesProviderBaseConfig
+    public class TwitterUpdatesProviderConfig
     {
         public string ConsumerKey { get; set; }
 

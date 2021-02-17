@@ -23,7 +23,6 @@ namespace TwitterScraper
         internal ITwitterClient TwitterClient { get; }
         
         private readonly UrlExpander _urlExpander;
-        private readonly TwitterUpdatesProviderConfig _config;
 
         public TwitterUpdatesProvider(
             TwitterUpdatesProviderConfig config)
@@ -35,8 +34,6 @@ namespace TwitterScraper
             TwitterClient.Auth.InitializeClientBearerTokenAsync().Wait();
 
             _urlExpander = new UrlExpander();
-
-            _config = config;
         }
 
         public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
