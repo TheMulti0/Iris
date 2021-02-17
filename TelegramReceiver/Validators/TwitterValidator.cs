@@ -9,7 +9,7 @@ namespace TelegramReceiver
 {
     public class TwitterValidator : IPlatformValidator
     {
-        private const string TwitterUserNamePattern = @"(https?:\/\/(www\.)?(m.)?twitter.com\/)?(?<userName>[\w\d-_]+)";
+        private const string TwitterUserNamePattern = @"(https?:\/\/(www\.)?(m.)?twitter.com\/)?@?(?<userName>[\w\d-_]+)";
         private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
         
         private readonly TwitterUpdatesProvider _twitter;
@@ -30,7 +30,7 @@ namespace TelegramReceiver
 
             User newUser = new User(group.Value, Platform.Twitter);
             
-            IEnumerable<Update> updates = await _twitter.GetUpdatesAsync(newUser);
+            IEnumerable<Update> updates = await _twitter.GetAllUpdatesAsync(newUser);
 
             if (updates == null || !updates.Any())
             {

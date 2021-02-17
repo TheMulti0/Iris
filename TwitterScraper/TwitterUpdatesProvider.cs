@@ -36,7 +36,18 @@ namespace TwitterScraper
             _urlExpander = new UrlExpander();
         }
 
-        public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
+        public Task<IEnumerable<Update>> GetUpdatesAsync(User user)
+        {
+            return GetUpdatesAsync(user, false);
+        }
+        
+        public Task<IEnumerable<Update>> GetAllUpdatesAsync(User user)
+        {
+            return GetUpdatesAsync(user, true);
+        }
+        
+        public async Task<IEnumerable<Update>> GetUpdatesAsync(
+            User user, bool includeAll)
         {
             var parameters = new GetUserTimelineParameters(user.UserId)
             {
@@ -45,10 +56,14 @@ namespace TwitterScraper
             };
             ITweet[] tweets = await TwitterClient.Timelines.GetUserTimelineAsync(parameters);
 
-            return tweets
-                .Reverse()
-                .Where(IsTweetPublishable(user.UserId))
-                .Select(ToUpdate(user));
+            IEnumerable<ITweet> updates = tweets;
+
+            if (!includeAll)
+            {
+                updates = updates.Where(IsTweetPublishable(user.UserId));
+            }
+                
+            return updates.Select(ToUpdate(user));
         }
 
         private static Func<ITweet, bool> IsTweetPublishable(string userId)
