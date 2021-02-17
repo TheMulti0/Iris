@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TwitterScraper.Tests
@@ -15,9 +15,11 @@ namespace TwitterScraper.Tests
 
         public TwitterUpdatesProviderTests()
         {
-            _twitter = new TwitterUpdatesProvider(
-                JsonSerializer.Deserialize<TwitterUpdatesProviderConfig>(
-                    File.ReadAllText("appsettings.json")));
+            var rootConfig = new ConfigurationBuilder().AddUserSecrets<TwitterUpdatesProviderConfig>().Build();
+
+            var config = rootConfig.GetSection<TwitterUpdatesProviderConfig>("UpdatesProvider");
+            
+            _twitter = new TwitterUpdatesProvider(config);
         }
 
         [TestMethod]

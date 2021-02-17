@@ -24,6 +24,7 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
+        .AddUserSecrets<TwitterUpdatesProviderConfig>()
         .AddEnvironmentVariables();
 }
 

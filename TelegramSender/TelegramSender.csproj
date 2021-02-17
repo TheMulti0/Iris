@@ -5,7 +5,8 @@
         <TargetFramework>net5.0</TargetFramework>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <LangVersion>default</LangVersion>
-    </PropertyGroup>
+        <UserSecretsId>fb2ed4ad-6a9f-4c20-822f-f19bb52345b1</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <None Update="appsettings.json">
