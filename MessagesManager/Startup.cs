@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
+using OpenQA.Selenium;
 using UserDataLayer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
@@ -54,7 +55,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         
         .AddSingleton(_ => new VideoExtractor(videoExtractorConfig))
         
-        .AddSingleton(_ => new TwitterScreenshotter(new WebDriverFactory(twitterScreenshotterConfig).Create()))
+        .AddSingleton<IWebDriverFactory>(_ => new WebDriverFactory(twitterScreenshotterConfig))
         .AddSingleton<Screenshotter>()
         
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
