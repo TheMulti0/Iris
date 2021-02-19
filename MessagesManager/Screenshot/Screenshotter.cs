@@ -4,10 +4,15 @@ using Common;
 
 namespace MessagesManager
 {
-    public class Screenshotter
+    internal class Screenshotter
     {
-        private TwitterScreenshotter _twitter;
-        
+        private readonly TwitterScreenshotter _twitter;
+
+        public Screenshotter(TwitterScreenshotter twitter)
+        {
+            _twitter = twitter;
+        }
+
         public async Task<byte[]> ScreenshotAsync(Update update)
         {
             switch (update.Author.Platform)

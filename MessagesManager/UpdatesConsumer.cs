@@ -10,7 +10,7 @@ using UserDataLayer;
 
 namespace MessagesManager
 {
-    public class UpdatesConsumer : IConsumer<Update>
+    internal class UpdatesConsumer : IConsumer<Update>
     {
         private readonly IProducer<Message> _producer;
         private readonly ISavedUsersRepository _repository;
