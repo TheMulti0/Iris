@@ -6,6 +6,8 @@ services:
     container_name: chrome
     environment:
       - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    networks:
+      - chrome_network
   
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
@@ -143,9 +145,11 @@ services:
     networks:
       - rabbitmq_network
       - mongodb_network
+      - chrome_network
     depends_on:
       - rabbitmq
       - mongodb
+      - chrome
 
   telegramsender:
     image: irisupdate/telegramsender:latest
@@ -166,3 +170,5 @@ services:
 networks:
   rabbitmq_network:
   mongodb_network:
+  chrome_network:
+    
