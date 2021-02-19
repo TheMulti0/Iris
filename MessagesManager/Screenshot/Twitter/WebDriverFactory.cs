@@ -5,7 +5,7 @@ using OpenQA.Selenium.Remote;
 
 namespace MessagesManager
 {
-    internal class WebDriverFactory
+    internal class WebDriverFactory : IWebDriverFactory
     {
         private readonly TwitterScreenshotterConfig _config;
 

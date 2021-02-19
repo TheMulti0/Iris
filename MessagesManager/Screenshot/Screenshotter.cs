@@ -8,14 +8,14 @@ namespace MessagesManager
 {
     internal class Screenshotter
     {
-        private readonly TwitterScreenshotter _twitter;
+        private readonly IWebDriverFactory _webDriverFactory;
         private readonly ILogger<Screenshotter> _logger;
 
         public Screenshotter(
-            TwitterScreenshotter twitter,
+            IWebDriverFactory webDriverFactory,
             ILogger<Screenshotter> logger)
         {
-            _twitter = twitter;
+            _webDriverFactory = webDriverFactory;
             _logger = logger;
         }
 
@@ -26,7 +26,9 @@ namespace MessagesManager
                 return update.Author.Platform switch 
                 {
                     Platform.Twitter 
-                        => _twitter.Screenshot(update.Url).ToByteArray(ImageFormat.Png),
+                        => new TwitterScreenshotter(_webDriverFactory.Create())
+                            .Screenshot(update.Url)
+                            .ToByteArray(ImageFormat.Png),
                     _ 
                         => null
                 };

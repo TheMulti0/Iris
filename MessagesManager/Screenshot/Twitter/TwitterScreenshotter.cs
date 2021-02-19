@@ -34,6 +34,8 @@ namespace MessagesManager
 
             Bitmap bitmap = Screenshot(tweet);
             
+            _driver.Dispose();
+
             return bitmap;
         }
 
