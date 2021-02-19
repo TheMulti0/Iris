@@ -38,6 +38,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
     var videoExtractorConfig = rootConfig.GetSection<VideoExtractorConfig>("VideoExtractor");
+    var twitterScreenshotterConfig = rootConfig.GetSection<TwitterScreenshotterConfig>("TwitterScreenshotter");
 
     services
         .AddSingleton<IMongoDbContext>(
@@ -47,12 +48,18 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(mongoConfig)
         .AddSingleton<MongoApplicationDbContext>()
         .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+        
         .AddRabbitMqConnection(connectionConfig)
         .AddProducer<Message>(producerConfig)
+        
         .AddSingleton(_ => new VideoExtractor(videoExtractorConfig))
+        
+        .AddSingleton(_ => new TwitterScreenshotter(new WebDriverFactory(twitterScreenshotterConfig).Create()))
         .AddSingleton<Screenshotter>()
+        
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
         .AddConsumerService<Update>(consumerConfig)
+        
         .BuildServiceProvider();
 }
     

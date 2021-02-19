@@ -1,6 +1,12 @@
 version: '3.4'
 
 services:
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: chrome
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+  
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
     container_name: 'rabbitmq'

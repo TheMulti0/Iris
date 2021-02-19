@@ -1,7 +1,0 @@
-{
-    "dependencies": {
-        "commander": "6.0.0",
-        "ora": "5.0.0",
-        "tweet-shot": "^0.3.0"
-    }
-}
