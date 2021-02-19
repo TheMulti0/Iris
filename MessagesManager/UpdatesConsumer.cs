@@ -34,7 +34,7 @@ namespace MessagesManager
 
         public async Task ConsumeAsync(Update update, CancellationToken token)
         {
-            _logger.LogInformation("Received update {}", update);
+            _logger.LogInformation("Received {}", update);
 
             SavedUser savedUser = await _repository.GetAsync(update.Author);
             List<UserChatSubscription> destinationChats = savedUser.Chats.ToList();

@@ -29,7 +29,7 @@ namespace UpdatesScraper
 
         public async Task ConsumeAsync(PollJob pollJob, CancellationToken token)
         {
-            _logger.LogInformation("Received poll job {}", pollJob);
+            _logger.LogInformation("Received {}", pollJob);
 
             var user = pollJob.User;
 

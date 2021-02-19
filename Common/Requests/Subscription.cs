@@ -26,6 +26,13 @@ namespace Common
             MinimumEarliestUpdateTime = minimumEarliestUpdateTime;
         }
 
+        public override string ToString()
+        {
+            return MinimumEarliestUpdateTime == null
+                ? $"{{ Subscription: {User}, Interval: {Interval} }}"
+                : $"{{ Subscription: {User}, Interval: {Interval}, From: {MinimumEarliestUpdateTime} }}";
+        }
+
         public void Deconstruct(out User user, out TimeSpan? interval)
         {
             user = User;

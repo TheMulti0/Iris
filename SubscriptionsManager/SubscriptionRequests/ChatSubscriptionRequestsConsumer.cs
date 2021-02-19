@@ -22,7 +22,7 @@ namespace SubscriptionsManager
 
         public async Task ConsumeAsync(ChatSubscriptionRequest subscriptionRequest, CancellationToken token)
         {
-            _logger.LogInformation("Received chat subscription request {}", subscriptionRequest);
+            _logger.LogInformation("Received {}", subscriptionRequest);
             
             _producer.Send(subscriptionRequest);
         }

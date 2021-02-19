@@ -36,7 +36,7 @@ namespace TelegramSender
         {
             _sender ??= await _senderFactory.CreateAsync();
             
-            _logger.LogInformation("Received message {}", message);
+            _logger.LogInformation("Received {}", message);
             
             foreach (var chatInfo in message.DestinationChats)
             {

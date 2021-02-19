@@ -32,7 +32,7 @@ namespace ScrapersDistributor
         {
             try
             {
-                _logger.LogInformation("Received poll request {}", request);
+                _logger.LogInformation("Received {}", request);
                 
                 (SubscriptionType type, Subscription rule) = request;
                 
