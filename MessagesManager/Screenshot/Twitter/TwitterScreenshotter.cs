@@ -26,13 +26,30 @@ namespace MessagesManager
 
         public Bitmap Screenshot(string url)
         {
-            _driver.Manage()
-                .Window.Size = new Size(1080, 2400);
-            
-            _driver.Navigate().GoToUrl(url);
-            
+            Setup(url);
+
             var tweet = _wait.Until(GetElement(By.XPath(TweetXPath)));
 
+            WaitForTweetThumbnails();
+
+            Bitmap bitmap = Screenshot(tweet);
+            
+            _driver.Close();
+
+            return bitmap;
+        }
+
+        private void Setup(string url)
+        {
+            _driver.Manage()
+                .Window.Size = new Size(1080, 2400);
+
+            _driver.Navigate()
+                .GoToUrl(url);
+        }
+
+        private void WaitForTweetThumbnails()
+        {
             try
             {
                 _shortWait.Until(GetElement(By.XPath(TweetImagesXPath))); // Wait for tweet thumbnails
@@ -41,9 +58,15 @@ namespace MessagesManager
             {
                 // Tweet might be text so no images will be loaded
             }
+        }
 
-            return ((ITakesScreenshot) tweet)
-                .GetScreenshot().AsByteArray
+        private Bitmap Screenshot(IWebElement tweet)
+        {
+            var takesScreenshot = (ITakesScreenshot) tweet;
+            
+            return takesScreenshot
+                .GetScreenshot()
+                .AsByteArray
                 .ToBitmap()
                 .Crop(GetViewport(tweet.Size))
                 .RoundCorners(30);
