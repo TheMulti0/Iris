@@ -20,8 +20,8 @@ namespace MessagesManager
         public TwitterScreenshotter(IWebDriver driver)
         {
             _driver = driver;
-            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-            _shortWait = new WebDriverWait(_driver, TimeSpan.FromSeconds(2));
+            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(20));
+            _shortWait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
         }
 
         public Bitmap Screenshot(string url)
@@ -34,8 +34,6 @@ namespace MessagesManager
 
             Bitmap bitmap = Screenshot(tweet);
             
-            _driver.Close();
-
             return bitmap;
         }
 
