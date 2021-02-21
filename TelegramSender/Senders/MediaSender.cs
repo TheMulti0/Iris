@@ -40,11 +40,7 @@ namespace TelegramSender
         {
             async Task HandleException(Exception e)
             {
-                _logger.LogError(
-                    e,
-                    "Failed to send media \n {} \n {}",
-                    JsonSerializer.Serialize(message.Media, _serializerOptions),
-                    e);
+                _logger.LogError("Failed to send media {}", e.Message);
 
                 if (!message.DownloadMedia)
                 {
@@ -61,8 +57,13 @@ namespace TelegramSender
             }
             catch (ApiRequestException e)
             {
-                //TODO find out specific message for this error
-                await HandleException(e);
+                if (e.Message == "Bad Request: failed to get HTTP URL content" ||
+                    e.Message == "Bad Request: wrong file identifier/HTTP URL specified")
+                {
+                    await HandleException(e);
+                }
+                
+                throw;
             }
             catch (IOException e)
             {
