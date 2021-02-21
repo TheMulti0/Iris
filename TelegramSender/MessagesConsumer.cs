@@ -95,7 +95,7 @@ namespace TelegramSender
             catch (ApiRequestException e)
             {
                 if (e.Message == "Forbidden: bot was blocked by the user" ||
-                    e.Message == "Bad Request: need administrator rights in the channel chat")
+                    e.Message == "Bad Request: need administrator rights in the channel chat") // TODO dont unsubscribe if time between subscription to update is less than x
                 {
                     await RemoveChatSubscription(author, chat);    
                 }
