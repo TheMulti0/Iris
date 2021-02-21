@@ -10,13 +10,19 @@ namespace MessagesManager.Tests
 
         public TwitterScreenshotterTests()
         {
-            _screenshotterFactory = () => new TwitterScreenshotter(new WebDriverFactory(new TwitterScreenshotterConfig{ UseLocalChromeDriver = true }).Create());
+            _screenshotterFactory = () => new TwitterScreenshotter(new WebDriverFactory(new TwitterScreenshotterConfig{ UseLocalChromeDriver = false, RemoteChromeUrl = "http://localhost:4444/wd/hub/"}).Create());
         }
         
         [TestMethod]
         public void TestTextTweet()
         {
             Test("https://twitter.com/IsraelPolls/status/1362480543733014537");
+        }
+        
+        [TestMethod]
+        public void TestPhotoTweet()
+        {
+            Test("https://twitter.com/Ayelet__Shaked/status/1363400109929684993");
         }
         
         [TestMethod]
@@ -34,7 +40,7 @@ namespace MessagesManager.Tests
         [TestMethod]
         public void TestReplyTweet()
         {
-            Test("https://twitter.com/ronisassover/status/1363384809339379712");
+            Test("https://twitter.com/kann_news/status/1363407092963508230");
         }
 
         [TestMethod]
