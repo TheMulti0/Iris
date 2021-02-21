@@ -1,15 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MessagesManager.Tests
 {
     [TestClass]
     public class TwitterScreenshotterTests
     {
-        private readonly TwitterScreenshotter _screenshotter;
+        private readonly Func<TwitterScreenshotter> _screenshotterFactory;
 
         public TwitterScreenshotterTests()
         {
-            _screenshotter = new TwitterScreenshotter(new WebDriverFactory(new TwitterScreenshotterConfig{ UseLocalChromeDriver = true }).Create());
+            _screenshotterFactory = () => new TwitterScreenshotter(new WebDriverFactory(new TwitterScreenshotterConfig{ UseLocalChromeDriver = true }).Create());
         }
         
         [TestMethod]
@@ -29,10 +30,22 @@ namespace MessagesManager.Tests
         {
             Test("https://twitter.com/Hatzehaka/status/1362481354483597316");
         }
+        
+        [TestMethod]
+        public void TestReplyTweet()
+        {
+            Test("https://twitter.com/ronisassover/status/1363384809339379712");
+        }
+
+        [TestMethod]
+        public void TestQuoteTweet()
+        {
+            Test("https://twitter.com/bezalelsm/status/1363360010298875907");
+        }
 
         private void Test(string url)
         {
-            var screenshot = _screenshotter.Screenshot(url);
+            var screenshot = _screenshotterFactory().Screenshot(url);
 
             Assert.IsNotNull(screenshot);
         }
