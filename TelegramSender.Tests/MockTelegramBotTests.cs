@@ -35,6 +35,8 @@ namespace TelegramSender.Tests
             _testConfig = JsonSerializer.Deserialize<TestConfig>("../../../appsettings.json");
 
             _consumer = new MessagesConsumer(
+                null,
+                null,
                 GetSenderFactory(_testConfig, loggerFactory),
                 new MessageBuilder(new Languages { Dictionary = new Dictionary<Language, LanguageDictionary> {
                     {Language.English, new LanguageDictionary()},

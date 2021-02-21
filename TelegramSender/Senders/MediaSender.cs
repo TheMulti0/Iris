@@ -61,6 +61,7 @@ namespace TelegramSender
             }
             catch (ApiRequestException e)
             {
+                //TODO find out specific message for this error
                 await HandleException(e);
             }
             catch (IOException e)
