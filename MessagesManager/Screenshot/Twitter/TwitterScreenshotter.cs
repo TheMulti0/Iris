@@ -26,17 +26,25 @@ namespace MessagesManager
 
         public Bitmap Screenshot(string url)
         {
-            Setup(url);
+            try
+            {
+                Setup(url);
 
-            var tweet = _wait.Until(GetElement(By.XPath(TweetXPath)));
+                var tweet = _wait.Until(GetElement(By.XPath(TweetXPath)));
 
-            WaitForTweetThumbnails();
+                WaitForTweetThumbnails();
 
-            Bitmap bitmap = Screenshot(tweet);
-            
-            _driver.Dispose();
+                Bitmap bitmap = Screenshot(tweet);
 
-            return bitmap;
+                _driver.Dispose();
+                
+                return bitmap;
+            }
+            catch
+            {
+                _driver.Dispose();
+                throw;
+            }
         }
 
         private void Setup(string url)
