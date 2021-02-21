@@ -94,7 +94,8 @@ namespace TelegramSender
             }
             catch (ApiRequestException e)
             {
-                if (e.Message == "Forbidden: bot was blocked by the user")
+                if (e.Message == "Forbidden: bot was blocked by the user" ||
+                    e.Message == "Bad Request: need administrator rights in the channel chat")
                 {
                     await RemoveChatSubscription(author, chat);    
                 }
