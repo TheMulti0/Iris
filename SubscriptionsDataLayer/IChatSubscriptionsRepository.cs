@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Common;
 using MongoDB.Bson;
 
-namespace UserDataLayer
+namespace SubscriptionsDataLayer
 {
     public interface IChatSubscriptionsRepository
     {

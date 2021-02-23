@@ -20,8 +20,8 @@
         <ProjectReference Include="..\Extensions\Extensions.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
         <ProjectReference Include="..\FacebookScraper\FacebookScraper.csproj" />
+        <ProjectReference Include="..\SubscriptionsDataLayer\SubscriptionsDataLayer.csproj" />
         <ProjectReference Include="..\TwitterScraper\TwitterScraper.csproj" />
-        <ProjectReference Include="..\UserDataLayer\UserDataLayer.csproj" />
     </ItemGroup>
 
     <ItemGroup>

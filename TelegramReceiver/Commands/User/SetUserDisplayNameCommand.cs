@@ -6,7 +6,7 @@ using Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
 using User = Common.User;

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
 using OpenQA.Selenium;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {

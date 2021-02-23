@@ -6,12 +6,11 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace UserDataLayer
+namespace SubscriptionsDataLayer
 {
     public class MongoChatSubscriptionsRepository : IChatSubscriptionsRepository
     {
         private readonly IMongoCollection<SubscriptionEntity> _collection;
-        private readonly UpdateOptions _updateOptions = new() { IsUpsert = true };
 
         public MongoChatSubscriptionsRepository(MongoApplicationDbContext context)
         {
@@ -64,6 +63,12 @@ namespace UserDataLayer
                 Chats = userChatSubscriptions
             };
             
+            if (existing == null)
+            {
+                await _collection.InsertOneAsync(subscription);
+                return;
+            }
+
             bool updateSuccess;
             do
             {
@@ -85,12 +90,14 @@ namespace UserDataLayer
                 return thisChat;
             }
 
-            if (!existing.Chats.Contains(chat))
+            UserChatSubscription existingChat = existing.Chats.FirstOrDefault(c => c.ChatId == chat.ChatId);
+            
+            if (existingChat == null)
             {
                 return existing.Chats.Concat(thisChat).ToList();
             }
             
-            existing.Chats[existing.Chats.IndexOf(chat)] = chat;
+            existing.Chats[existing.Chats.IndexOf(existingChat)] = chat;
 
             return existing.Chats;
         }
@@ -139,19 +146,37 @@ namespace UserDataLayer
             while (!removeSuccess);
         }
 
-        private async Task<bool> Update(SubscriptionEntity newUser, SubscriptionEntity existing)
+        private async Task<bool> Update(
+            SubscriptionEntity newUser,
+            SubscriptionEntity existing)
         {
+            int version = GetVersion(existing);
+
             UpdateDefinition<SubscriptionEntity> update = Builders<SubscriptionEntity>.Update
-                .Set(u => u.Version, existing.Version + 1)
+                .Set(u => u.Version, version + 1)
                 .Set(u => u.Chats, newUser.Chats);
 
             UpdateResult result = await _collection
                 .UpdateOneAsync(
-                    subscription => subscription.Version == existing.Version && subscription.User == newUser.User,
-                    update,
-                    _updateOptions);
+                    subscription => subscription.Version == version && subscription.User == newUser.User,
+                    update);
 
-            return result.IsAcknowledged && result.ModifiedCount > 0;
+            if (result.IsAcknowledged)
+            {
+                return result.MatchedCount > 0;
+            }
+            
+            return false;
+        }
+
+        private static int GetVersion(SubscriptionEntity existing)
+        {
+            if (existing == null)
+            {
+                return 0;
+            }
+            
+            return existing.Version;
         }
     }
 }

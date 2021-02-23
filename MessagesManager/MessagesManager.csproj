@@ -17,7 +17,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
-      <ProjectReference Include="..\UserDataLayer\UserDataLayer.csproj" />
+      <ProjectReference Include="..\SubscriptionsDataLayer\SubscriptionsDataLayer.csproj" />
     </ItemGroup>
 
     <ItemGroup>

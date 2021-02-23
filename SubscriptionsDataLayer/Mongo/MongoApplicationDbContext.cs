@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDbGenericRepository;
 
-namespace UserDataLayer
+namespace SubscriptionsDataLayer
 {
     public class MongoApplicationDbContext
     {

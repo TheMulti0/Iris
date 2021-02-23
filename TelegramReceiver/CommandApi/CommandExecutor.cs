@@ -11,7 +11,7 @@ using Nito.AsyncEx;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 using Update = Telegram.Bot.Types.Update;
 using User = Telegram.Bot.Types.User;
 

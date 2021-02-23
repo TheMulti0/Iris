@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MongoDbGenericRepository;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 
 namespace SubscriptionsManager
 {

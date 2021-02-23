@@ -9,8 +9,8 @@ using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
 using TelegramReceiver;
 using TwitterScraper;
-using UserDataLayer;
-using MongoApplicationDbContext = UserDataLayer.MongoApplicationDbContext;
+using SubscriptionsDataLayer;
+using MongoApplicationDbContext = SubscriptionsDataLayer.MongoApplicationDbContext;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UserDataLayer
+namespace SubscriptionsDataLayer
 {
     public class MongoDbConfig
     {

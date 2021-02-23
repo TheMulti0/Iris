@@ -7,7 +7,7 @@ using Common;
 using MoreLinq.Extensions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using User = Common.User;
 

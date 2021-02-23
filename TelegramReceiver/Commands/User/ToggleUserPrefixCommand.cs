@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Telegram.Bot.Types;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 
 namespace TelegramReceiver
 {

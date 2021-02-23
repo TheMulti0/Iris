@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
 using TelegramSender;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {

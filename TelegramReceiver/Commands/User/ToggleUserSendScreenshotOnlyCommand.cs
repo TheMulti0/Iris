@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using UserDataLayer;
+using SubscriptionsDataLayer;
 
 namespace TelegramReceiver
 {

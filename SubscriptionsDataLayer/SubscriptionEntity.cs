@@ -3,7 +3,7 @@ using Common;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace UserDataLayer
+namespace SubscriptionsDataLayer
 {
     public class SubscriptionEntity
     {
