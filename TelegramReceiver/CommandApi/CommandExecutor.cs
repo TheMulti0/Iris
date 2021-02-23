@@ -270,9 +270,18 @@ namespace TelegramReceiver
 
         private static async Task<Update> GetNextMessage(IObservable<Update> chatUpdates)
         {
-            Update nextUpdate = await chatUpdates
-                .FirstOrDefaultAsync()
-                .Timeout(ReactionTimeout);
+            Update nextUpdate;
+
+            try
+            {
+                nextUpdate = await chatUpdates
+                    .FirstOrDefaultAsync()
+                    .Timeout(ReactionTimeout);
+            }
+            catch (TimeoutException)
+            {
+                nextUpdate = null;
+            }
 
             if (nextUpdate != null &&
                 nextUpdate.Type == UpdateType.Message &&
