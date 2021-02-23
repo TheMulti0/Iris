@@ -13,14 +13,14 @@ namespace MessagesManager
     internal class UpdatesConsumer : IConsumer<Update>
     {
         private readonly IProducer<Message> _producer;
-        private readonly ISavedUsersRepository _repository;
+        private readonly IChatSubscriptionsRepository _repository;
         private readonly VideoExtractor _videoExtractor;
         private readonly Screenshotter _screenshotter;
         private readonly ILogger<UpdatesConsumer> _logger;
 
         public UpdatesConsumer(
             IProducer<Message> producer,
-            ISavedUsersRepository repository,
+            IChatSubscriptionsRepository repository,
             VideoExtractor videoExtractor,
             Screenshotter screenshotter,
             ILogger<UpdatesConsumer> logger)
@@ -36,8 +36,8 @@ namespace MessagesManager
         {
             _logger.LogInformation("Received {}", update);
 
-            SavedUser savedUser = await _repository.GetAsync(update.Author);
-            List<UserChatSubscription> destinationChats = savedUser.Chats.ToList();
+            SubscriptionEntity entity = await _repository.GetAsync(update.Author);
+            List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
             Update newUpdate = await ModifiedUpdate(update, destinationChats, token);
 

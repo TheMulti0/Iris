@@ -22,7 +22,7 @@ namespace TelegramReceiver
         private readonly ITelegramBotClient _client;
         private readonly TelegramConfig _config;
         private readonly CommandFactory _commandFactory;
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
         private readonly IConnectionsRepository _connectionsRepository;
         private readonly Languages _languages;
         private readonly ILogger<CommandExecutor> _logger;
@@ -97,7 +97,7 @@ namespace TelegramReceiver
         public CommandExecutor(
             TelegramConfig config,
             CommandFactory commandFactory,
-            ISavedUsersRepository savedUsersRepository,
+            IChatSubscriptionsRepository chatSubscriptionsRepository,
             IConnectionsRepository connectionsRepository,
             Languages languages,
             ILogger<CommandExecutor> logger)
@@ -105,7 +105,7 @@ namespace TelegramReceiver
             _client = new TelegramBotClient(config.AccessToken);
             _config = config;
             _commandFactory = commandFactory;
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _connectionsRepository = connectionsRepository;
             _languages = languages;
             _logger = logger;
@@ -207,7 +207,7 @@ namespace TelegramReceiver
 
             return new Context(
                 _client,
-                new AsyncLazy<SavedUser>(() => GetSavedUser(update)),
+                new AsyncLazy<SubscriptionEntity>(() => GetSavedUser(update)),
                 () => GetNextMessage(chatUpdates),
                 () => GetNextCallbackQuery(chatUpdates),
                 update,
@@ -241,7 +241,7 @@ namespace TelegramReceiver
             };
         }
 
-        private async Task<SavedUser> GetSavedUser(Update update)
+        private async Task<SubscriptionEntity> GetSavedUser(Update update)
         {
             ObjectId id = GetUserId(update);
             
@@ -250,8 +250,8 @@ namespace TelegramReceiver
                 return null;
             }
 
-            SavedUser savedUser = await _savedUsersRepository.GetAsync(id);
-            return savedUser;
+            SubscriptionEntity entity = await _chatSubscriptionsRepository.GetAsync(id);
+            return entity;
         }
 
         private static ObjectId GetUserId(Update update)

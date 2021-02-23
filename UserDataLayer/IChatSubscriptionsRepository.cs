@@ -6,15 +6,15 @@ using MongoDB.Bson;
 
 namespace UserDataLayer
 {
-    public interface ISavedUsersRepository
+    public interface IChatSubscriptionsRepository
     {
         Task<bool> ExistsAsync(User user);
         
-        IQueryable<SavedUser> GetAll();
+        IQueryable<SubscriptionEntity> Get();
         
-        Task<SavedUser> GetAsync(ObjectId id);
+        Task<SubscriptionEntity> GetAsync(ObjectId id);
         
-        Task<SavedUser> GetAsync(User user);
+        Task<SubscriptionEntity> GetAsync(User user);
         
         Task AddOrUpdateAsync(User user, UserChatSubscription chat);
 

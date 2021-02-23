@@ -8,23 +8,23 @@ namespace TelegramReceiver
 {
     internal class ToggleUserSendScreenshotOnlyCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
         public ToggleUserSendScreenshotOnlyCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository) : base(context)
+            IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            SavedUser savedUser = await SavedUser;
-            UserChatSubscription chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            SubscriptionEntity entity = await SavedUser;
+            UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
             chat.SendScreenshotOnly = !chat.SendScreenshotOnly;
             
-            await _savedUsersRepository.AddOrUpdateAsync(savedUser.User, chat);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
 
             return new RedirectResult(Route.User);
         }

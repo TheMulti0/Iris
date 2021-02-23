@@ -5,11 +5,11 @@ namespace UserDataLayer
 {
     public class MongoApplicationDbContext
     {
-        public IMongoCollection<SavedUser> SavedUsers { get; }
+        public IMongoCollection<SubscriptionEntity> Subscriptions { get; }
         
         public MongoApplicationDbContext(IMongoDbContext context)
         {
-            SavedUsers = context.GetCollection<SavedUser>();
+            Subscriptions = context.GetCollection<SubscriptionEntity>();
         }
     }
 }

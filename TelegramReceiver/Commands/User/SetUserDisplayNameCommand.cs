@@ -15,13 +15,13 @@ namespace TelegramReceiver
 {
     internal class SetUserDisplayNameCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
         public SetUserDisplayNameCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository) : base(context)
+            IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
         }
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
@@ -46,7 +46,7 @@ namespace TelegramReceiver
             return new RedirectResult(Route.User, Context with { Trigger = null });
         }
 
-        private InlineKeyboardMarkup CreateMarkup(SavedUser user)
+        private InlineKeyboardMarkup CreateMarkup(SubscriptionEntity user)
         {
             return new InlineKeyboardMarkup(
                 InlineKeyboardButton.WithCallbackData(
@@ -68,15 +68,15 @@ namespace TelegramReceiver
         }
 
         private async Task SetDisplayName(
-            SavedUser savedUser,
+            SubscriptionEntity entity,
             Update update)
         {
-            UserChatSubscription chat = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
             string newDisplayName = update.Message.Text;
             chat.DisplayName = newDisplayName;
             
-            await _savedUsersRepository.AddOrUpdateAsync(savedUser.User, chat);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
         }
     }
 }

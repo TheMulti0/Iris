@@ -20,7 +20,7 @@ namespace TelegramSender
 {
     public class MessagesConsumer : IConsumer<Message>
     {
-        private readonly ISavedUsersRepository _repository;
+        private readonly IChatSubscriptionsRepository _repository;
         private readonly IProducer<ChatSubscriptionRequest> _producer;
         private readonly ISenderFactory _senderFactory;
         private readonly MessageBuilder _messageBuilder;
@@ -29,7 +29,7 @@ namespace TelegramSender
         private MessageSender _sender;
 
         public MessagesConsumer(
-            ISavedUsersRepository repository,
+            IChatSubscriptionsRepository repository,
             IProducer<ChatSubscriptionRequest> producer,
             ISenderFactory senderFactory,
             MessageBuilder messageBuilder,

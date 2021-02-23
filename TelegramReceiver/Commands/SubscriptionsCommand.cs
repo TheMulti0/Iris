@@ -13,19 +13,19 @@ namespace TelegramReceiver
 {
     internal class SubscriptionsCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
         public SubscriptionsCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository) : base(context)
+            IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            List<SavedUser> currentUsers = _savedUsersRepository
-                .GetAll()
+            List<SubscriptionEntity> currentUsers = _chatSubscriptionsRepository
+                .Get()
                 .Where(
                     user => user.User.Platform == SelectedPlatform &&
                             user.Chats.Any(chat => chat.ChatId == ConnectedChat))
@@ -54,7 +54,7 @@ namespace TelegramReceiver
             return new NoRedirectResult();
         }
 
-        private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SavedUser> currentUsers)
+        private (InlineKeyboardMarkup, string) GetMessageDetails(IReadOnlyCollection<SubscriptionEntity> currentUsers)
         {
             var platform = Dictionary.GetPlatform(SelectedPlatform ?? throw new NullReferenceException());
             
@@ -71,7 +71,7 @@ namespace TelegramReceiver
                     .Batch(1));
         }
 
-        private InlineKeyboardMarkup GetUsersMarkup(IReadOnlyCollection<SavedUser> users)
+        private InlineKeyboardMarkup GetUsersMarkup(IReadOnlyCollection<SubscriptionEntity> users)
         {
             IEnumerable<InlineKeyboardButton> userButtons = users
                 .Select(UserToButton)
@@ -86,7 +86,7 @@ namespace TelegramReceiver
             return new InlineKeyboardMarkup(userButtons.Concat(GetBackButton()).Batch(1));
         }
 
-        private InlineKeyboardButton UserToButton(SavedUser user)
+        private InlineKeyboardButton UserToButton(SubscriptionEntity user)
         {
             UserChatSubscription chatSubscription = user.Chats.First(subscription => subscription.ChatId == ConnectedChat);
             

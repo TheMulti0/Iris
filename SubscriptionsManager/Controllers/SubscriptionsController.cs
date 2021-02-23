@@ -11,24 +11,24 @@ namespace SubscriptionsManager
     [Route("[controller]")]
     public class SubscriptionsController : ControllerBase
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
         public SubscriptionsController(
-            ISavedUsersRepository savedUsersRepository)
+            IChatSubscriptionsRepository chatSubscriptionsRepository)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
         }
 
         [HttpGet]
         public ValueTask<List<Subscription>> Get()
         {
-            return _savedUsersRepository.GetAll()
+            return _chatSubscriptionsRepository.Get()
                 .ToAsyncEnumerable()
                 .Select(ToSubscription)
                 .ToListAsync();
         }
 
-        private static Subscription ToSubscription(SavedUser user)
+        private static Subscription ToSubscription(SubscriptionEntity user)
         {
             IOrderedEnumerable<UserChatSubscription> orderedByInterval = user.Chats.OrderBy(info => info.Interval);
 

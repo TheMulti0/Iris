@@ -5,7 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace UserDataLayer
 {
-    public class SavedUser
+    public class SubscriptionEntity
     {
         [BsonId]
         public ObjectId Id { get; set; }

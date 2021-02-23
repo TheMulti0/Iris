@@ -6,14 +6,14 @@ using MongoDB.Bson;
 
 namespace UserDataLayer
 {
-    public class MockSavedUsersRepository : ISavedUsersRepository
+    public class MockChatSubscriptionsRepository : IChatSubscriptionsRepository
     {
         public Task<bool> ExistsAsync(User user) => Task.FromResult(false);
 
-        public IQueryable<SavedUser> GetAll()
+        public IQueryable<SubscriptionEntity> Get()
         {
-            return new EnumerableQuery<SavedUser>(
-                new SavedUser[]
+            return new EnumerableQuery<SubscriptionEntity>(
+                new SubscriptionEntity[]
                 {
                     new()
                     {
@@ -23,19 +23,19 @@ namespace UserDataLayer
                 });
         }
 
-        public Task<SavedUser> GetAsync(ObjectId id)
+        public Task<SubscriptionEntity> GetAsync(ObjectId id)
         {
             return Task.FromResult(
-                new SavedUser
+                new SubscriptionEntity
                 {
                     Chats = new List<UserChatSubscription>()
                 });
         }
 
-        public Task<SavedUser> GetAsync(User user)
+        public Task<SubscriptionEntity> GetAsync(User user)
         {
             return Task.FromResult(
-                new SavedUser
+                new SubscriptionEntity
                 {
                     User = user,
                     Chats = new List<UserChatSubscription>()

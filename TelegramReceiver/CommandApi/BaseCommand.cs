@@ -14,7 +14,7 @@ namespace TelegramReceiver
     {
         protected readonly Context Context;
         protected readonly ITelegramBotClient Client;
-        protected readonly AsyncLazy<SavedUser> SavedUser;
+        protected readonly AsyncLazy<SubscriptionEntity> SavedUser;
         protected readonly Func<Task<Update>> GetNextMessage;
         protected readonly Func<Task<Update>> GetNextCallbackQuery;
         protected readonly Update Trigger;

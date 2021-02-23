@@ -14,19 +14,19 @@ namespace TelegramReceiver
 {
     internal class AddUserCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
         private readonly IProducer<ChatSubscriptionRequest> _producer;
         private readonly UserValidator _validator;
         private readonly TimeSpan _defaultInterval;
 
         public AddUserCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository,
+            IChatSubscriptionsRepository chatSubscriptionsRepository,
             IProducer<ChatSubscriptionRequest> producer,
             UserValidator validator,
             TelegramConfig config) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _producer = producer;
             _validator = validator;
             _defaultInterval = config.DefaultInterval;
@@ -68,7 +68,7 @@ namespace TelegramReceiver
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, SavedUser = new AsyncLazy<SavedUser>(() => _savedUsersRepository.GetAsync(user)) });
+                Context with { Trigger = null, SavedUser = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(user)) });
         }
 
         private Task SendRequestMessage(
@@ -100,7 +100,7 @@ namespace TelegramReceiver
 
             var subscription = new Subscription(user, interval, DateTime.Now);
 
-            if (! await _savedUsersRepository.ExistsAsync(user))
+            if (! await _chatSubscriptionsRepository.ExistsAsync(user))
             {
                 _producer.Send(
                     new ChatSubscriptionRequest(
@@ -117,7 +117,7 @@ namespace TelegramReceiver
                 Language = Language
             };
 
-            await _savedUsersRepository.AddOrUpdateAsync(user, chatSubscription);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(user, chatSubscription);
 
             await Client.SendTextMessageAsync(
                 chatId: ContextChat,

@@ -48,7 +48,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
                 mongoConfig.DatabaseName))
         .AddSingleton(mongoConfig)
         .AddSingleton<MongoApplicationDbContext>()
-        .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+        .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
         
         .AddRabbitMqConnection(connectionConfig)
         .AddProducer<Message>(producerConfig)

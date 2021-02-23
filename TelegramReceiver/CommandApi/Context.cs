@@ -11,7 +11,7 @@ namespace TelegramReceiver
 {
     public record Context(
         ITelegramBotClient Client,
-        AsyncLazy<SavedUser> SavedUser, 
+        AsyncLazy<SubscriptionEntity> SavedUser, 
         Func<Task<Update>> GetNextMessage,
         Func<Task<Update>> GetNextCallbackQuery,
         Update Trigger,

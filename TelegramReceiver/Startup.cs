@@ -62,7 +62,7 @@ static IServiceCollection AddMongoDbRepositories(
             config.DatabaseName))
         .AddSingleton(config)
         .AddSingleton<MongoApplicationDbContext>()
-        .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+        .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
         .AddSingleton<TelegramReceiver.MongoApplicationDbContext>()
         .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>();
 }

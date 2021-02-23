@@ -8,13 +8,14 @@ using MongoDB.Driver.Linq;
 
 namespace UserDataLayer
 {
-    public class MongoSavedUsersRepository : ISavedUsersRepository
+    public class MongoChatSubscriptionsRepository : IChatSubscriptionsRepository
     {
-        private readonly IMongoCollection<SavedUser> _collection;
+        private readonly IMongoCollection<SubscriptionEntity> _collection;
+        private readonly UpdateOptions _updateOptions = new() { IsUpsert = true };
 
-        public MongoSavedUsersRepository(MongoApplicationDbContext context)
+        public MongoChatSubscriptionsRepository(MongoApplicationDbContext context)
         {
-            _collection = context.SavedUsers;
+            _collection = context.Subscriptions;
         }
 
         public Task<bool> ExistsAsync(User user)
@@ -23,64 +24,58 @@ namespace UserDataLayer
             
             return _collection
                 .AsQueryable()
-                .Where(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
+                .Where(subscription => subscription.User.UserId == userId && subscription.User.Platform == platform)
                 .AnyAsync();
         }
 
-        public IQueryable<SavedUser> GetAll()
+        public IQueryable<SubscriptionEntity> Get()
         {
             return _collection
                 .AsQueryable();
         }
 
-        public Task<SavedUser> GetAsync(ObjectId id)
+        public Task<SubscriptionEntity> GetAsync(ObjectId id)
         {
             return _collection
                 .AsQueryable()
-                .Where(savedUser => savedUser.Id == id)
+                .Where(subscription => subscription.Id == id)
                 .FirstOrDefaultAsync();
         }
 
-        public Task<SavedUser> GetAsync(User user)
+        public Task<SubscriptionEntity> GetAsync(User user)
         {
             (string userId, Platform platform) = user;
             
             return _collection
                 .AsQueryable()
-                .Where(savedUser => savedUser.User.UserId == userId && savedUser.User.Platform == platform)
+                .Where(subscription => subscription.User.UserId == userId && subscription.User.Platform == platform)
                 .FirstOrDefaultAsync();
         }
 
         public async Task AddOrUpdateAsync(User user, UserChatSubscription chat)
         {
-            SavedUser existing = await GetAsync(user);
+            SubscriptionEntity existing = await GetAsync(user);
 
             List<UserChatSubscription> userChatSubscriptions = GetSubscriptions(existing, chat);
 
-            var savedUser = new SavedUser
+            var subscription = new SubscriptionEntity
             {
                 User = user,
                 Chats = userChatSubscriptions
             };
             
-            if (existing == null)
-            {
-                await _collection.InsertOneAsync(savedUser);
-                return;
-            }
-
             bool updateSuccess;
             do
             {
                 updateSuccess = await Update(
-                    savedUser,
+                    subscription,
                     await GetAsync(user));
             }
             while (!updateSuccess);
         }
 
         private static List<UserChatSubscription> GetSubscriptions(
-            SavedUser existing,
+            SubscriptionEntity existing,
             UserChatSubscription chat)
         {
             var thisChat = new List<UserChatSubscription> { chat };
@@ -102,7 +97,7 @@ namespace UserDataLayer
 
         public async Task RemoveAsync(User user, string chatId)
         {
-            SavedUser existing = await GetAsync(user);
+            SubscriptionEntity existing = await GetAsync(user);
             if (existing == null)
             {
                 return;
@@ -129,7 +124,7 @@ namespace UserDataLayer
             while (!updateSuccess);
         }
 
-        private async Task Remove(User user, SavedUser existing)
+        private async Task Remove(User user, SubscriptionEntity existing)
         {
             bool removeSuccess;
             do
@@ -144,16 +139,17 @@ namespace UserDataLayer
             while (!removeSuccess);
         }
 
-        private async Task<bool> Update(SavedUser newUser, SavedUser existing)
+        private async Task<bool> Update(SubscriptionEntity newUser, SubscriptionEntity existing)
         {
-            UpdateDefinition<SavedUser> update = Builders<SavedUser>.Update
+            UpdateDefinition<SubscriptionEntity> update = Builders<SubscriptionEntity>.Update
                 .Set(u => u.Version, existing.Version + 1)
                 .Set(u => u.Chats, newUser.Chats);
 
             UpdateResult result = await _collection
                 .UpdateOneAsync(
-                    savedUser => savedUser.Version == existing.Version && savedUser.User == newUser.User,
-                    update);
+                    subscription => subscription.Version == existing.Version && subscription.User == newUser.User,
+                    update,
+                    _updateOptions);
 
             return result.IsAcknowledged && result.ModifiedCount > 0;
         }

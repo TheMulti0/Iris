@@ -9,15 +9,15 @@ namespace TelegramReceiver
 {
     internal class RemoveUserCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
         private readonly IProducer<ChatSubscriptionRequest> _producer;
 
         public RemoveUserCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository,
+            IChatSubscriptionsRepository chatSubscriptionsRepository,
             IProducer<ChatSubscriptionRequest> producer): base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _producer = producer;
         }
         
@@ -36,9 +36,9 @@ namespace TelegramReceiver
         {
             var userPollRule = new Subscription(user, null);
             
-            await _savedUsersRepository.RemoveAsync(user, ConnectedChat);
+            await _chatSubscriptionsRepository.RemoveAsync(user, ConnectedChat);
 
-            if (! await _savedUsersRepository.ExistsAsync(user))
+            if (! await _chatSubscriptionsRepository.ExistsAsync(user))
             {
                 _producer.Send(
                     new ChatSubscriptionRequest(

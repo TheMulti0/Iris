@@ -15,15 +15,15 @@ namespace TelegramReceiver
 {
     internal class SetUserLanguageCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
         private readonly Languages _languages;
 
         public SetUserLanguageCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository,
+            IChatSubscriptionsRepository chatSubscriptionsRepository,
             Languages languages) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _languages = languages;
         }
 
@@ -58,11 +58,11 @@ namespace TelegramReceiver
 
         private async Task SendRequestMessage(
             Message message, 
-            SavedUser savedUser,
+            SubscriptionEntity entity,
             UserChatSubscription chat)
         {
             var markup = new InlineKeyboardMarkup(
-                GetLanguageButtons(savedUser, chat));
+                GetLanguageButtons(entity, chat));
             
             await Client.EditMessageTextAsync(
                 chatId: ContextChat,
@@ -72,7 +72,7 @@ namespace TelegramReceiver
         }
 
         private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(
-            SavedUser savedUser,
+            SubscriptionEntity entity,
             UserChatSubscription subscription)
         {
             InlineKeyboardButton LanguageToButton(Language language)
@@ -98,7 +98,7 @@ namespace TelegramReceiver
                         {
                             InlineKeyboardButton.WithCallbackData(
                                 Dictionary.Back,
-                                $"{Route.User}-{savedUser.Id}"),                             
+                                $"{Route.User}-{entity.Id}"),                             
                         } 
                     });
         }
@@ -109,7 +109,7 @@ namespace TelegramReceiver
             Language language)
         {
             chat.Language = language;
-            await _savedUsersRepository.AddOrUpdateAsync(user, chat);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(user, chat);
         }
     }
 }

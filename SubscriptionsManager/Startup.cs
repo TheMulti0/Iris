@@ -40,7 +40,7 @@ namespace SubscriptionsManager
                         mongoConfig.DatabaseName))
                 .AddSingleton(mongoConfig)
                 .AddSingleton<MongoApplicationDbContext>()
-                .AddSingleton<ISavedUsersRepository, MongoSavedUsersRepository>()
+                .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
                 .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<SubscriptionRequest>(producerConfig)
                 .AddSingleton<IConsumer<ChatSubscriptionRequest>, ChatSubscriptionRequestsConsumer>()

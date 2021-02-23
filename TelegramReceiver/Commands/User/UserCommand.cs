@@ -13,27 +13,27 @@ namespace TelegramReceiver
 {
     internal class UserCommand : BaseCommand, ICommand
     {
-        private readonly ISavedUsersRepository _savedUsersRepository;
+        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
         private readonly Languages _languages;
 
         public UserCommand(
             Context context,
-            ISavedUsersRepository savedUsersRepository,
+            IChatSubscriptionsRepository chatSubscriptionsRepository,
             Languages languages) : base(context)
         {
-            _savedUsersRepository = savedUsersRepository;
+            _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _languages = languages;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            SavedUser savedUser = await SavedUser;
+            SubscriptionEntity entity = await SavedUser;
 
-            UserChatSubscription chatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chatSubscription = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
-            string text = GetText(savedUser.User, chatSubscription);
+            string text = GetText(entity.User, chatSubscription);
 
-            InlineKeyboardMarkup inlineKeyboardMarkup = GetMarkup(savedUser, chatSubscription);
+            InlineKeyboardMarkup inlineKeyboardMarkup = GetMarkup(entity, chatSubscription);
 
             if (Trigger == null)
             {
@@ -87,7 +87,7 @@ namespace TelegramReceiver
         }
 
         private InlineKeyboardMarkup GetMarkup(
-            SavedUser savedUser,
+            SubscriptionEntity entity,
             UserChatSubscription subscription)
         {
             string prefixAction = subscription.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
@@ -98,19 +98,19 @@ namespace TelegramReceiver
             {
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.SetDisplayName,
-                    $"{Route.SetUserDisplayName}-{savedUser.Id}"),
+                    $"{Route.SetUserDisplayName}-{entity.Id}"),
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.SetLanguage,
-                    $"{Route.SetUserLanguage}-{savedUser.Id}"),
+                    $"{Route.SetUserLanguage}-{entity.Id}"),
                 InlineKeyboardButton.WithCallbackData(
                     $"{prefixAction} {Dictionary.ShowPrefix}",
-                    $"{Route.ToggleUserPrefix}-{savedUser.Id}"),
+                    $"{Route.ToggleUserPrefix}-{entity.Id}"),
                 InlineKeyboardButton.WithCallbackData(
                     $"{suffixAction} {Dictionary.ShowSuffix}",
-                    $"{Route.ToggleUserSuffix}-{savedUser.Id}"),
+                    $"{Route.ToggleUserSuffix}-{entity.Id}"),
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Remove,
-                    $"{Route.RemoveUser}-{savedUser.Id}"),
+                    $"{Route.RemoveUser}-{entity.Id}"),
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Back,
                     $"{Route.Subscriptions}-{SelectedPlatform}")
@@ -123,7 +123,7 @@ namespace TelegramReceiver
                     {
                         InlineKeyboardButton.WithCallbackData(
                             $"{screenshotAction} {Dictionary.SendScreenshotOnly}",
-                            $"{Route.ToggleUserSendScreenshotOnly}-{savedUser.Id}") 
+                            $"{Route.ToggleUserSendScreenshotOnly}-{entity.Id}") 
                     });
             }
             
