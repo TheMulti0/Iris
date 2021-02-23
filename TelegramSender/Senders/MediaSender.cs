@@ -40,7 +40,7 @@ namespace TelegramSender
         {
             async Task HandleException(Exception e)
             {
-                _logger.LogError("Failed to send media {}", e.Message);
+                _logger.LogError("Failed to send media, {}", e.Message);
 
                 if (!message.DownloadMedia)
                 {
@@ -72,7 +72,6 @@ namespace TelegramSender
             finally
             {
                 // Release the thread even if the operation fails (avoid a deadlock)
-                _logger.LogInformation("Releasing message batch lock");
                 _messageBatchLock.Release();
             }
         }
