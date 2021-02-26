@@ -43,15 +43,18 @@ namespace TelegramReceiver
             SubscriptionEntity entity,
             Text text)
         {
+            var setContentButton = new[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.SetTextContent,
+                    $"{Route.SetTextContent}-{GetTextType()}-{entity.Id}")
+            };
+            
             var enabledButtons = new[]
             {
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Disable,
                     $"{Route.ToggleText}-{GetTextType()}-{entity.Id}"),
-                
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.SetTextContent,
-                    $"{Route.SetTextContent}-{GetTextType()}-{entity.Id}"),
 
                 InlineKeyboardButton.WithCallbackData(
                     $"{Dictionary.Mode}: {Dictionary.GetTextMode(text.Mode)}",
@@ -71,6 +74,11 @@ namespace TelegramReceiver
                     Dictionary.Back,
                     $"{Route.User}-{entity.Id}")
             };
+
+            if (text.Mode != TextMode.Url)
+            {
+                enabledButtons = enabledButtons.Concat(setContentButton).ToArray();
+            }
 
             if (text.Enabled)
             {
