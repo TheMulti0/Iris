@@ -38,10 +38,7 @@ namespace TelegramSender.Tests
                 null,
                 null,
                 GetSenderFactory(_testConfig, loggerFactory),
-                new MessageBuilder(new Languages { Dictionary = new Dictionary<Language, LanguageDictionary> {
-                    {Language.English, new LanguageDictionary()},
-                    {Language.Hebrew, new LanguageDictionary()}
-                } }),
+                new MessageBuilder(),
                 loggerFactory);
         }
 
