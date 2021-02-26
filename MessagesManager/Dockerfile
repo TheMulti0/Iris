@@ -9,7 +9,7 @@ WORKDIR /src
 COPY ["MessagesManager/MessagesManager.csproj", "MessagesManager/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
-COPY ["UserDataLayer/UserDataLayer.csproj", "UserDataLayer/"]
+COPY ["SubscriptionsDataLayer/SubscriptionsDataLayer.csproj", "SubscriptionsDataLayer/"]
 RUN dotnet restore "MessagesManager/MessagesManager.csproj"
 COPY . .
 WORKDIR "/src/MessagesManager"
