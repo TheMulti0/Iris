@@ -1,3 +1,4 @@
+using System;
 using Common;
 using Update = Common.Update;
 
@@ -5,79 +6,62 @@ namespace TelegramSender
 {
     public class MessageBuilder
     {
-        private readonly Languages _languages;
-
-        public MessageBuilder(Languages languages)
-        {
-            _languages = languages;
-        }
-
         public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {
-            var languageDictionary = _languages.Dictionary[chatSubscription.Language];
-
-            string typePrefix = GetTypePrefix(update, languageDictionary);
-
-            string prefix =
-                $"<a href=\"{update.Url}\">{chatSubscription.DisplayName}{typePrefix} ({languageDictionary.GetPlatform(update.Author.Platform)}):</a>\n\n\n";
-            
-            string suffix = $"\n\n\n{update.Url}";
+            string message = GetMessage(update, chatSubscription);
 
             if (chatSubscription.SendScreenshotOnly && update.Screenshot != null)
             {
-                string prefixx = chatSubscription.ShowPrefix
-                    ? prefix
-                    : string.Empty;
-
-                string msg = prefixx + (chatSubscription.ShowSuffix ? suffix : string.Empty);
-                
                 return new MessageInfo(
-                    msg,
+                    message,
                     new []{ new BytesPhoto(update.Screenshot) },
                     chatSubscription.ChatId);
             }
-
-            string message = GetMessage(update, chatSubscription, prefix, suffix);
-
+            
             return new MessageInfo(
                 message,
                 update.Media,
                 chatSubscription.ChatId,
-                DisableWebPagePreview: !update.IsLive);
+                DisableWebPagePreview: !chatSubscription.ShowUrlPreview);
         }
 
-        private static string GetTypePrefix(Update update, LanguageDictionary languageDictionary)
+        private static string GetMessage(Update update, UserChatSubscription chatSubscription)
         {
-            if (update.Repost)
-            {
-                return $" {languageDictionary.Repost}";
-            }
-            if (update.IsLive)
-            {
-                return $" {languageDictionary.Live}";
-            }
-            return string.Empty;
-        }
+            var prefix = ToString(chatSubscription.Prefix, update.Url);
+            var suffix = ToString(chatSubscription.Suffix, update.Url);
 
-        private static string GetMessage(Update update, UserChatSubscription chatSubscription, string prefix, string suffix)
-        {
-            string message;
+            if (prefix != string.Empty)
+            {
+                prefix += "\n\n\n";
+            }
+            if (suffix != string.Empty)
+            {
+                suffix = $"\n\n\n{suffix}";
+            }
             
-            if (chatSubscription.ShowPrefix)
+            return prefix + update.Content + suffix;
+        }
+
+        private static string ToString(Text text, string url)
+        {
+            if (!text.Enabled)
             {
-                message = prefix + update.Content;
-            }
-            else
-            {
-                message = update.Content;
+                return string.Empty;
             }
 
-            if (chatSubscription.ShowSuffix)
+            switch (text.Mode)
             {
-                message += suffix;
+                case TextMode.HyperlinkedText:
+                    return $"<a href=\"{url}\">{text.Content}</a>";
+                
+                case TextMode.Text:
+                    return text.Content;
+                
+                case TextMode.Url:
+                    return url;
             }
 
-            return message;
+            return string.Empty;
         }
     }
 }
