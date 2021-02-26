@@ -113,8 +113,6 @@ namespace TelegramReceiver
             {
                 ChatId = ConnectedChat,
                 Interval = interval,
-                DisplayName = user.UserId,
-                Language = Language,
                 Prefix = new Text
                 {
                     Content = string.Empty,

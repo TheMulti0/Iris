@@ -2,9 +2,11 @@
 using Common;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDbGenericRepository.Attributes;
 
 namespace SubscriptionsDataLayer
 {
+    [CollectionName("subscriptions")]
     public class SubscriptionEntity
     {
         [BsonId]

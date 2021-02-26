@@ -345,18 +345,6 @@ namespace TelegramReceiver
                 case Route.Language:
                     return typeof(LanguageCommand);
 
-                case Route.SetUserDisplayName:
-                    return typeof(SetUserDisplayNameCommand);
-                
-                case Route.SetUserLanguage:
-                    return typeof(SetUserLanguageCommand);
-                
-                case Route.ToggleUserPrefix:
-                    return typeof(ToggleUserPrefixCommand);
-                
-                case Route.ToggleUserSuffix:
-                    return typeof(ToggleUserSuffixCommand);
-                
                 case Route.ToggleUserSendScreenshotOnly:
                     return typeof(ToggleUserSendScreenshotOnlyCommand);
                 

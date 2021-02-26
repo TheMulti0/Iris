@@ -88,10 +88,8 @@ namespace TelegramReceiver
 
         private InlineKeyboardButton UserToButton(SubscriptionEntity user)
         {
-            UserChatSubscription chatSubscription = user.Chats.First(subscription => subscription.ChatId == ConnectedChat);
-            
             return InlineKeyboardButton.WithCallbackData(
-                $"{chatSubscription.DisplayName}",
+                $"{user.User.UserId}",
                 $"{Route.User.ToString()}-{user.Id}");
         }
 

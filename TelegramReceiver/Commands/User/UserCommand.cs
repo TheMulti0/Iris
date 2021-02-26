@@ -60,16 +60,14 @@ namespace TelegramReceiver
 
         private string GetText(User user, UserChatSubscription subscription)
         {
-            var text = new StringBuilder($"{Dictionary.SettingsFor} {subscription.DisplayName}:");
+            var text = new StringBuilder($"{Dictionary.SettingsFor} {user.UserId}:");
             text.AppendLine("\n");
             text.AppendLine($"<b>{Dictionary.UserId}:</b> {user.UserId}");
             text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(user.Platform)}");
             
             text.AppendLine("\n");
             
-            text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {subscription.DisplayName}");
             text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {subscription.Interval * 2}");
-            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
 
             text.AppendLine("\n");
             
@@ -101,14 +99,6 @@ namespace TelegramReceiver
 
             IEnumerable<InlineKeyboardButton> buttons = new[]
             {
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.SetDisplayName,
-                    $"{Route.SetUserDisplayName}-{entity.Id}"),
-                
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.SetLanguage,
-                    $"{Route.SetUserLanguage}-{entity.Id}"),
-                
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.SetPrefix,
                     $"{Route.SetText}-{TextType.Prefix}-{entity.Id}"),
