@@ -17,7 +17,6 @@
     "Language": "שפה",
     "SetDisplayName": "קבע שם מוצג",
     "Remove": "הסר",
-    "Removed": "משתמש הוסר",
     "SelectPlatform": "בחר פלטפורמה",
     "EnterNewDisplayName": "הכנס שם מוצג חדש",
     "EnterUserFromPlatform": "הכנס שם משתמש מ-",
@@ -25,7 +24,6 @@
     "Facebook": "פייסבוק",
     "Twitter": "טוויטר",
     "Feeds": "דפי RSS",
-    "Done": "בוצע",
     "ChooseLanguage": "בחר שפה",
     "Repost": "בפרסום מחדש",
     "ShowPrefix": "הצגת קידומת",
@@ -47,5 +45,16 @@
     "YouMustAgreeToTos": "על מנת להשתמש ב Iris, עליך לאשר את תנאי השימוש",
     "Tos": "...",
     "ThanksForCheckingOut": "תודה שבדקת את Iris!",
-    "ThanksNowYouCanUse": "תודה, עכשיו ניתן להשתמש ב Iris!"
+    "ThanksNowYouCanUse": "תודה, עכשיו ניתן להשתמש ב Iris!",
+    "SetPrefix": "קבע קידמות",
+    "SetSuffix": "קבע סיומת",
+    "ShowUrlPreview": "תצוגה אוטומטית",
+    "Prefix": "קידומת",
+    "Suffix": "סיומת",
+    "SetTextContent": "קבע תוכן טקסט",
+    "Text": "טקסט",
+    "HyperlinkedText": "טקסט מקושר",
+    "Url": "קישור",
+    "EnterContent": "הכנס תוכן",
+    "Mode": "סוג"
 }

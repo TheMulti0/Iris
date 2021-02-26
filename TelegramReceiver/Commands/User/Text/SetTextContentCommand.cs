@@ -1,27 +1,24 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using SubscriptionsDataLayer;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
-    internal class SetUserDisplayNameCommand : BaseCommand, ICommand
+    internal class SetTextContentCommand : BaseCommand, ICommand
     {
-        private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
-
-        public SetUserDisplayNameCommand(
+        private readonly IChatSubscriptionsRepository _repository;
+        
+        public SetTextContentCommand(
             Context context,
-            IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
+            IChatSubscriptionsRepository repository) : base(context)
         {
-            _chatSubscriptionsRepository = chatSubscriptionsRepository;
+            _repository = repository;
         }
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
@@ -32,7 +29,7 @@ namespace TelegramReceiver
 
             await SendRequestMessage(query.Message, inlineKeyboardMarkup, token);
 
-            // Wait for the user to reply with desired display name
+            // Wait for the user to reply with desired text content
 
             var update = await GetNextMessage();
 
@@ -41,7 +38,7 @@ namespace TelegramReceiver
                 return new NoRedirectResult();
             }
 
-            await SetDisplayName(await Subscription, update);
+            await SetTextContent(await Subscription, update);
 
             return new RedirectResult(Route.User, Context with { Trigger = null });
         }
@@ -51,7 +48,7 @@ namespace TelegramReceiver
             return new(
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.Back,
-                    $"{Route.User}-{user.Id}"));
+                    $"{Route.SetText}-{GetTextType()}-{user.Id}"));
         }
 
         private Task SendRequestMessage(
@@ -62,21 +59,29 @@ namespace TelegramReceiver
             return Client.EditMessageTextAsync(
                 chatId: message.Chat.Id,
                 messageId: message.MessageId,
-                text: Dictionary.EnterNewDisplayName,
+                text: Dictionary.EnterContent,
                 replyMarkup: markup,
                 cancellationToken: token);
         }
 
-        private async Task SetDisplayName(
+        private async Task SetTextContent(
             SubscriptionEntity entity,
             Update update)
         {
             UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
-            string newDisplayName = update.Message.Text;
-            chat.DisplayName = newDisplayName;
+            string newContent = update.Message.Text;
+
+            if (GetTextType() == TextType.Prefix)
+            {
+                chat.Prefix.Content = newContent;
+            }
+            else
+            {
+                chat.Suffix.Content = newContent;
+            }
             
-            await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
+            await _repository.AddOrUpdateAsync(entity.User, chat);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace TelegramReceiver
     {
         protected readonly Context Context;
         protected readonly ITelegramBotClient Client;
-        protected readonly AsyncLazy<SubscriptionEntity> SavedUser;
+        protected readonly AsyncLazy<SubscriptionEntity> Subscription;
         protected readonly Func<Task<Update>> GetNextMessage;
         protected readonly Func<Task<Update>> GetNextCallbackQuery;
         protected readonly Update Trigger;
@@ -30,11 +30,11 @@ namespace TelegramReceiver
         {
             Context = context;
             
-            (Client, SavedUser, GetNextMessage, GetNextCallbackQuery, Trigger, ContextChat, Connection, Dictionary, IsSuperUser) = context;
+            (Client, Subscription, GetNextMessage, GetNextCallbackQuery, Trigger, ContextChat, Connection, Dictionary, IsSuperUser) = context;
 
             SelectedPlatform = context.SelectedPlatform 
                                ?? ExtractPlatform(Trigger?.CallbackQuery) 
-                               ?? SavedUser.Task.Result?.User?.Platform;
+                               ?? Subscription.Task.Result?.User?.Platform;
             
             ConnectedChat = Connection?.Chat ?? ContextChat;
             Language = Connection?.Language ?? Language.English;
@@ -52,6 +52,11 @@ namespace TelegramReceiver
             {
                 return null;
             }
+        }
+
+        protected TextType GetTextType()
+        {
+            return Enum.Parse<TextType>(Trigger.CallbackQuery.Data.Split("-")[1]); 
         }
 
         protected string GetChatTitle(Chat connectedChat)

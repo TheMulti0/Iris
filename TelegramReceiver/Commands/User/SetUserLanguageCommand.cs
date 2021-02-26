@@ -30,16 +30,17 @@ namespace TelegramReceiver
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
             CallbackQuery query = Trigger.CallbackQuery;
-            var savedUser = await SavedUser;
+            var savedUser = await Subscription;
             
             UserChatSubscription userChatSubscription = savedUser.Chats.First(info => info.ChatId == ConnectedChat);
             
             await SendRequestMessage(
                 query.Message,
                 savedUser,
-                userChatSubscription);
+                userChatSubscription,
+                token);
 
-            // Wait for the user to reply with desired display name
+            // Wait for the user to reply with desired language
             
             var update = await GetNextCallbackQuery();
 
@@ -59,7 +60,8 @@ namespace TelegramReceiver
         private async Task SendRequestMessage(
             Message message, 
             SubscriptionEntity entity,
-            UserChatSubscription chat)
+            UserChatSubscription chat,
+            CancellationToken token)
         {
             var markup = new InlineKeyboardMarkup(
                 GetLanguageButtons(entity, chat));
@@ -68,7 +70,8 @@ namespace TelegramReceiver
                 chatId: ContextChat,
                 messageId: message.MessageId,
                 text: Dictionary.ChooseLanguage,
-                replyMarkup: markup);
+                replyMarkup: markup,
+                cancellationToken: token);
         }
 
         private IEnumerable<IEnumerable<InlineKeyboardButton>> GetLanguageButtons(

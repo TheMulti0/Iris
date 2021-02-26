@@ -6,11 +6,11 @@ using SubscriptionsDataLayer;
 
 namespace TelegramReceiver
 {
-    internal class ToggleUserSendScreenshotOnlyCommand : BaseCommand, ICommand
+    internal class ToggleUserShowUrlPreviewCommand : BaseCommand, ICommand
     {
         private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
-        public ToggleUserSendScreenshotOnlyCommand(
+        public ToggleUserShowUrlPreviewCommand(
             Context context,
             IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
         {
@@ -22,7 +22,7 @@ namespace TelegramReceiver
             SubscriptionEntity entity = await Subscription;
             UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
-            chat.SendScreenshotOnly = !chat.SendScreenshotOnly;
+            chat.ShowUrlPreview = !chat.ShowUrlPreview;
             
             await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
 

@@ -68,7 +68,7 @@ namespace TelegramReceiver
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, SavedUser = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(user)) });
+                Context with { Trigger = null, Subscription = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(user)) });
         }
 
         private Task SendRequestMessage(
@@ -114,7 +114,17 @@ namespace TelegramReceiver
                 ChatId = ConnectedChat,
                 Interval = interval,
                 DisplayName = user.UserId,
-                Language = Language
+                Language = Language,
+                Prefix = new Text
+                {
+                    Content = string.Empty,
+                    Mode = TextMode.Text
+                },
+                Suffix = new Text
+                {
+                    Content = string.Empty,
+                    Mode = TextMode.Text
+                }
             };
 
             await _chatSubscriptionsRepository.AddOrUpdateAsync(user, chatSubscription);

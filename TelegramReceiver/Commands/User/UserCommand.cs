@@ -27,7 +27,7 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            SubscriptionEntity entity = await SavedUser;
+            SubscriptionEntity entity = await Subscription;
 
             UserChatSubscription chatSubscription = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
@@ -64,22 +64,28 @@ namespace TelegramReceiver
             text.AppendLine("\n");
             text.AppendLine($"<b>{Dictionary.UserId}:</b> {user.UserId}");
             text.AppendLine($"<b>{Dictionary.Platform}:</b> {Dictionary.GetPlatform(user.Platform)}");
+            
+            text.AppendLine("\n");
+            
             text.AppendLine($"<b>{Dictionary.DisplayName}:</b> {subscription.DisplayName}");
             text.AppendLine($"<b>{Dictionary.MaxDelay}:</b> {subscription.Interval * 2}");
-            text.AppendLine(
-                $"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
+            text.AppendLine($"<b>{Dictionary.Language}:</b> {_languages.Dictionary[subscription.Language].LanguageString}");
 
-            string showPrefix = subscription.ShowPrefix ? Dictionary.Enabled : Dictionary.Disabled;
-            text.AppendLine($"<b>{Dictionary.ShowPrefix}:</b> {showPrefix}");
+            text.AppendLine("\n");
+            
+            text.AppendLine($"<b>{Dictionary.Prefix}:</b> {subscription.Prefix.Content}");
+            text.AppendLine($"<b>{Dictionary.Suffix}:</b> {subscription.Suffix.Content}");
 
-            string showSuffix = subscription.ShowSuffix ? Dictionary.Enabled : Dictionary.Disabled;
-            text.AppendLine($"<b>{Dictionary.ShowSuffix}:</b> {showSuffix}");
+            text.AppendLine("\n");
 
+            string showUrlPreview = subscription.ShowUrlPreview ? Dictionary.Enabled : Dictionary.Disabled;
+            text.AppendLine($"<b>{Dictionary.ShowUrlPreview}:</b> {showUrlPreview}");
+            
             if (SelectedPlatform != Platform.Twitter)
             {
                 return text.ToString();
             }
-
+            
             string sendScreenshotOnly = subscription.SendScreenshotOnly ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.SendScreenshotOnly}:</b> {sendScreenshotOnly}");
 
@@ -90,30 +96,30 @@ namespace TelegramReceiver
             SubscriptionEntity entity,
             UserChatSubscription subscription)
         {
-            string prefixAction = subscription.ShowPrefix ? Dictionary.Disable : Dictionary.Enable;
-            string suffixAction = subscription.ShowSuffix ? Dictionary.Disable : Dictionary.Enable;
             string screenshotAction = subscription.SendScreenshotOnly ? Dictionary.Disable : Dictionary.Enable;
+            string showUrlAction = subscription.ShowUrlPreview ? Dictionary.Disable : Dictionary.Enable;
 
             IEnumerable<InlineKeyboardButton> buttons = new[]
             {
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.SetDisplayName,
                     $"{Route.SetUserDisplayName}-{entity.Id}"),
+                
                 InlineKeyboardButton.WithCallbackData(
                     Dictionary.SetLanguage,
                     $"{Route.SetUserLanguage}-{entity.Id}"),
+                
                 InlineKeyboardButton.WithCallbackData(
-                    $"{prefixAction} {Dictionary.ShowPrefix}",
-                    $"{Route.ToggleUserPrefix}-{entity.Id}"),
+                    Dictionary.SetPrefix,
+                    $"{Route.SetText}-{TextType.Prefix}-{entity.Id}"),
+                
                 InlineKeyboardButton.WithCallbackData(
-                    $"{suffixAction} {Dictionary.ShowSuffix}",
-                    $"{Route.ToggleUserSuffix}-{entity.Id}"),
+                    Dictionary.SetSuffix,
+                    $"{Route.SetText}-{TextType.Suffix}-{entity.Id}"),
+                
                 InlineKeyboardButton.WithCallbackData(
-                    Dictionary.Remove,
-                    $"{Route.RemoveUser}-{entity.Id}"),
-                InlineKeyboardButton.WithCallbackData(
-                    Dictionary.Back,
-                    $"{Route.Subscriptions}-{SelectedPlatform}")
+                    $"{showUrlAction} {Dictionary.ShowUrlPreview}",
+                    $"{Route.ToggleShowUrlPreview}-{entity.Id}"),
             };
 
             if (SelectedPlatform == Platform.Twitter)
@@ -126,8 +132,17 @@ namespace TelegramReceiver
                             $"{Route.ToggleUserSendScreenshotOnly}-{entity.Id}") 
                     });
             }
+
+            InlineKeyboardButton[] actionButtons = {
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.Remove,
+                    $"{Route.RemoveUser}-{entity.Id}"),
+                InlineKeyboardButton.WithCallbackData(
+                    Dictionary.Back,
+                    $"{Route.Subscriptions}-{SelectedPlatform}")
+            };
             
-            return new InlineKeyboardMarkup(buttons.Batch(1));
+            return new InlineKeyboardMarkup(buttons.Concat(actionButtons).Batch(1));
         }
     }
 }

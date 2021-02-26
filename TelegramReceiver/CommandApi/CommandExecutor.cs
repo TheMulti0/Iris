@@ -174,7 +174,7 @@ namespace TelegramReceiver
                     
                         return CallbackQueryRoutes
                             .First(
-                                pair => update.CallbackQuery.Data.StartsWith(pair.Value))
+                                pair => update.CallbackQuery.Data.Split('-')[0] == (pair.Value))
                             .Key;
 
                     case UpdateType.Message:
@@ -207,7 +207,7 @@ namespace TelegramReceiver
 
             return new Context(
                 _client,
-                new AsyncLazy<SubscriptionEntity>(() => GetSavedUser(update)),
+                new AsyncLazy<SubscriptionEntity>(() => GetSubscription(update)),
                 () => GetNextMessage(chatUpdates),
                 () => GetNextCallbackQuery(chatUpdates),
                 update,
@@ -241,7 +241,7 @@ namespace TelegramReceiver
             };
         }
 
-        private async Task<SubscriptionEntity> GetSavedUser(Update update)
+        private async Task<SubscriptionEntity> GetSubscription(Update update)
         {
             ObjectId id = GetUserId(update);
             
@@ -368,7 +368,22 @@ namespace TelegramReceiver
                 
                 case Route.DeclineTos:
                     return typeof(DeclineTosCommand);
+
+                case Route.SetText:
+                    return typeof(SetTextCommand);
                 
+                case Route.ToggleShowUrlPreview:
+                    return typeof(ToggleUserShowUrlPreviewCommand);
+                
+                case Route.SetTextContent:
+                    return typeof(SetTextContentCommand);
+                
+                case Route.ToggleTextMode:
+                    return typeof(ToggleTextModeCommand);
+                
+                case Route.ToggleText:
+                    return typeof(ToggleTextCommand);
+
                 default:
                     _logger.LogError("Failed to find correct command for route {}", route);
                     return null;

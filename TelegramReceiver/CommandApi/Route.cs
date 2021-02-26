@@ -20,6 +20,11 @@
         ToggleUserSendScreenshotOnly,
         SendTos,
         AcceptTos,
-        DeclineTos
+        DeclineTos,
+        SetText,
+        ToggleShowUrlPreview,
+        SetTextContent,
+        ToggleTextMode,
+        ToggleText
     }
 }

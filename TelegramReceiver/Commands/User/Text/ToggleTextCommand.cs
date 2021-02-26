@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -6,11 +8,11 @@ using SubscriptionsDataLayer;
 
 namespace TelegramReceiver
 {
-    internal class ToggleUserSendScreenshotOnlyCommand : BaseCommand, ICommand
+    internal class ToggleTextCommand : BaseCommand, ICommand
     {
         private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
 
-        public ToggleUserSendScreenshotOnlyCommand(
+        public ToggleTextCommand(
             Context context,
             IChatSubscriptionsRepository chatSubscriptionsRepository) : base(context)
         {
@@ -22,11 +24,18 @@ namespace TelegramReceiver
             SubscriptionEntity entity = await Subscription;
             UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
-            chat.SendScreenshotOnly = !chat.SendScreenshotOnly;
+            if (GetTextType() == TextType.Prefix)
+            {
+                chat.Prefix.Enabled = !chat.Prefix.Enabled;
+            }
+            else
+            {
+                chat.Suffix.Enabled = !chat.Suffix.Enabled;
+            }
             
             await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
 
-            return new RedirectResult(Route.User);
+            return new RedirectResult(Route.SetText);
         }
     }
 }

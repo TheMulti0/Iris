@@ -17,7 +17,6 @@
     "Language": "Language",
     "SetDisplayName": "Set display name",
     "Remove": "Remove",
-    "Removed": "Removed user",
     "SelectPlatform": "Select a platform",
     "EnterNewDisplayName": "Enter new display name",
     "EnterUserFromPlatform": "Enter user from",
@@ -25,7 +24,6 @@
     "Facebook": "Facebook",
     "Twitter": "Twitter",
     "Feeds": "RSS Feeds",
-    "Done": "Done",
     "ChooseLanguage": "Choose language",
     "Repost": "in a repost",
     "ShowPrefix": "Show prefix",
@@ -47,5 +45,16 @@
     "YouMustAgreeToTos": "In order to use this bot you must agree to the terms of service",
     "Tos": "...",
     "ThanksForCheckingOut": "Thanks for checking out Iris!",
-    "ThanksNowYouCanUse": "Thanks, you may now use Iris!"
+    "ThanksNowYouCanUse": "Thanks, you may now use Iris!",
+    "SetPrefix": "Set prefix",
+    "SetSuffix": "Set suffix",
+    "ShowUrlPreview": "Show url preview",
+    "Prefix": "Prefix",
+    "Suffix": "Suffix",
+    "SetTextContent": "Set Text Content",
+    "Text": "Text",
+    "HyperlinkedText": "Hyperlinked Text",
+    "Url": "Url",
+    "EnterContent": "Enter content",
+    "Mode": "Mode"
 }

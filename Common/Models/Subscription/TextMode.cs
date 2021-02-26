@@ -2,8 +2,8 @@
 {
     public enum TextMode
     {
-        Text,
         HyperlinkedText,
+        Text,
         Url
     }
 }

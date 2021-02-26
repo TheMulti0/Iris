@@ -19,6 +19,10 @@ namespace Common
         
         public bool ShowSuffix { get; set; }
 
-        public SendOptions SendOptions { get; set; }
+        public Text Prefix { get; set; }
+
+        public Text Suffix { get; set; }
+
+        public bool ShowUrlPreview { get; set; }
     }
 }

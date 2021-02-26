@@ -23,7 +23,7 @@ namespace TelegramReceiver
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var user = (await SavedUser).User;
+            var user = (await Subscription).User;
 
             await Remove(user);
 

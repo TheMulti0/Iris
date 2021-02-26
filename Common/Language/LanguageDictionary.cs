@@ -22,7 +22,6 @@ namespace Common
         public string Language { get; set; }
         public string SetDisplayName { get; set; }
         public string Remove { get; set; }
-        public string Removed { get; set; }
         public string SelectPlatform { get; set; }
         public string EnterNewDisplayName { get; set; }
         public string EnterUserFromPlatform { get; set; }
@@ -30,7 +29,6 @@ namespace Common
         public string Facebook { get; set; }
         public string Twitter { get; set; }
         public string Feeds { get; set; }
-        public string Done { get; set; }
         public string ChooseLanguage { get; set; }
         public string Repost { get; set; }
         public string ShowPrefix { get; set; }
@@ -53,7 +51,18 @@ namespace Common
         public string Tos { get; set; }
         public string ThanksForCheckingOut { get; set; }
         public string ThanksNowYouCanUse { get; set; }
-
+        public string SetPrefix { get; set; }
+        public string SetSuffix { get; set; }
+        public string ShowUrlPreview { get; set; }
+        public string Prefix { get; set; }
+        public string Suffix { get; set; }
+        public string SetTextContent { get; set; }
+        public string Text { get; set; }
+        public string HyperlinkedText { get; set; }
+        public string Url { get; set; }
+        public string EnterContent { get; set; }
+        public string Mode { get; set; }
+        
         public string GetPlatform(Platform platform)
         {
             string p = null;
@@ -72,6 +81,26 @@ namespace Common
             }
             
             return p ?? Enum.GetName(platform);
+        }
+        
+        public string GetTextMode(TextMode mode)
+        {
+            string t = null;
+            
+            switch (mode)
+            {
+                case TextMode.Text:
+                    t = Text;
+                    break;
+                case TextMode.HyperlinkedText:
+                    t = HyperlinkedText;
+                    break;
+                case TextMode.Url:
+                    t = Url;
+                    break;
+            }
+            
+            return t ?? Enum.GetName(mode);
         }
     }
 }

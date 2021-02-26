@@ -19,7 +19,7 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            SubscriptionEntity entity = await SavedUser;
+            SubscriptionEntity entity = await Subscription;
             UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
 
             chat.ShowSuffix = !chat.ShowSuffix;
