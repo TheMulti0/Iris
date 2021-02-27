@@ -24,8 +24,6 @@ namespace TelegramSender
 
         public async Task SendAsync(MessageInfo message, Audio audio)
         {
-            _logger.LogInformation("Sending audio message");
-
             InputMedia audioFile = audio.Url;
 
             await _client.SendAudioAsync(

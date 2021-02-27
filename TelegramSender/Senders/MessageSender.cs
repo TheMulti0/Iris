@@ -29,8 +29,7 @@ namespace TelegramSender
             
             _mediaSender = new MediaSender(
                 client,
-                _textSender,
-                loggerFactory.CreateLogger<MediaSender>());
+                _textSender);
         }
 
         public Task SendAsync(MessageInfo message)

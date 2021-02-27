@@ -29,8 +29,6 @@ namespace TelegramSender
 
         private Task<Message> SendSingleTextMessage(MessageInfo message)
         {
-            _logger.LogInformation("Sending single text message");
-
             return _client.SendTextMessageAsync(
                 chatId: message.ChatId,
                 text: message.Message,
@@ -43,8 +41,6 @@ namespace TelegramSender
 
         private async Task SendMultipleTextMessages(MessageInfo message)
         {
-            _logger.LogInformation("Sending multiple text messages");
-
             string text = message.Message;
             int textLength = text.Length;
             if (textLength > TelegramConstants.MaxTextMessageLength)

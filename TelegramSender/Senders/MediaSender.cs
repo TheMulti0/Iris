@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -21,27 +19,21 @@ namespace TelegramSender
         private readonly HttpClient _httpClient;
         private readonly ITelegramBotClient _client;
         private readonly TextSender _textSender;
-        private readonly ILogger<MediaSender> _logger;
         private readonly SemaphoreSlim _messageBatchLock = new(1, 1);
-        private readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
 
         public MediaSender(
             ITelegramBotClient client,
-            TextSender textSender,
-            ILogger<MediaSender> logger)
+            TextSender textSender)
         {
             _httpClient = new HttpClient();
             _client = client;
             _textSender = textSender;
-            _logger = logger;
         }
 
         public async Task SendAsync(MessageInfo message)
         {
             async Task HandleException(Exception e)
             {
-                _logger.LogError("Failed to send media, {}", e.Message);
-
                 if (!message.DownloadMedia)
                 {
                     await UploadMedia(message);
@@ -65,10 +57,6 @@ namespace TelegramSender
                 
                 throw;
             }
-            catch (IOException e)
-            {
-                await HandleException(e);
-            }
             finally
             {
                 // Release the thread even if the operation fails (avoid a deadlock)
@@ -78,8 +66,6 @@ namespace TelegramSender
 
         private async Task UploadMedia(MessageInfo message)
         {
-            _logger.LogInformation("Retrying with DownloadMedia set to true");
-
             // Send media as stream (upload) instead of sending the url of the media
 
             await SendUnsafeAsync(message with { DownloadMedia = true });
@@ -155,24 +141,27 @@ namespace TelegramSender
 
         private Task<Message[]> SendMediaAlbumWithCaption(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
-            _logger.LogInformation("Sending media album with caption");
-
-            if (telegramMedia.FirstOrDefault() is InputMediaBase b)
+            IEnumerable<IAlbumInputMedia> mediaList = telegramMedia.ToList();
+            
+            if (mediaList.FirstOrDefault() is not InputMediaBase b)
             {
-                b.Caption = message.Message;
-                b.ParseMode = TelegramConstants.MessageParseMode;
+                return _client.SendMediaGroupAsync(
+                    inputMedia: mediaList,
+                    chatId: message.ChatId,
+                    cancellationToken: message.CancellationToken);
             }
+            
+            b.Caption = message.Message;
+            b.ParseMode = TelegramConstants.MessageParseMode;
 
             return _client.SendMediaGroupAsync(
-                inputMedia: telegramMedia,
+                inputMedia: mediaList,
                 chatId: message.ChatId, 
                 cancellationToken: message.CancellationToken);
         }
 
         private async Task SendMediaAlbumWithAdditionalTextMessage(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
-            _logger.LogInformation("Sending media album with additional text message");
-            
             var firstMediaMessageId = 0;
             
             if (message.Media.Any())
@@ -190,9 +179,7 @@ namespace TelegramSender
 
         private async Task<int> SendMediaAlbumIfAny(MessageInfo message, IEnumerable<IAlbumInputMedia> telegramMedia)
         {
-            _logger.LogInformation("Sending media album");
-            
-            var mediaMessages = await _client.SendMediaGroupAsync(
+            Message[] mediaMessages = await _client.SendMediaGroupAsync(
                 inputMedia: telegramMedia,
                 chatId: message.ChatId,
                 cancellationToken: message.CancellationToken);
