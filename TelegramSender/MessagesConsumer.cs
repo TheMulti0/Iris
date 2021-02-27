@@ -73,7 +73,7 @@ namespace TelegramSender
                 .GetOrAdd(chatId, _ => new ActionBlock<Task>(task => task));
 
             await chatSender.SendAsync(
-                SendAsync(sender, message, originalUpdate.Author, chatId));
+                SendAsync(sender, message, originalUpdate, chatId));
                 
             _logger.LogInformation("Successfully sent update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
         }
@@ -81,7 +81,7 @@ namespace TelegramSender
         private async Task SendAsync(
             MessageSender sender,
             MessageInfo message,
-            User author,
+            Update originalUpdate,
             ChatId chat)
         {
             try
@@ -90,15 +90,20 @@ namespace TelegramSender
             }
             catch (ChatNotFoundException)
             {
-                await RemoveChatSubscription(author, chat);
+                await RemoveChatSubscription(originalUpdate.Author, chat);
             }
             catch (ApiRequestException e)
             {
                 if (e.Message == "Forbidden: bot was blocked by the user" ||
-                    e.Message == "Bad Request: need administrator rights in the channel chat") // TODO dont unsubscribe if time between subscription to update is less than x
+                    e.Message == "Bad Request: need administrator rights in the channel chat")
+                    // TODO dont unsubscribe if time between subscription to update is less than x
                 {
-                    await RemoveChatSubscription(author, chat);    
+                    await RemoveChatSubscription(originalUpdate.Author, chat);
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to send update {} to chat id {}", originalUpdate, chat.Username ?? chat.Identifier.ToString());
             }
         }
 
