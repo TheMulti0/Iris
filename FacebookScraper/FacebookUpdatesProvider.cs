@@ -36,7 +36,7 @@ namespace FacebookScraper
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to parse {} output", scriptName);
+                _logger.LogError(e, "Failed to parse {} output for {}", scriptName, user);
             }
 
             return Enumerable.Empty<Update>();
