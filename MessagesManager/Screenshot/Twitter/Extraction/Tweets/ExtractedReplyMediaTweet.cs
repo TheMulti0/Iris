@@ -37,9 +37,7 @@ namespace MessagesManager
 
                     var text = _driver.FindElement(By.XPath(GetReplyTweetTextXPath(_replyTweetXPath))).Text;
 
-                    string cleanText = _tweetContent.CleanText();
-                    string objA = text.CleanText();
-                    if (!string.Equals(objA, cleanText))
+                    if (!string.Equals(text.CleanText(), _tweetContent.CleanText()))
                     {
                         continue;
                     }
@@ -51,7 +49,6 @@ namespace MessagesManager
                 catch
                 {
                 }
-                
             }
             
             return element;
