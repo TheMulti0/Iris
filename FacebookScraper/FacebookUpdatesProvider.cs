@@ -51,7 +51,7 @@ namespace FacebookScraper
                 CreationDate = post.CreationDate,
                 Url = post.PostUrl,
                 Media = GetMedia(post).ToList(),
-                Repost = post.Text == post.SharedText,
+                IsRepost = post.Text == post.SharedText,
                 IsLive = post.IsLive
             };
         }

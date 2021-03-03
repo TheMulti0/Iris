@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using Common;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -7,39 +9,26 @@ namespace MessagesManager
 {
     internal class TwitterScreenshotter
     {
-        private const string TweetXPath = "/html/body/div/div/div/div[2]/main/div/div/div/div[1]/div/div[2]/div/section/div/div/div[1]/div/div/article";
-        private static readonly string TweetImagesXPath = $"{TweetXPath}/div/div/div/div[3]/div[2]/div/div/div/div/div/div[2]/div";
-        private static readonly string TweetDateXPath = $"{TweetXPath}/div/div/div/div[3]/div[3]";
-        private static readonly string TweetStatsXPath = $"{TweetXPath}/div/div/div/div[3]/div[4]";
-        private static readonly string TweetButtonsXPath = $"{TweetXPath}/div/div/div/div[3]/div[5]";
-
-        private const string ReplyTweetXPath = "/html/body/div/div/div/div[2]/main/div/div/div/div/div/div[2]/div/section/div/div/div[2]/div/div/article";
-        private static readonly string ReplyTweetDateXPath = $"{ReplyTweetXPath}/div/div/div/div[3]/div[4]";
-        private static readonly string ReplyTweetStatsXPath = $"{ReplyTweetXPath}/div/div/div/div[3]/div[5]";
-        private static readonly string ReplyTweetButtonsXPath = $"{ReplyTweetXPath}/div/div/div/div[3]/div[6]";
-
         private readonly IWebDriver _driver;
         private readonly WebDriverWait _wait;
-        private readonly WebDriverWait _shortWait;
+
+        private IExtractedTweet _extractedTweet;
 
         public TwitterScreenshotter(IWebDriver driver)
         {
             _driver = driver;
             _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-            _shortWait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
         }
 
-        public Bitmap Screenshot(string url)
+        public Bitmap Screenshot(Update update)
         {
             try
             {
-                Setup(url);
+                Setup(update.Url);
 
-                var tweet = GetTweet(out bool isReplyTweet);
+                _extractedTweet = ExtractTweet(update);
 
-                WaitForTweetThumbnails();
-
-                Bitmap bitmap = Screenshot(tweet, isReplyTweet);
+                Bitmap bitmap = Screenshot(_extractedTweet.GetTweet());
 
                 _driver.Dispose();
                 
@@ -52,18 +41,27 @@ namespace MessagesManager
             }
         }
 
-        private IWebElement GetTweet(out bool isReplyTweet)
+        private IExtractedTweet ExtractTweet(Update update)
         {
-            try
+            bool hasMedia = update.Media.Any();
+            bool isReply = update.IsReply;
+            
+            if (isReply)
             {
-                isReplyTweet = false;
-                return _wait.Until(GetElement(By.XPath(TweetXPath)));
+                if (hasMedia)
+                {
+                    return new ExtractedReplyMediaTweet(_driver, update.Content, _wait);
+                }
+                
+                return new ExtractedReplyTweet(_driver, update.Content, _wait);
             }
-            catch (WebDriverTimeoutException)
+            
+            if (hasMedia)
             {
-                isReplyTweet = true;
-                return _wait.Until(GetElement(By.XPath(ReplyTweetXPath)));
+                return new ExtractedMediaTweet(_driver, _wait);
             }
+                
+            return new ExtractedTweet(_driver, _wait);
         }
 
         private void Setup(string url)
@@ -75,90 +73,30 @@ namespace MessagesManager
                 .GoToUrl(url);
         }
 
-        private void WaitForTweetThumbnails()
+        private Bitmap Screenshot(IWebElement tweetElement)
         {
-            try
-            {
-                _shortWait.Until(GetElement(By.XPath(TweetImagesXPath))); // Wait for tweet thumbnails
-            }
-            catch (WebDriverTimeoutException)
-            {
-                // Tweet might be text so no images will be loaded
-            }
-        }
-
-        private Bitmap Screenshot(IWebElement tweet, bool isReplyTweet)
-        {
-            var takesScreenshot = (ITakesScreenshot) tweet;
+            var takesScreenshot = (ITakesScreenshot) tweetElement;
             
             return takesScreenshot
                 .GetScreenshot()
                 .AsByteArray
                 .ToBitmap()
-                .Crop(GetViewport(tweet.Size, isReplyTweet))
-                .RoundCorners(30);
+                .Crop(GetViewport(_extractedTweet.GetHeights(), tweetElement.Size))
+                .RoundCorners(20);
         }
 
-        private Rectangle GetViewport(Size tweetSize, bool isReplyTweet)
+        private static Rectangle GetViewport(TweetHeights tweetHeights, Size tweetSize)
         {
-            (int dateHeight, int statsHeight, int buttonsHeight) = GetHeights(isReplyTweet);
+            (int dateHeight, int statsHeight, int buttonsHeight) = tweetHeights;
 
             var finalHeight = new Size(
                 tweetSize.Width,
-                tweetSize.Height - dateHeight - statsHeight - buttonsHeight);
+                tweetSize.Height 
+                    - (dateHeight + 20) 
+                    - statsHeight 
+                    - buttonsHeight);
 
             return new Rectangle(Point.Empty, finalHeight);
         }
-
-        private (int dateHeight, int statsHeight, int buttonsHeight) GetHeights(bool isReplyTweet)
-        {
-            int dateHeight;
-            int statsHeight;
-            int buttonsHeight;
-            
-            if (!isReplyTweet)
-            {
-                try
-                {
-                    (dateHeight, statsHeight, buttonsHeight) = GetTweetHeights();
-                }
-                catch (NoSuchElementException)
-                {
-                    (dateHeight, statsHeight, buttonsHeight) = GetReplyTweetHeights();
-                }
-            }
-            else
-            {
-                (dateHeight, statsHeight, buttonsHeight) = GetReplyTweetHeights();
-            }
-            
-            return (dateHeight + 20, statsHeight, buttonsHeight);
-        }
-
-        private (int dateHeight, int statsHeight, int buttonsHeight) GetTweetHeights()
-        {
-            int dateHeight = _driver.FindElement(By.XPath(TweetDateXPath)).Size.Height;
-            int statsHeight = _driver.FindElement(By.XPath(TweetStatsXPath)).Size.Height;
-            int buttonsHeight = _driver.FindElement(By.XPath(TweetButtonsXPath)).Size.Height;
-            
-            return (dateHeight, statsHeight, buttonsHeight);
-        }
-
-        private (int dateHeight, int statsHeight, int buttonsHeight) GetReplyTweetHeights()
-        {
-            int dateHeight;
-            int statsHeight;
-            int buttonsHeight;
-            dateHeight = _driver.FindElement(By.XPath(ReplyTweetDateXPath))
-                .Size.Height + 20;
-            statsHeight = _driver.FindElement(By.XPath(ReplyTweetStatsXPath))
-                .Size.Height;
-            buttonsHeight = _driver.FindElement(By.XPath(ReplyTweetButtonsXPath))
-                .Size.Height;
-            return (dateHeight, statsHeight, buttonsHeight);
-        }
-
-        private static Func<IWebDriver, IWebElement> GetElement(By by) 
-            => driver => driver.FindElement(by);
     }
 }

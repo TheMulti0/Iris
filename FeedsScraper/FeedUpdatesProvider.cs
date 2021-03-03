@@ -30,7 +30,7 @@ namespace FeedsScraper
                 CreationDate = item.PublishingDate,
                 Url = item.Link,
                 Media = GetMedia(item),
-                Repost = false
+                IsRepost = false
             };
         }
 

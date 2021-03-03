@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace Common
 {
@@ -16,11 +15,14 @@ namespace Common
 
         public List<IMedia> Media { get; init; }
 
-        public bool Repost { get; init; }
+        public bool IsRepost { get; init; }
 
         public bool IsLive { get; set; }
+
+        public bool IsReply { get; set; }
         
         public byte[] Screenshot { get; set; }
+
 
         public override string ToString()
         {

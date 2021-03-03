@@ -27,7 +27,7 @@ namespace MessagesManager
                 {
                     Platform.Twitter 
                         => new TwitterScreenshotter(_webDriverFactory.Create())
-                            .Screenshot(update.Url)
+                            .Screenshot(update)
                             .ToByteArray(ImageFormat.Png),
                     _ 
                         => null
