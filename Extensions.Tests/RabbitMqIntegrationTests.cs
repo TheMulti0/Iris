@@ -68,7 +68,7 @@ namespace Extensions.Tests
         {
             var cs = new TaskCompletionSource<BasicDeliverEventArgs>();
 
-            Task OnMessage(BasicDeliverEventArgs args)
+            Task OnMessage(BasicDeliverEventArgs args, CancellationToken token)
             {
                 byte[] body = args.Body.ToArray();
                 Console.WriteLine("callback " + body[0].ToString());
@@ -90,7 +90,7 @@ namespace Extensions.Tests
             return update;
         }
         
-        private static RabbitMqConsumer Consume(Func<BasicDeliverEventArgs, Task> onMessage)
+        private static RabbitMqConsumer Consume(Func<BasicDeliverEventArgs, CancellationToken, Task> onMessage)
         {
             return new RabbitMqConsumer(
                 _consumerConfig,

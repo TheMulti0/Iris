@@ -47,7 +47,7 @@ namespace Extensions
             var consumer = new RabbitMqConsumer(
                 _config,
                 _channel,
-                OnMessage(stoppingToken),
+                OnMessage,
                 _loggerFactory.CreateLogger<RabbitMqConsumer>());
 
             // Dispose the consumer when service is stopped
@@ -56,31 +56,29 @@ namespace Extensions
             return Task.CompletedTask;
         }
 
-        private Func<BasicDeliverEventArgs, Task> OnMessage(CancellationToken token)
+        private async Task OnMessage(BasicDeliverEventArgs message, CancellationToken token)
         {
-            return async message =>
+            var json = "No Json";
+            
+            try
             {
-                string json = "No Json";
-                try
-                {
-                    ReadOnlyMemory<byte> readOnlyMemory = message.Body;
-                    
-                    byte[] bytes = readOnlyMemory.ToArray();
+                ReadOnlyMemory<byte> readOnlyMemory = message.Body;
+                
+                byte[] bytes = readOnlyMemory.ToArray();
 
-                    json = new UTF8Encoding(true).GetString(bytes);
+                json = new UTF8Encoding(true).GetString(bytes);
 
-                    var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
-                               ?? throw new NullReferenceException($"Failed to deserialize {json}");
-                    
-                    await _consumer.ConsumeAsync(item, token);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Failed to parse json {}", json);
-    
-                    throw;
-                }
-            };
+                var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
+                           ?? throw new NullReferenceException($"Failed to deserialize {json}");
+                
+                await _consumer.ConsumeAsync(item, token);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to parse json {}", json);
+
+                throw;
+            }
         }
     }
 }

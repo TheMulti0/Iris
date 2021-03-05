@@ -12,7 +12,7 @@ namespace Extensions
         private readonly CancellationTokenSource _cts = new();
         private readonly RabbitMqConsumerConfig _config;
         private readonly IModel _channel;
-        private readonly Func<BasicDeliverEventArgs, Task> _onMessage;
+        private readonly Func<BasicDeliverEventArgs, CancellationToken, Task> _onMessage;
         private readonly ILogger<RabbitMqConsumer> _logger;
         private readonly AsyncEventingBasicConsumer _consumer;
         private readonly string _consumerId;
@@ -20,7 +20,7 @@ namespace Extensions
         public RabbitMqConsumer(
             RabbitMqConsumerConfig config,
             IModel channel,
-            Func<BasicDeliverEventArgs, Task> onMessage,
+            Func<BasicDeliverEventArgs, CancellationToken, Task> onMessage,
             ILogger<RabbitMqConsumer> logger)
         {
             _config = config;
@@ -37,7 +37,7 @@ namespace Extensions
         {
             try
             {
-                await _onMessage(message); // TODO Implement cancellation
+                await _onMessage(message, _cts.Token);
             }
             catch (Exception e)
             {
