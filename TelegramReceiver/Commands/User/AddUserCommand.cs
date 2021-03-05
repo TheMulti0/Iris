@@ -115,14 +115,17 @@ namespace TelegramReceiver
                 Interval = interval,
                 Prefix = new Text
                 {
+                    Enabled = false,
                     Content = string.Empty,
                     Mode = TextMode.Text
                 },
                 Suffix = new Text
                 {
+                    Enabled = false,
                     Content = string.Empty,
                     Mode = TextMode.Text
-                }
+                },
+                SubscriptionDate = DateTime.Now
             };
 
             await _chatSubscriptionsRepository.AddOrUpdateAsync(user, chatSubscription);

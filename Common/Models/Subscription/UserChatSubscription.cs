@@ -15,5 +15,7 @@ namespace Common
         public Text Suffix { get; set; }
 
         public bool ShowUrlPreview { get; set; }
+        
+        public DateTime SubscriptionDate { get; set; }
     }
 }

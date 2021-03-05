@@ -27,6 +27,7 @@ namespace TelegramSender
         private readonly ILogger<MessagesConsumer> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
         private MessageSender _sender;
+        private static readonly TimeSpan InvalidSubscriptionExpiration = TimeSpan.FromDays(1);
 
         public MessagesConsumer(
             IChatSubscriptionsRepository repository,
@@ -96,7 +97,6 @@ namespace TelegramSender
             {
                 if (e.Message == "Forbidden: bot was blocked by the user" ||
                     e.Message == "Bad Request: need administrator rights in the channel chat")
-                    // TODO dont unsubscribe if time between subscription to update is less than x
                 {
                     await RemoveChatSubscription(originalUpdate.Author, chat);
                 }
@@ -109,6 +109,11 @@ namespace TelegramSender
 
         private async Task RemoveChatSubscription(User author, string chatId)
         {
+            if (await CanSubscriptionBeRemoved(author, chatId))
+            {
+                return;
+            }
+
             _logger.LogInformation("Removing subscription of {} from chat {}", author, chatId);
             await _repository.RemoveAsync(author, chatId);
 
@@ -120,6 +125,17 @@ namespace TelegramSender
                         new Subscription(author, null), 
                         chatId));
             }
+        }
+
+        private async Task<bool> CanSubscriptionBeRemoved(User author, string chatId)
+        {
+            var subscription = await _repository.GetAsync(author);
+            var userChatSubscription = subscription.Chats.FirstOrDefault(chatSubscription => chatSubscription.ChatId == chatId);
+
+            DateTime now = DateTime.Now;
+            DateTime? subscriptionDate = userChatSubscription?.SubscriptionDate;
+
+            return now - subscriptionDate > InvalidSubscriptionExpiration;
         }
 
         public async Task FlushAsync()
