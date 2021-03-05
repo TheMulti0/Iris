@@ -95,29 +95,13 @@ namespace TwitterScraper
                 @"https://t.co/\S+",
                 match => _urlExpander.ExpandAsync(match.Groups[0].Value).Result);
 
-            return Replace(
-                withExpandedUrls,
+            return withExpandedUrls.Replace(
                 new[]
                 {
                     @"(https://)?pic.twitter.com/\S+",
                     $@"(({TwitterConstants.TwitterBaseUrl}|{TwitterConstants.TwitterBaseUrlWww})/.+/status/\d+/(photo|video)/\d)"
                 },
                 string.Empty);
-        }
-
-        private static string Replace(
-            string input,
-            IEnumerable<string> patterns,
-            string replacement)
-        {
-            string newestText = input;
-            
-            foreach (string pattern in patterns)
-            {
-                newestText = Regex.Replace(newestText, pattern, replacement);
-            }
-
-            return newestText;
         }
         
         internal static IEnumerable<IMedia> GetMedia(ITweet tweet)

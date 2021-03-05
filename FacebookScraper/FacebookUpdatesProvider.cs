@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Common;
+using Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using UpdatesScraper;
@@ -46,7 +45,7 @@ namespace FacebookScraper
         {
             return post => new Update
             {
-                Content = post.Text,
+                Content = ExtractText(post),
                 Author = user,
                 CreationDate = post.CreationDate,
                 Url = post.PostUrl,
@@ -54,6 +53,21 @@ namespace FacebookScraper
                 IsRepost = post.Text == post.SharedText,
                 IsLive = post.IsLive
             };
+        }
+
+        private static string ExtractText(Post post)
+        {
+            if (post.Link != null)
+            {
+                return post.Text.Replace(
+                    new[]
+                    {
+                        "\n(?<link>[A-Z].+)"
+                    },
+                    post.Link);
+            }
+
+            return post.Text;
         }
 
         private static IEnumerable<IMedia> GetMedia(Post post)

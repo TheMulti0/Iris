@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using Extensions;
 
 namespace MessagesManager
 {
@@ -7,8 +6,7 @@ namespace MessagesManager
     {
         internal static string CleanText(this string text)
         {
-            return Replace(
-                text,
+            return text.Replace(
                 new[]
                 {
                     @"(https://)",
@@ -17,21 +15,5 @@ namespace MessagesManager
                 },
                 string.Empty);
         }
-
-        private static string Replace(
-            string input,
-            IEnumerable<string> patterns,
-            string replacement)
-        {
-            string newestText = input;
-            
-            foreach (string pattern in patterns)
-            {
-                newestText = Regex.Replace(newestText, pattern, replacement);
-            }
-
-            return newestText;
-        }
-
     }
 }
