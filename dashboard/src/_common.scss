@@ -2,10 +2,17 @@ $dashboard-primary: mat-palette($mat-blue-grey);
 $dashboard-accent: mat-palette($mat-grey, A200, A100, A400);
 $dashboard-warn: mat-palette($mat-deep-orange);
 
-$dashboard-theme: mat-dark-theme((
+$dashboard-theme: mat-light-theme((
   color: (
     primary: $dashboard-primary,
     accent: $dashboard-accent,
     warn: $dashboard-warn,
   )
 ));
+
+$dashboard-primary-contrast: map-get($dashboard-primary, contrast);
+$dashboard-accent-contrast: map-get($dashboard-accent, contrast);
+$dashboard-warn-contrast: map-get($dashboard-warn, contrast);
+
+$dashboard-background: map-get($dashboard-theme, background);
+$dashboard-foreground: map-get($dashboard-theme, foreground);
