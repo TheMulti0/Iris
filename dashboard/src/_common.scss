@@ -2,7 +2,7 @@ $dashboard-primary: mat-palette($mat-blue-grey);
 $dashboard-accent: mat-palette($mat-grey, A200, A100, A400);
 $dashboard-warn: mat-palette($mat-deep-orange);
 
-$dashboard-theme: mat-light-theme((
+$dashboard-theme: mat-dark-theme((
   color: (
     primary: $dashboard-primary,
     accent: $dashboard-accent,
