@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MongoDbGenericRepository;
 
 namespace UpdatesScraper
 {
@@ -10,10 +11,10 @@ namespace UpdatesScraper
         private readonly IMongoCollection<SentUpdate> _collection;
 
         public MongoSentUpdatesRepository(
-            MongoApplicationDbContext context,
+            IMongoDbContext context,
             MongoDbConfig config)
         {
-            _collection = context.SentUpdates;
+            _collection = context.GetCollection<SentUpdate>();
 
             if (_collection.Indexes.List().ToList().Count < 2) // There shouldn't be more than two indices in the collection
             {

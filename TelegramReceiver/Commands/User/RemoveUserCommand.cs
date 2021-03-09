@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Common;
 using Extensions;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 using User = Common.User;
 
 namespace TelegramReceiver

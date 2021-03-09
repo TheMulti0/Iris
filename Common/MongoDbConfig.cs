@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SubscriptionsDataLayer
+﻿namespace Common
 {
     public class MongoDbConfig
     {

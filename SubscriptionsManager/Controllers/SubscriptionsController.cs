@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.AspNetCore.Mvc;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 namespace SubscriptionsManager
 {

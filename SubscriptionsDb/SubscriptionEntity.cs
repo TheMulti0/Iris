@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDbGenericRepository.Attributes;
 
-namespace SubscriptionsDataLayer
+namespace SubscriptionsDb
 {
     [CollectionName("subscriptions")]
     public class SubscriptionEntity

@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDbGenericRepository;
 
-namespace SubscriptionsDataLayer.Tests
+namespace SubscriptionsDb.Tests
 {
     [TestClass]
     public class MongoChatSubscriptionsRepositoryTests
@@ -24,10 +25,8 @@ namespace SubscriptionsDataLayer.Tests
             };
             
             var services = new ServiceCollection()
-                .AddSingleton<IMongoDbContext>(new MongoDbContext(config.ConnectionString, config.DatabaseName))
-                .AddSingleton(config)
-                .AddSingleton<MongoApplicationDbContext>()
-                .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
+                .AddSingleton<IConfiguration>()
+                .AddSubscriptionsDb(new MongoDbContext(config.ConnectionString, config.DatabaseName))
                 .BuildServiceProvider();
 
             _repository = services.GetService<IChatSubscriptionsRepository>();

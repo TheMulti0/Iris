@@ -3,6 +3,7 @@ using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDbGenericRepository;
+using SharpCompress;
 using UpdatesScraper.Mock;
 
 namespace UpdatesScraper
@@ -14,7 +15,7 @@ namespace UpdatesScraper
             IConfiguration configuration) where TProvider : class, IUpdatesProvider
         {
             return services.AddUpdatesScraper<TProvider>(
-                configuration.GetSection<MongoDbConfig>("MongoDb"),
+                configuration.GetSection<MongoDbConfig>("UpdatesScraperDb"),
                 configuration.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"),
                 configuration.GetSection<RabbitMqProducerConfig>("RabbitMqProducer"),
                 configuration.GetSection<ScraperConfig>("Scraper"),
@@ -45,11 +46,16 @@ namespace UpdatesScraper
             this IServiceCollection services,
             MongoDbConfig config)
         {
+            var context = new Lazy<IMongoDbContext>(() => CreateMongoDbContext(config));
+            
             return services
-                .AddMongoDb(config)
-                .AddSingleton<MongoApplicationDbContext>()
-                .AddSingleton<IUserLatestUpdateTimesRepository, MongoUserLatestUpdateTimesRepository>()
-                .AddSingleton<ISentUpdatesRepository, MongoSentUpdatesRepository>();
+                .AddSingleton<IUserLatestUpdateTimesRepository>(_ => new MongoUserLatestUpdateTimesRepository(context.Value))
+                .AddSingleton<ISentUpdatesRepository>(_ => new MongoSentUpdatesRepository(context.Value, config));
+        }
+        
+        private static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
+        {
+            return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
         }
 
         public static IServiceCollection AddUpdatesScraperMockRepositories(
@@ -58,15 +64,6 @@ namespace UpdatesScraper
             return services
                 .AddSingleton<IUserLatestUpdateTimesRepository, MockUserLatestUpdateTimesRepository>()
                 .AddSingleton<ISentUpdatesRepository, MockSentUpdatesRepository>();
-        }
-
-        public static IServiceCollection AddMongoDb(
-            this IServiceCollection services,
-            MongoDbConfig config)
-        {
-            return services
-                .AddSingleton<IMongoDbContext>(new MongoDbContext(config.ConnectionString, config.DatabaseName))
-                .AddSingleton(config);
         }
 
         public static IServiceCollection AddUpdatesProvider<TProvider>(

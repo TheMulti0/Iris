@@ -5,7 +5,7 @@ using RabbitMQ.Client;
 
 namespace Extensions
 {
-    public static class ServiceCollectionsExtensions
+    public static class ServicesExtensions
     {
         public static IServiceCollection AddRabbitMqConnection(
             this IServiceCollection services,

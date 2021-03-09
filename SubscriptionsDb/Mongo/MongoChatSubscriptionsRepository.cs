@@ -5,16 +5,17 @@ using Common;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MongoDbGenericRepository;
 
-namespace SubscriptionsDataLayer
+namespace SubscriptionsDb
 {
     public class MongoChatSubscriptionsRepository : IChatSubscriptionsRepository
     {
         private readonly IMongoCollection<SubscriptionEntity> _collection;
 
-        public MongoChatSubscriptionsRepository(MongoApplicationDbContext context)
+        public MongoChatSubscriptionsRepository(IMongoDbContext context)
         {
-            _collection = context.Subscriptions;
+            _collection = context.GetCollection<SubscriptionEntity>();
         }
 
         public Task<bool> ExistsAsync(User user)

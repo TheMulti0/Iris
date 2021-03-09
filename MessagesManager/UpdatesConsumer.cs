@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 namespace MessagesManager
 {

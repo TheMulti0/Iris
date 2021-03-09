@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 namespace SubscriptionsManager
 {

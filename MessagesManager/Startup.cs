@@ -6,10 +6,8 @@ using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
-using OpenQA.Selenium;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -37,19 +35,12 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"); 
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
-    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
     var videoExtractorConfig = rootConfig.GetSection<VideoExtractorConfig>("VideoExtractor");
     var twitterScreenshotterConfig = rootConfig.GetSection<TwitterScreenshotterConfig>("TwitterScreenshotter");
 
     services
-        .AddSingleton<IMongoDbContext>(
-            _ => new MongoDbContext(
-                mongoConfig.ConnectionString,
-                mongoConfig.DatabaseName))
-        .AddSingleton(mongoConfig)
-        .AddSingleton<MongoApplicationDbContext>()
-        .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
-        
+        .AddSubscriptionsDb()
+
         .AddRabbitMqConnection(connectionConfig)
         .AddProducer<Message>(producerConfig)
         

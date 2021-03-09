@@ -14,7 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
-      <ProjectReference Include="..\SubscriptionsDataLayer\SubscriptionsDataLayer.csproj" />
+      <ProjectReference Include="..\SubscriptionsDb\SubscriptionsDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>

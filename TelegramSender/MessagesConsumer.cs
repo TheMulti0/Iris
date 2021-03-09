@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 using Message = Common.Message;
 using Update = Common.Update;
 using User = Common.User;
