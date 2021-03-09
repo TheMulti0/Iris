@@ -12,10 +12,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Mongo" />
+        <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
 
 </Project>
