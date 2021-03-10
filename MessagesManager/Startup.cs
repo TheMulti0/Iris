@@ -6,8 +6,8 @@ using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MongoDbGenericRepository;
 using SubscriptionsDb;
+using UpdatesDb;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -40,6 +40,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 
     services
         .AddSubscriptionsDb()
+        .AddUpdatesDb()
 
         .AddRabbitMqConnection(connectionConfig)
         .AddProducer<Message>(producerConfig)

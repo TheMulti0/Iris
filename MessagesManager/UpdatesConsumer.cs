@@ -7,26 +7,30 @@ using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
 using SubscriptionsDb;
+using UpdatesDb;
 
 namespace MessagesManager
 {
     internal class UpdatesConsumer : IConsumer<Update>
     {
         private readonly IProducer<Message> _producer;
-        private readonly IChatSubscriptionsRepository _repository;
+        private readonly IChatSubscriptionsRepository _subscriptionsRepository;
+        private readonly IUpdatesRepository _updatesRepository;
         private readonly VideoExtractor _videoExtractor;
         private readonly Screenshotter _screenshotter;
         private readonly ILogger<UpdatesConsumer> _logger;
 
         public UpdatesConsumer(
             IProducer<Message> producer,
-            IChatSubscriptionsRepository repository,
+            IChatSubscriptionsRepository subscriptionsRepository,
+            IUpdatesRepository updatesRepository,
             VideoExtractor videoExtractor,
             Screenshotter screenshotter,
             ILogger<UpdatesConsumer> logger)
         {
             _producer = producer;
-            _repository = repository;
+            _subscriptionsRepository = subscriptionsRepository;
+            _updatesRepository = updatesRepository;
             _videoExtractor = videoExtractor;
             _screenshotter = screenshotter;
             _logger = logger;
@@ -36,7 +40,7 @@ namespace MessagesManager
         {
             _logger.LogInformation("Received {}", update);
 
-            SubscriptionEntity entity = await _repository.GetAsync(update.Author);
+            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(update.Author);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
             Update newUpdate = await ModifiedUpdate(update, destinationChats, token);
@@ -45,6 +49,8 @@ namespace MessagesManager
                 new Message(
                     newUpdate,
                     destinationChats));
+
+            await _updatesRepository.AddOrUpdateAsync(new UpdateEntity(update));
         }
 
         private async Task<Update> ModifiedUpdate(
