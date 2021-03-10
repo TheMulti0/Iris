@@ -8,7 +8,7 @@ namespace UpdatesDb
     {
         public ObjectId Id { get; set; }
 
-        public DateTime SaveDate { get; } = DateTime.Now;
+        public DateTime SaveDate { get; set; } = DateTime.Now;
 
         public UpdateEntity()
         {

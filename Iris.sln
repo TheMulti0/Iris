@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdatesDb.Tests", "UpdatesD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedDbs", "SharedDbs", "{87787069-4ACA-4E72-81C3-1E033E16F84B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardApi", "DashboardApi\DashboardApi.csproj", "{C5B57D15-ACBE-4FD7-A0D7-8E825CB35E49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,10 @@ Global
 		{0CABC5E4-A925-449A-9F99-F7772BCC355B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CABC5E4-A925-449A-9F99-F7772BCC355B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CABC5E4-A925-449A-9F99-F7772BCC355B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5B57D15-ACBE-4FD7-A0D7-8E825CB35E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5B57D15-ACBE-4FD7-A0D7-8E825CB35E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5B57D15-ACBE-4FD7-A0D7-8E825CB35E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5B57D15-ACBE-4FD7-A0D7-8E825CB35E49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
