@@ -35,8 +35,7 @@ namespace UpdatesScraper
 
             _collection.Indexes.CreateOne(indexModel);
         }
-
-        
+       
         public Task<bool> ExistsAsync(string url)
         {
             return _collection

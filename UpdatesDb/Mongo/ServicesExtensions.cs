@@ -1,5 +1,4 @@
 ﻿using System;
-using Common;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,21 +14,24 @@ namespace UpdatesDb
         {
             IConfiguration config = null;
             
-            var context = new Lazy<IMongoDbContext>(() => dbContext ?? CreateMongoDbContext(config));
+            var context = new Lazy<IMongoDbContext>(() => dbContext ?? CreateMongoDbContext(GetMongoDbConfig(config)));
             
             return services
                 .AddSingleton<IUpdatesRepository>(provider =>
                 {
                     config = provider.GetService<IConfiguration>();
                     
-                    return new MongoUpdatesRepository(context.Value);
+                    return new MongoUpdatesRepository(context.Value, GetMongoDbConfig(config));
                 });
         }
 
-        private static IMongoDbContext CreateMongoDbContext(IConfiguration config)
+        private static MongoDbConfig GetMongoDbConfig(IConfiguration config)
         {
-            var mongoDbConfig = config.GetSection<MongoDbConfig>("UpdatesDb");
+            return config.GetSection<MongoDbConfig>("UpdatesDb");
+        }
 
+        private static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
+        {
             return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
         }
     }

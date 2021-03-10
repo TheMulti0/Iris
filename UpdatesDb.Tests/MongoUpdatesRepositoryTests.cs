@@ -20,7 +20,7 @@ namespace UpdatesDb.Tests
 
             var mongoDbContext = new MongoDbContext(config.ConnectionString, config.DatabaseName);
 
-            _repository = new MongoUpdatesRepository(mongoDbContext);
+            _repository = new MongoUpdatesRepository(mongoDbContext, config);
         }
         
         [TestMethod]
