@@ -18,17 +18,20 @@ namespace DashboardApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Update> Get()
+        public Paged<Update> Get(int pageIndex, int pageSize)
         {
-            return _repository
-                .Get()
-                .AsEnumerable()
+            Paged<UpdateEntity> paged = _repository
+                .Get(pageIndex, pageSize);
+            
+            IEnumerable<Update> content = paged.Content
                 .Select(ToUpdate);
+            
+            return new Paged<Update>(content, paged);
         }
 
         private static Update ToUpdate(UpdateEntity entity)
         {
-            var media = new List<IMedia>()
+            List<IMedia> media = new List<IMedia>()
                 .Concat(entity.Audios)
                 .Concat(entity.Photos)
                 .Concat(entity.Videos)

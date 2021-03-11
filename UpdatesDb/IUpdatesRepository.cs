@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Common;
 using MongoDB.Bson;
 
 namespace UpdatesDb
 {
     public interface IUpdatesRepository
     {
-        IQueryable<UpdateEntity> Get();
+        Paged<UpdateEntity> Get(int pageIndex, int pageSize);
         
         Task<UpdateEntity> GetAsync(ObjectId id);
         

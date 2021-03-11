@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -38,10 +40,29 @@ namespace UpdatesDb
             _collection.Indexes.CreateOne(indexModel);
         }
 
-        public IQueryable<UpdateEntity> Get()
+        public Paged<UpdateEntity> Get(int pageIndex, int pageSize)
         {
-            return _collection
-                .AsQueryable();
+            IMongoQueryable<UpdateEntity> entities = _collection.AsQueryable();
+
+            int totalElements = entities.Count();
+
+            int totalPages = RoundZeroDown(totalElements, pageSize);
+            
+            var content = entities
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize);
+            
+            return new Paged<UpdateEntity>(
+                content,
+                pageIndex,
+                totalPages,
+                entities.Count()
+            );
+        }
+
+        private static int RoundZeroDown(int numerator, int denominator)
+        {
+            return (numerator + denominator - 1) / denominator;
         }
 
         public Task<UpdateEntity> GetAsync(ObjectId id)
