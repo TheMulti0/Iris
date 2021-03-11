@@ -31,7 +31,7 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
 static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
 {
     IConfiguration rootConfig = hostContext.Configuration;
-    
+
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"); 
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
