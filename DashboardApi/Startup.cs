@@ -27,8 +27,13 @@ namespace DashboardApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddUpdatesDb();
+            services.AddUpdatesDb();
+
+            services.AddCors(
+                options =>
+                {
+                    options.AddPolicy("MyPolicy", b => b.AllowAnyOrigin());
+                });
             
             services.AddControllers();
             services.AddSwaggerGen(
@@ -55,8 +60,9 @@ namespace DashboardApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            app.UseCors("MyPolicy");
 
             app.UseAuthorization();
 

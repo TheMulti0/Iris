@@ -43,21 +43,35 @@ namespace UpdatesDb
         public Paged<UpdateEntity> Get(int pageIndex, int pageSize)
         {
             IMongoQueryable<UpdateEntity> entities = _collection.AsQueryable();
-
+            
             int totalElements = entities.Count();
-
             int totalPages = RoundZeroDown(totalElements, pageSize);
+            int itemIndex = pageIndex * pageSize;
             
-            var content = entities
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize);
-            
+            IEnumerable<UpdateEntity> content = GetContent(entities, itemIndex, pageSize, totalElements);
+
             return new Paged<UpdateEntity>(
                 content,
                 pageIndex,
                 totalPages,
                 entities.Count()
             );
+        }
+
+        private static IEnumerable<UpdateEntity> GetContent(
+            IMongoQueryable<UpdateEntity> entities,
+            int itemIndex,
+            int pageSize, 
+            int totalElements)
+        {
+            if (itemIndex >= totalElements)
+            {
+                return new List<UpdateEntity>();
+            }
+
+            return entities
+                .Skip(itemIndex)
+                .Take(pageSize);
         }
 
         private static int RoundZeroDown(int numerator, int denominator)
@@ -75,7 +89,7 @@ namespace UpdatesDb
 
         public async Task AddOrUpdateAsync(UpdateEntity entity)
         {
-            var existing = await GetAsync(entity.Id);
+            UpdateEntity existing = await GetAsync(entity.Id);
 
             if (existing == null)
             {

@@ -1,1 +1,20 @@
-<p>updates works!</p>
+<span class="mat-h2">Updates works!</span>
+
+<cdk-virtual-scroll-viewport itemSize="100">
+  <mat-card
+    class="cardd"
+    *cdkVirtualFor="let u of dataSource; trackBy: trackByUrl"
+  >
+    <mat-card-header>
+      <mat-card-title>{{ u.author.userId }}</mat-card-title>
+      <mat-card-subtitle>
+        <app-platform-badge [platform]="u.author.platform"></app-platform-badge>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      {{ u.content }}
+    </mat-card-content>
+
+  </mat-card>
+</cdk-virtual-scroll-viewport>
