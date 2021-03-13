@@ -42,7 +42,9 @@ namespace UpdatesDb
 
         public Paged<UpdateEntity> Get(int pageIndex, int pageSize)
         {
-            IMongoQueryable<UpdateEntity> entities = _collection.AsQueryable();
+            IQueryable<UpdateEntity> entities = _collection
+                .AsQueryable()
+                .OrderByDescending(entity => entity.SaveDate);
             
             int totalElements = entities.Count();
             int totalPages = RoundZeroDown(totalElements, pageSize);
@@ -59,7 +61,7 @@ namespace UpdatesDb
         }
 
         private static IEnumerable<UpdateEntity> GetContent(
-            IMongoQueryable<UpdateEntity> entities,
+            IQueryable<UpdateEntity> entities,
             int itemIndex,
             int pageSize, 
             int totalElements)
