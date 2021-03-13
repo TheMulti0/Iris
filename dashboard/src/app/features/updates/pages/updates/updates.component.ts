@@ -5,16 +5,35 @@ import { Update } from 'src/app/models/updates';
 import { UpdatesService } from '../../services/updates.service';
 import { PaginatedDataSource } from '../../../../shared/utils/paginated-datasource';
 import { Observable } from 'rxjs';
-
-enum Direction {
-  Up = 'Up',
-  Down = 'Down',
-}
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-updates',
   templateUrl: './updates.component.html',
   styleUrls: ['./updates.component.scss'],
+  animations: [
+    trigger('hiddenShown', [
+      transition(':enter', [
+        style({
+          opacity: 0.9,
+          marginLeft: '2%',
+        }),
+        animate(
+          '0.25s ease-out',
+          style({
+            opacity: 1,
+            marginLeft: '0%',
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class UpdatesComponent {
   @ViewChild(CdkVirtualScrollViewport)

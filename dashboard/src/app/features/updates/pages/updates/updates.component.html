@@ -1,6 +1,7 @@
 <cdk-virtual-scroll-viewport itemSize="100">
   <mat-card
     *cdkVirtualFor="let u of dataSource; trackBy: trackByUrl"
+    [@hiddenShown]="true"
   >
     <mat-card-header>
       <mat-card-title>{{ u.author.userId }}</mat-card-title>

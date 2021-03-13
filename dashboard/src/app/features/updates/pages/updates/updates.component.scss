@@ -17,17 +17,4 @@ cdk-virtual-scroll-viewport {
 
 mat-card {
   margin: 20pt auto;
-  animation: slidein;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-out;
-}
-
-@keyframes slidein {
-  from {
-    margin-left: 2%;
-  }
-
-  to {
-    margin-left: 0%;
-  }
 }
