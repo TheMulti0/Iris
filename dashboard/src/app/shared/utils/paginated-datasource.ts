@@ -11,10 +11,10 @@ export class PaginatedDataSource<T> extends DataSource<T> {
   private dataStream: Subject<T[]> = new BehaviorSubject<T[]>(this.cachedItems);
   private subscription = new Subscription();
 
-  private pageSize = 20;
   private currentPageIndex = 0;
 
   constructor(
+    private pageSize: number,
     private getBatch: (pageIndex: number, pageSize: number) => Observable<T[]>
   ) {
     super();
