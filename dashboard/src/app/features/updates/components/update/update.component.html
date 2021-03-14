@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ update.author.userId }}</mat-card-title>
+    <mat-card-subtitle>
+      <app-platform-badge
+        [platform]="update.author.platform"
+      ></app-platform-badge>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div [innerHtml]="update.content"></div>
+  </mat-card-content>
+</mat-card>

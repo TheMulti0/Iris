@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Paged } from 'src/app/models/paged';
+import { Slice } from 'src/app/models/slice';
 import { Update } from 'src/app/models/updates';
 import { environment } from 'src/environments/environment';
 
@@ -11,9 +11,9 @@ import { environment } from 'src/environments/environment';
 export class UpdatesService {
   constructor(private client: HttpClient) {}
 
-  getUpdates(pageIndex: number, pageSize: number): Observable<Paged<Update>> {
-    return this.client.get<Paged<Update>>(
-      `${environment.apiUrl}/updates?pageIndex=${pageIndex}&pageSize=${pageSize}`
+  getUpdates(startIndex: number, limit: number): Observable<Slice<Update>> {
+    return this.client.get<Slice<Update>>(
+      `${environment.apiUrl}/updates?startIndex=${startIndex}&limit=${limit}`
     );
   }
 }

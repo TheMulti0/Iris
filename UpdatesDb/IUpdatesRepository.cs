@@ -6,7 +6,7 @@ namespace UpdatesDb
 {
     public interface IUpdatesRepository
     {
-        Paged<UpdateEntity> Get(int pageIndex, int pageSize);
+        Slice<UpdateEntity> Get(int startIndex, int limit);
         
         Task<UpdateEntity> GetAsync(ObjectId id);
         

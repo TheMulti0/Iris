@@ -40,40 +40,42 @@ namespace UpdatesDb
             _collection.Indexes.CreateOne(indexModel);
         }
 
-        public Paged<UpdateEntity> Get(int pageIndex, int pageSize)
+        public Slice<UpdateEntity> Get(int startIndex, int limit)
         {
             IQueryable<UpdateEntity> entities = _collection
                 .AsQueryable()
                 .OrderByDescending(entity => entity.SaveDate);
             
             int totalElements = entities.Count();
-            int totalPages = RoundZeroDown(totalElements, pageSize);
-            int itemIndex = pageIndex * pageSize;
             
-            IEnumerable<UpdateEntity> content = GetContent(entities, itemIndex, pageSize, totalElements);
+            IEnumerable<UpdateEntity> content = GetContent(
+                entities,
+                startIndex,
+                limit,
+                totalElements);
 
-            return new Paged<UpdateEntity>(
+            return new Slice<UpdateEntity>(
                 content,
-                pageIndex,
-                totalPages,
-                entities.Count()
+                startIndex,
+                limit,
+                totalElements
             );
         }
 
         private static IEnumerable<UpdateEntity> GetContent(
             IQueryable<UpdateEntity> entities,
-            int itemIndex,
-            int pageSize, 
+            int startIndex,
+            int limit, 
             int totalElements)
         {
-            if (itemIndex >= totalElements)
+            if (startIndex >= totalElements)
             {
                 return new List<UpdateEntity>();
             }
 
             return entities
-                .Skip(itemIndex)
-                .Take(pageSize);
+                .Skip(startIndex)
+                .Take(limit + 1); // limit is exclusive
         }
 
         private static int RoundZeroDown(int numerator, int denominator)

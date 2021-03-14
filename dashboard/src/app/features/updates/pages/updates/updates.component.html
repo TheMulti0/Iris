@@ -1,17 +1,13 @@
-<cdk-virtual-scroll-viewport itemSize="100">
-  <mat-card
-    *cdkVirtualFor="let u of dataSource; trackBy: trackByUrl"
-    [@hiddenShown]="true"
+<cdk-virtual-scroll-viewport itemSize="200">
+  <div
+    class="updates-container"
+    *cdkVirtualFor="
+      let update of dataSource;
+      let i = index;
+      trackBy: trackByUrl
+    "
   >
-    <mat-card-header>
-      <mat-card-title>{{ u.author.userId }}</mat-card-title>
-      <mat-card-subtitle>
-        <app-platform-badge [platform]="u.author.platform"></app-platform-badge>
-      </mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      {{ u.content }}
-    </mat-card-content>
-  </mat-card>
+    {{ i }}
+    <app-update [update]="update" [@hiddenShown]="true"> </app-update>
+  </div>
 </cdk-virtual-scroll-viewport>

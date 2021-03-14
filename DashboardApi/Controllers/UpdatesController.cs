@@ -17,16 +17,22 @@ namespace DashboardApi.Controllers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Used to bring a slice of items
+        /// </summary>
+        /// <param name="startIndex">Inclusive index of first item in slice</param>
+        /// <param name="limit">Exclusive index of last item in slice (represents the size of the slice)</param>
+        /// <returns></returns>
         [HttpGet]
-        public Paged<Update> Get(int pageIndex, int pageSize)
+        public Slice<Update> Get(int startIndex, int limit)
         {
-            Paged<UpdateEntity> paged = _repository
-                .Get(pageIndex, pageSize);
+            Slice<UpdateEntity> slice = _repository
+                .Get(startIndex, limit);
             
-            IEnumerable<Update> content = paged.Content
+            IEnumerable<Update> content = slice.Content
                 .Select(ToUpdate);
             
-            return new Paged<Update>(content, paged);
+            return new Slice<Update>(content, slice);
         }
 
         private static Update ToUpdate(UpdateEntity entity)

@@ -3,7 +3,7 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { map } from 'rxjs/operators';
 import { Update } from 'src/app/models/updates';
 import { UpdatesService } from '../../services/updates.service';
-import { PaginatedDataSource } from '../../../../shared/utils/paginated-datasource';
+import { SlicedDataSource } from '../../../../shared/utils/sliced-datasource';
 import { Observable } from 'rxjs';
 import {
   animate,
@@ -12,6 +12,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { Slice } from 'src/app/models/slice';
 
 @Component({
   selector: 'app-updates',
@@ -22,10 +23,10 @@ import {
       transition(':enter', [
         style({
           opacity: 0.9,
-          marginLeft: '2%',
+          marginLeft: '12%',
         }),
         animate(
-          '0.25s ease-out',
+          '2s ease-out',
           style({
             opacity: 1,
             marginLeft: '0%',
@@ -39,18 +40,17 @@ export class UpdatesComponent {
   @ViewChild(CdkVirtualScrollViewport)
   virtualScroll!: CdkVirtualScrollViewport;
 
-  dataSource: PaginatedDataSource<Update>;
+  dataSource: SlicedDataSource<Update>;
 
   constructor(private service: UpdatesService) {
-    this.dataSource = new PaginatedDataSource(20, (index, size) =>
-      this.getUpdates(index, size)
+    this.dataSource = new SlicedDataSource((index, limit) =>
+      this.getUpdates(index, limit)
     );
   }
 
-  private getUpdates(index: number, size: number): Observable<Update[]> {
+  private getUpdates(index: number, size: number): Observable<Slice<Update>> {
     return this.service
-      .getUpdates(index, size)
-      .pipe(map((page) => page.content));
+      .getUpdates(index, size);
   }
 
   trackByUrl(index: number, update: Update) {
