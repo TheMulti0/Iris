@@ -11,7 +11,7 @@ export class SlicedDataSource<T> extends DataSource<T> {
   private dataStream: Subject<T[]> = new BehaviorSubject<T[]>(this.cachedItems);
   private subscription = new Subscription();
 
-  private currentRange: ListRange = { start: 0, end: 1 };
+  private currentRange: ListRange = { start: 0, end: 0 };
 
   constructor(
     private getBatch: (

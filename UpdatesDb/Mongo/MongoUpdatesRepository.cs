@@ -78,11 +78,6 @@ namespace UpdatesDb
                 .Take(limit + 1); // limit is exclusive
         }
 
-        private static int RoundZeroDown(int numerator, int denominator)
-        {
-            return (numerator + denominator - 1) / denominator;
-        }
-
         public Task<UpdateEntity> GetAsync(ObjectId id)
         {
             return _collection

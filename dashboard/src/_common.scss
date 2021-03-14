@@ -2,6 +2,9 @@ $dashboard-primary: mat-palette($mat-blue-grey);
 $dashboard-accent: mat-palette($mat-grey, A200, A100, A400);
 $dashboard-warn: mat-palette($mat-deep-orange);
 
+$background-color: '#1D1E22';
+$app-bar-color: '#242529';
+
 $dashboard-theme: mat-dark-theme((
   color: (
     primary: $dashboard-primary,
@@ -9,6 +12,10 @@ $dashboard-theme: mat-dark-theme((
     warn: $dashboard-warn,
   )
 ));
+
+$background: map-get($dashboard-theme, background);
+$background: map_merge($background, (background: $background-color, app-bar: $app-bar-color));
+$dashboard-theme: map_merge($dashboard-theme, (background: $background));
 
 $dashboard-primary-contrast: map-get($dashboard-primary, contrast);
 $dashboard-accent-contrast: map-get($dashboard-accent, contrast);

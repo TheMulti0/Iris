@@ -1,3 +1,11 @@
-mat-card {
-  margin: 20pt auto;
+.author {
+  display: flex;
+  flex-direction: row;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  color: var(--f-base);
+  background-color: var(--b-app-bar);
 }

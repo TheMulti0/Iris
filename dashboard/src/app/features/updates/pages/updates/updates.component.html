@@ -1,13 +1,9 @@
-<cdk-virtual-scroll-viewport itemSize="200">
-  <div
-    class="updates-container"
-    *cdkVirtualFor="
-      let update of dataSource;
-      let i = index;
-      trackBy: trackByUrl
-    "
-  >
-    {{ i }}
-    <app-update [update]="update" [@hiddenShown]="true"> </app-update>
+<cdk-virtual-scroll-viewport itemSize="50">
+  <div class="updates-container">
+    <app-update
+      *cdkVirtualFor="let update of dataSource; trackBy: trackByUrl"
+      [update]="update"
+    >
+    </app-update>
   </div>
 </cdk-virtual-scroll-viewport>

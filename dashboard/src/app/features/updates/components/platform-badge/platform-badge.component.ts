@@ -11,14 +11,16 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 })
 export class PlatformBadgeComponent implements OnInit {
   @Input()
-  platform: Platform  | undefined;
-
-  icon: IconDefinition = faFacebook;
+  platform!: Platform;
+  icon!: IconDefinition;
+  tooltip!: string;
 
   constructor() {}
 
   ngOnInit() {
     this.icon = this.getIcon();
+
+    this.tooltip = Platform[this.platform];
   }
 
   private getIcon(): IconDefinition {
@@ -27,7 +29,6 @@ export class PlatformBadgeComponent implements OnInit {
         return faFacebook;
       case Platform.Twitter:
         return faTwitter;
-      case Platform.Feeds:
     }
     return faRss;
   }
