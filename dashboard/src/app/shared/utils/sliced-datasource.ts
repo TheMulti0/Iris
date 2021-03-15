@@ -4,7 +4,7 @@ import {
   CollectionViewer,
   ListRange,
 } from '@angular/cdk/collections';
-import { Slice } from 'src/app/models/slice';
+import { Slice } from 'src/app/models/slice.model';
 
 export class SlicedDataSource<T> extends DataSource<T> {
   private cachedItems: T[] = [];

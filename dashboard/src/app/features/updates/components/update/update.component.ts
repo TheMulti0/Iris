@@ -1,5 +1,5 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { Update } from 'src/app/models/updates';
+import { Update } from 'src/app/models/updates.model';
 
 @Component({
   selector: 'app-update',

@@ -1,4 +1,4 @@
-import { Platform } from 'src/app/models/updates';
+import { Platform } from 'src/app/models/updates.model';
 import { Component, Input, OnInit } from '@angular/core';
 import { faFacebook, faTwitter, IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faRss } from '@fortawesome/free-solid-svg-icons';

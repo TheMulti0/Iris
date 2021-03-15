@@ -2,7 +2,8 @@
   <div [innerHtml]="update.content"></div>
 
   <div *ngFor="let media of update.media">
-    <img [src]="media.Url">
+    <img *ngIf="media.type === 'Photo'" [src]="media.url">
+    <video *ngIf="media.type === 'Video'" [src]="media.url" controls></video>
   </div>
 </div>
 

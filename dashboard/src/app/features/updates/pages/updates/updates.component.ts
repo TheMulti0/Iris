@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Update } from 'src/app/models/updates';
+import { Update } from 'src/app/models/updates.model';
 import { UpdatesService } from '../../services/updates.service';
 import { SlicedDataSource } from '../../../../shared/utils/sliced-datasource';
 import { Observable } from 'rxjs';
-import { Slice } from 'src/app/models/slice';
+import { Slice } from 'src/app/models/slice.model';
 
 @Component({
   selector: 'app-updates',

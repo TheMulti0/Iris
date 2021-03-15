@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Slice } from 'src/app/models/slice';
-import { Update } from 'src/app/models/updates';
+import { Slice } from 'src/app/models/slice.model';
+import { Update } from 'src/app/models/updates.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
