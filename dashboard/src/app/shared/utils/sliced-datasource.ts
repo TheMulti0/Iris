@@ -47,8 +47,8 @@ export class SlicedDataSource<T> extends DataSource<T> {
     }
 
     this.currentRange = {
-      start: Math.floor(start * 0.75),
-      end: Math.floor(end * 1.25),
+      start: Math.floor(start * 0.5),
+      end: Math.floor(end * 1.5),
     }; // Fetch a range that is larger than requested
 
     this.fetchPage();
@@ -63,6 +63,8 @@ export class SlicedDataSource<T> extends DataSource<T> {
 
     const batch: Slice<T> = await this.getBatch(start, end).toPromise();
 
-    this.dataStream.next(batch.content);
+    this.cachedItems.push(...batch.content);
+
+    this.dataStream.next(this.cachedItems);
   }
 }
