@@ -9,8 +9,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
 using TelegramReceiver;
 using TwitterScraper;
-using SubscriptionsDataLayer;
-using MongoApplicationDbContext = SubscriptionsDataLayer.MongoApplicationDbContext;
+using SubscriptionsDb;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -36,7 +35,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
-    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
+    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("ConnectionsDb");
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
@@ -56,15 +55,24 @@ static IServiceCollection AddMongoDbRepositories(
     IServiceCollection services,
     MongoDbConfig config)
 {
-    return services.AddSingleton<IMongoDbContext>(
-        _ => new MongoDbContext(
-            config.ConnectionString,
-            config.DatabaseName))
-        .AddSingleton(config)
-        .AddSingleton<MongoApplicationDbContext>()
-        .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
-        .AddSingleton<TelegramReceiver.MongoApplicationDbContext>()
-        .AddSingleton<IConnectionsRepository, MongoConnectionsRepository>();
+    return AddReceiverMongoRepositories(
+        services.AddSubscriptionsDb(),
+        config);
+}
+
+static IServiceCollection AddReceiverMongoRepositories(
+    IServiceCollection services,
+    MongoDbConfig config)
+{
+    var context = new Lazy<IMongoDbContext>(() => CreateMongoDbContext(config));
+        
+    return services
+        .AddSingleton<IConnectionsRepository>(_ => new MongoConnectionsRepository(context.Value));
+}
+    
+static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
+{
+    return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
 }
 
 static IServiceCollection AddRabbitMq(

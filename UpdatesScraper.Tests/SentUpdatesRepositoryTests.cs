@@ -3,31 +3,26 @@ using System.Threading.Tasks;
 using Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MongoDbGenericRepository;
 
 namespace UpdatesScraper.Tests
 {
     [TestClass]
     public class SentUpdatesRepositoryTests
     {
-        private static MongoApplicationDbContext _dbContext;
-        private static MongoDbConfig _config;
+        private static MongoDbConfig _mongoDbConfig;
+        private static IMongoDbContext _dbContext;
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            var services = new ServiceCollection()
-                .AddLogging(builder => builder.AddTestsLogging(context))
-                .AddMongoDb(
-                    new MongoDbConfig
-                    {
-                        ConnectionString = "mongodb://localhost:27017",
-                        DatabaseName = "test"
-                    })
-                .AddSingleton<MongoApplicationDbContext>()
-                .BuildServiceProvider();
+            _mongoDbConfig = new MongoDbConfig
+            {
+                ConnectionString = "mongodb://localhost:27017",
+                DatabaseName = "test"
+            };
 
-            _dbContext = services.GetService<MongoApplicationDbContext>();
-            _config = services.GetService<MongoDbConfig>();
+            _dbContext = new MongoDbContext(_mongoDbConfig.ConnectionString, _mongoDbConfig.DatabaseName);
         }
 
         [TestMethod]
@@ -35,13 +30,11 @@ namespace UpdatesScraper.Tests
         {
             const string url = "https://test.com";
 
-            var repository = new MongoSentUpdatesRepository(
-                _dbContext,
-                _config);
+            var repository = new MongoSentUpdatesRepository(_dbContext, _mongoDbConfig);
 
-            await _dbContext.SentUpdates.Indexes.DropAllAsync();
+            await _dbContext.GetCollection<SentUpdate>().Indexes.DropAllAsync();
 
-            repository.CreateExpirationIndex(_config);
+            repository.CreateExpirationIndex(_mongoDbConfig);
             
             await TestGetSet(url, repository);
         }
@@ -51,11 +44,11 @@ namespace UpdatesScraper.Tests
         {
             const string url = "https://test.com";
 
-            await _dbContext.SentUpdates.Indexes.DropAllAsync();
+            await _dbContext.GetCollection<SentUpdate>().Indexes.DropAllAsync();
             
             await TestGetSet(url, new MongoSentUpdatesRepository(
                                       _dbContext,
-                                      _config));
+                                      _mongoDbConfig));
         }
 
         private static async Task TestGetSet(string url, ISentUpdatesRepository repository)

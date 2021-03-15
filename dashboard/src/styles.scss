@@ -1,0 +1,56 @@
+@import "~@angular/material/theming";
+@import "common";
+
+@include mat-core();
+@include angular-material-theme($dashboard-theme);
+
+$p-keys: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900;
+$a-keys: (100:A100, 200:A200, 400:A400, 700:A700);
+$w-keys: (100:100, 200:200, 400:400, 700:700);
+
+:root {
+  @each $key in $p-keys {
+    --p#{$key}: #{map-get($dashboard-primary, $key)};
+  }
+
+  @each $key, $value in $a-keys {
+    --a#{$key}: #{map-get($dashboard-accent, $value)};
+  }
+
+  @each $key, $value in $w-keys {
+    --w#{$key}: #{map-get($dashboard-warn, $value)};
+  }
+
+  @each $key in $p-keys {
+    --pc#{$key}: #{map-get($dashboard-primary-contrast, $key)};
+  }
+
+  @each $key, $value in $a-keys {
+    --ac#{$key}: #{map-get($dashboard-accent-contrast, $key)};
+  }
+
+  @each $key, $value in $dashboard-background {
+    --b-#{$key}: #{$value};
+  }
+
+  @each $key, $value in $dashboard-foreground {
+    --f-#{$key}: #{$value};
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: grid;
+  background: var(--b-background);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+* {
+  font-family: Ubuntu, Roboto, "Helvetica Neue", sans-serif !important;
+}

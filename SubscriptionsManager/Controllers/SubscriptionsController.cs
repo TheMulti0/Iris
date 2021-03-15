@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.AspNetCore.Mvc;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 namespace SubscriptionsManager
 {
@@ -20,12 +20,12 @@ namespace SubscriptionsManager
         }
 
         [HttpGet]
-        public ValueTask<List<Subscription>> Get()
+        public IEnumerable<Subscription> Get()
         {
-            return _chatSubscriptionsRepository.Get()
-                .ToAsyncEnumerable()
-                .Select(ToSubscription)
-                .ToListAsync();
+            return _chatSubscriptionsRepository
+                .Get()
+                .AsEnumerable()
+                .Select(ToSubscription);
         }
 
         private static Subscription ToSubscription(SubscriptionEntity user)

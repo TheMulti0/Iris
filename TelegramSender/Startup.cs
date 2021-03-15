@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
 using TelegramSender;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -37,16 +37,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
-    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("MongoDb");
 
     services
-        .AddSingleton<IMongoDbContext>(
-            _ => new MongoDbContext(
-                mongoConfig.ConnectionString,
-                mongoConfig.DatabaseName))
-        .AddSingleton(mongoConfig)
-        .AddSingleton<MongoApplicationDbContext>()
-        .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
+        .AddSubscriptionsDb()
         .AddRabbitMqConnection(connectionConfig)
         .AddLanguages()
         .AddSingleton(telegramConfig)

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 

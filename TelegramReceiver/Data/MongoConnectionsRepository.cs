@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MongoDbGenericRepository;
 using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver
@@ -9,10 +10,9 @@ namespace TelegramReceiver
     {
         private readonly IMongoCollection<Connection> _collection;
 
-        public MongoConnectionsRepository(
-            MongoApplicationDbContext context)
+        public MongoConnectionsRepository(IMongoDbContext context)
         {
-            _collection = context.Connection;
+            _collection = context.GetCollection<Connection>();
         }
 
         public Task<Connection> GetAsync(User user)

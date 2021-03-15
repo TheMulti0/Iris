@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Common;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
 

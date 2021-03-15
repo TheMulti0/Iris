@@ -56,7 +56,10 @@ namespace Common
 
             foreach (PropertyInfo property in valueType.GetProperties())
             {
-                dictionary.Add(property.Name, property.GetValue(value));
+                string name = property.Name;
+                string propertyName = char.ToLowerInvariant(name[0]) + name.Substring(1);
+                
+                dictionary.Add(propertyName, property.GetValue(value));
             }
             
             JsonSerializer.Serialize(writer, dictionary, _jsonSerializerOptions);

@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MongoDbGenericRepository;
-using SubscriptionsDataLayer;
+using SubscriptionsDb;
 
 namespace SubscriptionsManager
 {
@@ -31,16 +31,9 @@ namespace SubscriptionsManager
             var connectionConfig = Configuration.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
             var consumerConfig = Configuration.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
             var producerConfig = Configuration.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
-            var mongoConfig = Configuration.GetSection<MongoDbConfig>("MongoDb");
 
             services
-                .AddSingleton<IMongoDbContext>(
-                    _ => new MongoDbContext(
-                        mongoConfig.ConnectionString,
-                        mongoConfig.DatabaseName))
-                .AddSingleton(mongoConfig)
-                .AddSingleton<MongoApplicationDbContext>()
-                .AddSingleton<IChatSubscriptionsRepository, MongoChatSubscriptionsRepository>()
+                .AddSubscriptionsDb()
                 .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<SubscriptionRequest>(producerConfig)
                 .AddSingleton<IConsumer<ChatSubscriptionRequest>, ChatSubscriptionRequestsConsumer>()

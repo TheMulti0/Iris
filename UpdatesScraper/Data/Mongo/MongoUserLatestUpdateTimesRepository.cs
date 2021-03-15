@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Common;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MongoDbGenericRepository;
 
 namespace UpdatesScraper
 {
@@ -10,9 +11,9 @@ namespace UpdatesScraper
     {
         private readonly IMongoCollection<UserLatestUpdateTime> _collection;
 
-        public MongoUserLatestUpdateTimesRepository(MongoApplicationDbContext context)
+        public MongoUserLatestUpdateTimesRepository(IMongoDbContext context)
         {
-            _collection = context.UserLatestUpdateTimes;
+            _collection = context.GetCollection<UserLatestUpdateTime>();
         }
         
         public Task<UserLatestUpdateTime> GetAsync(User user)

@@ -43,6 +43,9 @@ services:
       dockerfile: TelegramReceiver/Dockerfile
     container_name: telegramreceiver
     restart: always
+    env_file:
+      - subscriptionsdb.env
+      - telegramreceiver.env
     volumes:
       - './TelegramReceiver/appsettings.json:/app/appsettings.json'
     networks:
@@ -59,6 +62,8 @@ services:
       dockerfile: SubscriptionsManager/Dockerfile
     container_name: subscriptionsmanager
     restart: always
+    env_file:
+      - subscriptionsdb.env
     volumes:
       - './SubscriptionsManager/appsettings.json:/app/appsettings.json'
     networks:
@@ -90,6 +95,8 @@ services:
       dockerfile: FacebookScraper/Dockerfile
     container_name: facebookscraper
     restart: always
+    env_file:
+      - facebookscraper.env
     volumes:
       - './FacebookScraper/appsettings.json:/app/appsettings.json'
     networks:
@@ -106,6 +113,8 @@ services:
       dockerfile: TwitterScraper/Dockerfile
     container_name: twitterscraper
     restart: always
+    env_file:
+      - twitterscraper.env
     volumes:
       - './TwitterScraper/appsettings.json:/app/appsettings.json'
     networks:
@@ -122,6 +131,8 @@ services:
       dockerfile: FeedsScraper/Dockerfile
     container_name: feedsscraper
     restart: always
+    env_file:
+      - feedsscraper.env
     volumes:
       - './FeedsScraper/appsettings.json:/app/appsettings.json'
     networks:
@@ -138,6 +149,9 @@ services:
       dockerfile: MessagesManager/Dockerfile
     container_name: messagesmanager
     restart: always
+    env_file:
+      - subscriptionsdb.env
+      - messagesmanager.env
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -158,6 +172,8 @@ services:
       dockerfile: TelegramSender/Dockerfile
     container_name: telegramsender
     restart: always
+    env_file:
+      - telegramsender.env
     volumes:
       - './TelegramSender/appsettings.json:/app/appsettings.json'
     networks:
