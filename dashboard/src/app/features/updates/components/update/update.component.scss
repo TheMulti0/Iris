@@ -1,11 +1,36 @@
-.author {
-  display: flex;
-  flex-direction: row;
-}
-
 :host {
   display: flex;
   flex-direction: column;
+
+  margin: 20pt 0;
+
+  padding: 10pt;
+  border-radius: 10pt;
+
   color: var(--f-base);
   background-color: var(--b-app-bar);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 25pt;
+}
+
+img {
+  max-height: 80vh;
+}
+
+.author {
+  display: flex;
+  flex-direction: row;
+
+  color: var(--f-secondary-text);
+
+  font-size: 8pt;
+}
+
+app-platform-badge {
+  margin: 0 3pt;
 }

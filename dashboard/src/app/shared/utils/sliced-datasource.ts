@@ -63,8 +63,6 @@ export class SlicedDataSource<T> extends DataSource<T> {
 
     const batch: Slice<T> = await this.getBatch(start, end).toPromise();
 
-    this.cachedItems = this.cachedItems.concat(batch.content);
-
-    this.dataStream.next(this.cachedItems);
+    this.dataStream.next(batch.content);
   }
 }

@@ -1,7 +1,13 @@
-<div class="author">
-  <span [innerHtml]="update.author.userId"> </span>
+<div class="content">
+  <div [innerHtml]="update.content"></div>
 
-  <app-platform-badge [platform]="update.author.platform"></app-platform-badge>
+  <div *ngFor="let media of update.media">
+    <img [src]="media.Url">
+  </div>
 </div>
 
-<div [innerHtml]="update.content"></div>
+<div class="author">
+  <app-platform-badge [platform]="update.author.platform"></app-platform-badge>
+
+  <span [innerHtml]="update.author.userId"> </span>
+</div>

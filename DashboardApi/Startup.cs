@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,7 +36,15 @@ namespace DashboardApi
                     options.AddPolicy("MyPolicy", b => b.AllowAnyOrigin());
                 });
             
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(
+                    options =>
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new MediaJsonConverter());
+                        options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+                        options.JsonSerializerOptions.Converters.Add(new NullableTimeSpanConverter());
+                    });
+            
             services.AddSwaggerGen(
                 c =>
                 {

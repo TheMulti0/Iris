@@ -21,5 +21,6 @@ export interface User {
 }
 
 export interface IMedia {
-  url: string;
+  type: string;
+  Url: string;
 }
