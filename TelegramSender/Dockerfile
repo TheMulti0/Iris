@@ -8,6 +8,7 @@ WORKDIR /src
 COPY ["TelegramSender/TelegramSender.csproj", "TelegramSender/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
+COPY ["SubscriptionsDb/SubscriptionsDb.csproj", "SubscriptionsDb/"]
 RUN dotnet restore "TelegramSender/TelegramSender.csproj"
 COPY . .
 WORKDIR "/src/TelegramSender"

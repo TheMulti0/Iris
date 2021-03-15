@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ["SubscriptionsManager/SubscriptionsManager.csproj", "SubscriptionsManager/"]
 COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
-COPY ["SubscriptionsDataLayer/SubscriptionsDataLayer.csproj", "SubscriptionsDataLayer/"]
+COPY ["SubscriptionsDb/SubscriptionsDb.csproj", "SubscriptionsDb/"]
 RUN dotnet restore "SubscriptionsManager/SubscriptionsManager.csproj"
 COPY . .
 WORKDIR "/src/SubscriptionsManager"
