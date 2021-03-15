@@ -1,3 +1,4 @@
+import { HostListener } from '@angular/core';
 import { Component, HostBinding, Input } from '@angular/core';
 import { Update } from 'src/app/models/updates.model';
 
@@ -11,4 +12,9 @@ export class UpdateComponent {
   update!: Update;
 
   constructor() {}
+
+  @HostListener('error', ['$event.target'])
+  onError(video: any) {
+    video.hide();
+ }
 }

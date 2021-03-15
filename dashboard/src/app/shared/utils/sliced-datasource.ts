@@ -47,8 +47,8 @@ export class SlicedDataSource<T> extends DataSource<T> {
     }
 
     this.currentRange = {
-      start: Math.floor(start * 0.5),
-      end: Math.floor(end * 1.5),
+      start: Math.floor(start * 0.1),
+      end: Math.floor(end * 2),
     }; // Fetch a range that is larger than requested
 
     this.fetchPage();

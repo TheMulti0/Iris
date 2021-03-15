@@ -1,10 +1,10 @@
 <div class="content">
   <div [innerHtml]="update.content"></div>
 
-  <!-- <div *ngFor="let media of update.media">
-    <img *ngIf="media.type === 'Photo'" [src]="media.url">
-    <video *ngIf="media.type === 'Video'" [src]="media.url" controls></video>
-  </div> -->
+  <div *ngFor="let media of update.media">
+    <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media">
+    <video *ngIf="media.type === 'Video'" [src]="media.url" controls class="media"></video>
+  </div>
 </div>
 
 <div class="author">
