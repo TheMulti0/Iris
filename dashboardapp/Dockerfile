@@ -5,9 +5,8 @@
 FROM node:12.2.0-alpine as build
 
 WORKDIR /app
-# Copy from build context (web) to /app
-COPY . .
 
+COPY package.json .
 RUN npm install
 RUN npm run ng build -- --prod
 

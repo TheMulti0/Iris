@@ -214,7 +214,7 @@ jobs:
           push: true
           tags: irisupdate/dashboardapi:latest  
   dashboardapp:
-    name: Build and push DashboardApp image
+    name: Build and push dashboardapp image
     runs-on: ubuntu-latest
 
     steps:
