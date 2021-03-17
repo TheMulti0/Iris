@@ -233,7 +233,7 @@ jobs:
         uses: docker/build-push-action@v2.2.1
         with:
           context: ./dashboardapp
-          file: ./Dockerfile
+          file: ./dashboardapp/Dockerfile
           push: true
           tags: irisupdate/dashboardapp:latest  
           
