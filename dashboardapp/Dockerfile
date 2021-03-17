@@ -6,7 +6,7 @@ FROM node:12.2.0-alpine as build
 
 WORKDIR /app
 
-COPY package.json .
+COPY . .
 RUN npm install
 RUN npm run ng build -- --prod
 
