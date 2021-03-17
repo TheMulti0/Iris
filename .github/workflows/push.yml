@@ -232,7 +232,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.2.1
         with:
-          file: ./dashboardapp/Dockerfile
+          context: ./dashboardapp
+          file: ./Dockerfile
           push: true
           tags: irisupdate/dashboardapp:latest  
           
