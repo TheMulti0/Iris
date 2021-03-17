@@ -8,7 +8,7 @@ WORKDIR /app
 # Copy from build context (web) to /app
 COPY . .
 
-RUN yarn install
+RUN npm install
 RUN npm run ng build -- --prod
 
 #
