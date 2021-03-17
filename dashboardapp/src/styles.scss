@@ -2,7 +2,7 @@
 @import "common";
 
 @include mat-core();
-@include angular-material-theme($dashboard-theme);
+@include angular-material-theme($dashboardapp-theme);
 
 $p-keys: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900;
 $a-keys: (100:A100, 200:A200, 400:A400, 700:A700);
@@ -10,30 +10,30 @@ $w-keys: (100:100, 200:200, 400:400, 700:700);
 
 :root {
   @each $key in $p-keys {
-    --p#{$key}: #{map-get($dashboard-primary, $key)};
+    --p#{$key}: #{map-get($dashboardapp-primary, $key)};
   }
 
   @each $key, $value in $a-keys {
-    --a#{$key}: #{map-get($dashboard-accent, $value)};
+    --a#{$key}: #{map-get($dashboardapp-accent, $value)};
   }
 
   @each $key, $value in $w-keys {
-    --w#{$key}: #{map-get($dashboard-warn, $value)};
+    --w#{$key}: #{map-get($dashboardapp-warn, $value)};
   }
 
   @each $key in $p-keys {
-    --pc#{$key}: #{map-get($dashboard-primary-contrast, $key)};
+    --pc#{$key}: #{map-get($dashboardapp-primary-contrast, $key)};
   }
 
   @each $key, $value in $a-keys {
-    --ac#{$key}: #{map-get($dashboard-accent-contrast, $key)};
+    --ac#{$key}: #{map-get($dashboardapp-accent-contrast, $key)};
   }
 
-  @each $key, $value in $dashboard-background {
+  @each $key, $value in $dashboardapp-background {
     --b-#{$key}: #{$value};
   }
 
-  @each $key, $value in $dashboard-foreground {
+  @each $key, $value in $dashboardapp-foreground {
     --f-#{$key}: #{$value};
   }
 }
