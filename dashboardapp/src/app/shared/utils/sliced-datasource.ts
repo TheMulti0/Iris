@@ -14,7 +14,7 @@ export class SlicedDataSource<T> extends DataSource<T> {
 
   private threshold = 1.5;
 
-  private currentRange: ListRange = { start: 0, end: 100 };
+  private currentRange: ListRange = { start: 0, end: 50 };
   private totalElementCount = 0;
 
   constructor(
