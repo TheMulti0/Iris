@@ -89,6 +89,9 @@ export class SlicedDataSource<T> extends DataSource<T> {
   }
 
   hasReachedEnd() {
-    return this.cachedItems.length === this.totalElementCount;
+    return (
+      this.cachedItems.length === this.totalElementCount ||
+      this.cachedItems.length + this.currentRange.start === this.totalElementCount
+    );
   }
 }
