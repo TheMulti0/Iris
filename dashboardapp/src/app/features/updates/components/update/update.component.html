@@ -1,15 +1,27 @@
 <div class="content">
-  <div [innerHtml]="update.content | format">
-  </div>
+  <div [innerHtml]="update.content | format"></div>
 
   <div *ngFor="let media of update.media">
-    <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media">
-    <video *ngIf="media.type === 'Video'" [src]="media.url" controls class="media"></video>
+    <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media" />
+    <video
+      *ngIf="media.type === 'Video'"
+      [src]="media.url"
+      controls
+      class="media"
+    ></video>
   </div>
 </div>
 
-<div class="author">
-  <app-platform-badge [platform]="update.author.platform"></app-platform-badge>
+<div class="footer">
+  <div class="author">
+    <app-platform-badge
+      [platform]="update.author.platform"
+    ></app-platform-badge>
 
-  <span [innerHtml]="update.author.userId"> </span>
+    <span [innerHtml]="update.author.userId"> </span>
+  </div>
+
+  <a [href]="update.url">
+    {{ dateTime }}
+  </a>
 </div>

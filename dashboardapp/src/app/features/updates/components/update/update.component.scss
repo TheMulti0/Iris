@@ -22,13 +22,18 @@
   max-width: 250pt;
 }
 
-.author {
+.footer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   color: var(--f-secondary-text);
 
   font-size: 8pt;
+}
+
+.author {
+  display: flex;
+  flex-direction: row;
 }
 
 app-platform-badge {

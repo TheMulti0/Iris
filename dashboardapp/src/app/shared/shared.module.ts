@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AppMaterialModule } from './app-material.module';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
@@ -14,9 +14,7 @@ const modules = [
   ExperimentalScrollingModule,
 ];
 
-const pipes = [
-  FormatPipe
-];
+const pipes = [FormatPipe];
 
 @NgModule({
   declarations: [...pipes],
