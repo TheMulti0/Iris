@@ -39,10 +39,7 @@ export class SlicedDataSource<T> extends DataSource<T> {
   onNewRange(range: ListRange) {
     const { start, end } = range;
 
-    if (
-      start >= this.currentRange.start &&
-      end <= this.currentRange.end
-    ) {
+    if (start >= this.currentRange.start && end <= this.currentRange.end) {
       return;
     }
 
