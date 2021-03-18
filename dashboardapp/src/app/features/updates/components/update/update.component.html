@@ -1,5 +1,6 @@
 <div class="content">
-  <div [innerHtml]="update.content"></div>
+  <div [innerHtml]="update.content | format">
+  </div>
 
   <div *ngFor="let media of update.media">
     <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media">
