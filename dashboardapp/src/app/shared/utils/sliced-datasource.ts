@@ -9,9 +9,13 @@ import { Slice } from 'src/app/models/slice.model';
 export class SlicedDataSource<T> extends DataSource<T> {
   private cachedItems: T[] = [];
   private dataStream: Subject<T[]> = new BehaviorSubject<T[]>(this.cachedItems);
-  private subscription = new Subscription();
+  private scrollSubscription = new Subscription();
+  private batchSubscription = new Subscription();
 
-  private currentRange: ListRange = { start: 0, end: 0 };
+  private threshold = 1.5;
+
+  private currentRange: ListRange = { start: 0, end: 100 };
+  private totalElementCount = 0;
 
   constructor(
     private getBatch: (
@@ -31,37 +35,60 @@ export class SlicedDataSource<T> extends DataSource<T> {
       this.onNewRange(range)
     );
 
-    this.subscription.add(scrollSubscription);
+    this.scrollSubscription.add(scrollSubscription);
 
     return this.dataStream;
   }
 
-  onNewRange(range: ListRange) {
+  private onNewRange(range: ListRange) {
     const { start, end } = range;
 
     if (start >= this.currentRange.start && end <= this.currentRange.end) {
+      this.dataStream.next(this.cachedItems);
       return;
     }
 
     this.currentRange = {
-      start: Math.floor(start),
-      end: Math.floor(end),
+      start: Math.floor(start / this.threshold),
+      end: Math.ceil(end * this.threshold),
     }; // Fetch a range that is larger than requested
 
     this.fetchPage();
   }
 
   disconnect(collectionViewer: CollectionViewer): void {
-    this.subscription.unsubscribe();
+    this.scrollSubscription.unsubscribe();
   }
 
-  private async fetchPage() {
+  private fetchPage() {
     const { start, end } = this.currentRange;
 
-    const batch: Slice<T> = await this.getBatch(start, end).toPromise();
+    this.batchSubscription.unsubscribe();
 
-    this.cachedItems.push(...batch.content);
+    this.batchSubscription = this.getBatch(start, end).subscribe((batch) =>
+      this.onBatch(batch)
+    );
+  }
+
+  private onBatch(batch: Slice<T>) {
+    const { start, end } = this.currentRange;
+
+    if (this.cachedItems.length >= end - start) {
+      this.cachedItems = batch.content;
+    } else {
+      for (const item of batch.content) {
+        if (this.cachedItems.find((i) => i === item) === undefined) {
+          this.cachedItems.push(item);
+        }
+      }
+    }
+
+    this.totalElementCount = batch.totalElementCount;
 
     this.dataStream.next(this.cachedItems);
+  }
+
+  hasReachedEnd() {
+    return this.cachedItems.length === this.totalElementCount;
   }
 }
