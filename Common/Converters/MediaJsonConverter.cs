@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -33,13 +32,13 @@ namespace Common
             switch (type)
             {
                 case nameof(Photo):
-                    return JsonSerializer.Deserialize<Photo>(rawText, options);
+                    return JsonSerializer.Deserialize<Photo>(rawText, _jsonSerializerOptions);
                 
                 case nameof(Audio):
-                    return JsonSerializer.Deserialize<Audio>(rawText, options);
+                    return JsonSerializer.Deserialize<Audio>(rawText, _jsonSerializerOptions);
                 
                 default:
-                    return JsonSerializer.Deserialize<Video>(rawText, options); 
+                    return JsonSerializer.Deserialize<Video>(rawText, _jsonSerializerOptions); 
             }
         }
 
