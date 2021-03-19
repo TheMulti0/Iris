@@ -15,6 +15,7 @@ namespace Common
         {
             _jsonSerializerOptions = new JsonSerializerOptions
             {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters = { new TimeSpanConverter(), new NullableTimeSpanConverter() }
             };
         }
