@@ -1,25 +1,30 @@
 :host {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 
-  margin: 20pt 0;
+  margin: 5pt 0;
 
   padding: 10pt;
-  border-radius: 10pt;
+  border-radius: 5pt;
 
   color: var(--f-base);
   background-color: var(--b-app-bar);
+}
+
+:host > div {
+  margin: 5pt 0;
 }
 
 .content {
   display: flex;
   flex-direction: column;
 
-  margin-bottom: 25pt;
+  font-size: 12pt;
 }
 
 .media {
-  max-width: 250pt;
+  width: 100%;
 }
 
 .footer {

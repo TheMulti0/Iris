@@ -23,4 +23,5 @@ export interface User {
 export interface IMedia {
   type: string;
   url: string;
+  thumbnailUrl: string;
 }

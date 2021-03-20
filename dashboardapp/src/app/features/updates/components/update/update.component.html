@@ -1,15 +1,12 @@
-<div class="content">
-  <div [innerHtml]="update.content | format"></div>
+<div class="content" dir="auto" [innerHtml]="update.content | format"></div>
 
-  <div *ngFor="let media of update.media">
-    <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media" />
-    <video
-      *ngIf="media.type === 'Video'"
-      [src]="media.url"
-      controls
-      class="media"
-    ></video>
-  </div>
+<div *ngFor="let media of update.media">
+  <img *ngIf="media.type === 'Photo'" [src]="media.url" class="media" />
+  <img
+    *ngIf="media.type === 'Video'"
+    [src]="media.thumbnailUrl"
+    class="media"
+  />
 </div>
 
 <div class="footer">
@@ -21,7 +18,7 @@
     <span [innerHtml]="update.author.userId"> </span>
   </div>
 
-  <a [href]="update.url">
+  <a>
     {{ dateTime }}
   </a>
 </div>

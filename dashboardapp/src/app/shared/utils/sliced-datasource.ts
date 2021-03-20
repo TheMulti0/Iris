@@ -17,6 +17,12 @@ export class SlicedDataSource<T> extends DataSource<T> {
   private currentRange: ListRange = { start: 0, end: 50 };
   private totalElementCount = 0;
 
+  private _hasReachedEnd$ = new BehaviorSubject<boolean>(false);
+
+  public get hasReachedEnd$(): Observable<boolean> {
+    return this._hasReachedEnd$;
+  }
+
   constructor(
     private getBatch: (
       startIndex: number,
@@ -86,11 +92,14 @@ export class SlicedDataSource<T> extends DataSource<T> {
     this.totalElementCount = batch.totalElementCount;
 
     this.dataStream.next(this.cachedItems);
+
+    if (this.hasReachedEnd()) {
+      this._hasReachedEnd$.next(true);
+    }
   }
 
-  hasReachedEnd() {
+  private hasReachedEnd() {
     return (
-      this.cachedItems.length === this.totalElementCount ||
       this.cachedItems.length + this.currentRange.start === this.totalElementCount
     );
   }

@@ -6,6 +6,6 @@
     >
     </app-update>
 
-    <mat-spinner *ngIf="!dataSource.hasReachedEnd()"></mat-spinner>
+    <mat-spinner *ngIf="!dataSource.hasReachedEnd$ | async"></mat-spinner>
   </div>
 </cdk-virtual-scroll-viewport>
