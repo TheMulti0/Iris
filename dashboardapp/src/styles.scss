@@ -50,9 +50,19 @@ body {
 body {
   margin: 0;
   display: grid;
+
+  color: var(--f-base);
   background: var(--b-background);
 }
 
 a:-webkit-any-link {
+  color: var(--f-base);
+
+  font-weight: 600;
+
   text-decoration: none;
+}
+
+a:-webkit-any-link:hover {
+  text-decoration: underline;
 }
