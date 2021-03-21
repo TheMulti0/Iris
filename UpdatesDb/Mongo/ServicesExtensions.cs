@@ -22,7 +22,8 @@ namespace UpdatesDb
                     config = provider.GetService<IConfiguration>();
                     
                     return new MongoUpdatesRepository(context.Value, GetMongoDbConfig(config));
-                });
+                })
+                .AddSingleton<IFeedsRepository>(_ => new MongoFeedsRepository(context.Value));
         }
 
         private static MongoDbConfig GetMongoDbConfig(IConfiguration config)

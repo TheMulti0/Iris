@@ -10,6 +10,11 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
+interface ListItem {
+  matIcon: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -57,6 +62,17 @@ export class LayoutComponent {
     );
 
   isExpanded = false;
+
+  listItems: ListItem[] = [
+    {
+      matIcon: 'feed',
+      name: 'Feed #1'
+    },
+    {
+      matIcon: 'add',
+      name: 'New feed'
+    }
+  ];
 
   constructor(private breakpointObserver: BreakpointObserver) {}
 }

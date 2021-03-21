@@ -36,13 +36,16 @@
   </button>
 
   <mat-list>
-    <mat-list-item matRipple>
+    <mat-list-item matRipple *ngFor="let item of listItems">
       <mat-icon
         mat-list-icon
-        [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(25%)'"
-        >folder</mat-icon
+        [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
       >
-      <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">Folder</span>
+        {{ item.matIcon }}
+      </mat-icon>
+      <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">
+        {{ item.name }}
+      </span>
     </mat-list-item>
   </mat-list>
 </div>
