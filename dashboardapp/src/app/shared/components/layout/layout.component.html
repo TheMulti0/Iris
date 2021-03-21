@@ -1,51 +1,29 @@
-<!-- <mat-sidenav-container>
-  <mat-sidenav
-    #drawer
-    class="sidenav"
-    mode="side"
-    [fixedInViewport]="false"
-    [opened]="true"
-  >
-    <mat-toolbar>
-      <button
-        type="button"
-        mat-icon-button
-        (click)="isExpanded = !isExpanded"
+<div class="root">
+  <div class="sidenav" [style.width]="isExpanded ? '180pt' : '64pt'">
+    <button mat-button (click)="isExpanded = !isExpanded">
+      <mat-icon [@menu]="isExpanded">menu</mat-icon>
+    </button>
 
-      >
-        <mat-icon [@menu]="isExpanded">menu</mat-icon>
-      </button>
-    </mat-toolbar>
+    <mat-list>
+      <mat-list-item matRipple *ngFor="let item of listItems">
+        <mat-icon
+          mat-list-icon
+          [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
+        >
+          {{ item.matIcon }}
+        </mat-icon>
+        <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">
+          {{ item.name }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </div>
 
-    <mat-nav-list >
-      <a mat-list-item>
-        <mat-icon>menu</mat-icon>
-        <span [@slide] *ngIf="isExpanded"> dsaasd</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+  <div class="content">
 
-  <mat-sidenav-content>
+    <mat-toolbar></mat-toolbar>
+
     <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container> -->
 
-<div class="sidenav" [style.width]="isExpanded ? '120pt' : '64pt'">
-  <button mat-button (click)="isExpanded = !isExpanded">
-    <mat-icon [@menu]="isExpanded">menu</mat-icon>
-  </button>
-
-  <mat-list>
-    <mat-list-item matRipple *ngFor="let item of listItems">
-      <mat-icon
-        mat-list-icon
-        [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
-      >
-        {{ item.matIcon }}
-      </mat-icon>
-      <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">
-        {{ item.name }}
-      </span>
-    </mat-list-item>
-  </mat-list>
+  </div>
 </div>
