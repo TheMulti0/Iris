@@ -38,10 +38,6 @@ $w-keys: (100:100, 200:200, 400:400, 700:700);
   }
 }
 
-* {
-  font-family: Roboto, sans-serif !important;
-}
-
 html,
 body {
   height: 100%;
@@ -53,6 +49,8 @@ body {
 
   color: var(--f-base);
   background: var(--b-background);
+
+  font-family: Roboto, sans-serif !important;
 }
 
 a:-webkit-any-link {
