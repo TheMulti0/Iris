@@ -7,6 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { AppMaterialModule } from './shared/app-material.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,6 +18,8 @@ import { DatePipe } from '@angular/common';
     BrowserAnimationsModule,
     HttpClientModule,
     RouterModule,
+    OverlayModule,
+    AppMaterialModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

@@ -5,7 +5,7 @@
     </button>
 
     <mat-list>
-      <mat-list-item matRipple *ngFor="let item of listItems">
+      <mat-list-item matRipple *ngFor="let item of listItems" [matTooltip]="isExpanded ? '' : item.name">
         <mat-icon
           mat-list-icon
           [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
@@ -20,10 +20,39 @@
   </div>
 
   <div class="content">
+    <mat-toolbar>
+      <span style="flex: 1 1 auto"></span>
 
-    <mat-toolbar></mat-toolbar>
+      <ng-container *ngIf="isAuthenticated$ | async; else logoutTemplate">
+        <img
+          *ngIf="user$ | async as user"
+          class="profile-picture"
+          [src]="user.profilePicture"
+          [matTooltip]="user.userName"
+          [matMenuTriggerFor]="menu"
+        />
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <ng-template #logoutTemplate>
+        <button mat-icon-button matTooltip="Login" [matMenuTriggerFor]="menu">
+          <mat-icon>login</mat-icon>
+        </button>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="loginWithTwitter()">
+            Login in with Twitter
+          </button>
+        </mat-menu>
+      </ng-template>
+    </mat-toolbar>
 
     <router-outlet></router-outlet>
-
   </div>
 </div>

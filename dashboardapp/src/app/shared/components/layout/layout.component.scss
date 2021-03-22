@@ -1,9 +1,3 @@
-mat-toolbar {
-  background-color: var(--b-card);
-
-  height: 50pt;
-}
-
 .root {
   display: flex;
   flex-direction: row;
@@ -16,7 +10,7 @@ mat-toolbar {
 
   min-height: 100%;
 
-  transition: width 0.25s;
+  transition: width 0.15s;
   transition-timing-function: ease-out;
 
   background-color: var(--b-app-bar);
@@ -29,6 +23,15 @@ mat-toolbar {
   width: 100%;
 }
 
+mat-toolbar {
+  background-color: var(--b-card);
+
+  height: 50pt;
+
+  display: flex;
+  flex-direction: row;
+}
+
 .mat-button {
   width: 100%;
   height: 50pt;
@@ -39,10 +42,12 @@ mat-toolbar {
 }
 
 .mat-list-icon {
-  transition: margin 0.25s;
+  transition: margin 0.15s;
   transition-timing-function: ease-out;
 }
 
-.mat-toolbar {
-  background-color: var(--b-card);
+.profile-picture {
+  height: 90%;
+
+  border-radius: 100%;
 }

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppMaterialModule } from './app-material.module';
@@ -7,6 +7,9 @@ import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-exp
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormatPipe } from './pipes/format.pipe';
 import { LayoutComponent } from './components/layout/layout.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
+import { AvatarModule } from 'ngx-avatar';
 
 const modules = [
   AppMaterialModule,
@@ -15,13 +18,16 @@ const modules = [
   FontAwesomeModule,
   ScrollingModule,
   ExperimentalScrollingModule,
-
+  AvatarModule
 ];
 
 const pipes = [FormatPipe];
 
 @NgModule({
   declarations: [...pipes, LayoutComponent],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: NotAuthenticatedInterceptor, multi: true },
+  ],
   imports: [...modules],
   exports: [...modules, ...pipes],
 })

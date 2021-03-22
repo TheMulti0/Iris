@@ -5,10 +5,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatRippleModule } from '@angular/material/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 const modules = [
   MatButtonModule,
@@ -17,10 +19,11 @@ const modules = [
   MatToolbarModule,
   MatCardModule,
   MatListModule,
+  MatMenuModule,
   MatRippleModule,
   MatChipsModule,
   MatProgressSpinnerModule,
-  MatSidenavModule,
+  MatSidenavModule
 ];
 
 @NgModule({
