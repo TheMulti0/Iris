@@ -9,7 +9,7 @@ namespace UpdatesDb
     {
         IQueryable<FeedEntity> Get();
         
-        Task<FeedEntity> GetAsync(ObjectId id);
+        Task<FeedEntity> GetAsync(ObjectId ownerId);
         
         Task AddOrUpdateAsync(FeedEntity entity);
     }

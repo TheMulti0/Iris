@@ -25,11 +25,11 @@ namespace UpdatesDb
             return _collection.AsQueryable();
         }
 
-        public Task<FeedEntity> GetAsync(ObjectId id)
+        public Task<FeedEntity> GetAsync(ObjectId ownerId)
         {
             return _collection
                 .AsQueryable()
-                .Where(update => update.Id == id)
+                .Where(entity => entity.OwnerId == ownerId)
                 .FirstOrDefaultAsync();
         }
 
