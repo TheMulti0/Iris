@@ -12,13 +12,12 @@ export class SlicedDataSource<T> extends DataSource<T> {
   private scrollSubscription = new Subscription();
   private batchSubscription = new Subscription();
 
-  private threshold = 1.5;
+  private backlog = 2;
 
   private currentRange: ListRange = { start: 0, end: 50 };
-  private totalElementCount = 0;
+  private totalElementount = 0;
 
   private _hasReachedEnd$ = new BehaviorSubject<boolean>(false);
-
   public get hasReachedEnd$(): Observable<boolean> {
     return this._hasReachedEnd$;
   }
@@ -55,8 +54,8 @@ export class SlicedDataSource<T> extends DataSource<T> {
     }
 
     this.currentRange = {
-      start: Math.floor(start / this.threshold),
-      end: Math.ceil(end * this.threshold),
+      start: Math.max(0, start - this.backlog),
+      end: end + this.backlog,
     }; // Fetch a range that is larger than requested
 
     this.fetchPage();
@@ -77,30 +76,8 @@ export class SlicedDataSource<T> extends DataSource<T> {
   }
 
   private onBatch(batch: Slice<T>) {
-    const { start, end } = this.currentRange;
-
-    if (this.cachedItems.length >= end - start) {
-      this.cachedItems = batch.content;
-    } else {
-      for (const item of batch.content) {
-        if (this.cachedItems.find((i) => i === item) === undefined) {
-          this.cachedItems.push(item);
-        }
-      }
-    }
-
-    this.totalElementCount = batch.totalElementCount;
+    this.cachedItems = this.cachedItems.concat(batch.content);
 
     this.dataStream.next(this.cachedItems);
-
-    if (this.hasReachedEnd()) {
-      this._hasReachedEnd$.next(true);
-    }
-  }
-
-  private hasReachedEnd() {
-    return (
-      this.cachedItems.length + this.currentRange.start === this.totalElementCount
-    );
   }
 }
