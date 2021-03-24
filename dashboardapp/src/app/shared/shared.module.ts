@@ -9,7 +9,6 @@ import { FormatPipe } from './pipes/format.pipe';
 import { LayoutComponent } from './components/layout/layout.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NotAuthenticatedInterceptor } from './services/not-authenticated.interceptor';
-import { AvatarModule } from 'ngx-avatar';
 
 const modules = [
   AppMaterialModule,
@@ -17,8 +16,7 @@ const modules = [
   CommonModule,
   FontAwesomeModule,
   ScrollingModule,
-  ExperimentalScrollingModule,
-  AvatarModule
+  ExperimentalScrollingModule
 ];
 
 const pipes = [FormatPipe];
