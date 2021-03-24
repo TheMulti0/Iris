@@ -8,9 +8,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatRippleModule } from '@angular/material/core';
-import { OverlayModule } from '@angular/cdk/overlay';
 
 const modules = [
   MatButtonModule,
@@ -23,6 +23,7 @@ const modules = [
   MatRippleModule,
   MatChipsModule,
   MatProgressSpinnerModule,
+  MatProgressBarModule,
   MatSidenavModule
 ];
 

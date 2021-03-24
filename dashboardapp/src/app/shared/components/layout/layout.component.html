@@ -1,58 +1,71 @@
-<div class="root">
-  <div class="sidenav" [style.width]="isExpanded ? '180pt' : '64pt'">
-    <button mat-button (click)="isExpanded = !isExpanded">
-      <mat-icon [@menu]="isExpanded">menu</mat-icon>
-    </button>
+<div>
+  <mat-progress-bar mode="indeterminate" *ngIf="progressBarService.loading$ | async"></mat-progress-bar>
 
-    <mat-list>
-      <mat-list-item matRipple *ngFor="let item of listItems" [matTooltip]="isExpanded ? '' : item.name">
-        <mat-icon
-          mat-list-icon
-          [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
+  <div class="root">
+    <div class="sidenav" [style.width]="isExpanded ? '180pt' : '64pt'">
+      <button mat-button (click)="isExpanded = !isExpanded">
+        <mat-icon [@menu]="isExpanded">menu</mat-icon>
+      </button>
+
+      <mat-list>
+        <mat-list-item
+          matRipple
+          *ngFor="let item of listItems"
+          [matTooltip]="isExpanded ? '' : item.name"
         >
-          {{ item.matIcon }}
-        </mat-icon>
-        <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">
-          {{ item.name }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </div>
+          <mat-icon
+            mat-list-icon
+            [style.margin]="isExpanded ? '0 calc(5%)' : '0 calc(20%)'"
+          >
+            {{ item.matIcon }}
+          </mat-icon>
+          <span mat-line *ngIf="isExpanded" [@slide]="isExpanded">
+            {{ item.name }}
+          </span>
+        </mat-list-item>
+      </mat-list>
+    </div>
 
-  <div class="content">
-    <mat-toolbar>
-      <span style="flex: 1 1 auto"></span>
+    <div class="content">
+      <mat-toolbar>
+        <span style="flex: 1 1 auto"></span>
 
-      <ng-container *ngIf="isAuthenticated$ | async; else logoutTemplate">
-        <img
-          *ngIf="user$ | async as user"
-          class="profile-picture"
-          [src]="user.profilePicture"
-          [matTooltip]="user.userName"
-          [matMenuTriggerFor]="menu"
-        />
+        <ng-container *ngIf="isAuthenticated$ | async; else logoutTemplate">
+          <img
+            *ngIf="user"
+            class="profile-picture"
+            [src]="user.profilePicture"
+            [matTooltip]="user.userName"
+            [matMenuTriggerFor]="menu"
+          />
 
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="logout()">
-            <mat-icon>logout</mat-icon>
-            <span>Logout</span>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
+        </ng-container>
+
+        <ng-template #logoutTemplate>
+          <button
+            mat-button
+            matTooltip="Login"
+            [matMenuTriggerFor]="menu"
+            class="mat-button-square"
+          >
+            <mat-icon>login</mat-icon>
           </button>
-        </mat-menu>
-      </ng-container>
 
-      <ng-template #logoutTemplate>
-        <button mat-icon-button matTooltip="Login" [matMenuTriggerFor]="menu">
-          <mat-icon>login</mat-icon>
-        </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="loginWithTwitter()">
+              Login in with Twitter
+            </button>
+          </mat-menu>
+        </ng-template>
+      </mat-toolbar>
 
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="loginWithTwitter()">
-            Login in with Twitter
-          </button>
-        </mat-menu>
-      </ng-template>
-    </mat-toolbar>
-
-    <router-outlet></router-outlet>
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

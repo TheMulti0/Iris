@@ -12,6 +12,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { User } from 'src/app/models/user.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { MeService } from '../../services/me.service';
+import { LoadingService } from '../../services/loading.service';
 
 interface ListItem {
   matIcon: string;
@@ -58,23 +59,16 @@ export class LayoutComponent implements OnInit {
       shareReplay()
     );
   isExpanded = false;
-  listItems: ListItem[] = [
-    {
-      matIcon: 'feed',
-      name: 'Feed #1',
-    },
-    {
-      matIcon: 'add',
-      name: 'New feed',
-    },
-  ];
+  listItems: ListItem[] = [];
+
   isAuthenticated$: Observable<boolean>;
-  user$ = new Subject<User>();
+  user!: User;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
     private authenticationService: AuthenticationService,
-    private meService: MeService
+    private meService: MeService,
+    public progressBarService: LoadingService
   ) {
     this.isAuthenticated$ = this.authenticationService.isAuthenticated$;
   }
@@ -82,13 +76,28 @@ export class LayoutComponent implements OnInit {
   async ngOnInit() {
     await this.authenticationService.updateAuthenticationStatus().toPromise();
 
-    this.isAuthenticated$.subscribe(async (isAuthenticated) => {
-      if (!isAuthenticated) {
-        return;
-      }
+    this.isAuthenticated$.subscribe((isAuthenticated) =>
+      this.onAuthenticateChange(isAuthenticated)
+    );
+  }
 
-      this.user$.next(await this.meService.getMe().toPromise());
-    });
+  async onAuthenticateChange(isAuthenticated: boolean) {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    this.user = await this.meService.getMe().toPromise();
+
+    this.listItems.push(
+      {
+        matIcon: 'feed',
+        name: 'Feed #1',
+      },
+      {
+        matIcon: 'add',
+        name: 'New feed',
+      }
+    );
   }
 
   loginWithTwitter() {
