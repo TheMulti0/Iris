@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashboardApi", "DashboardAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramClient", "TelegramClient\TelegramClient.csproj", "{52B94DE2-D119-4E15-9E29-E4B0DBE66870}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramClient.Tests", "TelegramClient.Tests\TelegramClient.Tests.csproj", "{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{52B94DE2-D119-4E15-9E29-E4B0DBE66870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52B94DE2-D119-4E15-9E29-E4B0DBE66870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52B94DE2-D119-4E15-9E29-E4B0DBE66870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

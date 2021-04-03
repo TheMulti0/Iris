@@ -9,6 +9,8 @@ namespace TelegramClient
     {
         IObservable<TdApi.Update> OnUpdateReceived { get; }
 
+        Task<TdApi.Chat> GetChatAsync(long chatId);
+
         Task<TdApi.Message> SendMessageAsync(
             long chatId,
             TdApi.InputMessageContent inputMessageContent,
@@ -16,7 +18,7 @@ namespace TelegramClient
             TdApi.ReplyMarkup replyMarkup = null,
             TdApi.SendMessageOptions options = null);
 
-        Task<IEnumerable<TdApi.Message>> SendMessagesAsync(
+        Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(
             long chatId,
             TdApi.InputMessageContent[] inputMessageContents,
             long replyToMessageId = 0,

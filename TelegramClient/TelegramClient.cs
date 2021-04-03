@@ -7,6 +7,13 @@ using TdLib;
 
 namespace TelegramClient
 {
+    public class MessageSendFailedException : Exception
+    {
+        public MessageSendFailedException(string message) : base(message)
+        {
+        }
+    }
+    
     public class TelegramClient : ITelegramClient
     {
         private readonly TdClient _client;
@@ -16,6 +23,11 @@ namespace TelegramClient
         {
             _client = client;
             OnUpdateReceived = client.OnUpdateReceived();
+        }
+
+        public Task<TdApi.Chat> GetChatAsync(long chatId)
+        {
+            return _client.GetChatAsync(chatId);
         }
 
         public async Task<TdApi.Message> SendMessageAsync(
@@ -35,26 +47,31 @@ namespace TelegramClient
             return await OnUpdateReceived
                 .Where(u =>
                 {
-                    if (u is not TdApi.Update.UpdateMessageSendSucceeded m)
+                    switch (u)
                     {
-                        return false;
+                        case TdApi.Update.UpdateMessageSendSucceeded m:
+                            return m.OldMessageId == message.Id;
+                        
+                        case TdApi.Update.UpdateMessageSendFailed f when f.OldMessageId == message.Id:
+                            throw new MessageSendFailedException(f.ErrorMessage);
+                        
+                        default:
+                            return false;
                     }
-                    
-                    return m.OldMessageId == message.Id;
                 })
                 .Cast<TdApi.Update.UpdateMessageSendSucceeded>()
                 .Select(u => u.Message)
                 .FirstOrDefaultAsync();
         }
         
-        public async Task<IEnumerable<TdApi.Message>> SendMessagesAsync(
+        public async Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(
             long chatId,
             TdApi.InputMessageContent[] inputMessageContents,
             long replyToMessageId = 0,
             TdApi.SendMessageOptions options = null)
         {
             TdApi.Messages messages = await _client.SendMessageAlbumAsync(
-                chatId: (await _client.GetChatAsync(chatId)).Id,
+                chatId: chatId,
                 inputMessageContents: inputMessageContents,
                 replyToMessageId: replyToMessageId,
                 options: options);
@@ -69,23 +86,26 @@ namespace TelegramClient
 
             await foreach (TdApi.Update update in OnUpdateReceived.ToAsyncEnumerable())
             {
-                if (update is not TdApi.Update.UpdateMessageSendSucceeded m)
+                switch (update)
                 {
-                    continue;
-                }
+                    case TdApi.Update.UpdateMessageSendFailed f:
+                        throw new MessageSendFailedException(f.ErrorMessage);
+                    
+                    case TdApi.Update.UpdateMessageSendSucceeded m when messages.Messages_.All(message => message.Id != m.OldMessageId):
+                        continue;
+                    
+                    case TdApi.Update.UpdateMessageSendSucceeded m:
+                    {
+                        yield return m.Message;
 
-                if (messages.Messages_.All(message => message.Id != m.OldMessageId))
-                {
-                    continue;
-                }
+                        sentMessagesCount++;
 
-                yield return m.Message;
-
-                sentMessagesCount++;
-
-                if (messages.TotalCount == sentMessagesCount)
-                {
-                    yield break;
+                        if (messages.TotalCount == sentMessagesCount)
+                        {
+                            yield break;
+                        }
+                        break;
+                    }
                 }
             }
         }
