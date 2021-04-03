@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
+using Common;
 using Extensions;
+using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TdLib;
@@ -9,11 +11,10 @@ namespace TelegramClient.Tests
     [TestClass]
     public class TelegramClientTests
     {
-        private const string Text = "test";
-        private const string PhotoUrl = "https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80";
-
         private static ITelegramClient _client;
         private static long _chatId;
+
+        private readonly VideoExtractor _videoExtractor = new(new VideoExtractorConfig());
 
         [ClassInitialize]
         public static async Task Initialize(TestContext context)
@@ -29,33 +30,84 @@ namespace TelegramClient.Tests
             _chatId = (await _client.GetChatAsync(chatId)).Id;
         }
         
-        [TestMethod]
-        public Task TestTextMessage()
+        [DataTestMethod]
+        [DataRow("test")]
+        public Task TestTextMessage(string text)
         {
             return TestSendMessage(new TdApi.InputMessageContent.InputMessageText
             {
                 Text = new TdApi.FormattedText
                 {
-                    Text = Text
+                    Text = text
                 }
             });
         }
-
-        [TestMethod]
-        public Task TestUrlPhotoMessage()
+        
+        [DataTestMethod]
+        [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80")]
+        public Task TestPhotoMessage(string photoUrl)
         {
             return TestSendMessage(
                 new TdApi.InputMessageContent.InputMessagePhoto
                 {
                     Photo = new TdApi.InputFile.InputFileRemote
                     {
-                        Id = PhotoUrl
+                        Id = photoUrl
                     }
                 });
         }
+        
+        [DataTestMethod]
+        [DataRow("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")]
+        public Task TestDirectVideoMessage(string directVideoUrl)
+        {
+            return TestSendMessage(
+                new TdApi.InputMessageContent.InputMessageVideo
+                {
+                    Video = new TdApi.InputFile.InputFileRemote
+                    {
+                        Id = directVideoUrl
+                    }
+                });
+        }
+        
+        [DataTestMethod]
+        [DataRow("https://www.facebook.com/396697410351933/videos/2725471531076700")]
+        [DataRow("https://www.facebook.com/396697410351933/videos/454394315979515")]
+        [DataRow("https://www.facebook.com/396697410351933/videos/184727739908065")]
+        [DataRow("https://facebook.com/ayelet.benshaul.shaked/videos/230569472153183")]
+        [DataRow("https://facebook.com/shirlypinto89/videos/968529917218882")]
+        public Task TestLightStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        {
+            return TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
+        }
+        
+        [DataTestMethod]
+        [DataRow("https://www.facebook.com/396697410351933/videos/3732920580089470")]
+        [DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
+        // Should take a long time because this test is supposed to download and upload heavy video streams to Telegram
+        public Task TestHeavyStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        {
+            return TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
+        }
+
+        private async Task TestStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        {
+            Video extractedVideo = await _videoExtractor.ExtractVideo(toBeExtractedStreamVideoUrl);
+
+            await TestSendMessage(
+                new TdApi.InputMessageContent.InputMessageVideo
+                {
+                    Video = new TdApi.InputFile.InputFileRemote
+                    {
+                        Id = extractedVideo.Url
+                    }
+                });
+        }
+
         private static async Task TestSendMessage(TdApi.InputMessageContent messageContent)
         {
-            var message = await _client.SendMessageAsync(
+            TdApi.Message message = await _client.SendMessageAsync(
                 _chatId,
                 messageContent);
 

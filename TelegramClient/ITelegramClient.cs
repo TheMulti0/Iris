@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TdLib;
 
@@ -16,12 +17,14 @@ namespace TelegramClient
             TdApi.InputMessageContent inputMessageContent,
             long replyToMessageId = 0,
             TdApi.ReplyMarkup replyMarkup = null,
-            TdApi.SendMessageOptions options = null);
+            TdApi.SendMessageOptions options = null,
+            CancellationToken token = default);
 
         Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(
             long chatId,
             TdApi.InputMessageContent[] inputMessageContents,
             long replyToMessageId = 0,
-            TdApi.SendMessageOptions options = null);
+            TdApi.SendMessageOptions options = null,
+            CancellationToken token = default);
     }
 }
