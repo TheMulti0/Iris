@@ -41,7 +41,7 @@ namespace TelegramClient
             
             return await GetMatchingMessageEvents(message)
                 .SelectAwaitWithCancellation(
-                    (update, t) => GetMessageAsync(update, chatId, inputMessageContent, t))
+                    (update, t) => GetMessageAsync(update, chatId, inputMessageContent, replyToMessageId, replyMarkup, options, t))
                 .FirstOrDefaultAsync(token);
         }
 
@@ -65,6 +65,9 @@ namespace TelegramClient
             TdApi.Update update,
             long chatId,
             TdApi.InputMessageContent inputMessageContent,
+            long replyToMessageId,
+            TdApi.ReplyMarkup replyMarkup,
+            TdApi.SendMessageOptions options,
             CancellationToken token)
         {
             switch (update)
@@ -74,19 +77,7 @@ namespace TelegramClient
 
                 case TdApi.Update.UpdateMessageSendFailed f:
                 {
-                    if (f.ErrorMessage != "Wrong file identifier/HTTP URL specified" &&
-                        f.ErrorMessage != "Failed to get HTTP URL content")
-                    {
-                        throw new MessageSendFailedException(f.ErrorMessage);
-                    }
-
-                    if (inputMessageContent.HasFile(out TdApi.InputFile file) &&
-                        file.HasUrl(out string url))
-                    {
-                        return await SendDownloadedMessage(chatId, inputMessageContent, url, token);
-                    }
-
-                    break;
+                    return await HandleMessageSendFailed(f, chatId, inputMessageContent, replyToMessageId, replyMarkup, options, token);
                 }
             }
 
@@ -95,8 +86,11 @@ namespace TelegramClient
 
         private async Task<TdApi.Message> SendDownloadedMessage(
             long chatId,
-            TdApi.InputMessageContent inputMessageContent,
             string url,
+            TdApi.InputMessageContent inputMessageContent,
+            long replyToMessageId,
+            TdApi.ReplyMarkup replyMarkup,
+            TdApi.SendMessageOptions options,
             CancellationToken token)
         {
             var downloader = new FileDownloader(url);
@@ -105,7 +99,10 @@ namespace TelegramClient
             TdApi.Message message = await SendMessageAsync(
                 chatId,
                 inputMessageContent.WithFile(downloadedFile),
-                token: token);
+                replyToMessageId,
+                replyMarkup,
+                options,
+                token);
 
             await downloader.DisposeAsync();
             return message;
@@ -157,6 +154,35 @@ namespace TelegramClient
                     }
                 }
             }
+        }
+
+        private async Task<TdApi.Message> HandleMessageSendFailed(
+            TdApi.Update.UpdateMessageSendFailed update,
+            long chatId,
+            TdApi.InputMessageContent inputMessageContent,
+            long replyToMessageId,
+            TdApi.ReplyMarkup replyMarkup,
+            TdApi.SendMessageOptions options,
+            CancellationToken token)
+        {
+            if (update.ErrorMessage != "Wrong file identifier/HTTP URL specified" &&
+                update.ErrorMessage != "Failed to get HTTP URL content")
+            {
+                ThrowMessageSendFailed(update);
+            }
+
+            if (inputMessageContent.HasFile(out TdApi.InputFile file) &&
+                file.HasUrl(out string url))
+            {
+                return await SendDownloadedMessage(chatId, url, inputMessageContent, replyToMessageId, replyMarkup, options, token);
+            }
+            
+            throw new IndexOutOfRangeException();
+        }
+
+        private static void ThrowMessageSendFailed(TdApi.Update.UpdateMessageSendFailed update)
+        {
+            throw new MessageSendFailedException(update.ErrorMessage);
         }
     }
 }

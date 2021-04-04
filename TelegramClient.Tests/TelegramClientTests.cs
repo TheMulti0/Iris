@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
@@ -91,18 +92,49 @@ namespace TelegramClient.Tests
             return TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
         }
 
+        [DataTestMethod]
+        [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80", "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")]
+        public async Task TestMixedAlbumMessage(string photoUrl, string directVideoUrl)
+        {
+            var photoContent = new TdApi.InputMessageContent.InputMessagePhoto
+            {
+                Photo = new TdApi.InputFile.InputFileRemote
+                {
+                    Id = photoUrl
+                }
+            };
+
+            var directVideoContent = new TdApi.InputMessageContent.InputMessageVideo
+            {
+                Video = new TdApi.InputFile.InputFileRemote
+                {
+                    Id = directVideoUrl
+                }
+            };
+
+            await TestMessageAlbum(
+                photoContent,
+                directVideoContent);
+        }
+
         private async Task TestStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        {
+            TdApi.InputMessageContent.InputMessageVideo inputMessageContent = await ExtractVideo(toBeExtractedStreamVideoUrl);
+            
+            await TestSendMessage(inputMessageContent);
+        }
+
+        private async Task<TdApi.InputMessageContent.InputMessageVideo> ExtractVideo(string toBeExtractedStreamVideoUrl)
         {
             Video extractedVideo = await _videoExtractor.ExtractVideo(toBeExtractedStreamVideoUrl);
 
-            await TestSendMessage(
-                new TdApi.InputMessageContent.InputMessageVideo
+            return new TdApi.InputMessageContent.InputMessageVideo
+            {
+                Video = new TdApi.InputFile.InputFileRemote
                 {
-                    Video = new TdApi.InputFile.InputFileRemote
-                    {
-                        Id = extractedVideo.Url
-                    }
-                });
+                    Id = extractedVideo.Url
+                }
+            };
         }
 
         private static async Task TestSendMessage(TdApi.InputMessageContent messageContent)
@@ -112,6 +144,15 @@ namespace TelegramClient.Tests
                 messageContent);
 
             Assert.IsNotNull(message);
+        }
+
+        private static async Task TestMessageAlbum(params TdApi.InputMessageContent[] messageContent)
+        {
+            var messages = await _client.SendMessageAlbumAsync(
+                _chatId,
+                messageContent);
+
+            Assert.IsNotNull(messages.FirstOrDefault());
         }
     }
 }

@@ -69,20 +69,27 @@ namespace TelegramClient
                     return d.Remute(document => document.Document, file);
                 
                 case TdApi.InputMessageContent.InputMessagePhoto p:
-                    return p.Remute(photo => photo.Photo, file);
+                    return new TdApi.InputMessageContent.InputMessagePhoto
+                    {
+                        Caption = p.Caption,
+                        Height = p.Height,
+                        Photo = file,
+                        Thumbnail = p.Thumbnail,
+                        Width = p.Width,
+                        Ttl = p.Ttl,
+                        AddedStickerFileIds = p.AddedStickerFileIds
+                    };
                 
                 case TdApi.InputMessageContent.InputMessageVideo v:
                     return new TdApi.InputMessageContent.InputMessageVideo
                     {
                         Caption = v.Caption,
                         Duration = v.Duration,
-                        Extra = v.Extra,
                         Height = v.Height,
                         Thumbnail = v.Thumbnail,
                         Ttl = v.Ttl,
                         Video = file,
                         Width = v.Width,
-                        DataType = v.DataType,
                         SupportsStreaming = v.SupportsStreaming,
                         AddedStickerFileIds = v.AddedStickerFileIds
                     };

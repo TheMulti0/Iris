@@ -8,16 +8,26 @@ namespace TelegramClient
     {
         private readonly TelegramClientConfig _config;
         private readonly TdClient _client = new();
+        private readonly TdApi.TdlibParameters _tdlibParameters;
 
         public TelegramClientFactory(TelegramClientConfig config)
         {
             _config = config;
+            
+            _tdlibParameters = new TdApi.TdlibParameters
+            {
+                ApiId = _config.AppId,
+                ApiHash = _config.AppHash,
+                ApplicationVersion = "1.6.0",
+                DeviceModel = "PC",
+                SystemLanguageCode = "en",
+                SystemVersion = "Win 10.0"
+            };
         }
 
         public async Task<ITelegramClient> CreateAsync()
         {
-            //await _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamEmpty());
-            //await _client.SetLogVerbosityLevelAsync(0);
+            await _client.SetLogVerbosityLevelAsync(0);
 
             var startupState = new StartupState(false, false);
             
@@ -41,15 +51,7 @@ namespace TelegramClient
             switch (update)
             {
                 case TdApi.Update.UpdateAuthorizationState authState when authState.AuthorizationState.GetType() == typeof(TdApi.AuthorizationState.AuthorizationStateWaitTdlibParameters):
-                    await _client.SetTdlibParametersAsync(new TdApi.TdlibParameters
-                        {
-                            ApiId = _config.AppId,
-                            ApiHash = _config.AppHash,
-                            ApplicationVersion = "1.6.0",
-                            DeviceModel = "PC",
-                            SystemLanguageCode = "en",
-                            SystemVersion = "Win 10.0"
-                        });
+                    await _client.SetTdlibParametersAsync(_tdlibParameters);
                     
                     return state with { ParametersSet = true };
                 
