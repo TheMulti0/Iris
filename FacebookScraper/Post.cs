@@ -1,84 +1,83 @@
 using System;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace FacebookScraper
 {
     public record Post 
     {
-        [JsonPropertyName("post_id")]
+        [JsonProperty("post_id")]
         public string PostId { get; init; }
         
-        [JsonPropertyName("text")]
+        [JsonProperty("text")]
         public string Text { get; init; }
         
-        [JsonPropertyName("post_text")]
+        [JsonProperty("post_text")]
         public string PostText { get; init; }
         
-        [JsonPropertyName("shared_text")]
+        [JsonProperty("shared_text")]
         public string SharedText { get; init; }
         
-        [JsonPropertyName("time")]
-        public DateTime CreationDate { get; init; }
+        [JsonProperty("time")]
+        public DateTime? CreationDate { get; init; }
         
-        [JsonPropertyName("image")]
+        [JsonProperty("image")]
         public string ImageUrl { get; init; }
         
-        [JsonPropertyName("video")]
+        [JsonProperty("video")]
         public string VideoUrl { get; init; }
         
-        [JsonPropertyName("video_thumbnail")]
+        [JsonProperty("video_thumbnail")]
         public string VideoThumbnailUrl { get; init; }
         
-        [JsonPropertyName("video_id")]
+        [JsonProperty("video_id")]
         public string VideoId { get; init; }
         
-        [JsonPropertyName("comments")]
+        [JsonProperty("comments")]
         public int Comments { get; init; }
         
-        [JsonPropertyName("shares")]
+        [JsonProperty("shares")]
         public int Shares { get; init; }
         
-        [JsonPropertyName("post_url")]
+        [JsonProperty("post_url")]
         public string PostUrl { get; init; }
         
-        [JsonPropertyName("link")]
+        [JsonProperty("link")]
         public string Link { get; init; }
         
-        [JsonPropertyName("user_id")]
+        [JsonProperty("user_id")]
         public string UserId { get; init; }
         
-        [JsonPropertyName("images")]
+        [JsonProperty("images")]
         public string[] Images { get; init; }
         
-        [JsonPropertyName("is_live")]
+        [JsonProperty("is_live")]
         public bool IsLive { get; init; }
 
-        [JsonPropertyName("username")]
+        [JsonProperty("username")]
         public string UserName { get; init; }
 
-        [JsonPropertyName("factcheck")]
+        [JsonProperty("factcheck")]
         public object FactCheck { get; init; }
 
-        [JsonPropertyName("shared_post_id")]
+        [JsonProperty("shared_post_id")]
         public string SharedPostId { get; init; }
 
-        [JsonPropertyName("shared_time")]
-        public DateTime SharedCreationDate { get; init; }
+        [JsonProperty("shared_time")]
+        public DateTime? SharedCreationDate { get; init; }
 
-        [JsonPropertyName("shared_user_id")]
+        [JsonProperty("shared_user_id")]
         public string SharedUserId { get; init; }
 
-        [JsonPropertyName("shared_username")]
+        [JsonProperty("shared_username")]
         public string SharedUserName { get; init; }
 
-        [JsonPropertyName("shared_post_url")]
+        [JsonProperty("shared_post_url")]
         public string SharedPostUrl { get; init; }
 
-        [JsonPropertyName("available")]
+        [JsonProperty("available")]
         public bool Available { get; init; }
 
-        [JsonPropertyName("comments_full")]
+        [JsonProperty("comments_full")]
         public object CommentsFull { get; init; }
     }
 }

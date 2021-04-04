@@ -33,7 +33,7 @@ namespace FacebookScraper
             {
                 string response = await GetFacebookResponse(user);
 
-                Post[] posts = JsonSerializer.Deserialize<Post[]>(response) ??
+                Post[] posts = JsonConvert.DeserializeObject<Post[]>(response) ??
                                Array.Empty<Post>();
 
                 if (!posts.Any())
@@ -68,7 +68,7 @@ namespace FacebookScraper
             return ScriptExecutor.ExecutePython(
                 FacebookScriptName,
                 token: default,
-                parameters);
+                parameters.ToArray());
         }
 
         private static Func<Post, Update> ToUpdate(User user)
