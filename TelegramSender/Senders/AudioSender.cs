@@ -35,7 +35,7 @@ namespace TelegramSender
                 performer: audio.Artist,
                 title: audio.Title,
                 parseMode: TelegramConstants.MessageParseMode,
-                replyToMessageId: message.ReplyMessageId,
+                replyToMessageId: message.ReplyToMessageId,
                 cancellationToken: message.CancellationToken
             );
         }

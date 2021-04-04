@@ -10,6 +10,8 @@ namespace TelegramClient
     {
         IObservable<TdApi.Update> OnUpdateReceived { get; }
 
+        Task<TdApi.FormattedText> ParseTextAsync(string text, TdApi.TextParseMode parseMode);
+
         Task<TdApi.Chat> GetChatAsync(long chatId);
 
         Task<TdApi.Message> SendMessageAsync(

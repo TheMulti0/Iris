@@ -50,22 +50,40 @@ namespace TelegramSender
             
             _logger.LogInformation("Received {}", message);
             
-            foreach (UserChatSubscription chatInfo in message.DestinationChats)
-            {
-                string chatId = chatInfo.ChatId;
-
-                (Update update, _) = message;
+            await SendSingleChatMessage(message, message.DestinationChats.First());
             
-                MessageInfo messageInfo = _messageBuilder.Build(update, chatInfo);
-
-                await SendChatUpdate(update, _sender, messageInfo, chatId);
+            foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
+            {
+                await SendChatMessage(message, chatInfo, await GetParsedMessageInfo(chatInfo, message.Update));
             }
+        }
+
+        private async Task SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
+        {
+            string chatId = chatInfo.ChatId;
+            Update update = message.Update;
+
+            ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, update);
+
+            await SendAsync(_sender, parsed, update, chatId);
+        }
+
+        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription chatInfo, Update update)
+        {
+            MessageInfo messageInfo = _messageBuilder.Build(update, chatInfo);
+            var parsed = await _sender.ParseAsync(messageInfo);
+            return parsed;
+        }
+
+        private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
+        {
+            await SendChatUpdate(message.Update, _sender, messageInfo, chatInfo.ChatId);
         }
 
         private async Task SendChatUpdate(
             Update originalUpdate,
             MessageSender sender,
-            MessageInfo message,
+            ParsedMessageInfo message,
             ChatId chatId)
         {
             _logger.LogInformation("Sending update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
@@ -81,7 +99,7 @@ namespace TelegramSender
 
         private async Task SendAsync(
             MessageSender sender,
-            MessageInfo message,
+            ParsedMessageInfo message,
             Update originalUpdate,
             ChatId chat)
         {

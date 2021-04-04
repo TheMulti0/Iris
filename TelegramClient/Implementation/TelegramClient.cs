@@ -19,6 +19,11 @@ namespace TelegramClient
             OnUpdateReceived = client.OnUpdateReceived();
         }
 
+        public Task<TdApi.FormattedText> ParseTextAsync(string text, TdApi.TextParseMode parseMode)
+        {
+            return _client.ParseTextEntitiesAsync(text, parseMode);
+        }
+
         public Task<TdApi.Chat> GetChatAsync(long chatId)
         {
             return _client.GetChatAsync(chatId);

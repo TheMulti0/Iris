@@ -171,7 +171,7 @@ namespace TelegramSender
 
             if (message.Message.Any())
             {
-                MessageInfo newMessage = message with { ReplyMessageId = firstMediaMessageId };
+                MessageInfo newMessage = message with { ReplyToMessageId = firstMediaMessageId };
 
                 await _textSender.SendAsync(newMessage);
             }

@@ -34,7 +34,7 @@ namespace TelegramSender
                 text: message.Message,
                 parseMode: TelegramConstants.MessageParseMode,
                 disableWebPagePreview: message.DisableWebPagePreview,
-                replyToMessageId: message.ReplyMessageId,
+                replyToMessageId: message.ReplyToMessageId,
                 cancellationToken: message.CancellationToken
             );
         }
@@ -53,12 +53,12 @@ namespace TelegramSender
                     ',',
                     '.');
 
-                int lastMessageId = message.ReplyMessageId;
+                int lastMessageId = message.ReplyToMessageId;
 
                 foreach (string msg in messageChunks)
                 {
                     MessageInfo newInfo 
-                        = message with { Message = msg, ReplyMessageId = lastMessageId};
+                        = message with { Message = msg, ReplyToMessageId = lastMessageId};
                     
                     Message lastMessage = await SendSingleTextMessage(newInfo);
 

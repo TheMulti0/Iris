@@ -85,7 +85,7 @@ namespace TelegramClient.Tests
         
         [DataTestMethod]
         [DataRow("https://www.facebook.com/396697410351933/videos/3732920580089470")]
-        [DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
+        //[DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
         // Should take a long time because this test is supposed to download and upload heavy video streams to Telegram
         public Task TestHeavyStreamVideoMessage(string toBeExtractedStreamVideoUrl)
         {
