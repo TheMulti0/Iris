@@ -93,8 +93,8 @@ namespace TelegramClient.Tests
         }
 
         [DataTestMethod]
-        [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80", "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")]
-        public async Task TestMixedAlbumMessage(string photoUrl, string directVideoUrl)
+        [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80", "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4", "https://www.facebook.com/396697410351933/videos/3732920580089470")]
+        public async Task TestMixedAlbumMessage(string photoUrl, string directVideoUrl, string toBeExtractedStreamVideoUrl)
         {
             var photoContent = new TdApi.InputMessageContent.InputMessagePhoto
             {
@@ -111,10 +111,13 @@ namespace TelegramClient.Tests
                     Id = directVideoUrl
                 }
             };
+            
+            TdApi.InputMessageContent.InputMessageVideo extractedVideoContent = await ExtractVideo(toBeExtractedStreamVideoUrl);
 
             await TestMessageAlbum(
                 photoContent,
-                directVideoContent);
+                directVideoContent,
+                extractedVideoContent);
         }
 
         private async Task TestStreamVideoMessage(string toBeExtractedStreamVideoUrl)

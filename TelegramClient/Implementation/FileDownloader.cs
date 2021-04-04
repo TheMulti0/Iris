@@ -19,14 +19,14 @@ namespace TelegramClient
         public FileDownloader(string remoteUrl)
         {
             _remoteUrl = remoteUrl;
-
+            
             _filePath = GetFilePath();
             _fileStream = new FileStream(_filePath, FileMode.Create);
         }
 
         private static string GetFilePath()
         {
-            long currentTime = new DateTimeOffset().ToUnixTimeMilliseconds();
+            long currentTime = new DateTimeOffset().ToUnixTimeSeconds();
             int random = Random.Next();
             
             return $"{currentTime}-{random}";
@@ -44,11 +44,11 @@ namespace TelegramClient
             };
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
+            await _fileStream.DisposeAsync();
+
             File.Delete(_filePath);
-            
-            return _fileStream.DisposeAsync();
         }
     }
 }

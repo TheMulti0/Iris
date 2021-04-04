@@ -93,19 +93,31 @@ namespace TelegramClient
             TdApi.SendMessageOptions options,
             CancellationToken token)
         {
-            var downloader = new FileDownloader(url);
-            TdApi.InputFile downloadedFile = await downloader.DownloadFileAsync();
+            (FileDownloader downloader, TdApi.InputMessageContent downloadedMessageContent) = await DownloadMessageContent(url, inputMessageContent);
 
             TdApi.Message message = await SendMessageAsync(
                 chatId,
-                inputMessageContent.WithFile(downloadedFile),
+                downloadedMessageContent,
                 replyToMessageId,
                 replyMarkup,
                 options,
                 token);
 
             await downloader.DisposeAsync();
+            
             return message;
+        }
+
+        private static async Task<(FileDownloader, TdApi.InputMessageContent)> DownloadMessageContent(
+            string url,
+            TdApi.InputMessageContent inputMessageContent)
+        {
+            var downloader = new FileDownloader(url);
+
+            TdApi.InputFile downloadedFile = await downloader.DownloadFileAsync();
+            TdApi.InputMessageContent downloadedMessageContent = inputMessageContent.WithFile(downloadedFile);
+            
+            return (downloader, downloadedMessageContent);
         }
 
         public async Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(
@@ -115,17 +127,76 @@ namespace TelegramClient
             TdApi.SendMessageOptions options = null,
             CancellationToken token = default)
         {
+            try
+            {
+                return await SendMessageAlbumUnsafe(chatId, inputMessageContents, replyToMessageId, options, false, token);
+            }
+            catch (MessageSendFailedException e)
+            {
+                (TdApi.InputMessageContent content, FileDownloader downloader)[] contents 
+                    = await GetDownloadedMessageContents(inputMessageContents)
+                        .ToArrayAsync(token);
+
+                var newInputMessageContents = contents.Select(t => t.content).ToArray();
+                
+                IEnumerable<TdApi.Message> messages = await SendMessageAlbumUnsafe(
+                    chatId,
+                    newInputMessageContents,
+                    replyToMessageId,
+                    options,
+                    true,
+                    token);
+                
+                foreach ((TdApi.InputMessageContent _, FileDownloader downloader) in contents)
+                {
+                    await downloader.DisposeAsync();
+                }
+
+                return messages;
+            }
+        }
+
+        private async Task<IEnumerable<TdApi.Message>> SendMessageAlbumUnsafe(
+            long chatId,
+            TdApi.InputMessageContent[] inputMessageContents,
+            long replyToMessageId,
+            TdApi.SendMessageOptions options,
+            bool ignoreFailure,
+            CancellationToken token)
+        {
             TdApi.Messages messages = await _client.SendMessageAlbumAsync(
                 chatId: chatId,
                 inputMessageContents: inputMessageContents,
                 replyToMessageId: replyToMessageId,
                 options: options);
 
-            return await GetSentMessages(messages, token).ToListAsync(token);
+            return await GetSentMessages(messages, ignoreFailure, token)
+                .ToListAsync(token);
+        }
+
+        private static async IAsyncEnumerable<(TdApi.InputMessageContent content, FileDownloader downloader)> GetDownloadedMessageContents(
+            IEnumerable<TdApi.InputMessageContent> inputMessageContents)
+        {
+            foreach (TdApi.InputMessageContent inputMessageContent in inputMessageContents)
+            {
+                if (inputMessageContent.HasFile(out TdApi.InputFile file) &&
+                    file.HasUrl(out string url))
+                {
+                    (FileDownloader downloader, TdApi.InputMessageContent downloadedMessageContent) =
+                        await DownloadMessageContent(url, inputMessageContent);
+
+                    yield return (downloadedMessageContent, downloader);
+                }
+                else
+                {
+                    yield return (inputMessageContent, null);
+                }
+            }
         }
 
         private async IAsyncEnumerable<TdApi.Message> GetSentMessages(
             TdApi.Messages messages,
+            bool ignoreFailure,
             [EnumeratorCancellation] CancellationToken token)
         {
             var sentMessagesCount = 0;
@@ -134,8 +205,10 @@ namespace TelegramClient
             {
                 switch (update)
                 {
-                    case TdApi.Update.UpdateMessageSendFailed f:
+                    case TdApi.Update.UpdateMessageSendFailed f when !ignoreFailure:
+                    {
                         throw new MessageSendFailedException(f.ErrorMessage);
+                    }
                     
                     case TdApi.Update.UpdateMessageSendSucceeded m when messages.Messages_.All(message => message.Id != m.OldMessageId):
                         continue;
