@@ -31,7 +31,10 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
     
+    var facebookConfig = rootConfig.GetSection<FacebookUpdatesProviderConfig>("UpdatesProvider");
+    
     services
+        .AddSingleton(facebookConfig)
         .AddUpdatesScraper<FacebookUpdatesProvider>(rootConfig)
         .BuildServiceProvider();
 }

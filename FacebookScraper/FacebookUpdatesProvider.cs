@@ -7,38 +7,68 @@ using Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using UpdatesScraper;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace FacebookScraper
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
+        private const string FacebookScriptName = "get_posts.py";
+        private const string LinkRegex = "\n(?<link>[A-Z].+)";
+
+        private readonly FacebookUpdatesProviderConfig _config;
         private readonly ILogger<FacebookUpdatesProvider> _logger;
 
         public FacebookUpdatesProvider(
+            FacebookUpdatesProviderConfig config,
             ILogger<FacebookUpdatesProvider> logger)
         {
+            _config = config;
             _logger = logger;
         }
 
         public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
-            const string scriptName = "get_posts.py";
-            
             try
             {
-                // TODO make page count an optional configurable field
-                string response = await ScriptExecutor.ExecutePython(
-                    scriptName, token: default, user.UserId, 1);
+                string response = await GetFacebookResponse(user);
+
+                Post[] posts = JsonSerializer.Deserialize<Post[]>(response) ??
+                               Array.Empty<Post>();
+
+                if (!posts.Any())
+                {
+                    _logger.LogWarning("No results were received when scraping {}", user);
+                }
                 
-                return JsonConvert.DeserializeObject<Post[]>(response)
-                    .Select(ToUpdate(user));
+                return posts.Select(ToUpdate(user)) ;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to parse {} output for {}", scriptName, user);
+                _logger.LogError(e, "Failed to parse {} output for {}", FacebookScriptName, user);
             }
 
             return Enumerable.Empty<Update>();
+        }
+
+        private Task<string> GetFacebookResponse(User user)
+        {
+            var parameters = new List<object>
+            {
+                user.UserId,
+                _config.PageCount
+            };
+            
+            if (_config.UserName != null && _config.Password != null)
+            {
+                parameters.Add(_config.UserName);
+                parameters.Add(_config.Password);
+            }
+            
+            return ScriptExecutor.ExecutePython(
+                FacebookScriptName,
+                token: default,
+                parameters);
         }
 
         private static Func<Post, Update> ToUpdate(User user)
@@ -62,7 +92,7 @@ namespace FacebookScraper
                 return post.Text.Replace(
                     new[]
                     {
-                        "\n(?<link>[A-Z].+)"
+                        LinkRegex
                     },
                     post.Link);
             }
@@ -94,8 +124,8 @@ namespace FacebookScraper
 
         private static IEnumerable<Photo> GetPhotos(Post post)
         {
-            return post.Images.Select(
-                url => new Photo(url));
+            return post.Images?.Select(url => new Photo(url)) ??
+                   Enumerable.Empty<Photo>();
         }
     }
 }
