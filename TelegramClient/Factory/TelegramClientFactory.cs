@@ -27,7 +27,7 @@ namespace TelegramClient
 
         public async Task<ITelegramClient> CreateAsync()
         {
-            await _client.SetLogVerbosityLevelAsync(0);
+            await _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamEmpty());
 
             var startupState = new StartupState(false, false);
             

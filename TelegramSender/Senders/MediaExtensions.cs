@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Common;
 using TdLib;
 
@@ -71,6 +72,61 @@ namespace TelegramSender
                     }
                 },
                 SupportsStreaming = true
+            };
+        }
+
+        public static TdApi.InputMessageContent ToInputMessageContent(this TdApi.MessageContent content)
+        {
+            switch (content)
+            {
+                case TdApi.MessageContent.MessagePhoto p:
+                    return p.ToInputPhoto();
+                
+                case TdApi.MessageContent.MessageVideo v:
+                    return v.ToInputVideo();
+            }
+
+            return null;
+        }
+
+        private static TdApi.InputMessageContent.InputMessagePhoto ToInputPhoto(
+            this TdApi.MessageContent.MessagePhoto photo)
+        {
+            TdApi.PhotoSize size = photo.Photo.Sizes.OrderByDescending(size => size.Width).First();
+            return new TdApi.InputMessageContent.InputMessagePhoto
+            {
+                //Caption = photo.Caption,
+                Height = size.Height,
+                Width = size.Width,
+                Photo = size.Photo.ToInputFile()
+            };
+        }
+        
+        private static TdApi.InputMessageContent.InputMessageVideo ToInputVideo(
+            this TdApi.MessageContent.MessageVideo video)
+        {
+            return new()
+            {
+                //Caption = video.Caption,
+                Duration = video.Video.Duration,
+                Height = video.Video.Height,
+                Width = video.Video.Width,
+                Thumbnail = new TdApi.InputThumbnail
+                {
+                    Thumbnail = video.Video.Thumbnail.Photo.ToInputFile(),
+                    Height = video.Video.Thumbnail.Height,
+                    Width = video.Video.Thumbnail.Width
+                },
+                Video = video.Video.Video_.ToInputFile(),
+                SupportsStreaming = video.Video.SupportsStreaming
+            };
+        }
+
+        private static TdApi.InputFile ToInputFile(this TdApi.File file)
+        {
+            return new TdApi.InputFile.InputFileRemote
+            {
+                Id = file.Remote.Id
             };
         }
     }

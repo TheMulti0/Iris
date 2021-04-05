@@ -18,22 +18,23 @@ namespace TelegramSender
         private readonly ITelegramClient _client;
 
         public MessageSender(
-            ITelegramBotClient client,
+            ITelegramClient client,
             ILoggerFactory loggerFactory)
         {
+            _client = client;
             _logger = loggerFactory.CreateLogger<MessageSender>();
 
-            _textSender = new TextSender(
-                client,
-                loggerFactory.CreateLogger<TextSender>());
-
-            _audioSender = new AudioSender(
-                client,
-                loggerFactory.CreateLogger<AudioSender>());
-            
-            _mediaSender = new MediaSender(
-                client,
-                _textSender);
+            // _textSender = new TextSender(
+            //     client,
+            //     loggerFactory.CreateLogger<TextSender>());
+            //
+            // _audioSender = new AudioSender(
+            //     client,
+            //     loggerFactory.CreateLogger<AudioSender>());
+            //
+            // _mediaSender = new MediaSender(
+            //     client,
+            //     _textSender);
         }
 
         public Task SendAsync(MessageInfo message)
@@ -57,11 +58,13 @@ namespace TelegramSender
             TdApi.FormattedText text = await _client.ParseTextAsync(message.Message, new TdApi.TextParseMode.TextParseModeHTML());
 
             var inputMedia = message.GetInputMedia(text);
+
+            var chat = await _client.GetChatAsync(message.ChatId.Identifier);
             
             return new ParsedMessageInfo(
                 text,
                 inputMedia,
-                message.ChatId.Identifier,
+                chat.Id,
                 message.ReplyToMessageId,
                 message.DisableWebPagePreview,
                 message.CancellationToken);

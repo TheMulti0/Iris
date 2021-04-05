@@ -8,10 +8,14 @@ using System.Threading.Tasks.Dataflow;
 using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
+using Remutable.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using SubscriptionsDb;
+using TdLib;
+using Telegram.Bot.Types.InlineQueryResults;
+using TelegramClient;
 using Message = Common.Message;
 using Update = Common.Update;
 using User = Common.User;
@@ -50,54 +54,73 @@ namespace TelegramSender
             
             _logger.LogInformation("Received {}", message);
             
-            await SendSingleChatMessage(message, message.DestinationChats.First());
-            
+            var uploadedContents = (await SendFirstChatMessage(message)).ToList();
+
             foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
             {
-                await SendChatMessage(message, chatInfo, await GetParsedMessageInfo(chatInfo, message.Update));
+                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.Update);
+                
+                IEnumerable<TdApi.InputMessageContent> messageContents = WithUploadedContents(parsedMessageInfo.Media, uploadedContents);
+
+                await SendChatMessage(message, chatInfo, parsedMessageInfo with { Media = messageContents });
             }
         }
 
-        private async Task SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
+        private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(Message message)
+        {
+            IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, message.DestinationChats.First());
+            
+            return GetInputMessageContents(sentMessages);
+        }
+
+        private static IEnumerable<TdApi.InputMessageContent> WithUploadedContents(IEnumerable<TdApi.InputMessageContent> content, IEnumerable<TdApi.InputMessageContent> uploadedContent)
+        {
+            return content
+                .Zip(
+                    uploadedContent,
+                    (original, uploaded) => original.HasCaption(out TdApi.FormattedText caption)
+                        ? uploaded.WithCaption(caption)
+                        : original);
+        }
+
+        private static IEnumerable<TdApi.InputMessageContent> GetInputMessageContents(IEnumerable<TdApi.Message> messages)
+        {
+            return messages
+                .Where(m => !(m.Content is TdApi.MessageContent.MessageText))
+                .Select(m => m.Content.ToInputMessageContent());
+        }
+
+        private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
         {
             string chatId = chatInfo.ChatId;
             Update update = message.Update;
 
             ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, update);
 
-            await SendAsync(_sender, parsed, update, chatId);
+            return await SendAsync(_sender, parsed, update, chatId);
         }
 
         private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription chatInfo, Update update)
         {
             MessageInfo messageInfo = _messageBuilder.Build(update, chatInfo);
-            var parsed = await _sender.ParseAsync(messageInfo);
-            return parsed;
+            
+            return await _sender.ParseAsync(messageInfo);
         }
 
         private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
         {
-            await SendChatUpdate(message.Update, _sender, messageInfo, chatInfo.ChatId);
-        }
-
-        private async Task SendChatUpdate(
-            Update originalUpdate,
-            MessageSender sender,
-            ParsedMessageInfo message,
-            ChatId chatId)
-        {
-            _logger.LogInformation("Sending update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
+            _logger.LogInformation("Sending update {} to chat id {}", message.Update, ((ChatId) chatInfo.ChatId).Username ?? ((ChatId) chatInfo.ChatId).Identifier.ToString());
             
             ActionBlock<Task> chatSender = _chatSenders
-                .GetOrAdd(chatId, _ => new ActionBlock<Task>(task => task));
+                .GetOrAdd(chatInfo.ChatId, _ => new ActionBlock<Task>(task => task));
 
             await chatSender.SendAsync(
-                SendAsync(sender, message, originalUpdate, chatId));
+                SendAsync(_sender, messageInfo, message.Update, chatInfo.ChatId));
                 
-            _logger.LogInformation("Successfully sent update {} to chat id {}", originalUpdate, chatId.Username ?? chatId.Identifier.ToString());
+            _logger.LogInformation("Successfully sent update {} to chat id {}", message.Update, ((ChatId) chatInfo.ChatId).Username ?? ((ChatId) chatInfo.ChatId).Identifier.ToString());
         }
 
-        private async Task SendAsync(
+        private async Task<IEnumerable<TdApi.Message>> SendAsync(
             MessageSender sender,
             ParsedMessageInfo message,
             Update originalUpdate,
@@ -105,24 +128,26 @@ namespace TelegramSender
         {
             try
             {
-                await sender.SendAsync(message);
+                return await sender.SendAsync(message);
             }
-            catch (ChatNotFoundException)
-            {
-                await RemoveChatSubscription(originalUpdate.Author, chat);
-            }
-            catch (ApiRequestException e)
+            catch (MessageSendFailedException e)
             {
                 if (e.Message == "Forbidden: bot was blocked by the user" ||
                     e.Message == "Bad Request: need administrator rights in the channel chat")
                 {
                     await RemoveChatSubscription(originalUpdate.Author, chat);
                 }
+                else
+                {
+                    throw;
+                }
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Failed to send update {} to chat id {}", originalUpdate, chat.Username ?? chat.Identifier.ToString());
             }
+
+            return Enumerable.Empty<TdApi.Message>();
         }
 
         private async Task RemoveChatSubscription(User author, string chatId)

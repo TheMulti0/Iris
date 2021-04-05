@@ -5,7 +5,7 @@ using TdLib;
 
 namespace TelegramClient
 {
-    internal static class TdExtensions
+    public static class TdExtensions
     {
         public static IObservable<TdApi.Update> OnUpdateReceived(this TdClient client)
         {
@@ -13,6 +13,88 @@ namespace TelegramClient
                 action => client.UpdateReceived += action,
                 action => client.UpdateReceived -= action)
                 .Select(pattern => pattern.EventArgs);
+        }
+        
+        public static bool HasCaption(this TdApi.InputMessageContent content, out TdApi.FormattedText caption)
+        {
+            switch (content)
+            {
+                case TdApi.InputMessageContent.InputMessageAnimation an:
+                    caption = an.Caption;
+                    break;
+                
+                case TdApi.InputMessageContent.InputMessageAudio au:
+                    caption = au.Caption;
+                    break;
+                
+                case TdApi.InputMessageContent.InputMessageDocument d:
+                    caption = d.Caption;
+                    break;
+                
+                case TdApi.InputMessageContent.InputMessagePhoto p:
+                    caption = p.Caption;
+                    break;
+                
+                case TdApi.InputMessageContent.InputMessageVideo v:
+                    caption = v.Caption;
+                    break;
+                
+                case TdApi.InputMessageContent.InputMessageVoiceNote von:
+                    caption = von.Caption;
+                    break;
+                
+                default:
+                    caption = null;
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static TdApi.InputMessageContent WithCaption(this TdApi.InputMessageContent content, TdApi.FormattedText text)
+        {
+            switch (content)
+            {
+                case TdApi.InputMessageContent.InputMessageAnimation an:
+                    return an.Remute(animation => animation.Caption, text);
+                
+                case TdApi.InputMessageContent.InputMessageAudio au:
+                    return au.Remute(audio => audio.Caption, text);
+                
+                case TdApi.InputMessageContent.InputMessageDocument d:
+                    return d.Remute(document => document.Caption, text);
+                
+                case TdApi.InputMessageContent.InputMessagePhoto p:
+                    return new TdApi.InputMessageContent.InputMessagePhoto
+                    {
+                        Caption = text,
+                        Height = p.Height,
+                        Photo = p.Photo,
+                        Thumbnail = p.Thumbnail,
+                        Width = p.Width,
+                        Ttl = p.Ttl,
+                        AddedStickerFileIds = p.AddedStickerFileIds
+                    };
+                
+                case TdApi.InputMessageContent.InputMessageVideo v:
+                    return new TdApi.InputMessageContent.InputMessageVideo
+                    {
+                        Caption = text,
+                        Duration = v.Duration,
+                        Height = v.Height,
+                        Thumbnail = v.Thumbnail,
+                        Ttl = v.Ttl,
+                        Video = v.Video,
+                        Width = v.Width,
+                        SupportsStreaming = v.SupportsStreaming,
+                        AddedStickerFileIds = v.AddedStickerFileIds
+                    };
+                
+                case TdApi.InputMessageContent.InputMessageVoiceNote von:
+                    return von.Remute(note => note.Caption, text);
+            }
+
+            return content;
         }
 
         public static bool HasFile(this TdApi.InputMessageContent content, out TdApi.InputFile file)
