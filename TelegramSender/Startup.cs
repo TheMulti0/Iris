@@ -46,7 +46,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton(telegramConfig)
         .AddSingleton<TelegramClientFactory>()
         .AddSingleton<ISenderFactory, SenderFactory>()
-        .AddSingleton<MessageBuilder>()
+        .AddSingleton<MessageInfoBuilder>()
         .AddProducer<ChatSubscriptionRequest>(producerConfig)
         .AddSingleton<IConsumer<Message>, MessagesConsumer>()
         .AddConsumerService<Message>(consumerConfig)

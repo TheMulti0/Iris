@@ -4,7 +4,7 @@ using Update = Common.Update;
 
 namespace TelegramSender
 {
-    public class MessageBuilder
+    public class MessageInfoBuilder
     {
         public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {

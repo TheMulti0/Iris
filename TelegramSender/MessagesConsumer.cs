@@ -8,13 +8,9 @@ using System.Threading.Tasks.Dataflow;
 using Common;
 using Extensions;
 using Microsoft.Extensions.Logging;
-using Remutable.Extensions;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using SubscriptionsDb;
 using TdLib;
-using Telegram.Bot.Types.InlineQueryResults;
 using TelegramClient;
 using Message = Common.Message;
 using Update = Common.Update;
@@ -27,7 +23,7 @@ namespace TelegramSender
         private readonly IChatSubscriptionsRepository _repository;
         private readonly IProducer<ChatSubscriptionRequest> _producer;
         private readonly ISenderFactory _senderFactory;
-        private readonly MessageBuilder _messageBuilder;
+        private readonly MessageInfoBuilder _messageInfoBuilder;
         private readonly ILogger<MessagesConsumer> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
         private MessageSender _sender;
@@ -37,13 +33,13 @@ namespace TelegramSender
             IChatSubscriptionsRepository repository,
             IProducer<ChatSubscriptionRequest> producer,
             ISenderFactory senderFactory,
-            MessageBuilder messageBuilder,
+            MessageInfoBuilder messageInfoBuilder,
             ILoggerFactory loggerFactory)
         {
             _repository = repository;
             _producer = producer;
             _senderFactory = senderFactory;
-            _messageBuilder = messageBuilder;
+            _messageInfoBuilder = messageInfoBuilder;
             _logger = loggerFactory.CreateLogger<MessagesConsumer>();
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
@@ -87,7 +83,7 @@ namespace TelegramSender
         {
             return messages
                 .Where(m => !(m.Content is TdApi.MessageContent.MessageText))
-                .Select(m => m.Content.ToInputMessageContent());
+                .Select(m => m.Content.ToInputMessageContentAsync());
         }
 
         private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
@@ -102,7 +98,7 @@ namespace TelegramSender
 
         private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription chatInfo, Update update)
         {
-            MessageInfo messageInfo = _messageBuilder.Build(update, chatInfo);
+            MessageInfo messageInfo = _messageInfoBuilder.Build(update, chatInfo);
             
             return await _sender.ParseAsync(messageInfo);
         }

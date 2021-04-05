@@ -6,19 +6,19 @@ using TdLib;
 
 namespace TelegramClient
 {
-    internal class FileDownloader : IAsyncDisposable
+    public sealed class InputFileStream : IAsyncDisposable
     {
+        private readonly Func<Task<Stream>> _getStreamAsync;
         private static readonly HttpClient HttpClient = new();
         private static readonly Random Random = new();
 
-        private readonly string _remoteUrl;
         private readonly string _filePath;
         private readonly FileStream _fileStream;
 
-
-        public FileDownloader(string remoteUrl)
+        public InputFileStream(
+            Func<Task<Stream>> getStreamAsync)
         {
-            _remoteUrl = remoteUrl;
+            _getStreamAsync = getStreamAsync;
             
             _filePath = GetFilePath();
             _fileStream = new FileStream(_filePath, FileMode.Create);
@@ -32,9 +32,9 @@ namespace TelegramClient
             return $"{currentTime}-{random}";
         }
 
-        public async Task<TdApi.InputFile> DownloadFileAsync()
+        public async Task<TdApi.InputFile> GetFileAsync()
         {
-            await using Stream remoteStream = await HttpClient.GetStreamAsync(_remoteUrl);
+            await using Stream remoteStream = await _getStreamAsync();
             
             await remoteStream.CopyToAsync(_fileStream);
 

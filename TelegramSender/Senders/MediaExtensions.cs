@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Common;
 using TdLib;
+using TelegramClient;
 
 namespace TelegramSender
 {
     internal static class MediaExtensions
     {
-        public static IEnumerable<TdApi.InputMessageContent> GetInputMedia(this MessageInfo message, TdApi.FormattedText text)
+        public static async IAsyncEnumerable<TdApi.InputMessageContent> GetInputMessageContentAsync(this MessageInfo message, TdApi.FormattedText text)
         {
             TdApi.FormattedText GetCaption(int i) => i == 0 && message.FitsInOneMediaMessage ? text : null;
 
@@ -15,19 +18,22 @@ namespace TelegramSender
             
             foreach (IMedia media in message.Media)
             {
-                yield return media.ToInputMessageContent(GetCaption(mediaIndex));
+                yield return await media.ToInputMessageContentAsync(GetCaption(mediaIndex));
                 
                 mediaIndex++;
             }
         }
         
-        public static TdApi.InputMessageContent ToInputMessageContent(this IMedia media, TdApi.FormattedText caption)
+        public static async Task<TdApi.InputMessageContent> ToInputMessageContentAsync(this IMedia media, TdApi.FormattedText caption)
         {
             switch (media)
             {
                 case Photo p:
                     return p.ToInputPhoto(caption);
                 
+                case BytesPhoto p:
+                    return await p.ToInputPhotoAsync(caption);
+
                 case Video v:
                     return v.ToInputVideo(caption);
             }
@@ -44,6 +50,19 @@ namespace TelegramSender
                 {
                     Id = photo.Url
                 }
+            };
+        }
+        
+        private static async Task<TdApi.InputMessageContent> ToInputPhotoAsync(this BytesPhoto photo, TdApi.FormattedText caption)
+        {
+            Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
+
+            var inputFileStream = new InputFileStream(GetStreamAsync);
+
+            return new TdApi.InputMessageContent.InputMessagePhoto
+            {
+                Caption = caption,
+                Photo = await inputFileStream.GetFileAsync()
             };
         }
 
@@ -75,7 +94,7 @@ namespace TelegramSender
             };
         }
 
-        public static TdApi.InputMessageContent ToInputMessageContent(this TdApi.MessageContent content)
+        public static TdApi.InputMessageContent ToInputMessageContentAsync(this TdApi.MessageContent content)
         {
             switch (content)
             {
