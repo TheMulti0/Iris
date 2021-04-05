@@ -46,17 +46,39 @@ namespace TelegramSender
 
         public async Task ConsumeAsync(Message message, CancellationToken token)
         {
+            var screenshotSubscriptions = message.DestinationChats
+                .Where(subscription => subscription.SendScreenshotOnly)
+                .ToList();
+            
+            if (screenshotSubscriptions.Any())
+            {
+                await ConsumeMessageAsync(message with { DestinationChats = screenshotSubscriptions });
+            }
+            
+            var normalSubscriptions = message.DestinationChats
+                .Where(subscription => !subscription.SendScreenshotOnly)
+                .ToList();
+            
+            await ConsumeMessageAsync(message with { DestinationChats = normalSubscriptions });
+        }
+
+        private async Task ConsumeMessageAsync(Message message)
+        {
             _sender ??= await _senderFactory.CreateAsync();
-            
+
             _logger.LogInformation("Received {}", message);
-            
+
+            // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
+            // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
             var uploadedContents = (await SendFirstChatMessage(message)).ToList();
 
             foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
             {
                 ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.Update);
-                
-                IEnumerable<TdApi.InputMessageContent> messageContents = WithUploadedContents(parsedMessageInfo.Media, uploadedContents);
+
+                IEnumerable<TdApi.InputMessageContent> messageContents = WithUploadedContents(
+                    parsedMessageInfo.Media,
+                    uploadedContents);
 
                 await SendChatMessage(message, chatInfo, parsedMessageInfo with { Media = messageContents });
             }
