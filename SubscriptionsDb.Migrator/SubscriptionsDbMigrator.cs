@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 
 namespace SubscriptionsDb.Migrator
 {
@@ -24,12 +25,31 @@ namespace SubscriptionsDb.Migrator
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
+            try
             {
-                await foreach (UserChatSubscription subscription in InsertChat(subscriptionEntity, stoppingToken))
+                foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
                 {
-                    await _repository.AddOrUpdateAsync(subscriptionEntity.User, subscription);
+                    await foreach (UserChatSubscription subscription in InsertChat(subscriptionEntity, stoppingToken))
+                    {
+                        if (subscription.ChatInfo != null)
+                        {
+                            await _repository.AddOrUpdateAsync(subscriptionEntity.User, subscription);
+                    
+                            Console.WriteLine($"Migrated user chat subscription {subscription.ChatInfo.Id}");    
+                        }
+                        else
+                        {
+                            //await _repository.RemoveAsync(subscriptionEntity.User, subscription.ChatId);
+                            
+                            //Console.WriteLine($"Removed user chat subscription {subscription.ChatId}");
+                        }
+                        
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -39,9 +59,22 @@ namespace SubscriptionsDb.Migrator
         {
             foreach (UserChatSubscription subscription in subscriptionEntity.Chats)
             {
-                Telegram.Bot.Types.Chat chat = await _client.GetChatAsync(subscription.ChatId, stoppingToken);
+                ChatInfo? chatInfo = null;
 
-                var chatInfo = JsonSerializer.Deserialize<ChatInfo>(JsonSerializer.Serialize(chat));
+                try
+                {
+                    if (subscription.ChatInfo != null)
+                    {
+                        continue;
+                    }
+                    
+                    Telegram.Bot.Types.Chat chat = await _client.GetChatAsync(subscription.ChatId, stoppingToken);
+
+                    chatInfo = JsonSerializer.Deserialize<ChatInfo>(JsonSerializer.Serialize(chat));
+                }
+                catch (ChatNotFoundException)
+                {
+                }
 
                 yield return subscription with { ChatInfo = chatInfo };
             }
