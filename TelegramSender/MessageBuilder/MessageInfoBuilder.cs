@@ -15,13 +15,13 @@ namespace TelegramSender
                 return new MessageInfo(
                     message,
                     new []{ new BytesPhoto(update.Screenshot) },
-                    chatSubscription.ChatId);
+                    chatSubscription.ChatInfo.Id);
             }
             
             return new MessageInfo(
                 message,
                 update.Media,
-                chatSubscription.ChatId,
+                chatSubscription.ChatInfo.Id,
                 DisableWebPagePreview: !chatSubscription.ShowUrlPreview);
         }
 

@@ -197,7 +197,7 @@ namespace TelegramReceiver
             Update update,
             IObservable<Update> updates)
         {
-            ChatId contextChatId = update.GetChatId();
+            long contextChatId = update.GetChatId();
 
             IObservable<Update> chatUpdates = updates
                 .Where(u => u.GetChatId().GetHashCode() == contextChatId.GetHashCode());
@@ -217,7 +217,7 @@ namespace TelegramReceiver
                 _config.SuperUsers.Contains(user?.Username));
         }
         
-        private async Task<Connection> GetConnectionAsync(User user, ChatId contextChatId)
+        private async Task<Connection> GetConnectionAsync(User user, long contextChatId)
         {
             Connection connection = await _connectionsRepository.GetAsync(user);
 
@@ -229,7 +229,7 @@ namespace TelegramReceiver
             var connectionProperties = new ConnectionProperties
             {
                 Language = Language.English,
-                Chat = contextChatId
+                ChatId = contextChatId
             };
             
             await _connectionsRepository

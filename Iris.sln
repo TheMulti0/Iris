@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramClient", "TelegramC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramClient.Tests", "TelegramClient.Tests\TelegramClient.Tests.csproj", "{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubscriptionsDb.Migrator", "SubscriptionsDb.Migrator\SubscriptionsDb.Migrator.csproj", "{68FF9AA9-436C-495E-B741-D16EB1C2E14D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCFF320C-078A-4D07-9FF0-10E6B1B3C271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68FF9AA9-436C-495E-B741-D16EB1C2E14D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68FF9AA9-436C-495E-B741-D16EB1C2E14D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68FF9AA9-436C-495E-B741-D16EB1C2E14D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68FF9AA9-436C-495E-B741-D16EB1C2E14D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,5 +202,6 @@ Global
 		{F7C14A24-7CB4-4572-A902-754C88F9D724} = {87787069-4ACA-4E72-81C3-1E033E16F84B}
 		{0CABC5E4-A925-449A-9F99-F7772BCC355B} = {87787069-4ACA-4E72-81C3-1E033E16F84B}
 		{A17074BD-44B4-46F5-B783-7B9E39D2F11D} = {87787069-4ACA-4E72-81C3-1E033E16F84B}
+		{68FF9AA9-436C-495E-B741-D16EB1C2E14D} = {87787069-4ACA-4E72-81C3-1E033E16F84B}
 	EndGlobalSection
 EndGlobal

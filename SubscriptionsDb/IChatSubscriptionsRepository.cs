@@ -17,6 +17,6 @@ namespace SubscriptionsDb
         
         Task AddOrUpdateAsync(User user, UserChatSubscription chat);
 
-        Task RemoveAsync(User user, string chatId);
+        Task RemoveAsync(User user, long chatId);
     }
 }

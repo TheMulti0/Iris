@@ -18,12 +18,12 @@ namespace TelegramReceiver
         protected readonly Func<Task<Update>> GetNextMessage;
         protected readonly Func<Task<Update>> GetNextCallbackQuery;
         protected readonly Update Trigger;
-        protected readonly ChatId ContextChat;
+        protected readonly long ContextChat;
         protected readonly LanguageDictionary Dictionary;
         protected readonly Connection Connection;
         protected readonly bool IsSuperUser;
         protected readonly Platform? SelectedPlatform;
-        protected readonly ChatId ConnectedChat;
+        protected readonly long ConnectedChat;
         protected readonly Language Language;
         
         protected BaseCommand(Context context)
@@ -36,7 +36,7 @@ namespace TelegramReceiver
                                ?? ExtractPlatform(Trigger?.CallbackQuery) 
                                ?? Subscription.Task.Result?.User?.Platform;
             
-            ConnectedChat = Connection?.Chat ?? ContextChat;
+            ConnectedChat = Connection?.ChatId ?? ContextChat;
             Language = Connection?.Language ?? Language.English;
         }
 

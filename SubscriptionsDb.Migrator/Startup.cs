@@ -6,9 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
-using TelegramSender;
 using SubscriptionsDb;
+using SubscriptionsDb.Migrator;
+using Telegram.Bot;
 using TelegramClient;
+using TelegramReceiver;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -26,7 +28,6 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
-        .AddUserSecrets<MessagesConsumer>()
         .AddEnvironmentVariables();
 }
 
@@ -34,24 +35,31 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
+    var mongoConfig = rootConfig.GetSection<MongoDbConfig>("ConnectionsDb");
     var telegramConfig = rootConfig.GetSection<TelegramClientConfig>("Telegram");
-    var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
-    var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer");
-    var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
 
-    services
+    AddConnectionsDb(services, mongoConfig)
         .AddSubscriptionsDb()
-        .AddRabbitMqConnection(connectionConfig)
-        .AddLanguages()
-        .AddSingleton(telegramConfig)
-        .AddSingleton<TelegramClientFactory>()
-        .AddSingleton<ISenderFactory, SenderFactory>()
-        .AddSingleton<MessageInfoBuilder>()
-        .AddProducer<ChatSubscriptionRequest>(producerConfig)
-        .AddSingleton<IConsumer<Message>, MessagesConsumer>()
-        .AddConsumerService<Message>(consumerConfig)
+        .AddSingleton(new TelegramBotClient(telegramConfig.BotToken))
+        .AddHostedService<SubscriptionsDbMigrator>()
+        .AddHostedService<ConnectionsDbMigrator>()
         .BuildServiceProvider();
 }
+
+    static IServiceCollection AddConnectionsDb(
+        IServiceCollection services,
+        MongoDbConfig config)
+    {
+        var context = new Lazy<IMongoDbContext>(() => CreateMongoDbContext(config));
+        
+        return services
+            .AddSingleton<IConnectionsRepository>(_ => new MongoConnectionsRepository(context.Value));
+    }
+    
+    static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
+    {
+        return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
+    }
     
 await new HostBuilder()
     .ConfigureAppConfiguration(ConfigureConfiguration)

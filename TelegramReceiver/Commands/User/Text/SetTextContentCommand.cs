@@ -68,7 +68,7 @@ namespace TelegramReceiver
             SubscriptionEntity entity,
             Update update)
         {
-            UserChatSubscription chat = entity.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chat = entity.Chats.First(info => info.ChatInfo.Id == ConnectedChat);
 
             string newContent = update.Message.Text;
 

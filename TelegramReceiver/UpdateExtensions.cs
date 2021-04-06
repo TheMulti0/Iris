@@ -5,7 +5,7 @@ namespace TelegramReceiver
 {
     public static class UpdateExtensions
     {
-        public static ChatId GetChatId(this Update update)
+        public static long GetChatId(this Update update)
         {
             switch (update.Type)
             {
@@ -14,7 +14,7 @@ namespace TelegramReceiver
                 case UpdateType.CallbackQuery:
                     return update.CallbackQuery.Message.Chat.Id;
                 default:
-                    return null;
+                    return 0;
             }
         }
         

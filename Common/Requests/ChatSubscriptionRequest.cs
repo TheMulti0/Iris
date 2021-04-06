@@ -3,5 +3,5 @@
     public record ChatSubscriptionRequest(
         SubscriptionType SubscriptionType,
         Subscription Subscription,
-        string ChatId) : SubscriptionRequest(SubscriptionType, Subscription);
+        long ChatId) : SubscriptionRequest(SubscriptionType, Subscription);
 }
