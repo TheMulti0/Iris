@@ -4,7 +4,7 @@ using Update = Common.Update;
 
 namespace TelegramSender
 {
-    public class MessageBuilder
+    public class MessageInfoBuilder
     {
         public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {
@@ -15,13 +15,13 @@ namespace TelegramSender
                 return new MessageInfo(
                     message,
                     new []{ new BytesPhoto(update.Screenshot) },
-                    chatSubscription.ChatId);
+                    chatSubscription.ChatInfo.Id);
             }
             
             return new MessageInfo(
                 message,
                 update.Media,
-                chatSubscription.ChatId,
+                chatSubscription.ChatInfo.Id,
                 DisableWebPagePreview: !chatSubscription.ShowUrlPreview);
         }
 

@@ -103,7 +103,7 @@ namespace SubscriptionsDb
             return existing.Chats;
         }
 
-        public async Task RemoveAsync(User user, string chatId)
+        public async Task RemoveAsync(User user, long chatId)
         {
             SubscriptionEntity existing = await GetAsync(user);
             if (existing == null)
@@ -111,7 +111,7 @@ namespace SubscriptionsDb
                 return;
             }
             
-            UserChatSubscription chat = existing.Chats.First(info => info.ChatId == chatId);
+            UserChatSubscription chat = existing.Chats.First(info => info.ChatInfo.Id == chatId);
 
             if (existing.Chats.Contains(chat) && existing.Chats.Count == 1)
             {

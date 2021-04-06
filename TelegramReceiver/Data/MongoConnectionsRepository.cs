@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -6,13 +7,18 @@ using User = Telegram.Bot.Types.User;
 
 namespace TelegramReceiver
 {
-    internal class MongoConnectionsRepository : IConnectionsRepository
+    public class MongoConnectionsRepository : IConnectionsRepository
     {
         private readonly IMongoCollection<Connection> _collection;
 
         public MongoConnectionsRepository(IMongoDbContext context)
         {
             _collection = context.GetCollection<Connection>();
+        }
+
+        public IQueryable<Connection> Get()
+        {
+            return _collection.AsQueryable();
         }
 
         public Task<Connection> GetAsync(User user)
@@ -37,6 +43,7 @@ namespace TelegramReceiver
 
             UpdateDefinition<Connection> update = Builders<Connection>.Update
                 .Set(c => c.Chat, connection.Chat)
+                .Set(c => c.ChatId, connection.ChatId)
                 .Set(c => c.Language, connection.Language)
                 .Set(c => c.HasAgreedToTos, connection.HasAgreedToTos);
             

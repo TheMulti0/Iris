@@ -111,7 +111,10 @@ namespace TelegramReceiver
             
             var chatSubscription = new UserChatSubscription
             {
-                ChatId = ConnectedChat,
+                ChatInfo = new ChatInfo
+                {
+                    Id = ConnectedChat
+                },
                 Interval = interval,
                 Prefix = new Text
                 {

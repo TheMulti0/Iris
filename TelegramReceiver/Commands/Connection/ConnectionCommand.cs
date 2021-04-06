@@ -4,6 +4,7 @@ using Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using ChatType = Telegram.Bot.Types.Enums.ChatType;
 using Message = Telegram.Bot.Types.Message;
 
 namespace TelegramReceiver

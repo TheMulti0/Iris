@@ -10,7 +10,7 @@ namespace TelegramSender
         IEnumerable<IMedia> Media,
         ChatId ChatId,
         CancellationToken CancellationToken = default,
-        int ReplyMessageId = 0,
+        int ReplyToMessageId = 0,
         bool DownloadMedia = false,
         bool DisableWebPagePreview = true)
     {

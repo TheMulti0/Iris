@@ -58,7 +58,7 @@ namespace TelegramReceiver
                 return new NoRedirectResult();
             }
 
-            Connection.Chat = chatId; 
+            Connection.ChatId = chat.Id; 
             await _repository.AddOrUpdateAsync(message.From, Connection);
 
             return new RedirectResult(Route.Connection, Context with { Connection = Connection, ConnectedChat = chat });

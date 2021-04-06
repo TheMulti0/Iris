@@ -14,6 +14,7 @@ namespace TelegramReceiver
 
         public Language Language { get; set; }
         public string Chat { get; set; }
+        public long ChatId { get; set; }
 
         public bool HasAgreedToTos { get; set; }
 
@@ -24,7 +25,7 @@ namespace TelegramReceiver
         public Connection(IConnectionProperties properties)
         {
             Language = properties.Language;
-            Chat = properties.Chat;
+            ChatId = properties.ChatId;
             HasAgreedToTos = properties.HasAgreedToTos;
         }
     }

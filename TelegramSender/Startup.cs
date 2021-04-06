@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
 using TelegramSender;
 using SubscriptionsDb;
+using TelegramClient;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -25,7 +26,7 @@ static void ConfigureConfiguration(IConfigurationBuilder builder)
         .SetBasePath(basePath)
         .AddJsonFile($"{fileName}.{fileType}", false)
         .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
-        .AddUserSecrets<TelegramConfig>()
+        .AddUserSecrets<MessagesConsumer>()
         .AddEnvironmentVariables();
 }
 
@@ -33,7 +34,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
 {
     IConfiguration rootConfig = hostContext.Configuration;
 
-    var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
+    var telegramConfig = rootConfig.GetSection<TelegramClientConfig>("Telegram");
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
@@ -43,8 +44,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddRabbitMqConnection(connectionConfig)
         .AddLanguages()
         .AddSingleton(telegramConfig)
+        .AddSingleton<TelegramClientFactory>()
         .AddSingleton<ISenderFactory, SenderFactory>()
-        .AddSingleton<MessageBuilder>()
+        .AddSingleton<MessageInfoBuilder>()
         .AddProducer<ChatSubscriptionRequest>(producerConfig)
         .AddSingleton<IConsumer<Message>, MessagesConsumer>()
         .AddConsumerService<Message>(consumerConfig)

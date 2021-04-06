@@ -1,51 +1,177 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common;
 using Microsoft.Extensions.Logging;
-using Telegram.Bot;
+using TdLib;
+using TelegramClient;
 
 namespace TelegramSender
 {
     public class MessageSender
     {
         private readonly ILogger<MessageSender> _logger;
-        private readonly TextSender _textSender;
-        private readonly AudioSender _audioSender;
-        private readonly MediaSender _mediaSender;
+        private readonly ITelegramClient _client;
 
         public MessageSender(
-            ITelegramBotClient client,
+            ITelegramClient client,
             ILoggerFactory loggerFactory)
         {
+            _client = client;
             _logger = loggerFactory.CreateLogger<MessageSender>();
-
-            _textSender = new TextSender(
-                client,
-                loggerFactory.CreateLogger<TextSender>());
-
-            _audioSender = new AudioSender(
-                client,
-                loggerFactory.CreateLogger<AudioSender>());
-            
-            _mediaSender = new MediaSender(
-                client,
-                _textSender);
         }
 
-        public Task SendAsync(MessageInfo message)
+        public async Task<ParsedMessageInfo> ParseAsync(MessageInfo message)
         {
-            if (message.Media.Any(media => media is Audio))
+            TdApi.FormattedText text = await ParseTextAsync(message.Message);
+
+            var inputMedia = await message.GetInputMessageContentAsync(text).ToListAsync();
+
+            var chat = await _client.GetChatAsync(message.ChatId.Identifier);
+            
+            return new ParsedMessageInfo(
+                text,
+                inputMedia,
+                chat.Id,
+                message.ReplyToMessageId,
+                message.DisableWebPagePreview,
+                message.CancellationToken);
+        }
+
+        private Task<TdApi.FormattedText> ParseTextAsync(string text)
+        {
+            return _client.ParseTextAsync(text, new TdApi.TextParseMode.TextParseModeHTML());
+        }
+
+        public async Task<IEnumerable<TdApi.Message>> SendAsync(ParsedMessageInfo parsedMessage)
+        {
+            if (!parsedMessage.Media.Any())
             {
-                return _audioSender.SendAsync(
-                    message,
-                    (Audio) message.Media.FirstOrDefault(media => media is Audio));
+                return await SendTextMessagesAsync(parsedMessage).ToListAsync();
             }
 
-            return message.Media.Count(media => media is not Audio) switch 
+            IEnumerable<TdApi.Message> mediaMessages = await SendMediaMessages(parsedMessage);
+
+            if (parsedMessage.FitsInOneMediaMessage)
             {
-                0 => _textSender.SendAsync(message),
-                _ => _mediaSender.SendAsync(message)
-            };
+                return mediaMessages;
+            }
+            
+            IEnumerable<TdApi.Message> textMessages = await SendTextMessagesAsync(parsedMessage).ToListAsync();
+
+            return mediaMessages.Concat(textMessages);
+        }
+
+        private async Task<IEnumerable<TdApi.Message>> SendMediaMessages(ParsedMessageInfo parsedMessage)
+        {
+            List<TdApi.InputMessageContent> audios = parsedMessage.Media
+                .Where(content => content is TdApi.InputMessageContent.InputMessageAudio)
+                .ToList();
+            
+            IEnumerable<TdApi.InputMessageContent> nonAudios = parsedMessage.Media
+                .Where(content => !(content is TdApi.InputMessageContent.InputMessageAudio));
+
+            if (!audios.Any())
+            {
+                return await SendMessageAlbumAsync(parsedMessage);
+            }
+            
+            IEnumerable<TdApi.Message> audioMessages = await SendMessageAlbumAsync(parsedMessage with { Media = audios });
+            IEnumerable<TdApi.Message> nonAudioMessages = await SendMessageAlbumAsync(parsedMessage with { Media = nonAudios });
+
+            return audioMessages.Concat(nonAudioMessages);
+        }
+
+        private async Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(ParsedMessageInfo parsedMessage)
+        {
+            return await _client.SendMessageAlbumAsync(
+                parsedMessage.ChatId,
+                parsedMessage.Media.ToArray(),
+                parsedMessage.ReplyToMessageId,
+                token: parsedMessage.CancellationToken);
+        }
+
+        private async IAsyncEnumerable<TdApi.Message> SendTextMessagesAsync(ParsedMessageInfo message)
+        {
+            string text = message.Text.Text;
+            if (text.Length <= TelegramConstants.MaxTextMessageLength)
+            {
+                yield return await SendSingleTextMessage(message);
+                yield break;
+            }
+            
+            IEnumerable<string> messageChunks = ChunkText(
+                text,
+                TelegramConstants.MaxTextMessageLength,
+                "\n>>>",
+                '\n',
+                '?',
+                '!',
+                '.');
+
+            long lastMessageId = 0;
+            foreach (string msg in messageChunks)
+            {
+                TdApi.FormattedText parsedMsg = await ParseTextAsync(msg);
+                TdApi.Message textMessage = await SendSingleTextMessage(
+                    message with { Text = parsedMsg, ReplyToMessageId = lastMessageId });
+
+                yield return textMessage;
+                lastMessageId = textMessage.Id;
+            }
+        }
+
+        private async Task<TdApi.Message> SendSingleTextMessage(ParsedMessageInfo parsedMessage)
+        {
+            return await _client.SendMessageAsync(
+                parsedMessage.ChatId,
+                new TdApi.InputMessageContent.InputMessageText
+                {
+                    Text = parsedMessage.Text
+                },
+                parsedMessage.ReplyToMessageId,
+                token: parsedMessage.CancellationToken);
+        }
+
+        private static IEnumerable<string> ChunkText(
+            string bigString,
+            int maxLength,
+            string suffix,
+            params char[] punctuation)
+        {
+            var chunks = new List<string>();
+
+            int index = 0;
+            var startIndex = 0;
+
+            int bigStringLength = bigString.Length;
+            while (startIndex < bigStringLength)
+            {
+                if (index == bigStringLength - 1)
+                {
+                    suffix = "";
+                }
+                maxLength -= suffix.Length;
+
+                string chunk = startIndex + maxLength >= bigStringLength
+                    ? bigString.Substring(startIndex)
+                    : bigString.Substring(startIndex, maxLength);
+
+                int endIndex = chunk.LastIndexOfAny(punctuation);
+
+                if (endIndex < 0)
+                    endIndex = chunk.LastIndexOf(" ", StringComparison.Ordinal);
+
+                if (endIndex < 0)
+                    endIndex = Math.Min(maxLength - 1, chunk.Length - 1);
+
+                chunks.Add(chunk.Substring(0, endIndex + 1) + suffix);
+
+                index++;
+                startIndex += endIndex + 1;
+            }
+
+            return chunks;
         }
     }
 }

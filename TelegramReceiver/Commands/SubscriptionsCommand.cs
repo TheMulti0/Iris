@@ -28,7 +28,7 @@ namespace TelegramReceiver
                 .Get()
                 .Where(
                     user => user.User.Platform == SelectedPlatform &&
-                            user.Chats.Any(chat => chat.ChatId == ConnectedChat))
+                            user.Chats.Any(chat => chat.ChatInfo.Id == ConnectedChat))
                 .ToList();
 
             (InlineKeyboardMarkup markup, string text) = GetMessageDetails(currentUsers);

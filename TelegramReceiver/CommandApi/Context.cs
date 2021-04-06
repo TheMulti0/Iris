@@ -15,7 +15,7 @@ namespace TelegramReceiver
         Func<Task<Update>> GetNextMessage,
         Func<Task<Update>> GetNextCallbackQuery,
         Update Trigger,
-        ChatId ContextChatId,
+        long ContextChatId,
         Connection Connection,
         LanguageDictionary Dictionary,
         bool IsSuperUser)

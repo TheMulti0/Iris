@@ -21,7 +21,7 @@ namespace TelegramReceiver
             TextType type = GetTextType();
             SubscriptionEntity entity = await Subscription;
             
-            UserChatSubscription subscription = entity.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription subscription = entity.Chats.First(info => info.ChatInfo.Id == ConnectedChat);
 
             Text text = type == TextType.Prefix 
                 ? subscription.Prefix 

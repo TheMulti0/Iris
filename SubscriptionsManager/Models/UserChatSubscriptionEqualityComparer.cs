@@ -23,12 +23,12 @@ namespace SubscriptionsManager
             {
                 return false;
             }
-            return x.ChatId == y.ChatId;
+            return x.ChatInfo.Id == y.ChatInfo.Id;
         }
 
         public int GetHashCode(UserChatSubscription obj)
         {
-            return obj.ChatId != null ? obj.ChatId.GetHashCode() : 0;
+            return obj.ChatInfo.Id.GetHashCode();
         }
     }
 }

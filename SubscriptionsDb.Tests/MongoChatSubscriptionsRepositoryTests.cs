@@ -12,7 +12,7 @@ namespace SubscriptionsDb.Tests
     [TestClass]
     public class MongoChatSubscriptionsRepositoryTests
     {
-        private const string TestChat = "testChat";
+        private const long TestChat = 11;
         private readonly IChatSubscriptionsRepository _repository;
         private readonly User TestUser = new User("Test", Platform.Facebook);
 
@@ -39,7 +39,10 @@ namespace SubscriptionsDb.Tests
             
             await _repository.AddOrUpdateAsync(user, new UserChatSubscription
             {
-                ChatId = TestChat
+                ChatInfo = new ChatInfo
+                {
+                    Id = TestChat
+                },
             });
             
             Assert.IsTrue(await _repository.ExistsAsync(user));
@@ -55,13 +58,16 @@ namespace SubscriptionsDb.Tests
             TimeSpan newInterval = TimeSpan.FromDays(1);
             await _repository.AddOrUpdateAsync(user, new UserChatSubscription
             {
-                ChatId = TestChat,
+                ChatInfo = new ChatInfo
+                {
+                    Id = TestChat
+                },
                 Interval = newInterval
             });
 
             var subscriptionEntity = await _repository.GetAsync(user);
             
-            Assert.AreEqual(newInterval, subscriptionEntity.Chats.FirstOrDefault(subscription => subscription.ChatId == TestChat).Interval);
+            Assert.AreEqual(newInterval, subscriptionEntity.Chats.First(subscription => subscription.ChatInfo.Id == TestChat).Interval);
         }
     }
 }

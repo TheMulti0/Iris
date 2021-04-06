@@ -26,6 +26,7 @@
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\SubscriptionsDb\SubscriptionsDb.csproj" />
+      <ProjectReference Include="..\TelegramClient\TelegramClient.csproj" />
     </ItemGroup>
 
 </Project>

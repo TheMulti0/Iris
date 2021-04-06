@@ -47,7 +47,7 @@ namespace SubscriptionsDb
             return Task.CompletedTask;
         }
 
-        public Task RemoveAsync(User user, string chatId)
+        public Task RemoveAsync(User user, long chatId)
         {
             return Task.CompletedTask;
         }

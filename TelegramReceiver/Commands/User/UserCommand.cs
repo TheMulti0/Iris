@@ -29,7 +29,7 @@ namespace TelegramReceiver
         {
             SubscriptionEntity entity = await Subscription;
 
-            UserChatSubscription chatSubscription = entity.Chats.First(info => info.ChatId == ConnectedChat);
+            UserChatSubscription chatSubscription = entity.Chats.First(info => info.ChatInfo.Id == ConnectedChat);
 
             string text = GetText(entity.User, chatSubscription);
 
