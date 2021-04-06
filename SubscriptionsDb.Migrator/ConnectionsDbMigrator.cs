@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Telegram.Bot;
@@ -19,13 +20,26 @@ namespace SubscriptionsDb.Migrator
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            foreach (Connection connection in _repository.Get())
+            try
             {
-                var chat = await _client.GetChatAsync(connection.Chat, stoppingToken);
+                foreach (Connection connection in _repository.Get())
+                {
+                    if (connection.ChatId != 0)
+                    {
+                        continue;
+                    }
+                    var chat = await _client.GetChatAsync(connection.Chat, stoppingToken);
 
-                connection.ChatId = chat.Id;
+                    connection.ChatId = chat.Id;
 
-                await _repository.AddOrUpdateAsync(connection.User, connection);
+                    await _repository.AddOrUpdateAsync(connection.User, connection);
+
+                    Console.WriteLine($"Migrated connection {connection.User}");
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
     }

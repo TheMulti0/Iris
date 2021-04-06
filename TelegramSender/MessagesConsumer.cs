@@ -58,8 +58,11 @@ namespace TelegramSender
             var normalSubscriptions = message.DestinationChats
                 .Where(subscription => !subscription.SendScreenshotOnly)
                 .ToList();
-            
-            await ConsumeMessageAsync(message with { DestinationChats = normalSubscriptions });
+
+            if (normalSubscriptions.Any())
+            {
+                await ConsumeMessageAsync(message with { DestinationChats = normalSubscriptions });
+            }
         }
 
         private async Task ConsumeMessageAsync(Message message)
