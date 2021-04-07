@@ -24,7 +24,9 @@ namespace TelegramSender
             }
         }
         
-        public static async Task<TdApi.InputMessageContent> ToInputMessageContentAsync(this IMedia media, TdApi.FormattedText caption)
+        public static async Task<TdApi.InputMessageContent> ToInputMessageContentAsync(
+            this IMedia media,
+            TdApi.FormattedText caption)
         {
             switch (media)
             {
@@ -53,16 +55,24 @@ namespace TelegramSender
             };
         }
         
-        private static async Task<TdApi.InputMessageContent> ToInputPhotoAsync(this BytesPhoto photo, TdApi.FormattedText caption)
+        private static async Task<TdApi.InputMessageContent> ToInputPhotoAsync(
+            this BytesPhoto photo,
+            TdApi.FormattedText caption)
         {
             Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
 
             var inputFileStream = new InputFileStream(GetStreamAsync);
 
-            return new TdApi.InputMessageContent.InputMessagePhoto
+            var inputMessageContent = new TdApi.InputMessageContent.InputMessagePhoto
             {
                 Caption = caption,
                 Photo = await inputFileStream.GetFileAsync()
+            };
+            
+            return new InputMessageContentFileStream
+            {
+                InputFileStream = inputFileStream,
+                InputMessageContent = inputMessageContent
             };
         }
 
