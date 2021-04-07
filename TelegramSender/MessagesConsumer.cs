@@ -89,7 +89,11 @@ namespace TelegramSender
 
         private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(Message message)
         {
-            IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, message.DestinationChats.First());
+            UserChatSubscription chatSubscription = message.DestinationChats.First();
+            
+            IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, chatSubscription);
+            
+            _logger.LogInformation("Successfully sent update {} to chat id {}", message.Update, chatSubscription.ChatInfo.Id);
             
             return GetInputMessageContents(sentMessages);
         }
