@@ -127,7 +127,8 @@ namespace TelegramSender
                 parsedMessage.ChatId,
                 new TdApi.InputMessageContent.InputMessageText
                 {
-                    Text = parsedMessage.Text
+                    Text = parsedMessage.Text,
+                    DisableWebPagePreview = parsedMessage.DisableWebPagePreview
                 },
                 parsedMessage.ReplyToMessageId,
                 token: parsedMessage.CancellationToken);
