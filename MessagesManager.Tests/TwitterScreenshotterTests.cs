@@ -81,6 +81,18 @@ namespace MessagesManager.Tests
         {
             Test(new Update
             {
+                Url = "https://twitter.com/kann_news/status/1379654933851607043",
+                Content = "סמוטריץ' ורע\"מ יתמכו בממשלה מבחוץ? ח\"כ שמחה רוטמן מהציונות הדתית על הדיווח ב-#חדשותהערב: \"העם בחר בדרך הימין האידיאולוגית. חווינו על בשרנו כל מיני פתרונות שעטנז, הם לא יעילים ויריצו אותנו לבחירות חמישיות\"\n@golan_aryeh\n #הבוקרהזה",
+                IsReply = true,
+                Media = new List<IMedia> {  }
+            }).Save("../../../test.png");
+        }
+        
+        [TestMethod]
+        public void TestReplyVideoUrlTweet()
+        {
+            Test(new Update
+            {
                 Url = "https://twitter.com/kann_news/status/1366648731408490500",
                 Content = "תיעוד בלעדי: 48 שעות במיון הפסיכיאטרי | פברואר בכאן חדשות\n@alon_sharvit_",
                 IsReply = true,
