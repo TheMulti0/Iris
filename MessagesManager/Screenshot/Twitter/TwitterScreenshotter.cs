@@ -76,13 +76,27 @@ namespace MessagesManager
         private Bitmap Screenshot(IWebElement tweetElement)
         {
             var takesScreenshot = (ITakesScreenshot) tweetElement;
+
+            TweetHeights tweetHeights = GetHeights();
             
             return takesScreenshot
                 .GetScreenshot()
                 .AsByteArray
                 .ToBitmap()
-                .Crop(GetViewport(_extractedTweet.GetHeights(), tweetElement.Size))
+                .Crop(GetViewport(tweetHeights, tweetElement.Size))
                 .RoundCorners(20);
+        }
+
+        private TweetHeights GetHeights()
+        {
+            try
+            {
+                return _extractedTweet.GetHeights();
+            }
+            catch (NoSuchElementException)
+            {
+                return new TweetHeights(0, 0, 0);
+            }
         }
 
         private static Rectangle GetViewport(TweetHeights tweetHeights, Size tweetSize)
