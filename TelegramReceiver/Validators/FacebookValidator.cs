@@ -28,7 +28,7 @@ namespace TelegramReceiver
                 return null;
             }
 
-            User newUser = new User(group.Value, Platform.Facebook);
+            User newUser = new User(group.Value.ToLower(), Platform.Facebook);
             
             IEnumerable<Update> updates = await _facebook.GetUpdatesAsync(newUser);
 

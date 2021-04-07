@@ -28,7 +28,7 @@ namespace TelegramReceiver
                 return null;
             }
 
-            User newUser = new User(group.Value, Platform.Twitter);
+            User newUser = new User(group.Value.ToLower(), Platform.Twitter);
             
             IEnumerable<Update> updates = await _twitter.GetAllUpdatesAsync(newUser);
 
