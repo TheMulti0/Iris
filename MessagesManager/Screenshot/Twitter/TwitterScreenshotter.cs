@@ -77,7 +77,7 @@ namespace MessagesManager
         {
             var takesScreenshot = (ITakesScreenshot) tweetElement;
 
-            TweetHeights tweetHeights = GetHeights();
+            TweetHeights tweetHeights = _extractedTweet.GetHeights();
             
             return takesScreenshot
                 .GetScreenshot()
@@ -85,18 +85,6 @@ namespace MessagesManager
                 .ToBitmap()
                 .Crop(GetViewport(tweetHeights, tweetElement.Size))
                 .RoundCorners(20);
-        }
-
-        private TweetHeights GetHeights()
-        {
-            try
-            {
-                return _extractedTweet.GetHeights();
-            }
-            catch (NoSuchElementException)
-            {
-                return new TweetHeights(0, 0, 0);
-            }
         }
 
         private static Rectangle GetViewport(TweetHeights tweetHeights, Size tweetSize)
