@@ -25,7 +25,7 @@ namespace TelegramSender
         {
             TdApi.FormattedText text = await ParseTextAsync(message.Message);
 
-            var inputMedia = await message.GetInputMessageContentAsync(text).ToListAsync();
+            var inputMedia = message.GetInputMessageContentAsync(text);
 
             var chat = await _client.GetChatAsync(message.ChatId.Identifier);
             

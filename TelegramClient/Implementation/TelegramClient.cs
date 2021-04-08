@@ -37,14 +37,12 @@ namespace TelegramClient
             TdApi.SendMessageOptions options = null,
             CancellationToken token = default)
         {
-            IAsyncDisposable disposable = null;
-            
-            if (inputMessageContent is InputMessageContentFileStream c)
+            bool hasFileStream = inputMessageContent.HasInputFileStream(out InputFileStream file);
+            if (hasFileStream)
             {
-                inputMessageContent = c.InputMessageContent;
-                disposable = c.InputFileStream;
-            }
-
+                inputMessageContent = inputMessageContent.WithFile(await file.CreateLocalInputFileAsync());
+            } 
+            
             TdApi.Message message = await _client.SendMessageAsync(
                 chatId: chatId,
                 inputMessageContent: inputMessageContent,
@@ -52,14 +50,14 @@ namespace TelegramClient
                 replyMarkup: replyMarkup,
                 options: options);
 
-            var sentMessage = await GetMatchingMessageEvents(message)
+            TdApi.Message sentMessage = await GetMatchingMessageEvents(message)
                 .SelectAwaitWithCancellation(
                     (update, t) => GetMessageAsync(update, chatId, inputMessageContent, replyToMessageId, replyMarkup, options, t))
                 .FirstOrDefaultAsync(token);
 
-            if (disposable != null)
+            if (hasFileStream)
             {
-                await disposable.DisposeAsync();
+                await file.DisposeAsync();
             }
             
             return sentMessage;
@@ -73,7 +71,7 @@ namespace TelegramClient
                 {
                     case TdApi.Update.UpdateMessageSendSucceeded m when m.OldMessageId == message.Id:
                         return true;
-
+ 
                     case TdApi.Update.UpdateMessageSendFailed f when f.OldMessageId == message.Id:
                         return true;
                 }
@@ -113,7 +111,7 @@ namespace TelegramClient
             TdApi.SendMessageOptions options,
             CancellationToken token)
         {
-            var downloadedMessageContent = await DownloadMessageContent(url, inputMessageContent);
+            var downloadedMessageContent = GetDownloadStreamMessageContent(url, inputMessageContent);
 
             TdApi.Message message = await SendMessageAsync(
                 chatId,
@@ -126,20 +124,13 @@ namespace TelegramClient
             return message;
         }
 
-        private static async Task<InputMessageContentFileStream> DownloadMessageContent(
+        private static TdApi.InputMessageContent GetDownloadStreamMessageContent(
             string url,
             TdApi.InputMessageContent inputMessageContent)
         {
-            RemoteFileStream downloader = new RemoteFileStream(url);
+            var file = new InputFileStream(new RemoteFileStream(url).GetStreamAsync);
 
-            TdApi.InputFile downloadedFile = await downloader.GetFileAsync();
-            TdApi.InputMessageContent downloadedMessageContent = inputMessageContent.WithFile(downloadedFile);
-
-            return new InputMessageContentFileStream
-            {
-                InputFileStream = downloader,
-                InputMessageContent = downloadedMessageContent
-            };
+            return inputMessageContent.WithFile(file);
         }
 
         public async Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(
@@ -155,8 +146,7 @@ namespace TelegramClient
             }
             catch (MessageSendFailedException e)
             {
-                TdApi.InputMessageContent[] contents 
-                    = await GetDownloadedMessageContents(inputMessageContents).ToArrayAsync(token);
+                TdApi.InputMessageContent[] contents = GetDownloadedMessageContents(inputMessageContents).ToArray();
 
                 return await SendMessageAlbumUnsafe(
                     chatId,
@@ -176,15 +166,10 @@ namespace TelegramClient
             bool ignoreFailure,
             CancellationToken token)
         {
-            Dictionary<TdApi.InputMessageContent, IAsyncDisposable> contents = inputMessageContents.Select(
-                content =>
-                {
-                    if (content is InputMessageContentFileStream c)
-                    {
-                        return (c.InputMessageContent, c.InputFileStream);
-                    }
-                    return (content, null);
-                }).ToDictionary(tuple => tuple.InputMessageContent, tuple => tuple.InputFileStream);
+            Dictionary<TdApi.InputMessageContent, IAsyncDisposable> contents = await inputMessageContents
+                .ToAsyncEnumerable()
+                .SelectAwait(ExtractStreamFiles)
+                .ToDictionaryAsync(tuple => tuple.content, tuple => tuple.file, token);
 
             TdApi.Messages messages = await _client.SendMessageAlbumAsync(
                 chatId: chatId,
@@ -202,7 +187,20 @@ namespace TelegramClient
             return sentMessages;
         }
 
-        private static async IAsyncEnumerable<TdApi.InputMessageContent> GetDownloadedMessageContents(
+        private static async ValueTask<(TdApi.InputMessageContent content, IAsyncDisposable file)> ExtractStreamFiles(TdApi.InputMessageContent content)
+        {
+            return content.HasInputFileStream(out InputFileStream file) 
+                ? (
+                    content.WithFile(
+                        await file.CreateLocalInputFileAsync()),
+                    file) 
+                : (
+                    content,
+                    null
+                    );
+        }
+
+        private static IEnumerable<TdApi.InputMessageContent> GetDownloadedMessageContents(
             IEnumerable<TdApi.InputMessageContent> inputMessageContents)
         {
             foreach (TdApi.InputMessageContent inputMessageContent in inputMessageContents)
@@ -211,7 +209,7 @@ namespace TelegramClient
                     file.HasUrl(out string url) &&
                     inputMessageContent is TdApi.InputMessageContent.InputMessageVideo)
                 {
-                    yield return await DownloadMessageContent(url, inputMessageContent);
+                    yield return GetDownloadStreamMessageContent(url, inputMessageContent);
                 }
                 else
                 {

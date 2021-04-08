@@ -1,17 +1,15 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using TdLib;
 
 namespace TelegramClient
 {
-    public sealed class InputFileStream : IAsyncDisposable
+    public sealed class InputFileStream : TdApi.InputFile, IAsyncDisposable
     {
-        private readonly Func<Task<Stream>> _getStreamAsync;
-        private static readonly HttpClient HttpClient = new();
         private static readonly Random Random = new();
 
+        private readonly Func<Task<Stream>> _getStreamAsync;
         private readonly string _filePath;
         private readonly FileStream _fileStream;
 
@@ -20,11 +18,11 @@ namespace TelegramClient
         {
             _getStreamAsync = getStreamAsync;
             
-            _filePath = GetFilePath();
+            _filePath = CreateUniqueFilePath();
             _fileStream = new FileStream(_filePath, FileMode.Create);
         }
 
-        private static string GetFilePath()
+        private static string CreateUniqueFilePath()
         {
             long currentTime = new DateTimeOffset().ToUnixTimeSeconds();
             int random = Random.Next();
@@ -32,13 +30,13 @@ namespace TelegramClient
             return $"{currentTime}-{random}";
         }
 
-        public async Task<TdApi.InputFile> GetFileAsync()
+        public async Task<TdApi.InputFile> CreateLocalInputFileAsync()
         {
             await using Stream remoteStream = await _getStreamAsync();
             
             await remoteStream.CopyToAsync(_fileStream);
 
-            return new TdApi.InputFile.InputFileLocal
+            return new InputFileLocal
             {
                 Path = _fileStream.Name
             };

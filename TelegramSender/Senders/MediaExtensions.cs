@@ -10,7 +10,7 @@ namespace TelegramSender
 {
     internal static class MediaExtensions
     {
-        public static async IAsyncEnumerable<TdApi.InputMessageContent> GetInputMessageContentAsync(this MessageInfo message, TdApi.FormattedText text)
+        public static IEnumerable<TdApi.InputMessageContent> GetInputMessageContentAsync(this MessageInfo message, TdApi.FormattedText text)
         {
             TdApi.FormattedText GetCaption(int i) => i == 0 && message.FitsInOneMediaMessage ? text : null;
 
@@ -18,13 +18,13 @@ namespace TelegramSender
             
             foreach (IMedia media in message.Media)
             {
-                yield return await media.ToInputMessageContentAsync(GetCaption(mediaIndex));
+                yield return media.ToInputMessageContentAsync(GetCaption(mediaIndex));
                 
                 mediaIndex++;
             }
         }
         
-        public static async Task<TdApi.InputMessageContent> ToInputMessageContentAsync(
+        public static TdApi.InputMessageContent ToInputMessageContentAsync(
             this IMedia media,
             TdApi.FormattedText caption)
         {
@@ -34,7 +34,7 @@ namespace TelegramSender
                     return p.ToInputPhoto(caption);
                 
                 case BytesPhoto p:
-                    return await p.ToInputPhotoAsync(caption);
+                    return p.ToInputPhotoAsync(caption);
 
                 case Video v:
                     return v.ToInputVideo(caption);
@@ -55,7 +55,7 @@ namespace TelegramSender
             };
         }
         
-        private static async Task<TdApi.InputMessageContent> ToInputPhotoAsync(
+        private static TdApi.InputMessageContent ToInputPhotoAsync(
             this BytesPhoto photo,
             TdApi.FormattedText caption)
         {
@@ -63,16 +63,10 @@ namespace TelegramSender
 
             var inputFileStream = new InputFileStream(GetStreamAsync);
 
-            var inputMessageContent = new TdApi.InputMessageContent.InputMessagePhoto
+            return new TdApi.InputMessageContent.InputMessagePhoto
             {
                 Caption = caption,
-                Photo = await inputFileStream.GetFileAsync()
-            };
-            
-            return new InputMessageContentFileStream
-            {
-                InputFileStream = inputFileStream,
-                InputMessageContent = inputMessageContent
+                Photo = inputFileStream
             };
         }
 

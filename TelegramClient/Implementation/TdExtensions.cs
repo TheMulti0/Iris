@@ -136,6 +136,19 @@ namespace TelegramClient
 
             return true;
         }
+        
+        public static bool HasInputFileStream(this TdApi.InputMessageContent content, out InputFileStream file)
+        {
+            if (content.HasFile(out TdApi.InputFile f) &&
+                f is InputFileStream s)
+            {
+                file = s;
+                return true;
+            }
+            
+            file = null;
+            return false;
+        }
 
         public static TdApi.InputMessageContent WithFile(this TdApi.InputMessageContent content, TdApi.InputFile file)
         {
