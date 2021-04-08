@@ -194,7 +194,7 @@ namespace TelegramClient
 
             List<TdApi.Message> sentMessages = await GetSentMessages(messages, ignoreFailure, token).ToListAsync(token);
 
-            foreach (IAsyncDisposable inputFileStream in contents.Values)
+            foreach (IAsyncDisposable inputFileStream in contents.Values.Where(i => i != null))
             {
                 await inputFileStream.DisposeAsync();
             }
