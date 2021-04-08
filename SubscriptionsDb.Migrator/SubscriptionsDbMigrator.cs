@@ -63,14 +63,14 @@ namespace SubscriptionsDb.Migrator
 
                 try
                 {
-                    if (subscription.ChatInfo != null)
-                    {
-                        continue;
-                    }
-                    
-                    Telegram.Bot.Types.Chat chat = await _client.GetChatAsync(subscription.ChatId, stoppingToken);
-
-                    chatInfo = JsonSerializer.Deserialize<ChatInfo>(JsonSerializer.Serialize(chat));
+                    // if (subscription.ChatInfo != null)
+                    // {
+                    //     continue;
+                    // }
+                    //
+                    // Telegram.Bot.Types.Chat chat = await _client.GetChatAsync(subscription.ChatId, stoppingToken);
+                    //
+                    // chatInfo = JsonSerializer.Deserialize<ChatInfo>(JsonSerializer.Serialize(chat));
                 }
                 catch (ChatNotFoundException)
                 {

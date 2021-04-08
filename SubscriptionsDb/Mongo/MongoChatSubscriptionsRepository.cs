@@ -91,7 +91,7 @@ namespace SubscriptionsDb
                 return thisChat;
             }
 
-            UserChatSubscription existingChat = existing.Chats.FirstOrDefault(c => c.ChatId == chat.ChatId);
+            UserChatSubscription existingChat = existing.Chats.FirstOrDefault(c => c.ChatInfo.Id == chat.ChatInfo.Id);
             
             if (existingChat == null)
             {

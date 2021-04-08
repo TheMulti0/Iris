@@ -42,7 +42,6 @@ namespace TelegramReceiver
             }
 
             UpdateDefinition<Connection> update = Builders<Connection>.Update
-                .Set(c => c.Chat, connection.Chat)
                 .Set(c => c.ChatId, connection.ChatId)
                 .Set(c => c.Language, connection.Language)
                 .Set(c => c.HasAgreedToTos, connection.HasAgreedToTos);

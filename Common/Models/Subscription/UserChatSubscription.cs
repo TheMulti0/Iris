@@ -6,8 +6,6 @@ namespace Common
     {
         public TimeSpan Interval { get; set; }
 
-        public string ChatId { get; set; }
-
         public ChatInfo ChatInfo { get; set; }
 
         public bool SendScreenshotOnly { get; set; }

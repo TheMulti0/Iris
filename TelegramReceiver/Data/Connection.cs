@@ -13,7 +13,6 @@ namespace TelegramReceiver
         public User User { get; set; }
 
         public Language Language { get; set; }
-        public string Chat { get; set; }
         public long ChatId { get; set; }
 
         public bool HasAgreedToTos { get; set; }

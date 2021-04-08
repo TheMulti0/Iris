@@ -24,15 +24,15 @@ namespace SubscriptionsDb.Migrator
             {
                 foreach (Connection connection in _repository.Get())
                 {
-                    if (connection.ChatId != 0)
-                    {
-                        continue;
-                    }
-                    var chat = await _client.GetChatAsync(connection.Chat, stoppingToken);
-
-                    connection.ChatId = chat.Id;
-
-                    await _repository.AddOrUpdateAsync(connection.User, connection);
+                    // if (connection.ChatId != 0)
+                    // {
+                    //     continue;
+                    // }
+                    // var chat = await _client.GetChatAsync(connection.Chat, stoppingToken);
+                    //
+                    // connection.ChatId = chat.Id;
+                    //
+                    // await _repository.AddOrUpdateAsync(connection.User, connection);
 
                     Console.WriteLine($"Migrated connection {connection.User}");
                 }
