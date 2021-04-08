@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TdLib;
 
 namespace TelegramClient
@@ -9,11 +10,15 @@ namespace TelegramClient
         private readonly TelegramClientConfig _config;
         private readonly TdClient _client = new();
         private readonly TdApi.TdlibParameters _tdlibParameters;
+        private readonly ILogger<TelegramClientFactory> _logger;
 
-        public TelegramClientFactory(TelegramClientConfig config)
+        public TelegramClientFactory(
+            TelegramClientConfig config,
+            ILogger<TelegramClientFactory> logger)
         {
             _config = config;
-            
+            _logger = logger;
+
             _tdlibParameters = new TdApi.TdlibParameters
             {
                 ApiId = _config.AppId,
@@ -23,13 +28,13 @@ namespace TelegramClient
                 SystemLanguageCode = "en",
                 SystemVersion = "Win 10.0"
             };
+
+            _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamEmpty()).Wait();
+            _client.SetLogVerbosityLevelAsync(0).Wait();
         }
 
         public async Task<ITelegramClient> CreateAsync()
         {
-            await _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamEmpty());
-            await _client.SetLogVerbosityLevelAsync(0);
-
             var startupState = new StartupState(false, false);
             
             await foreach (TdApi.Update update in _client.OnUpdateReceived().ToAsyncEnumerable())
