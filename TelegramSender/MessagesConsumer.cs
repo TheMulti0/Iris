@@ -73,15 +73,22 @@ namespace TelegramSender
 
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
-            var uploadedContents = (await SendFirstChatMessage(message)).ToList();
+            List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(message)).ToList();
 
             foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
             {
                 ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.Update);
 
-                IEnumerable<TdApi.InputMessageContent> messageContents = WithUploadedContents(
-                    parsedMessageInfo.Media,
-                    uploadedContents);
+                if (parsedMessageInfo == null)
+                {
+                    continue;
+                }
+
+                IEnumerable<TdApi.InputMessageContent> originalContents = parsedMessageInfo.Media;
+                
+                IEnumerable<TdApi.InputMessageContent> messageContents = uploadedContents.Any() 
+                    ? WithUploadedContents(originalContents, uploadedContents) 
+                    : originalContents;
 
                 await SendChatMessage(message, chatInfo, parsedMessageInfo with { Media = messageContents });
             }
@@ -122,14 +129,30 @@ namespace TelegramSender
 
             ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, update);
 
+            if (parsed == null)
+            {
+                return Enumerable.Empty<TdApi.Message>();
+            }
+
             return await SendAsync(_sender, parsed, update, chatId);
         }
 
-        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription chatInfo, Update update)
+        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription subscription, Update update)
         {
-            MessageInfo messageInfo = _messageInfoBuilder.Build(update, chatInfo);
+            try
+            {
+                MessageInfo messageInfo = _messageInfoBuilder.Build(update, subscription);
             
-            return await _sender.ParseAsync(messageInfo);
+                return await _sender.ParseAsync(messageInfo);
+            }
+            catch (TdException e)
+            {
+                if (e.Message == "CHANNEL_INVALID")
+                {
+                    await RemoveChatSubscription(update.Author, subscription.ChatInfo.Id);
+                }
+            }
+            return null;
         }
 
         private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
