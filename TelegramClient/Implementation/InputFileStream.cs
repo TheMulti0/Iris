@@ -44,9 +44,13 @@ namespace TelegramClient
 
         public async ValueTask DisposeAsync()
         {
+            Console.WriteLine($"Disposing {_filePath}");
+            
             await _fileStream.DisposeAsync();
 
             File.Delete(_filePath);
+            
+            Console.WriteLine($"Successfully disposed {_filePath}");
         }
     }
 }
