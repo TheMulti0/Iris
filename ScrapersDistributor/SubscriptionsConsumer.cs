@@ -58,6 +58,11 @@ namespace ScrapersDistributor
             _logger.LogInformation("Adding user subscription {}", subscription);
 
             var cts = new CancellationTokenSource();
+
+            if (subscription.User.Platform == Platform.Facebook)
+            {
+                subscription = subscription with { Interval = subscription.Interval * 3 };
+            }
             
             Task userTask = Task.Run(
                 () => PeriodicallySendJobs(subscription, cts.Token),

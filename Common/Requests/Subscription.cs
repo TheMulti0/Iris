@@ -8,7 +8,7 @@ namespace Common
         public User User { get; }
         
         [JsonConverter(typeof(NullableTimeSpanConverter))]
-        public TimeSpan? Interval { get; }
+        public TimeSpan? Interval { get; init; }
 
         public DateTime? MinimumEarliestUpdateTime { get; set; }
 
