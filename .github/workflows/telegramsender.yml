@@ -3,6 +3,12 @@ name: Deploy
 on:
   push:
     branches: [ master ]
+    paths:
+      - "Extensions/**"
+      - "Common/**"
+      - "TelegramClient/**"
+      - "SubscriptionsDb/**"
+      - "TelegramSender/**"
     
 jobs:
   telegramsender:

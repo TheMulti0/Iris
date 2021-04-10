@@ -3,6 +3,12 @@ name: Deploy
 on:
   push:
     branches: [ master ]
+    paths:
+      - "Extensions/**"
+      - "Common/**"
+      - "MessagesManager/**"
+      - "SubscriptionsDb/**"
+      - "UpdatesDb/**"
     
 jobs:
   messagesmanager:
