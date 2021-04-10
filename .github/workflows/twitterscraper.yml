@@ -3,11 +3,11 @@ name: Deploy TwitterScraper
 on:
   push:
     branches: [ master ]
-    paths:
-      - "Extensions/**"
-      - "Common/**"
-      - "UpdatesScraper/**"
-      - "TwitterScraper/**"
+#     paths:
+#       - "Extensions/**"
+#       - "Common/**"
+#       - "UpdatesScraper/**"
+#       - "TwitterScraper/**"
     
 jobs:
   build-push:
