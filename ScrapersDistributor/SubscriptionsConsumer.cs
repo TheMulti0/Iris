@@ -124,10 +124,10 @@ namespace ScrapersDistributor
         {
             while (true)
             {
-                _producer.Send(pollJob, platformName);
-                
                 _logger.LogInformation("Delaying {} for another {}", subscription, interval);
                 await Task.Delay(interval, token);
+                
+                _producer.Send(pollJob, platformName);
             }
         }
     }
