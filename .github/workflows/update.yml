@@ -131,12 +131,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
-        with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
-          stop-commands: ${{ github.token }} | sha256sum | head -c 64
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
