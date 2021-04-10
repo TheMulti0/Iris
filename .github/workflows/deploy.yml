@@ -1,4 +1,4 @@
-﻿name: Build and push images
+name: Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     
 jobs:
   facebookscraper:
-    name: Build and push FacebookScraper image
+    name: Deploy FacebookScraper
     runs-on: ubuntu-latest
 
     steps:
@@ -27,8 +27,17 @@ jobs:
           file: ./FacebookScraper/Dockerfile
           push: true
           tags: irisupdate/facebookscraper:latest  
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment facebookscraper facebookscraper=irisupdate/facebookscraper:latest
+          
   feedsscraper:
-    name: Build and push FeedsScraper image
+    name: Deploy FeedsScraper
     runs-on: ubuntu-latest
 
     steps:
@@ -48,10 +57,18 @@ jobs:
         with:
           file: ./FeedsScraper/Dockerfile
           push: true
-          tags: irisupdate/feedsscraper:latest  
+          tags: irisupdate/feedsscraper:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment feedsscraper feedsscraper=irisupdate/feedsscraper:latest
           
   messagesmanager:
-    name: Build and push MessagesManager image
+    name: Deploy MessagesManager
     runs-on: ubuntu-latest
 
     steps:
@@ -71,10 +88,18 @@ jobs:
         with:
           file: ./MessagesManager/Dockerfile
           push: true
-          tags: irisupdate/messagesmanager:latest  
+          tags: irisupdate/messagesmanager:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment messagesmanager messagesmanager=irisupdate/messagesmanager:latest
           
   subscriptionsmanager:
-    name: Build and push SubscriptionsManager image
+    name: Deploy SubscriptionsManager
     runs-on: ubuntu-latest
 
     steps:
@@ -94,10 +119,18 @@ jobs:
         with:
           file: ./SubscriptionsManager/Dockerfile
           push: true
-          tags: irisupdate/subscriptionsmanager:latest  
+          tags: irisupdate/subscriptionsmanager:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment subscriptionsmanager subscriptionsmanager=irisupdate/subscriptionsmanager:latest
           
   scrapersdistributor:
-    name: Build and push ScrapersDistributor image
+    name: Deploy ScrapersDistributor
     runs-on: ubuntu-latest
 
     steps:
@@ -118,9 +151,17 @@ jobs:
           file: ./ScrapersDistributor/Dockerfile
           push: true
           tags: irisupdate/scrapersdistributor:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment scrapersdistributor scrapersdistributor=irisupdate/scrapersdistributor:latest
 
   telegramreceiver:
-    name: Build and push TelegramReceiver image
+    name: Deploy TelegramReceiver
     runs-on: ubuntu-latest
 
     steps:
@@ -140,10 +181,18 @@ jobs:
         with:
           file: ./TelegramReceiver/Dockerfile
           push: true
-          tags: irisupdate/telegramreceiver:latest  
+          tags: irisupdate/telegramreceiver:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment telegramreceiver telegramreceiver=irisupdate/telegramreceiver:latest
           
   telegramsender:
-    name: Build and push TelegramSender image
+    name: Deploy TelegramSender
     runs-on: ubuntu-latest
 
     steps:
@@ -163,10 +212,18 @@ jobs:
         with:
           file: ./TelegramSender/Dockerfile
           push: true
-          tags: irisupdate/telegramsender:latest  
+          tags: irisupdate/telegramsender:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment telegramsender telegramsender=irisupdate/telegramsender:latest
           
   twitterscraper:
-    name: Build and push TwitterScraper image
+    name: Deploy TwitterScraper
     runs-on: ubuntu-latest
 
     steps:
@@ -187,9 +244,17 @@ jobs:
           file: ./TwitterScraper/Dockerfile
           push: true
           tags: irisupdate/twitterscraper:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment twitterscraper twitterscraper=irisupdate/twitterscraper:latest
 
   dashboardapi:
-    name: Build and push DashboardApi image
+    name: Deploy DashboardApi
     runs-on: ubuntu-latest
 
     steps:
@@ -210,9 +275,17 @@ jobs:
           file: ./DashboardApi/Dockerfile
           push: true
           tags: irisupdate/dashboardapi:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment dashboardapi dashboardapi=irisupdate/dashboardapi:latest
         
   dashboardapp:
-    name: Build and push dashboardapp image
+    name: Deploy dashboardapp
     runs-on: ubuntu-latest
 
     steps:
@@ -233,5 +306,13 @@ jobs:
           context: ./dashboardapp
           file: ./dashboardapp/Dockerfile
           push: true
-          tags: irisupdate/dashboardapp:latest  
-          
+          tags: irisupdate/dashboardapp:latest
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+      - name: Update deployment
+        run: kubectl set image deployment dashboardapp dashboardapp=irisupdate/dashboardapp:latest
+        
