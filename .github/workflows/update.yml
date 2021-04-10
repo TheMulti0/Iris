@@ -142,12 +142,6 @@ jobs:
         with:
           personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
           clusterName: iris
-        run: |
-          # disable command workflow processing
-          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
-
-          # enable workflow command processing
-          echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
       - name: Update image
         run: kubectl set image deployment dashboardapi dashboardapi=latest
       - name: log untrusted output
