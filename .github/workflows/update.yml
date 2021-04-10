@@ -131,25 +131,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: log untrusted output
-        run: |
-        
-          # disable command workflow processing
-          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
-          
       - name: Set up kubectl
         uses: matootie/dokube@v1.3.3
         with:
           personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
           clusterName: iris
           stop-commands: ${{ github.token }} | sha256sum | head -c 64
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
         run: kubectl set image deployment dashboardapi dashboardapi=latest
-      - name: log untrusted output
-        run: |
-
-          # enable workflow command processing
-          echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
 
   dashboardapp:
     name: Update dashboardapp
