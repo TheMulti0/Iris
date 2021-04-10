@@ -195,14 +195,8 @@ namespace TelegramClient
         private static async ValueTask<(TdApi.InputMessageContent content, IAsyncDisposable file)> ExtractStreamFiles(TdApi.InputMessageContent content)
         {
             return content.HasInputFileStream(out InputFileStream file) 
-                ? (
-                    content.WithFile(
-                        await file.CreateLocalInputFileAsync()),
-                    file) 
-                : (
-                    content,
-                    null
-                    );
+                ? (content.WithFile(await file.CreateLocalInputFileAsync()), file) 
+                : (content, null);
         }
 
         private static IEnumerable<TdApi.InputMessageContent> GetDownloadedMessageContents(
