@@ -12,13 +12,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment facebookscraper facebookscraper=latest
+        run: kubectl set image deployment facebookscraper facebookscraper=irisupdate/facebookscraper
   feedsscraper:
     name: Update FeedsScraper
     runs-on: ubuntu-latest
@@ -26,13 +27,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment feedsscraper feedsscraper=latest
+        run: kubectl set image deployment feedsscraper feedsscraper=irisupdate/feedsscraper
           
   messagesmanager:
     name: Update MessagesManager
@@ -41,13 +43,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment messagesmanager messagesmanager=latest
+        run: kubectl set image deployment messagesmanager messagesmanager=irisupdate/messagesmanager
           
   subscriptionsmanager:
     name: Update SubscriptionsManager
@@ -56,13 +59,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment subscriptionsmanager subscriptionsmanager=latest
+        run: kubectl set image deployment subscriptionsmanager subscriptionsmanager=irisupdate/subscriptionsmanager
           
   scrapersdistributor:
     name: Update ScrapersDistributor
@@ -71,13 +75,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment scrapersdistributor scrapersdistributor=latest
+        run: kubectl set image deployment scrapersdistributor scrapersdistributor=irisupdate/scrapersdistributor
 
   telegramreceiver:
     name: Update TelegramReceiver
@@ -86,13 +91,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment telegramreceiver telegramreceiver=latest
+        run: kubectl set image deployment telegramreceiver telegramreceiver=irisupdate/telegramreceiver
           
   telegramsender:
     name: Update TelegramSender
@@ -101,13 +107,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment telegramsender telegramsender=latest
+        run: kubectl set image deployment telegramsender telegramsender=irisupdate/telegramsender
           
   twitterscraper:
     name: Update TwitterScraper
@@ -116,13 +123,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment twitterscraper twitterscraper=latest
+        run: kubectl set image deployment twitterscraper twitterscraper=irisupdate/twitterscraper
 
   dashboardapi:
     name: Update DashboardApi
@@ -138,7 +146,7 @@ jobs:
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment dashboardapi dashboardapi=latest
+        run: kubectl set image deployment dashboardapi dashboardapi=irisupdate/dashboardapi
 
   dashboardapp:
     name: Update dashboardapp
@@ -147,11 +155,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up kubectl
-        uses: matootie/dokube@v1.3.3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          clusterName: iris
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
       - name: Update image
-        run: kubectl set image deployment dashboardapp dashboardapp=latest
+        run: kubectl set image deployment dashboardapp dashboardapp=irisupdate/dashboardapp
         
