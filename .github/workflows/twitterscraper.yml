@@ -1,17 +1,17 @@
-name: Deploy TwitterScraper
+name: TwitterScraper
 
 on:
   push:
     branches: [ master ]
-#     paths:
-#       - "Extensions/**"
-#       - "Common/**"
-#       - "UpdatesScraper/**"
-#       - "TwitterScraper/**"
+    paths:
+      - "Extensions/**"
+      - "Common/**"
+      - "UpdatesScraper/**"
+      - "TwitterScraper/**"
     
 jobs:
   build-push:
-    name: Build TwitterScraper's image and push to container registry
+    name: Build image and push to container registry
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
           tags: irisupdate/twitterscraper:latest
 
   deploy:
-    name: Deploy TwitterScraper's new image
+    name: Deploy new image
     runs-on: ubuntu-latest
     needs: build-push
     steps:

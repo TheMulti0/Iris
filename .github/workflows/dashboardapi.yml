@@ -1,4 +1,4 @@
-name: Deploy
+name: DashboardApi
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
       - "dashboardapp/**"
     
 jobs:
-  dashboardapi:
-    name: Deploy DashboardApi
+  build-push:
+    name: Build image and push to container registry
     runs-on: ubuntu-latest
 
     steps:
@@ -32,12 +32,19 @@ jobs:
           file: ./DashboardApi/Dockerfile
           push: true
           tags: irisupdate/dashboardapi:latest
+
+  deploy:
+    name: Deploy new image
+    runs-on: ubuntu-latest
+    needs: build-push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_TOKEN }}
       - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 iris
+        run: doctl kubernetes cluster kubeconfig save iris
       - name: Update deployment
         run: kubectl set image deployment dashboardapi dashboardapi=irisupdate/dashboardapi:latest
-        
