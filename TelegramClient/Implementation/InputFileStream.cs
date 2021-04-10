@@ -33,6 +33,8 @@ namespace TelegramClient
         public async Task<TdApi.InputFile> CreateLocalInputFileAsync()
         {
             await using Stream remoteStream = await _getStreamAsync();
+
+            Console.WriteLine("Stream length: " + remoteStream.Length);
             
             await remoteStream.CopyToAsync(_fileStream);
 
