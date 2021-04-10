@@ -19,9 +19,14 @@ spec:
           imagePullPolicy: "Always"
           name: messagesmanager
           env:
-            - name: MongoDb__ConnectionString
+            - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
-                  name: usersdbsecrets
+                  name: subscriptionsdbsecrets
+                  key: connectionstring
+            - name: UpdatesDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: updatesdbsecrets
                   key: connectionstring
       restartPolicy: Always

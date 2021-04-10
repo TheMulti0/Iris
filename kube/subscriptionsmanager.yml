@@ -33,9 +33,9 @@ spec:
           imagePullPolicy: "Always"
           name: subscriptionsmanager
           env:
-            - name: MongoDb__ConnectionString
+            - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
-                  name: usersdbsecrets
+                  name: subscriptionsdbsecrets
                   key: connectionstring
       restartPolicy: Always

@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: telegramreceiversecrets
+type: Opaque
+stringData:
+  accesstoken: accesstoken
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,16 +27,23 @@ spec:
           imagePullPolicy: "Always"
           name: telegramreceiver
           env:
-            - name: MongoDb__ConnectionString
+            - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
-                  name: usersdbsecrets
+                  name: subscriptionsdbsecrets
+                  key: connectionstring
+            - name: ConnectionsDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: connectionsdbsecrets
                   key: connectionstring
             - name: Telegram__AccessToken
               valueFrom:
                 secretKeyRef:
-                  name: telegramsecrets
+                  name: telegramreceiversecrets
                   key: accesstoken
+            - name: Telegram__DefaultInterval
+              value: "00:01:00"
             - name: Twitter__ConsumerKey
               valueFrom:
                 secretKeyRef:
@@ -39,4 +54,6 @@ spec:
                 secretKeyRef:
                   name: twittersecrets
                   key: consumersecret
+            - name: Facebook__PageCount
+              value: "1"
       restartPolicy: Always

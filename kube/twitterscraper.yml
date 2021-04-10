@@ -16,9 +16,16 @@ spec:
     spec:
       containers:
         - image: irisupdate/twitterscraper:latest
-          imagePullPolicy: ""
+          imagePullPolicy: "Always"
           name: twitterscraper
           env:
+            - name: UpdatesScraperDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: connectionstring
+            - name: UpdatesScraperDb__DatabaseName
+              value: TwitterScraperDb
             - name: UpdatesProvider__ConsumerKey
               valueFrom:
                 secretKeyRef:

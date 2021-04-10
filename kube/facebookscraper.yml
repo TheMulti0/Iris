@@ -27,9 +27,6 @@ spec:
           imagePullPolicy: "Always"
           name: facebookscraper
           env:
-            - name: UpdatesProvider__Name
-              valueFrom:
-                secretKeyRef:
-                  name: facebooksecrets
-                  key: name
+            - name: UpdatesProvider__PageCount
+              value: "1"
       restartPolicy: Always

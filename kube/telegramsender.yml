@@ -1,3 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: telegramsendersecrets
+type: Opaque
+stringData:
+  bottoken: bottoken
+  appid: appid
+  apphash: apphash
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,9 +29,19 @@ spec:
           imagePullPolicy: "Always"
           name: telegramsender
           env:
-            - name: Telegram__AccessToken
+            - name: Telegram__BotToken
               valueFrom:
                 secretKeyRef:
-                  name: telegramsecrets
-                  key: accesstoken
+                  name: telegramsendersecrets
+                  key: bottoken
+            - name: Telegram__AppId
+              valueFrom:
+                secretKeyRef:
+                  name: telegramsendersecrets
+                  key: appid
+            - name: Telegram__AppHash
+              valueFrom:
+                secretKeyRef:
+                  name: telegramsendersecrets
+                  key: apphash
       restartPolicy: Always
