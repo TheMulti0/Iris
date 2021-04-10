@@ -142,6 +142,7 @@ jobs:
         with:
           personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
           clusterName: iris
+          stop-commands: ${{ github.token }} | sha256sum | head -c 64
       - name: Update image
         run: kubectl set image deployment dashboardapi dashboardapi=latest
       - name: log untrusted output
