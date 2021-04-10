@@ -51,6 +51,8 @@ namespace TelegramClient
             await _fileStream.DisposeAsync();
 
             File.Delete(_filePath);
+
+            Console.WriteLine($"Exists: {File.Exists(_filePath)}");
             
             Console.WriteLine($"Successfully disposed {_filePath}");
         }
