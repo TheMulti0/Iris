@@ -43,24 +43,27 @@ namespace TelegramClient
                 inputMessageContent = inputMessageContent.WithFile(await file.CreateLocalInputFileAsync());
             } 
             
-            TdApi.Message message = await _client.SendMessageAsync(
-                chatId: chatId,
-                inputMessageContent: inputMessageContent,
-                replyToMessageId: replyToMessageId,
-                replyMarkup: replyMarkup,
-                options: options);
-
-            TdApi.Message sentMessage = await GetMatchingMessageEvents(message)
-                .SelectAwaitWithCancellation(
-                    (update, t) => GetMessageAsync(update, chatId, inputMessageContent, replyToMessageId, replyMarkup, options, t))
-                .FirstOrDefaultAsync(token);
-
-            if (hasFileStream)
+            try
             {
-                await file.DisposeAsync();
+                TdApi.Message message = await _client.SendMessageAsync(
+                    chatId: chatId,
+                    inputMessageContent: inputMessageContent,
+                    replyToMessageId: replyToMessageId,
+                    replyMarkup: replyMarkup,
+                    options: options);
+
+                return await GetMatchingMessageEvents(message)
+                    .SelectAwaitWithCancellation(
+                        (update, t) => GetMessageAsync(update, chatId, inputMessageContent, replyToMessageId, replyMarkup, options, t))
+                    .FirstOrDefaultAsync(token);
             }
-            
-            return sentMessage;
+            finally
+            {
+                if (hasFileStream)
+                {
+                    await file.DisposeAsync();
+                }    
+            }
         }
 
         private IAsyncEnumerable<TdApi.Update> GetMatchingMessageEvents(TdApi.Message message) => OnUpdateReceived
@@ -113,15 +116,13 @@ namespace TelegramClient
         {
             var downloadedMessageContent = GetDownloadStreamMessageContent(url, inputMessageContent);
 
-            TdApi.Message message = await SendMessageAsync(
+            return await SendMessageAsync(
                 chatId,
                 downloadedMessageContent,
                 replyToMessageId,
                 replyMarkup,
                 options,
                 token);
-            
-            return message;
         }
 
         private static TdApi.InputMessageContent GetDownloadStreamMessageContent(
@@ -171,20 +172,24 @@ namespace TelegramClient
                 .SelectAwait(ExtractStreamFiles)
                 .ToDictionaryAsync(tuple => tuple.content, tuple => tuple.file, token);
 
-            TdApi.Messages messages = await _client.SendMessageAlbumAsync(
-                chatId: chatId,
-                inputMessageContents: contents.Keys.ToArray(),
-                replyToMessageId: replyToMessageId,
-                options: options);
-
-            List<TdApi.Message> sentMessages = await GetSentMessages(messages, ignoreFailure, token).ToListAsync(token);
-
-            foreach (IAsyncDisposable inputFileStream in contents.Values.Where(i => i != null))
+            try
             {
-                await inputFileStream.DisposeAsync();
+                TdApi.Messages messages = await _client.SendMessageAlbumAsync(
+                    chatId: chatId,
+                    inputMessageContents: contents.Keys.ToArray(),
+                    replyToMessageId: replyToMessageId,
+                    options: options);
+
+                return await GetSentMessages(messages, ignoreFailure, token)
+                    .ToListAsync(token);
             }
-            
-            return sentMessages;
+            finally
+            {
+                foreach (IAsyncDisposable inputFileStream in contents.Values.Where(i => i != null))
+                {
+                    await inputFileStream.DisposeAsync();
+                }
+            }
         }
 
         private static async ValueTask<(TdApi.InputMessageContent content, IAsyncDisposable file)> ExtractStreamFiles(TdApi.InputMessageContent content)
