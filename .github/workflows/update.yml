@@ -1,0 +1,156 @@
+﻿name: Update components images
+
+on:
+  push:
+    branches: [ master ]
+    
+jobs:
+  facebookscraper:
+    name: Update FacebookScraper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment facebookscraper facebookscraper=latest
+  feedsscraper:
+    name: Update FeedsScraper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment feedsscraper feedsscraper=latest
+          
+  messagesmanager:
+    name: Update MessagesManager
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment messagesmanager messagesmanager=latest
+          
+  subscriptionsmanager:
+    name: Update SubscriptionsManager
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment subscriptionsmanager subscriptionsmanager=latest
+          
+  scrapersdistributor:
+    name: Update ScrapersDistributor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment scrapersdistributor scrapersdistributor=latest
+
+  telegramreceiver:
+    name: Update TelegramReceiver
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment telegramreceiver telegramreceiver=latest
+          
+  telegramsender:
+    name: Update TelegramSender
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment telegramsender telegramsender=latest
+          
+  twitterscraper:
+    name: Update TwitterScraper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment twitterscraper twitterscraper=latest
+
+  dashboardapi:
+    name: Update DashboardApi
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment dashboardapi dashboardapi=latest
+
+  dashboardapp:
+    name: Update dashboardapp
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up kubectl
+        uses: matootie/dokube@v1.3.3
+        with:
+          personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          clusterName: iris
+      - name: Update image
+        run: kubectl set image deployment dashboardapp dashboardapp=latest
+        
