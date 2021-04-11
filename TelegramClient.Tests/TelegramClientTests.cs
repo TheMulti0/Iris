@@ -46,6 +46,31 @@ namespace TelegramClient.Tests
         }
         
         [DataTestMethod]
+        [DataRow("test")]
+        public async Task TestReplyTextMessage(string text)
+        {
+            var content = new TdApi.InputMessageContent.InputMessageText
+            {
+                Text = new TdApi.FormattedText
+                {
+                    Text = text
+                }
+            };
+            TdApi.Message message = await _client.SendMessageAsync(
+                _chatId,
+                content);
+            
+            Assert.IsNotNull(message);
+            
+            TdApi.Message message2 = await _client.SendMessageAsync(
+                _chatId,
+                content,
+                replyToMessageId: message.Id);
+            
+            Assert.IsNotNull(message2);
+        }
+        
+        [DataTestMethod]
         [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80")]
         public Task TestPhotoMessage(string photoUrl)
         {
