@@ -32,13 +32,10 @@ namespace TelegramClient
 
         public async Task<TdApi.InputFile> CreateLocalInputFileAsync()
         {
-            if (!File.Exists(_filePath))
-            {
-                await using Stream remoteStream = await _getStreamAsync();
+            await using Stream remoteStream = await _getStreamAsync();
+        
+            await remoteStream.CopyToAsync(_fileStream);                
             
-                await remoteStream.CopyToAsync(_fileStream);                
-            }
-
             return new InputFileLocal
             {
                 Path = _fileStream.Name
