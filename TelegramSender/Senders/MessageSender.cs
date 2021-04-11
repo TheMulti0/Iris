@@ -73,7 +73,7 @@ namespace TelegramSender
                 .ToList();
             
             IEnumerable<TdApi.InputMessageContent> nonAudios = parsedMessage.Media
-                .Where(content => !(content is TdApi.InputMessageContent.InputMessageAudio));
+                .Where(content => content is not TdApi.InputMessageContent.InputMessageAudio);
 
             if (!audios.Any())
             {

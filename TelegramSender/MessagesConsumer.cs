@@ -118,7 +118,7 @@ namespace TelegramSender
         private static IEnumerable<TdApi.InputMessageContent> GetInputMessageContents(IEnumerable<TdApi.Message> messages)
         {
             return messages
-                .Where(m => !(m.Content is TdApi.MessageContent.MessageText))
+                .Where(m => m.Content is not TdApi.MessageContent.MessageText)
                 .Select(m => m.Content.ToInputMessageContentAsync());
         }
 
