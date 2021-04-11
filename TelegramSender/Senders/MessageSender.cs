@@ -50,14 +50,18 @@ namespace TelegramSender
                 return await SendTextMessagesAsync(parsedMessage).ToListAsync();
             }
 
-            IEnumerable<TdApi.Message> mediaMessages = await SendMediaMessages(parsedMessage);
+            IEnumerable<TdApi.Message> mediaMessages = (await SendMediaMessages(parsedMessage))
+                .ToList();
 
             if (parsedMessage.FitsInOneMediaMessage)
             {
                 return mediaMessages;
             }
+
+            ParsedMessageInfo inReplyToFirstMediaMessage = parsedMessage with { ReplyToMessageId = mediaMessages.First().Id };
             
-            IEnumerable<TdApi.Message> textMessages = await SendTextMessagesAsync(parsedMessage).ToListAsync();
+            IEnumerable<TdApi.Message> textMessages = await SendTextMessagesAsync(inReplyToFirstMediaMessage)
+                .ToListAsync();
 
             return mediaMessages.Concat(textMessages);
         }
