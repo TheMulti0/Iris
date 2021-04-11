@@ -37,7 +37,7 @@ namespace TelegramClient
             TdApi.SendMessageOptions options = null,
             CancellationToken token = default)
         {
-            DisposableMessageContent content = null;
+            var content = new DisposableMessageContent(inputMessageContent);
 
             bool hasFileStream = inputMessageContent.HasInputFileStream(out InputFileStream file);
             if (hasFileStream)
@@ -49,7 +49,7 @@ namespace TelegramClient
             {
                 TdApi.Message message = await _client.SendMessageAsync(
                     chatId: chatId,
-                    inputMessageContent: inputMessageContent,
+                    inputMessageContent: content.Content,
                     replyToMessageId: replyToMessageId,
                     replyMarkup: replyMarkup,
                     options: options);
