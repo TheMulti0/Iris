@@ -32,11 +32,12 @@ namespace TelegramClient
 
         public async Task<TdApi.InputFile> CreateLocalInputFileAsync()
         {
-            await using Stream remoteStream = await _getStreamAsync();
-
-            Console.WriteLine("Stream length: " + remoteStream.Length);
+            if (!File.Exists(_filePath))
+            {
+                await using Stream remoteStream = await _getStreamAsync();
             
-            await remoteStream.CopyToAsync(_fileStream);
+                await remoteStream.CopyToAsync(_fileStream);                
+            }
 
             return new InputFileLocal
             {
@@ -46,15 +47,9 @@ namespace TelegramClient
 
         public async ValueTask DisposeAsync()
         {
-            Console.WriteLine($"Disposing {_filePath}");
-            
             await _fileStream.DisposeAsync();
 
             File.Delete(_filePath);
-
-            Console.WriteLine($"Exists: {File.Exists(_filePath)}");
-            
-            Console.WriteLine($"Successfully disposed {_filePath}");
         }
     }
 }

@@ -17,11 +17,6 @@ namespace TelegramClient
         {
             _client = client;
             OnUpdateReceived = client.OnUpdateReceived();
-
-            TaskScheduler.UnobservedTaskException += (sender, e) =>
-            {
-                Console.WriteLine("Unhandled task exception" + e);
-            };
         }
 
         public Task<TdApi.FormattedText> ParseTextAsync(string text, TdApi.TextParseMode parseMode)
