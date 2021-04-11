@@ -184,7 +184,7 @@ namespace TelegramClient
                     return false;
             }
             
-            return true;
+            return thumbnail != null;
         }
 
         public static TdApi.InputMessageContent WithFile(this TdApi.InputMessageContent content, TdApi.InputFile file)
