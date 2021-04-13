@@ -38,7 +38,7 @@ namespace FacebookScraper
 
                 if (!posts.Any())
                 {
-                    _logger.LogWarning("No results were received when scraping {}", user);
+                    _logger.LogWarning("No results were received when scraping {} {}", user, response);
                 }
                 
                 return posts.Select(ToUpdate(user)) ;
