@@ -11,11 +11,15 @@ namespace TelegramClient
     public class TelegramClient : ITelegramClient
     {
         private readonly TdClient _client;
+        private readonly TelegramClientConfig _config;
         public IObservable<TdApi.Update> OnUpdateReceived { get; }
 
-        public TelegramClient(TdClient client)
+        public TelegramClient(
+            TdClient client,
+            TelegramClientConfig config)
         {
             _client = client;
+            _config = config;
             OnUpdateReceived = client.OnUpdateReceived();
         }
 
@@ -78,6 +82,7 @@ namespace TelegramClient
 
         private IAsyncEnumerable<TdApi.Update> GetMatchingMessageEvents(TdApi.Message message) => OnUpdateReceived
             .ToAsyncEnumerable()
+            .Timeout(_config.MessageSendTimeout)
             .Where(
                 u =>
                 {
@@ -252,7 +257,9 @@ namespace TelegramClient
         {
             var sentMessagesCount = 0;
 
-            await foreach (TdApi.Update update in OnUpdateReceived.ToAsyncEnumerable()
+            await foreach (TdApi.Update update in OnUpdateReceived
+                .ToAsyncEnumerable()
+                .Timeout(_config.MessageSendTimeout)
                 .WithCancellation(token))
             {
                 switch (update)

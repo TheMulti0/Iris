@@ -49,7 +49,7 @@ namespace TelegramClient
             
             await AuthenticateAsync();
 
-            return new TelegramClient(_client);
+            return new TelegramClient(_client, _config);
         }
 
         private async Task<StartupState> UpdateStartupStateAsync(TdApi.Update update, StartupState state)

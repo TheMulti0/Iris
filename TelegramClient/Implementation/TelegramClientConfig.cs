@@ -1,4 +1,6 @@
-﻿namespace TelegramClient
+﻿using System;
+
+namespace TelegramClient
 {
     public class TelegramClientConfig
     {
@@ -7,5 +9,7 @@
         public string AppHash { get; set; }
 
         public string BotToken { get; set; }
+
+        public TimeSpan MessageSendTimeout { get; set; } = TimeSpan.FromHours(1);
     }
 }
