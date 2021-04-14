@@ -50,7 +50,7 @@ namespace MessagesManager
                     newUpdate,
                     destinationChats));
 
-            await _updatesRepository.AddOrUpdateAsync(new UpdateEntity(update));
+            //await _updatesRepository.AddOrUpdateAsync(new UpdateEntity(update));
         }
 
         private async Task<Update> ModifiedUpdate(
