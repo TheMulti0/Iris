@@ -180,7 +180,7 @@ namespace TelegramSender
             }
             catch (MessageSendFailedException e)
             {
-                if (e.Message == "Forbidden: bot was blocked by the user" ||
+                if (e.Message == "Bot was blocked by the user" ||
                     e.Message == "Bad Request: need administrator rights in the channel chat")
                 {
                     await RemoveChatSubscription(originalUpdate.Author, chat);
