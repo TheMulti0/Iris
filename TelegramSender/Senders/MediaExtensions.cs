@@ -128,20 +128,28 @@ namespace TelegramSender
         private static TdApi.InputMessageContent.InputMessageVideo ToInputVideo(
             this TdApi.MessageContent.MessageVideo video)
         {
-            return new()
+            var v = video.Video;
+            
+            return new TdApi.InputMessageContent.InputMessageVideo
             {
                 //Caption = video.Caption,
-                Duration = video.Video.Duration,
-                Height = video.Video.Height,
-                Width = video.Video.Width,
-                Thumbnail = new TdApi.InputThumbnail
-                {
-                    Thumbnail = video.Video.Thumbnail.Photo.ToInputFile(),
-                    Height = video.Video.Thumbnail.Height,
-                    Width = video.Video.Thumbnail.Width
-                },
-                Video = video.Video.Video_.ToInputFile(),
-                SupportsStreaming = video.Video.SupportsStreaming
+                Duration = v.Duration,
+                Height = v.Height,
+                Width = v.Width,
+                Thumbnail = v.Thumbnail?.ToInputThumbnail(),
+                Video = v.Video_.ToInputFile(),
+                SupportsStreaming = v.SupportsStreaming
+            };
+        }
+        
+        private static TdApi.InputThumbnail ToInputThumbnail(
+            this TdApi.PhotoSize thumbnail)
+        {
+            return new()
+            {
+                Thumbnail = thumbnail.Photo.ToInputFile(),
+                Height = thumbnail.Height,
+                Width = thumbnail.Width
             };
         }
 
