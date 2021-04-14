@@ -46,6 +46,10 @@ namespace TelegramSender
 
         public async Task ConsumeAsync(Message message, CancellationToken token)
         {
+            _sender ??= await _senderFactory.CreateAsync();
+
+            _logger.LogInformation("Received {}", message);
+            
             var screenshotSubscriptions = message.DestinationChats
                 .Where(subscription => subscription.SendScreenshotOnly)
                 .ToList();
@@ -67,10 +71,6 @@ namespace TelegramSender
 
         private async Task ConsumeMessageAsync(Message message)
         {
-            _sender ??= await _senderFactory.CreateAsync();
-
-            _logger.LogInformation("Received {}", message);
-
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
             List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(message)).ToList();
