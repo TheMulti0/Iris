@@ -1,1 +1,1 @@
-facebook-scraper
+facebook-scraper==0.2.19
