@@ -171,7 +171,6 @@ namespace TelegramClient
                     inputMessageContents,
                     replyToMessageId,
                     options,
-                    false,
                     token);
             }
             catch (MessageSendFailedException)
@@ -184,7 +183,6 @@ namespace TelegramClient
                     contents,
                     replyToMessageId,
                     options,
-                    true,
                     token);
             }
         }
@@ -194,7 +192,6 @@ namespace TelegramClient
             IEnumerable<TdApi.InputMessageContent> inputMessageContents,
             long replyToMessageId,
             TdApi.SendMessageOptions options,
-            bool ignoreFailure,
             CancellationToken token)
         {
             var contents = await inputMessageContents
@@ -210,7 +207,7 @@ namespace TelegramClient
                     replyToMessageId: replyToMessageId,
                     options: options);
 
-                return await GetSentMessages(messages, ignoreFailure, token)
+                return await GetSentMessages(messages, token)
                     .ToListAsync(token);
             }
             finally
@@ -252,7 +249,6 @@ namespace TelegramClient
 
         private async IAsyncEnumerable<TdApi.Message> GetSentMessages(
             TdApi.Messages messages,
-            bool ignoreFailure,
             [EnumeratorCancellation] CancellationToken token)
         {
             var sentMessagesCount = 0;
@@ -264,7 +260,7 @@ namespace TelegramClient
             {
                 switch (update)
                 {
-                    case TdApi.Update.UpdateMessageSendFailed f when !ignoreFailure:
+                    case TdApi.Update.UpdateMessageSendFailed f:
                     {
                         throw new MessageSendFailedException(f.ErrorMessage);
                     }
