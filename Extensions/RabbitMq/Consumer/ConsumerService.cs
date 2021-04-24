@@ -58,20 +58,25 @@ namespace Extensions
 
         private async Task OnMessage(BasicDeliverEventArgs message, CancellationToken token)
         {
+            var item = ParseMessage(message);
+
+            await _consumer.ConsumeAsync(item, token);
+        }
+
+        private T ParseMessage(BasicDeliverEventArgs message)
+        {
             var json = "No Json";
-            
+
             try
             {
                 ReadOnlyMemory<byte> readOnlyMemory = message.Body;
-                
+
                 byte[] bytes = readOnlyMemory.ToArray();
 
                 json = new UTF8Encoding(true).GetString(bytes);
 
-                var item = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions)
-                           ?? throw new NullReferenceException($"Failed to deserialize {json}");
-                
-                await _consumer.ConsumeAsync(item, token);
+                return JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions) 
+                       ?? throw new NullReferenceException($"Failed to deserialize {json}");
             }
             catch (Exception e)
             {
