@@ -27,7 +27,14 @@ namespace TelegramSender
         private readonly ILogger<MessagesConsumer> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
         private MessageSender _sender;
+        
         private static readonly TimeSpan InvalidSubscriptionExpiration = TimeSpan.FromDays(1);
+        private static readonly string[] RemoveSubscriptionOnMessages =
+        {
+            "Bot was blocked by the user",
+            "Bad Request: need administrator rights in the channel chat",
+            "Have no write access to the chat"
+        };
 
         public MessagesConsumer(
             IChatSubscriptionsRepository repository,
@@ -180,15 +187,11 @@ namespace TelegramSender
             }
             catch (MessageSendFailedException e)
             {
-                if (e.Message == "Bot was blocked by the user" ||
-                    e.Message == "Bad Request: need administrator rights in the channel chat")
-                {
-                    await RemoveChatSubscription(originalUpdate.Author, chat);
-                }
-                else
-                {
-                    throw;
-                }
+                await HandleException(originalUpdate, chat, e);
+            }
+            catch (TdException e)
+            {
+                await HandleException(originalUpdate, chat, e);
             }
             catch (Exception e)
             {
@@ -196,6 +199,18 @@ namespace TelegramSender
             }
 
             return Enumerable.Empty<TdApi.Message>();
+        }
+
+        private async Task HandleException(Update originalUpdate, long chat, Exception e)
+        {
+            if (RemoveSubscriptionOnMessages.Contains(e.Message))
+            {
+                await RemoveChatSubscription(originalUpdate.Author, chat);
+            }
+            else
+            {
+                throw e;
+            }
         }
 
         private async Task RemoveChatSubscription(User author, long chatId)
