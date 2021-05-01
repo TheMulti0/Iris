@@ -41,6 +41,9 @@
       <None Remove="posts\post.py" />
       <None Remove="posts\iposts_provider.py" />
       <None Remove="posts\__init__.py" />
+      <None Update="cookies.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
     
     <ItemGroup>

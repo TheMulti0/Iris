@@ -59,12 +59,6 @@ namespace FacebookScraper
                 _config.PageCount
             };
             
-            if (_config.UserName != null && _config.Password != null)
-            {
-                parameters.Add(_config.UserName);
-                parameters.Add(_config.Password);
-            }
-            
             return ScriptExecutor.ExecutePython(
                 FacebookScriptName,
                 token: default,
