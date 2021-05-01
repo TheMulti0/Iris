@@ -47,4 +47,6 @@ jobs:
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save iris
       - name: Update deployment
-        run: kubectl set image deployment subscriptionsmanager subscriptionsmanager=irisupdate/subscriptionsmanager:latest
+        run: |
+          - kubectl set image deployment subscriptionsmanager subscriptionsmanager=irisupdate/subscriptionsmanager:latest
+          - kubectl set image deployment subscriptionsmanager subscriptionsmanager=irisupdate/subscriptionsmanager
