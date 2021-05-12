@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -61,7 +62,7 @@ namespace ScrapersDistributor
 
             if (subscription.User.Platform == Platform.Facebook)
             {
-                subscription = subscription with { Interval = subscription.Interval * 3 };
+                subscription = subscription with { Interval = subscription.Interval };
             }
             
             Task userTask = Task.Run(

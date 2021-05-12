@@ -28,23 +28,33 @@ namespace ScrapersDistributor
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Polling subscriptions");
-            
-            try
+
+            while (true)
             {
-                List<Subscription> subscriptions = await _client.Get(stoppingToken);
-            
-                foreach (Subscription subscription in subscriptions)
+                try
                 {
-                    await _consumer.ConsumeAsync(
-                        new SubscriptionRequest(SubscriptionType.Subscribe, subscription),
-                        stoppingToken);
+                    await Poll(stoppingToken);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to poll subscriptions, retrying in 10 seconds");
+
+                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
                 }
             }
-            catch (Exception e)
+        }
+
+        private async Task Poll(CancellationToken stoppingToken)
+        {
+            List<Subscription> subscriptions = await _client.Get(stoppingToken);
+
+            foreach (Subscription subscription in subscriptions)
             {
-                _logger.LogError(e, "Failed to poll subscriptions");
+                await _consumer.ConsumeAsync(
+                    new SubscriptionRequest(SubscriptionType.Subscribe, subscription),
+                    stoppingToken);
             }
-            
         }
     }
 }
