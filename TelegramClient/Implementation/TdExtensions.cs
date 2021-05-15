@@ -15,6 +15,11 @@ namespace TelegramClient
                 action => client.UpdateReceived -= action)
                 .Select(pattern => pattern.EventArgs);
         }
+
+        public static bool IsMissingInfo(this TdApi.InputMessageContent.InputMessageVideo v)
+        {
+            return v.Duration == 0 && v.Height == 0 && v.Width == 0 && v.Thumbnail == null;
+        }
         
         public static bool HasCaption(this TdApi.InputMessageContent content, out TdApi.FormattedText caption)
         {
@@ -250,6 +255,12 @@ namespace TelegramClient
         {
             TdApi.InputMessageContent newContent = content
                 .WithFile(await file.CreateLocalInputFileAsync());
+            
+            if (newContent is TdApi.InputMessageContent.InputMessageVideo v &&
+                v.IsMissingInfo())
+            {
+                newContent = await v.WithExtractedInfo();
+            }
 
             if (!newContent.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
                 thumbnail.Thumbnail is not InputFileStream s)
@@ -265,6 +276,24 @@ namespace TelegramClient
             return new DisposableMessageContent(
                 newContent,
                 new AggregateAsyncDisposable(file, s));
+        }
+        
+        public static async Task<TdApi.InputMessageContent.InputMessageVideo> WithExtractedInfo(this TdApi.InputMessageContent.InputMessageVideo v)
+        {
+            TdApi.InputMessageContent.InputMessageVideo e = await v.ExtractInfoAsync();
+
+            return new TdApi.InputMessageContent.InputMessageVideo
+            {
+                Caption = v.Caption,
+                Duration = v.Duration != 0 ? v.Duration : e.Duration,
+                Height = v.Height != 0 ? v.Height : e.Height,
+                Width = v.Width != 0 ? v.Width : e.Width,
+                Thumbnail = v.Thumbnail ?? e.Thumbnail,
+                Ttl = v.Ttl,
+                Video = v.Video,
+                SupportsStreaming = v.SupportsStreaming,
+                AddedStickerFileIds = v.AddedStickerFileIds
+            };
         }
         
         public static TdApi.InputMessageContent WithThumbnail(this TdApi.InputMessageContent content, TdApi.InputThumbnail thumbnail)

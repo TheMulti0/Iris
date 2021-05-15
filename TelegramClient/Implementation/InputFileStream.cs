@@ -19,7 +19,7 @@ namespace TelegramClient
             _getStreamAsync = getStreamAsync;
             
             _filePath = CreateUniqueFilePath();
-            _fileStream = new FileStream(_filePath, FileMode.Create);
+            _fileStream = new FileStream(_filePath, FileMode.CreateNew);
         }
 
         private static string CreateUniqueFilePath()
