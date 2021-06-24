@@ -59,8 +59,14 @@ namespace FacebookScraper
                 _config.PageCount
             };
             
+#if _WINDOWS
+            string script = FacebookScriptName;
+#else
+            string script = $"torsocks {FacebookScriptName}";
+#endif
+            
             return ScriptExecutor.ExecutePython(
-                FacebookScriptName,
+                script,
                 token: default,
                 parameters.ToArray());
         }

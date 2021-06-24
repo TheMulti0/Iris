@@ -22,6 +22,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=build /src/TelegramReceiver/requirements.txt .
 RUN apt-get update -y && apt-get install python3-pip -y
+RUN apt-get install tor
 RUN pip3 install --upgrade pip
 RUN pip3 install -r "requirements.txt"
 ENTRYPOINT ["dotnet", "TelegramReceiver.dll"]
