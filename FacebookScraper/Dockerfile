@@ -21,8 +21,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=build /src/FacebookScraper/requirements.txt .
-RUN apt-get update -y && apt-get install python3-pip -y
-RUN apt-get install tor
+RUN apt-get update -y && apt-get install python3-pip tor -y 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r "requirements.txt"
 ENTRYPOINT ["dotnet", "FacebookScraper.dll"]
