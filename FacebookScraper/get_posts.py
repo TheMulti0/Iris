@@ -21,7 +21,7 @@ def json_converter(obj):
 def get_facebook_posts(user_id, pages):
     return list(get_posts(
         user_id,
-        cookies='cookies.txt',
+        #cookies='cookies.txt',
         pages=pages
     ))
 
