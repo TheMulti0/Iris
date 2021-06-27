@@ -18,7 +18,7 @@ namespace TelegramClient
 
         public static bool IsMissingInfo(this TdApi.InputMessageContent.InputMessageVideo v)
         {
-            return v.Duration == 0 && v.Height == 0 && v.Width == 0 && v.Thumbnail == null;
+            return v.Duration == 0 || v.Height == 0 || v.Width == 0 || v.Thumbnail == null;
         }
         
         public static bool HasCaption(this TdApi.InputMessageContent content, out TdApi.FormattedText caption)
@@ -255,27 +255,28 @@ namespace TelegramClient
         {
             TdApi.InputMessageContent newContent = content
                 .WithFile(await file.CreateLocalInputFileAsync());
-            
-            if (newContent is TdApi.InputMessageContent.InputMessageVideo v &&
-                v.IsMissingInfo())
+
+            if (newContent is not TdApi.InputMessageContent.InputMessageVideo v || !v.IsMissingInfo())
             {
-                newContent = await v.WithExtractedInfo();
+                return new DisposableMessageContent(newContent, file);
             }
 
+            newContent = await v.WithExtractedInfo();
+
             if (!newContent.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
-                thumbnail.Thumbnail is not InputFileStream s)
+                thumbnail.Thumbnail is not InputFileStream thumbnailFile)
             {
                 return new DisposableMessageContent(newContent, file);
             }
             
             TdApi.InputThumbnail inputThumbnail = thumbnail
-                .WithFile(await s.CreateLocalInputFileAsync());
+                .WithFile(await thumbnailFile.CreateLocalInputFileAsync());
 
             newContent = newContent.WithThumbnail(inputThumbnail);
             
             return new DisposableMessageContent(
                 newContent,
-                new AggregateAsyncDisposable(file, s));
+                new AggregateAsyncDisposable(file, thumbnailFile));
         }
         
         public static async Task<TdApi.InputMessageContent.InputMessageVideo> WithExtractedInfo(this TdApi.InputMessageContent.InputMessageVideo v)

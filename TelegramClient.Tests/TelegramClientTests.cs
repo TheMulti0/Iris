@@ -34,9 +34,9 @@ namespace TelegramClient.Tests
         
         [DataTestMethod]
         [DataRow("test")]
-        public Task TestTextMessage(string text)
+        public async Task TestTextMessage(string text)
         {
-            return TestSendMessage(new TdApi.InputMessageContent.InputMessageText
+            await TestSendMessage(new TdApi.InputMessageContent.InputMessageText
             {
                 Text = new TdApi.FormattedText
                 {
@@ -72,9 +72,9 @@ namespace TelegramClient.Tests
         
         [DataTestMethod]
         [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80")]
-        public Task TestPhotoMessage(string photoUrl)
+        public async Task TestPhotoMessage(string photoUrl)
         {
-            return TestSendMessage(
+            await TestSendMessage(
                 new TdApi.InputMessageContent.InputMessagePhoto
                 {
                     Photo = new TdApi.InputFile.InputFileRemote
@@ -86,9 +86,9 @@ namespace TelegramClient.Tests
         
         [DataTestMethod]
         [DataRow("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")]
-        public Task TestDirectVideoMessage(string directVideoUrl)
+        public async Task TestDirectVideoMessage(string directVideoUrl)
         {
-            return TestSendMessage(
+            await TestSendMessage(
                 new TdApi.InputMessageContent.InputMessageVideo
                 {
                     Video = new TdApi.InputFile.InputFileRemote
@@ -104,18 +104,18 @@ namespace TelegramClient.Tests
         [DataRow("https://www.facebook.com/396697410351933/videos/184727739908065")]
         [DataRow("https://facebook.com/ayelet.benshaul.shaked/videos/230569472153183")]
         [DataRow("https://facebook.com/shirlypinto89/videos/968529917218882")]
-        public Task TestLightStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        public async Task TestLightStreamVideoMessage(string toBeExtractedStreamVideoUrl)
         {
-            return TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
+            await TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
         }
         
         [DataTestMethod]
         [DataRow("https://www.facebook.com/396697410351933/videos/3732920580089470")]
         //[DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
         // Should take a long time because this test is supposed to download and upload heavy video streams to Telegram
-        public Task TestHeavyStreamVideoMessage(string toBeExtractedStreamVideoUrl)
+        public async Task TestHeavyStreamVideoMessage(string toBeExtractedStreamVideoUrl)
         {
-            return TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
+            await TestStreamVideoMessage(toBeExtractedStreamVideoUrl);
         }
 
         [DataTestMethod]

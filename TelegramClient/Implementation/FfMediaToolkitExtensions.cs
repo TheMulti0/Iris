@@ -23,17 +23,17 @@ namespace TelegramClient
             var video = MediaFile.Open(l.Path).Video;
             Size size = video.Info.FrameSize;
 
-            TdApi.InputThumbnail thumbnail = v.Thumbnail;
-            if (v.Thumbnail == null)
-            {
-                thumbnail = await video.ExtractThumbnailAsync();
-            }
+            // TdApi.InputThumbnail thumbnail = v.Thumbnail;
+            // if (v.Thumbnail == null)
+            // {
+            //     thumbnail = await video.ExtractThumbnailAsync();
+            // }
 
             return new TdApi.InputMessageContent.InputMessageVideo
             {
                 Duration = (int) video.Info.Duration.TotalSeconds,
                 Height = size.Height,
-                Thumbnail = thumbnail,
+                //Thumbnail = thumbnail,
                 Width = size.Width
             };
         }
