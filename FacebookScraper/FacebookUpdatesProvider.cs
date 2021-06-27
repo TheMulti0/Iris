@@ -57,7 +57,7 @@ namespace FacebookScraper
             {
                 user.UserId,
                 _config.PageCount,
-                JsonSerializer.Serialize(_config.Proxies)
+                string.Join(',', _config.Proxies)
             };
 
             return ScriptExecutor.ExecutePython(
