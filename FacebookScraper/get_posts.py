@@ -8,10 +8,10 @@ from facebook_scraper import get_posts, set_proxy
 def main(args):
     user_id = args[0]
     pages = int(args[1])
-    proxies = args[2].split(',')
+#    proxies = args[2].split(',')
 
-    for proxy in proxies:
-        set_proxy(proxy)
+#    for proxy in proxies:
+#        set_proxy(proxy)
 
     posts = get_facebook_posts(user_id, pages)
 
