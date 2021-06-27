@@ -56,17 +56,12 @@ namespace FacebookScraper
             var parameters = new List<object>
             {
                 user.UserId,
-                _config.PageCount
+                _config.PageCount,
+                JsonSerializer.Serialize(_config.Proxies)
             };
-            
-//#if _WINDOWS
-            string script = FacebookScriptName;
-//#else
-//            string script = $"torsocks {FacebookScriptName}";
-//#endif
-            
+
             return ScriptExecutor.ExecutePython(
-                script,
+                FacebookScriptName,
                 token: default,
                 parameters.ToArray());
         }

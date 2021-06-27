@@ -1,13 +1,18 @@
-﻿import sys, json
+﻿import json
+import sys
 from datetime import datetime
 
-from facebook_scraper import get_posts
+from facebook_scraper import get_posts, set_proxy
 
 
 def main(args):
     user_id = args[0]
     pages = int(args[1])
-    
+    proxies = json.loads(args[2])
+
+    for proxy in proxies:
+        set_proxy(proxy)
+
     posts = get_facebook_posts(user_id, pages)
 
     print(json.dumps(posts, indent=2, default=json_converter))
@@ -21,7 +26,6 @@ def json_converter(obj):
 def get_facebook_posts(user_id, pages):
     return list(get_posts(
         user_id,
-        #cookies='cookies.txt',
         pages=pages
     ))
 
