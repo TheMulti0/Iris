@@ -5,12 +5,12 @@ namespace Common
 {
     public record Video : IMedia
     {
-        public string Url { get; init; }
+        public string Url { get; }
         public string ThumbnailUrl { get; init; }
         [JsonConverter(typeof(NullableTimeSpanConverter))]
-        public TimeSpan? Duration { get; init; }
-        public int? Width { get; init; }
-        public int? Height { get; init; }
+        public TimeSpan? Duration { get; }
+        public int? Width { get; }
+        public int? Height { get; }
 
         public Video(
             string url,

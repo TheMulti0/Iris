@@ -3,103 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
-using Extensions;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using UpdatesScraper;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace FacebookScraper
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
-        private const string FacebookScriptName = "get_posts.py";
-        private const string LinkRegex = "\n(?<link>[A-Z].+)";
-
-        private readonly FacebookUpdatesProviderConfig _config;
-        private readonly ILogger<FacebookUpdatesProvider> _logger;
+        private readonly PostsScraper _scraper;
 
         public FacebookUpdatesProvider(
             FacebookUpdatesProviderConfig config,
-            ILogger<FacebookUpdatesProvider> logger)
+            ILoggerFactory loggerFactory)
         {
-            _config = config;
-            _logger = logger;
+            _scraper = new PostsScraper(
+                config,
+                loggerFactory.CreateLogger<PostsScraper>());
         }
 
         public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
         {
-            try
-            {
-                string response = await GetFacebookResponse(user);
-
-                Post[] posts = JsonConvert.DeserializeObject<Post[]>(response) ??
-                               Array.Empty<Post>();
-
-                if (!posts.Any())
-                {
-                    _logger.LogWarning("No results were received when scraping {} {}", user, response);
-                }
+            var posts = await _scraper.GetPostsAsync(user);
                 
-                return posts.Select(ToUpdate(user)) ;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to parse {} output for {}", FacebookScriptName, user);
-            }
-
-            return Enumerable.Empty<Update>();
-        }
-
-        private Task<string> GetFacebookResponse(User user)
-        {
-            var parameters = new List<object>
-            {
-                user.UserId,
-                _config.PageCount,
-                string.Join(',', _config.Proxies)
-            };
-
-            return ScriptExecutor.ExecutePython(
-                FacebookScriptName,
-                token: default,
-                parameters.ToArray());
+            return posts.Select(ToUpdate(user));
         }
 
         private static Func<Post, Update> ToUpdate(User user)
         {
             return post => new Update
             {
-                Content = ExtractText(post),
+                Content = post.EntireText,
                 Author = user,
                 CreationDate = post.CreationDate,
-                Url = post.PostUrl,
+                Url = post.Url,
                 Media = GetMedia(post).ToList(),
-                IsRepost = post.Text == post.SharedText,
+                IsRepost = post.SharedPost != null,
                 IsLive = post.IsLive
             };
-        }
-
-        private static string ExtractText(Post post)
-        {
-            if (post.Link != null)
-            {
-                return post.Text.Replace(
-                    new[]
-                    {
-                        LinkRegex
-                    },
-                    post.Link);
-            }
-
-            return post.Text;
         }
 
         private static IEnumerable<IMedia> GetMedia(Post post)
         {
             IEnumerable<Photo> photos = GetPhotos(post);
 
-            if (post.VideoUrl == null)
+            if (post.Video == null)
             {
                 return photos;
             }
@@ -109,9 +56,12 @@ namespace FacebookScraper
                 return new List<IMedia>();
             }
             
-            var video = new Video(
-                post.VideoUrl,
-                post.VideoThumbnailUrl);
+            var video = new Common.Video(
+                post.Video.Url,
+                post.Video.ThumbnailUrl,
+                post.Video.Duration,
+                post.Video.Width,
+                post.Video.Height);
 
             return photos
                 .Concat(new IMedia[] { video });
@@ -119,7 +69,7 @@ namespace FacebookScraper
 
         private static IEnumerable<Photo> GetPhotos(Post post)
         {
-            return post.Images?.Select(url => new Photo(url)) ??
+            return post.Images?.Select(img => new Photo(img.Url)) ??
                    Enumerable.Empty<Photo>();
         }
     }
