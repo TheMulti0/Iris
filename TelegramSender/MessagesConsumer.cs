@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -12,6 +13,7 @@ using Telegram.Bot.Types;
 using SubscriptionsDb;
 using TdLib;
 using TelegramClient;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Message = Common.Message;
 using Update = Common.Update;
 using User = Common.User;
@@ -34,6 +36,11 @@ namespace TelegramSender
             "Bot was blocked by the user",
             "Bad Request: need administrator rights in the channel chat",
             "Have no write access to the chat"
+        };
+
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            Converters = { new MediaJsonConverter() }
         };
 
         public MessagesConsumer(
@@ -187,6 +194,10 @@ namespace TelegramSender
             }
             catch (MessageSendFailedException e)
             {
+                foreach (IMedia media in originalUpdate.Media)
+                {
+                    _logger.LogWarning(JsonSerializer.Serialize(media, _jsonSerializerOptions));
+                }
                 await HandleException(originalUpdate, chat, e);
             }
             catch (TdException e)
@@ -195,10 +206,15 @@ namespace TelegramSender
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to send update {} to chat id {}", originalUpdate, chat);
+                Report(originalUpdate, chat, e);
             }
 
             return Enumerable.Empty<TdApi.Message>();
+        }
+
+        private void Report(Update originalUpdate, long chat, Exception e)
+        {
+            _logger.LogError(e, "Failed to send update {} to chat id {}", originalUpdate, chat);
         }
 
         private async Task HandleException(Update originalUpdate, long chat, Exception e)
@@ -209,6 +225,7 @@ namespace TelegramSender
             }
             else
             {
+                Report(originalUpdate, chat, e);
                 throw e;
             }
         }
