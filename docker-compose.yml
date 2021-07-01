@@ -1,14 +1,6 @@
 version: '3.4'
 
 services:
-  chrome:
-    image: selenium/standalone-chrome:latest
-    container_name: chrome
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-    networks:
-      - chrome_network
-  
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
     container_name: 'rabbitmq'
@@ -115,22 +107,6 @@ services:
       - rabbitmq
       - mongodb
       
-  feedsscraper:
-    image: irisupdate/feedsscraper:latest
-    build:
-      context: .
-      dockerfile: FeedsScraper/Dockerfile
-    container_name: feedsscraper
-    restart: always
-    env_file:
-      - feedsscraper.env
-    networks:
-      - rabbitmq_network
-      - mongodb_network
-    depends_on:
-      - rabbitmq
-      - mongodb
-      
   messagesmanager:
     image: irisupdate/messagesmanager:latest
     build:
@@ -167,40 +143,6 @@ services:
       - rabbitmq
       - mongodb
 
-  dashboardapi:
-    image: irisupdate/dashboardapi:latest
-    build:
-      context: .
-      dockerfile: DashboardApi/Dockerfile
-    container_name: dashboardapi
-    restart: always
-    env_file:
-      - dashboardapi.env
-    networks:
-      - mongodb_network
-      - dashboard_network
-    depends_on:
-      - mongodb
-
-  dashboardapp:
-    image: irisupdate/dashboardapp:latest
-    build:
-      context: dashboardapp
-      dockerfile: Dockerfile
-    container_name: dashboardapp
-    restart: always
-    ports:
-      - 80:80
-    networks:
-      - mongodb_network
-      - dashboard_network
-    depends_on:
-      - mongodb
-      - dashboardapi
-
 networks:
   rabbitmq_network:
   mongodb_network:
-  chrome_network:
-  dashboard_network:
-    
