@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using UpdatesScraper;
 
 namespace FacebookScraper
 {
@@ -15,6 +15,9 @@ namespace FacebookScraper
 
         private readonly FacebookUpdatesProviderConfig _config;
         private readonly ILogger<PostsScraper> _logger;
+
+        private readonly SemaphoreSlim _proxyIndexLock = new(1, 1);
+        private int _proxyIndex;
 
         public PostsScraper(
             FacebookUpdatesProviderConfig config,
@@ -28,7 +31,7 @@ namespace FacebookScraper
         {
             try
             {
-                string response = await GetFacebookResponse(user);
+                string response = await GetFacebookResponseAsync(user);
 
                 PostRaw[] posts = JsonConvert.DeserializeObject<PostRaw[]>(response) ??
                                   Array.Empty<PostRaw>();
@@ -48,19 +51,42 @@ namespace FacebookScraper
             return Enumerable.Empty<Post>();
         }
 
-        private Task<string> GetFacebookResponse(User user)
+        private async Task<string> GetFacebookResponseAsync(User user)
         {
             var parameters = new List<object>
             {
                 user.UserId,
                 _config.PageCount,
-                string.Join(',', _config.Proxies)
+                await GetProxyAsync()
             };
 
-            return ScriptExecutor.ExecutePython(
+            return await ScriptExecutor.ExecutePython(
                 FacebookScriptName,
                 token: default,
                 parameters.ToArray());
+        }
+
+        private async Task<string> GetProxyAsync()
+        {
+            await _proxyIndexLock.WaitAsync();
+
+            try
+            {
+                if (_proxyIndex == _config.Proxies.Length - 1)
+                {
+                    _proxyIndex = 0;
+                }
+                else
+                {
+                    _proxyIndex++;
+                }
+                
+                return _config.Proxies[_proxyIndex];
+            }
+            finally
+            {
+                _proxyIndexLock.Release();
+            }
         }
     }
 }
