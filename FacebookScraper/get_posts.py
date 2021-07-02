@@ -1,21 +1,19 @@
 ﻿import json
 import sys
 from datetime import datetime
+from typing import Optional
 
 from facebook_scraper import get_posts, set_proxy
 
 
-def main(args):
-    user_id = args[0]
-    pages = int(args[1])
-    proxy = args[2]
+class GetPostsRequest:
+    user_id: str
+    pages: int
+    proxy: Optional[str]
+    cookies_filename: Optional[str]
 
-    if proxy != '':
-        set_proxy(proxy)
-
-    posts = get_facebook_posts(user_id, pages)
-
-    print(json.dumps(posts, indent=2, default=json_converter))
+    def __init__(self, new_dict):
+        self.__dict__.update(new_dict)
 
 
 def json_converter(obj):
@@ -23,11 +21,24 @@ def json_converter(obj):
         return obj.__str__()
 
 
-def get_facebook_posts(user_id, pages):
-    return list(get_posts(
-        user_id,
-        pages=pages
-    ))
+def main(args):
+    request = GetPostsRequest(json.loads(args[0]))
+
+    posts = get_facebook_posts(request)
+
+    print(json.dumps(posts, indent=2, default=json_converter))
+
+
+def get_facebook_posts(request: GetPostsRequest):
+    if request.proxy is not None:
+        set_proxy(request.proxy)
+
+    posts = get_posts(
+        request.user_id,
+        pages=request.pages,
+        cookies=request.cookies_filename)
+
+    return list(posts)
 
 
 if __name__ == "__main__":

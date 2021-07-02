@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FacebookScraper
@@ -35,21 +34,29 @@ namespace FacebookScraper
 
         private async Task<string> GetFacebookResponseAsync(User user)
         {
-            var parameters = new List<object>
+            var request = new GetPostsRequest
             {
-                user.UserId,
-                _config.PageCount,
-                await GetProxyAsync()
+                UserId = user.UserId,
+                Pages = _config.PageCount,
+                Proxy = await GetProxyAsync()
             };
 
+            string json = JsonConvert.SerializeObject(request)
+                .Replace("\"", "\\\""); // Python argument's double quoted strings need to be escaped
+            
             return await ScriptExecutor.ExecutePython(
                 FacebookScriptName,
                 token: default,
-                parameters.ToArray());
+                json);
         }
 
         private async Task<string> GetProxyAsync()
         {
+            if (_config.Proxies.Length == 0)
+            {
+                return null;
+            }
+            
             await _proxyIndexLock.WaitAsync();
 
             try
