@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FacebookScraper
@@ -13,20 +14,28 @@ namespace FacebookScraper
         private const string FacebookScriptName = "get_posts.py";
 
         private readonly FacebookUpdatesProviderConfig _config;
+        private readonly ILogger<PostsScraper> _logger;
 
         private readonly SemaphoreSlim _proxyIndexLock = new(1, 1);
         private int _proxyIndex;
 
-        public PostsScraper(FacebookUpdatesProviderConfig config)
+        public PostsScraper(
+            FacebookUpdatesProviderConfig config,
+            ILogger<PostsScraper> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Post>> GetPostsAsync(User user)
         {
             var response = await GetResponseAsync(user);
 
-            //TODO handle error
+            switch (response.Error)
+            {
+                case "ProxyError":
+                    throw new InvalidOperationException($"proxy is invalid {response.OriginalRequest.Proxy}");
+            }
             
             return response.Posts.Select(raw => raw.ToPost());
         }
@@ -47,8 +56,10 @@ namespace FacebookScraper
                 FacebookScriptName,
                 token: default,
                 json);
+
+            var response = JsonConvert.DeserializeObject<GetPostsResponse>(responseStr);
             
-            return JsonConvert.DeserializeObject<GetPostsResponse>(responseStr);
+            return response with { OriginalRequest = request };
         }
 
         private async Task<string> GetProxyAsync()

@@ -9,5 +9,8 @@ namespace FacebookScraper
 
         [JsonProperty("error")]
         public string Error { get; init; }
+
+        [JsonIgnore]
+        internal GetPostsRequest OriginalRequest { get; init; }
     }
 }
