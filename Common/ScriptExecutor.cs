@@ -39,9 +39,11 @@ namespace Common
             token.Register(() => process.Kill());
             
             string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
+            
             if (string.IsNullOrEmpty(output))
             {
-                throw new InvalidOperationException("Failed to execute script (no output)");
+                throw new InvalidOperationException($"Failed to execute script (no output) {error}");
             }
 
             return output;
@@ -56,7 +58,8 @@ namespace Common
                 FileName = command,
                 Arguments = string.Join(' ', args),
                 UseShellExecute = false,
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
             };
         }
     }
