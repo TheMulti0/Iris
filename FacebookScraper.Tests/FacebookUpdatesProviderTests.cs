@@ -24,8 +24,7 @@ namespace FacebookScraper.Tests
                 });
             
             _updatesProvider = new FacebookUpdatesProvider(
-                new FacebookUpdatesProviderConfig(),
-                loggerFactory);
+                new FacebookUpdatesProviderConfig());
         }
 
         [TestMethod]

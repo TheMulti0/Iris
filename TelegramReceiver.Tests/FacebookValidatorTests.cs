@@ -8,7 +8,7 @@ namespace TelegramReceiver.Tests
     [TestClass]
     public class FacebookValidatorTests
     {
-        private readonly FacebookValidator _validator = new(new FacebookUpdatesProvider(new FacebookUpdatesProviderConfig(), NullLoggerFactory.Instance));
+        private readonly FacebookValidator _validator = new(new FacebookUpdatesProvider(new FacebookUpdatesProviderConfig()));
         
         [TestMethod]
         public Task TestUserName()

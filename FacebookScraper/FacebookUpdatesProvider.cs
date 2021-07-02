@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
-using Microsoft.Extensions.Logging;
 using UpdatesScraper;
 
 namespace FacebookScraper
@@ -12,13 +11,9 @@ namespace FacebookScraper
     {
         private readonly PostsScraper _scraper;
 
-        public FacebookUpdatesProvider(
-            FacebookUpdatesProviderConfig config,
-            ILoggerFactory loggerFactory)
+        public FacebookUpdatesProvider(FacebookUpdatesProviderConfig config)
         {
-            _scraper = new PostsScraper(
-                config,
-                loggerFactory.CreateLogger<PostsScraper>());
+            _scraper = new PostsScraper(config);
         }
 
         public async Task<IEnumerable<Update>> GetUpdatesAsync(User user)

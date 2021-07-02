@@ -30,7 +30,7 @@ namespace TelegramReceiver
 
             User newUser = new User(group.Value.ToLower(), Platform.Twitter);
             
-            IEnumerable<Update> updates = await _twitter.GetAllUpdatesAsync(newUser);
+            IEnumerable<Update> updates = await GetUpdatesAsync(newUser);
 
             if (updates == null || !updates.Any())
             {
@@ -38,6 +38,18 @@ namespace TelegramReceiver
             }
 
             return newUser;
+        }
+
+        private async Task<IEnumerable<Update>> GetUpdatesAsync(User newUser)
+        {
+            try
+            {
+                return await _twitter.GetAllUpdatesAsync(newUser);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

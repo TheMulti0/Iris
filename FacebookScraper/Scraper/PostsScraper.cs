@@ -14,41 +14,23 @@ namespace FacebookScraper
         private const string FacebookScriptName = "get_posts.py";
 
         private readonly FacebookUpdatesProviderConfig _config;
-        private readonly ILogger<PostsScraper> _logger;
 
         private readonly SemaphoreSlim _proxyIndexLock = new(1, 1);
         private int _proxyIndex;
 
-        public PostsScraper(
-            FacebookUpdatesProviderConfig config,
-            ILogger<PostsScraper> logger)
+        public PostsScraper(FacebookUpdatesProviderConfig config)
         {
             _config = config;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<Post>> GetPostsAsync(User user)
         {
-            try
-            {
-                string response = await GetFacebookResponseAsync(user);
+            string response = await GetFacebookResponseAsync(user);
 
-                PostRaw[] posts = JsonConvert.DeserializeObject<PostRaw[]>(response) ??
-                                  Array.Empty<PostRaw>();
-                
-                if (!posts.Any())
-                {
-                    _logger.LogWarning("No results were received when scraping {} {}", user, response);
-                }
-
-                return posts.Select(raw => raw.ToPost());
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to parse {} output for {}", FacebookScriptName, user);
-            }
-
-            return Enumerable.Empty<Post>();
+            PostRaw[] posts = JsonConvert.DeserializeObject<PostRaw[]>(response) ??
+                              Array.Empty<PostRaw>();
+            
+            return posts.Select(raw => raw.ToPost());
         }
 
         private async Task<string> GetFacebookResponseAsync(User user)

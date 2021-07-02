@@ -52,7 +52,8 @@ namespace UpdatesScraper
             User user,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            IEnumerable<Update> updates = await _updatesProvider.GetUpdatesAsync(user);
+            IEnumerable<Update> updates = await GetUpdatesAsync(user);
+            
             List<Update> sortedUpdates = updates
                 .Reverse()
                 .OrderBy(update => update.CreationDate).ToList();
@@ -65,6 +66,27 @@ namespace UpdatesScraper
             {
                 yield return update;
             }
+        }
+
+        private async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
+        {
+            try
+            {
+                var updates = await _updatesProvider.GetUpdatesAsync(user);
+                
+                if (!updates.Any())
+                {
+                    _logger.LogWarning("No results were received when scraping {}", user);
+                }
+
+                return updates;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to scrape {}", user);
+            }
+
+            return Enumerable.Empty<Update>();
         }
 
         private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(User user)

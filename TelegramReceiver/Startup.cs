@@ -94,7 +94,7 @@ static IServiceCollection AddValidators(
 {
     return services
         .AddSingleton(
-            provider => new FacebookUpdatesProvider(facebookConfig, provider.GetService<ILoggerFactory>()))
+            provider => new FacebookUpdatesProvider(facebookConfig))
         .AddSingleton<FacebookValidator>()
         .AddSingleton(
             _ => new TwitterUpdatesProvider(twitterConfig))
