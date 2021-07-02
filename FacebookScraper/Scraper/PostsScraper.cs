@@ -14,17 +14,14 @@ namespace FacebookScraper
         private const string FacebookScriptName = "get_posts.py";
 
         private readonly FacebookUpdatesProviderConfig _config;
-        private readonly ILogger<PostsScraper> _logger;
 
         private readonly SemaphoreSlim _proxyIndexLock = new(1, 1);
         private int _proxyIndex;
 
         public PostsScraper(
-            FacebookUpdatesProviderConfig config,
-            ILogger<PostsScraper> logger)
+            FacebookUpdatesProviderConfig config)
         {
             _config = config;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<Post>> GetPostsAsync(User user)
