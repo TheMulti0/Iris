@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace FacebookScraper
 {
-    public record GetPostsRequest
+    internal record GetPostsRequest
     {
         [JsonProperty("user_id")]
         public string UserId { get; init; }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace FacebookScraper
 {
-    public class PostsScraper
+    internal class PostsScraper
     {
         private const string FacebookScriptName = "get_posts.py";
 
@@ -24,15 +24,14 @@ namespace FacebookScraper
 
         public async Task<IEnumerable<Post>> GetPostsAsync(User user)
         {
-            string response = await GetFacebookResponseAsync(user);
+            var response = await GetResponseAsync(user);
 
-            PostRaw[] posts = JsonConvert.DeserializeObject<PostRaw[]>(response) ??
-                              Array.Empty<PostRaw>();
+            //TODO handle error
             
-            return posts.Select(raw => raw.ToPost());
+            return response.Posts.Select(raw => raw.ToPost());
         }
 
-        private async Task<string> GetFacebookResponseAsync(User user)
+        private async Task<GetPostsResponse> GetResponseAsync(User user)
         {
             var request = new GetPostsRequest
             {
@@ -43,11 +42,13 @@ namespace FacebookScraper
 
             string json = JsonConvert.SerializeObject(request)
                 .Replace("\"", "\\\""); // Python argument's double quoted strings need to be escaped
-            
-            return await ScriptExecutor.ExecutePython(
+
+            string responseStr = await ScriptExecutor.ExecutePython(
                 FacebookScriptName,
                 token: default,
                 json);
+            
+            return JsonConvert.DeserializeObject<GetPostsResponse>(responseStr);
         }
 
         private async Task<string> GetProxyAsync()

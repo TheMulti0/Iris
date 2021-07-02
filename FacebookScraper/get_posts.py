@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 from facebook_scraper import get_posts, set_proxy
+from requests.exceptions import ProxyError
 
 
 class GetPostsRequest:
@@ -16,17 +17,28 @@ class GetPostsRequest:
         self.__dict__.update(new_dict)
 
 
+class GetPostsResponse:
+    posts: []
+    error: str
+
+
 def json_converter(obj):
     if isinstance(obj, datetime):
         return obj.__str__()
+    if isinstance(obj, GetPostsResponse):
+        return obj.__dict__
 
 
 def main(args):
     request = GetPostsRequest(json.loads(args[0]))
+    response = GetPostsResponse()
 
-    posts = get_facebook_posts(request)
+    try:
+        response.posts = get_facebook_posts(request)
+    except ProxyError:
+        response.error = 'ProxyError'
 
-    print(json.dumps(posts, indent=2, default=json_converter))
+    print(json.dumps(response, indent=2, default=json_converter))
 
 
 def get_facebook_posts(request: GetPostsRequest):
