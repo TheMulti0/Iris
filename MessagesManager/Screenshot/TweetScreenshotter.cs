@@ -13,9 +13,9 @@ namespace MessagesManager
         
         private readonly HtmlCssToImageClient _client;
 
-        public TweetScreenshotter(HtmlCssToImageCredentials credentials)
+        public TweetScreenshotter(HtmlToCssImageConfig config)
         {
-            _client = new HtmlCssToImageClient(credentials);
+            _client = new HtmlCssToImageClient(new HtmlCssToImageCredentials(config.UserId, config.ApiKey));
         }
 
         public async Task<string> ScreenshotAsync(string url)
