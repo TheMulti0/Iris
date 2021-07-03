@@ -74,7 +74,7 @@ namespace MessagesManager
             Update update,
             CancellationToken cancellationToken)
         {
-            if (update.Author.Platform == Platform.Twitter)
+            if (update.Author.Platform != Platform.Facebook)
             {
                 return update.Media;
             }
@@ -99,7 +99,7 @@ namespace MessagesManager
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to extract video of url {}", video.Url);
+                _logger.LogError(e, "Failed to extract video of url {}", updateUrl);
             }
 
             return media;
