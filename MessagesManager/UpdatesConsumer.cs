@@ -64,7 +64,7 @@ namespace MessagesManager
 
                 var screenshot = new Photo(screenshotUrl);
                 
-                return update with { Media = new List<IMedia> { screenshot } };
+                return update with { Content = string.Empty, Media = new List<IMedia> { screenshot } };
             }
 
             List<IMedia> media = await WithExtractedVideos(update, token);
