@@ -81,7 +81,7 @@ namespace FacebookScraper
         public string VideoId { get; init; }
 
         [JsonProperty("video_size_MB")]
-        public int? VideoSizeMb { get; init; }
+        public double? VideoSizeMb { get; init; }
         
         [JsonProperty("video_watches")]
         public int? VideoWatches { get; init; }

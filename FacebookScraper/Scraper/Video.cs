@@ -60,7 +60,7 @@ namespace FacebookScraper
 
         public string ThumbnailUrl { get; init; }
 
-        public int? SizeMb { get; init; }
+        public double? SizeMb { get; init; }
 
         public int? Watches { get; init; }
     }
