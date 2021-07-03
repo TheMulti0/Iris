@@ -60,7 +60,8 @@ namespace FacebookScraper
             {
                 UserId = user.UserId,
                 Pages = _config.PageCount,
-                Proxy = await GetProxyAsync()
+                Proxy = await GetProxyAsync(),
+                CookiesFileName = _config.CookiesFileName
             };
 
             string json = JsonConvert.SerializeObject(request)
