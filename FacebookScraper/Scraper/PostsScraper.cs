@@ -28,18 +28,30 @@ namespace FacebookScraper
         {
             var response = await GetResponseAsync(user);
 
+            HandleError(response);
+
+            return response.Posts.Select(raw => raw.ToPost());
+        }
+
+        private static void HandleError(GetPostsResponse response)
+        {
             switch (response.Error)
             {
                 case "ProxyError":
-                    throw new InvalidOperationException($"proxy is invalid {response.OriginalRequest.Proxy}");
+                    throw new InvalidOperationException($"Proxy is invalid, proxy is {response.OriginalRequest.Proxy}");
+                case "TemporarilyBanned":
+                    throw new InvalidOperationException($"Temporarily banned, proxy is {response.OriginalRequest.Proxy}");
+                case "InvalidCookies":
+                    throw new InvalidOperationException("Invalid cookies passed in cookies file");
+                case "LoginRequired":
+                    throw new InvalidOperationException($"Login required to see {response.OriginalRequest.UserId}");
+                default:
+                    if (response.Posts == null)
+                    {
+                        throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");    
+                    }
+                    break;
             }
-
-            if (response.Posts == null)
-            {
-                throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");
-            }
-            
-            return response.Posts.Select(raw => raw.ToPost());
         }
 
         private async Task<GetPostsResponse> GetResponseAsync(User user)

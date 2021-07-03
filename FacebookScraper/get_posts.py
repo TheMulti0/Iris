@@ -36,14 +36,9 @@ def main(args):
 
     try:
         response.posts = get_facebook_posts(request)
-    except ProxyError as e:
-        response.error = 'ProxyError'
-        response.error_description = str(e) 
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        response.error = exc_type
+        response.error = type(e).__name__
         response.error_description = str(e)
-        #raise e
 
     print(json.dumps(response, indent=2, default=json_converter))
 
