@@ -59,9 +59,9 @@ namespace FacebookScraper
             return raw.ImageIds.Select((id, index) => new Image
             {
                 Id = id,
-                Url = raw.Images[index],
-                LowQualityUrl = raw.ImagesLowQuality[index],
-                Description = raw.ImagesDescription[index]
+                Url = raw.Images.ElementAt(index),
+                LowQualityUrl = raw.ImagesLowQuality.ElementAtOrDefault(index),
+                Description = raw.ImagesDescription.ElementAtOrDefault(index)
             });
         }
 
