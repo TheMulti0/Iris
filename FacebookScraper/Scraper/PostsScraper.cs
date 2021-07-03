@@ -34,7 +34,7 @@ namespace FacebookScraper
                     throw new InvalidOperationException($"proxy is invalid {response.OriginalRequest.Proxy}");
             }
 
-            if (response.Error != null && response.Posts == null)
+            if (response.Posts == null)
             {
                 throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");
             }
