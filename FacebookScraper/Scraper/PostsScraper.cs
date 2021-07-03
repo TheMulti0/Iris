@@ -32,12 +32,11 @@ namespace FacebookScraper
             {
                 case "ProxyError":
                     throw new InvalidOperationException($"proxy is invalid {response.OriginalRequest.Proxy}");
-                
-                default:
-                    throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");
-                
-                case null or "":
-                    break;
+            }
+
+            if (response.Error != null && response.Posts == null)
+            {
+                throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");
             }
             
             return response.Posts.Select(raw => raw.ToPost());
