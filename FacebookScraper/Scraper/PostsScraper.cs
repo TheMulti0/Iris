@@ -42,13 +42,13 @@ namespace FacebookScraper
                 case "TemporarilyBanned":
                     throw new InvalidOperationException($"Temporarily banned, proxy is {response.OriginalRequest.Proxy}");
                 case "InvalidCookies":
-                    throw new InvalidOperationException("Invalid cookies passed in cookies file");
+                    throw new InvalidOperationException("Invalid cookies passed in the cookies file");
                 case "LoginRequired":
-                    throw new InvalidOperationException($"Login required to see {response.OriginalRequest.UserId}");
+                    throw new InvalidOperationException($"Login required in order to view {response.OriginalRequest.UserId}");
                 default:
                     if (response.Posts == null)
                     {
-                        throw new InvalidOperationException($"unrecognized error {response.Error} {response.ErrorDescription}");    
+                        throw new Exception($"Unrecognized error {response.Error} {response.ErrorDescription}");    
                     }
                     break;
             }
