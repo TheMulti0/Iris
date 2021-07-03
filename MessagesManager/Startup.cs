@@ -2,6 +2,7 @@
 using System.IO;
 using Common;
 using Extensions;
+using HtmlCssToImage.Net;
 using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var videoExtractorConfig = rootConfig.GetSection<VideoExtractorConfig>("VideoExtractor");
-    var twitterScreenshotterConfig = rootConfig.GetSection<TwitterScreenshotterConfig>("TwitterScreenshotter");
+    var htmlCssToImageCredentials = rootConfig.GetSection<HtmlCssToImageCredentials>("HtmlCssToImage");
 
     services
         .AddSubscriptionsDb()
@@ -47,8 +48,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         
         .AddSingleton(_ => new VideoExtractor(videoExtractorConfig))
         
-        .AddSingleton<IWebDriverFactory>(_ => new WebDriverFactory(twitterScreenshotterConfig))
-        .AddSingleton<Screenshotter>()
+        .AddSingleton(_ => new TweetScreenshotter(htmlCssToImageCredentials))
         
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
         .AddConsumerService<Update>(consumerConfig)

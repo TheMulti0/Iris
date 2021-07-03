@@ -17,7 +17,7 @@ namespace MessagesManager
         private readonly IChatSubscriptionsRepository _subscriptionsRepository;
         private readonly IUpdatesRepository _updatesRepository;
         private readonly VideoExtractor _videoExtractor;
-        private readonly Screenshotter _screenshotter;
+        private readonly TweetScreenshotter _tweetScreenshotter;
         private readonly ILogger<UpdatesConsumer> _logger;
 
         public UpdatesConsumer(
@@ -25,14 +25,14 @@ namespace MessagesManager
             IChatSubscriptionsRepository subscriptionsRepository,
             IUpdatesRepository updatesRepository,
             VideoExtractor videoExtractor,
-            Screenshotter screenshotter,
+            TweetScreenshotter tweetScreenshotter,
             ILogger<UpdatesConsumer> logger)
         {
             _producer = producer;
             _subscriptionsRepository = subscriptionsRepository;
             _updatesRepository = updatesRepository;
             _videoExtractor = videoExtractor;
-            _screenshotter = screenshotter;
+            _tweetScreenshotter = tweetScreenshotter;
             _logger = logger;
         }
 
@@ -58,16 +58,18 @@ namespace MessagesManager
             IEnumerable<UserChatSubscription> destinationChats,
             CancellationToken token)
         {
+            if (destinationChats.Any(subscription => subscription.SendScreenshotOnly))
+            {
+                string screenshotUrl = await _tweetScreenshotter.ScreenshotAsync(update.Url);
+
+                var screenshot = new Photo(screenshotUrl);
+                
+                return update with { Media = new List<IMedia> { screenshot } };
+            }
+
             List<IMedia> media = await WithExtractedVideos(update, token);
 
-            if (!destinationChats.Any(subscription => subscription.SendScreenshotOnly))
-            {
-                return update with { Media = media };
-            }
-            
-            byte[] screenshot = await _screenshotter.ScreenshotAsync(update);
-
-            return update with { Media = media, Screenshot = screenshot };
+            return update with { Media = media };
         }
 
         private async Task<List<IMedia>> WithExtractedVideos(
