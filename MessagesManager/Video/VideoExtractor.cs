@@ -48,6 +48,42 @@ namespace MessagesManager
                 videoInfo.Height);
         }
 
+        private async Task<JsonElement> GetResponse(string url)
+        {
+            var output
+                = await ScriptExecutor.ExecutePython(
+                    "extract_video.py",
+                    token: default,
+                    url,
+                    _config.FormatRequest,
+                    _config.UserName,
+                    _config.Password);
+            
+            try
+            {
+                // Cut out the json element, ignore the logs and other outputs
+                int startIndex = output.IndexOf('{');
+                int lastIndex = output.LastIndexOf('}') + 1;
+
+                string response = output.Substring(
+                    startIndex,
+                    lastIndex - startIndex);
+
+                return JsonDocument.Parse(response).RootElement;
+            }
+            catch
+            {
+                Console.WriteLine(output);
+                throw;
+            }
+        }
+
+        private static JsonElement.ArrayEnumerator? GetFormats(JsonElement root)
+        {
+            return root.GetPropertyOrNull("formats")?
+                .EnumerateArray();
+        }
+
         private static VideoInfo GetCombinedVideoInfo(JsonElement? root, JsonElement? highestFormat)
         {
             VideoInfo videoInfo = GetVideoInfo(root);
@@ -56,19 +92,6 @@ namespace MessagesManager
             CombineVideoInfos(fallbackInfo, videoInfo);
 
             return videoInfo;
-        }
-
-        private static void CombineVideoInfos(VideoInfo fallbackInfo, VideoInfo videoInfo)
-        {
-            foreach (PropertyInfo property in typeof(VideoInfo).GetProperties())
-            {
-                var fallbackValue = property.GetValue(fallbackInfo);
-
-                if (property.GetValue(videoInfo) == null && fallbackValue != null)
-                {
-                    property.SetValue(videoInfo, fallbackValue!);
-                }
-            }
         }
 
         private static VideoInfo GetVideoInfo(JsonElement? element)
@@ -83,32 +106,17 @@ namespace MessagesManager
             };
         }
 
-        private async Task<JsonElement> GetResponse(string url)
+        private static void CombineVideoInfos(VideoInfo fallbackInfo, VideoInfo videoInfo)
         {
-            var output
-                = await ScriptExecutor.ExecutePython(
-                "extract_video.py",
-                token: default,
-                url,
-                _config.FormatRequest,
-                _config.UserName,
-                _config.Password);
+            foreach (PropertyInfo property in typeof(VideoInfo).GetProperties())
+            {
+                var fallbackValue = property.GetValue(fallbackInfo);
 
-            // Cut out the json element, ignore the logs and other outputs
-            int startIndex = output.IndexOf('{');
-            int lastIndex = output.LastIndexOf('}') + 1;
-
-            string response = output.Substring(
-                startIndex,
-                lastIndex - startIndex);
-
-            return JsonDocument.Parse(response).RootElement;
-        }
-
-        private static JsonElement.ArrayEnumerator? GetFormats(JsonElement root)
-        {
-            return root.GetPropertyOrNull("formats")?
-                .EnumerateArray();
+                if (property.GetValue(videoInfo) == null && fallbackValue != null)
+                {
+                    property.SetValue(videoInfo, fallbackValue!);
+                }
+            }
         }
 
         private static TimeSpan? GetDuration(double? durationSeconds)
