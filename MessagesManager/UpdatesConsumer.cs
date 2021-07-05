@@ -17,7 +17,7 @@ namespace MessagesManager
         private readonly IChatSubscriptionsRepository _subscriptionsRepository;
         private readonly IUpdatesRepository _updatesRepository;
         private readonly VideoExtractor _videoExtractor;
-        private readonly TweetScreenshotter _tweetScreenshotter;
+        private readonly Screenshotter _screenshotter;
         private readonly ILogger<UpdatesConsumer> _logger;
 
         public UpdatesConsumer(
@@ -25,14 +25,14 @@ namespace MessagesManager
             IChatSubscriptionsRepository subscriptionsRepository,
             IUpdatesRepository updatesRepository,
             VideoExtractor videoExtractor,
-            TweetScreenshotter tweetScreenshotter,
+            Screenshotter screenshotter,
             ILogger<UpdatesConsumer> logger)
         {
             _producer = producer;
             _subscriptionsRepository = subscriptionsRepository;
             _updatesRepository = updatesRepository;
             _videoExtractor = videoExtractor;
-            _tweetScreenshotter = tweetScreenshotter;
+            _screenshotter = screenshotter;
             _logger = logger;
         }
 
@@ -60,11 +60,13 @@ namespace MessagesManager
         {
             if (destinationChats.Any(subscription => subscription.SendScreenshotOnly))
             {
-                string screenshotUrl = await _tweetScreenshotter.ScreenshotAsync(update.Url);
-
-                var screenshot = new Photo(screenshotUrl);
-                
-                return update with { Content = string.Empty, Media = new List<IMedia> { screenshot } };
+                try
+                {
+                    return await _screenshotter.ScreenshotAsync(update);
+                }
+                catch (NotImplementedException)
+                {
+                }
             }
 
             List<IMedia> media = await WithExtractedVideos(update, token);

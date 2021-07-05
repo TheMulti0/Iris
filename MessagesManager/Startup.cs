@@ -37,7 +37,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var videoExtractorConfig = rootConfig.GetSection<VideoExtractorConfig>("VideoExtractor");
-    var htmlCssToImageConfig = rootConfig.GetSection<HtmlToCssImageConfig>("HtmlCssToImage");
+    var htmlCssToImageConfig = new HtmlCssToImageCredentials(rootConfig["HtmlCssToImage:UserId"], rootConfig["HtmlCssToImage:ApiKey"]);
 
     services
         .AddSubscriptionsDb()
@@ -48,7 +48,9 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         
         .AddSingleton(_ => new VideoExtractor(videoExtractorConfig))
         
-        .AddSingleton(_ => new TweetScreenshotter(htmlCssToImageConfig))
+        .AddSingleton<IHtmlCssToImageClient>(_ => new HtmlCssToImageClient(htmlCssToImageConfig))
+        .AddSingleton<TwitterScreenshotter>()
+        .AddSingleton<Screenshotter>()
         
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
         .AddConsumerService<Update>(consumerConfig)

@@ -4,18 +4,18 @@ using HtmlCssToImage.Net;
 
 namespace MessagesManager
 {
-    public class TweetScreenshotter
+    internal class TwitterScreenshotter : IWebsiteScreenshotter
     {
-        private const string TweetHtml = "<blockquote class=\"twitter-tweet\" style=\"width: 400px;\" data-dnt=\"true\">\r\n<p lang=\"en\" dir=\"ltr\"></p>\r\n\r\n<a href=\"{TWEET_URL}\"></a>\r\n\r\n</blockquote> <script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>";
+        private const string TweetHtml = "<blockquote class=\"twitter-tweet\" style=\"width: 300px;\" data-dnt=\"true\">\r\n<p lang=\"en\" dir=\"ltr\"></p>\r\n\r\n<a href=\"{TWEET_URL}\"></a>\r\n\r\n</blockquote> <script async src=\"https://platform.twitter.com/widgets.js\" charset=\"utf-8\"></script>";
         private const double DeviceScale = 2.5;
         private const string CssSelector = ".twitter-tweet";
         private static readonly TimeSpan Delay = TimeSpan.FromMilliseconds(1500);
         
         private readonly IHtmlCssToImageClient _client;
 
-        public TweetScreenshotter(HtmlToCssImageConfig config)
+        public TwitterScreenshotter(IHtmlCssToImageClient client)
         {
-            _client = new HtmlCssToImageClient(new HtmlCssToImageCredentials(config.UserId, config.ApiKey));
+            _client = client;
         }
 
         public async Task<string> ScreenshotAsync(string url)
