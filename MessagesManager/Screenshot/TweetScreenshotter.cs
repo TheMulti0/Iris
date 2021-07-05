@@ -11,7 +11,7 @@ namespace MessagesManager
         private const string CssSelector = ".twitter-tweet";
         private static readonly TimeSpan Delay = TimeSpan.FromMilliseconds(1500);
         
-        private readonly HtmlCssToImageClient _client;
+        private readonly IHtmlCssToImageClient _client;
 
         public TweetScreenshotter(HtmlToCssImageConfig config)
         {
@@ -22,14 +22,14 @@ namespace MessagesManager
         {
             var html = TweetHtml.Replace("{TWEET_URL}", url);
 
-            var createImageParameters = new CreateImageParameters(html)
+            var request = new CreateImageRequest(html)
             {
                 DeviceScale = DeviceScale,
                 CssSelector = CssSelector,
                 Delay = Delay
             };
             
-            var image = await _client.CreateImageAsync(createImageParameters);
+            CreateImageResponse image = await _client.CreateImageAsync(request);
 
             return image.Url;
         }
