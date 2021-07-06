@@ -38,7 +38,7 @@ namespace TelegramSender
             "Have no write access to the chat"
         };
 
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             Converters = { new MediaJsonConverter() }
         };
@@ -64,23 +64,7 @@ namespace TelegramSender
 
             _logger.LogInformation("Received {}", message);
             
-            var screenshotSubscriptions = message.DestinationChats
-                .Where(subscription => subscription.SendScreenshotOnly)
-                .ToList();
-            
-            if (screenshotSubscriptions.Any())
-            {
-                await ConsumeMessageAsync(message with { DestinationChats = screenshotSubscriptions });
-            }
-            
-            var normalSubscriptions = message.DestinationChats
-                .Where(subscription => !subscription.SendScreenshotOnly)
-                .ToList();
-
-            if (normalSubscriptions.Any())
-            {
-                await ConsumeMessageAsync(message with { DestinationChats = normalSubscriptions });
-            }
+            await ConsumeMessageAsync(message);
         }
 
         private async Task ConsumeMessageAsync(Message message)

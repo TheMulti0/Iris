@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -43,32 +44,81 @@ namespace MessagesManager
             SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(update.Author);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
-            Update newUpdate = await ModifiedUpdate(update, destinationChats, token);
+            IAsyncEnumerable<Message> messages = ToMessages(update, destinationChats, token);
+            
+            await foreach (Message message in messages.WithCancellation(token))
+            {
+                _producer.Send(message);    
 
-            _producer.Send(
-                new Message(
-                    newUpdate,
-                    destinationChats));
-
-            //await _updatesRepository.AddOrUpdateAsync(new UpdateEntity(update));
+                //await _updatesRepository.AddOrUpdateAsync(new UpdateEntity(message.Update));
+            }
         }
 
-        private async Task<Update> ModifiedUpdate(
+        private async IAsyncEnumerable<Message> ToMessages(
             Update update,
-            IEnumerable<UserChatSubscription> destinationChats,
-            CancellationToken token)
+            IReadOnlyCollection<UserChatSubscription> destinationChats,
+            [EnumeratorCancellation] CancellationToken token)
         {
-            if (destinationChats.Any(subscription => subscription.SendScreenshotOnly))
+            List<UserChatSubscription> screenshotOnlySubscriptions = destinationChats
+                .Where(subscription => subscription.SendScreenshotOnly)
+                .ToList();
+
+            bool hasSentScreenshot = false;
+
+            if (screenshotOnlySubscriptions.Any())
             {
-                try
+                Update screenshottedUpdate = await ScreenshotAsync(update);
+                
+                if (screenshottedUpdate != null)
                 {
-                    return await _screenshotter.ScreenshotAsync(update);
-                }
-                catch (NotImplementedException)
-                {
+                    hasSentScreenshot = true;
+                    
+                    yield return new Message(
+                        screenshottedUpdate,
+                        screenshotOnlySubscriptions);
                 }
             }
 
+            List<UserChatSubscription> subscriptions = GetSubscriptions(destinationChats, screenshotOnlySubscriptions, hasSentScreenshot).ToList();
+
+            if (subscriptions.Any())
+            {
+                Update extractedVideosUpdate = await ExtractVideosAsync(update, token);
+
+                yield return new Message(
+                    extractedVideosUpdate,
+                    subscriptions);    
+            }
+        }
+
+        private static IEnumerable<UserChatSubscription> GetSubscriptions(
+            IEnumerable<UserChatSubscription> destinationChats,
+            IEnumerable<UserChatSubscription> screenshotOnlySubscriptions,
+            bool hasSentScreenshot)
+        {
+            var subscriptions = destinationChats.Where(subscription => !subscription.SendScreenshotOnly);
+
+            return hasSentScreenshot 
+                ? subscriptions 
+                : subscriptions.Concat(screenshotOnlySubscriptions);
+        }
+
+        private async Task<Update> ScreenshotAsync(Update update)
+        {
+            try
+            {
+                return await _screenshotter.ScreenshotAsync(update);
+            }
+            catch (NotImplementedException)
+            {
+                return null;
+            }
+        }
+
+        private async Task<Update> ExtractVideosAsync(
+            Update update,
+            CancellationToken token)
+        {
             List<IMedia> media = await WithExtractedVideos(update, token);
 
             return update with { Media = media };
