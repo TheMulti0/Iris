@@ -9,15 +9,7 @@ namespace MessagesManager
 {
     public class VideoExtractor
     {
-        private class VideoInfo
-        {
-            public string ExtractedUrl { get; set; }
-            public string ThumbnailUrl { get; set; }
-            public double? DurationSeconds { get; set; }
-            public int? Width { get; set; }
-            public int? Height { get; set; }
-        }
-        
+        private const string ScriptName = "extract_video.py";
         private readonly VideoExtractorConfig _config;
 
         public VideoExtractor(VideoExtractorConfig config)
@@ -27,11 +19,11 @@ namespace MessagesManager
 
         public async Task<Video> ExtractVideo(string url)
         {
-            JsonElement root = await GetResponse(url);
+            JsonElement root = await GetVideoInfoAsync(url);
 
             JsonElement? highestFormat = GetFormats(root)?.LastOrDefault();
             
-            var videoInfo = GetCombinedVideoInfo(root, highestFormat);
+            VideoInfo videoInfo = GetCombinedVideoInfo(root, highestFormat);
 
             if (videoInfo.ExtractedUrl == null)
             {
@@ -48,40 +40,68 @@ namespace MessagesManager
                 videoInfo.Height);
         }
 
-        private async Task<JsonElement> GetResponse(string url)
+        private async Task<JsonElement> GetVideoInfoAsync(string url)
         {
-            var output
-                = await ScriptExecutor.ExecutePython(
-                    "extract_video.py",
-                    token: default,
-                    url,
-                    _config.FormatRequest,
-                    _config.UserName,
-                    _config.Password);
+            ExtractVideoResponse response = await GetResponse(url);
+
+            HandleError(response);
+
+            return (JsonElement) response.VideoInfo;
+        }
+
+        private async Task<ExtractVideoResponse> GetResponse(string url)
+        {
+            var request = new ExtractVideoRequest
+            {
+                Url = url,
+                Format = _config.FormatRequest,
+                UserName = _config.UserName,
+                Password = _config.Password
+            };
             
-            try
-            {
-                // Cut out the json element, ignore the logs and other outputs
-                int startIndex = output.IndexOf('{');
-                int lastIndex = output.LastIndexOf('}') + 1;
+            string json = JsonSerializer.Serialize(request)
+                .Replace("\"", "\\\""); // Python argument's double quoted strings need to be escaped
+            
+            string responseString = await GetResponseString(json);
 
-                string response = output.Substring(
-                    startIndex,
-                    lastIndex - startIndex);
+            var response = JsonSerializer.Deserialize<ExtractVideoResponse>(responseString);
 
-                return JsonDocument.Parse(response).RootElement;
-            }
-            catch
+            return response with { OriginalRequest = request };
+        }
+
+        private static async Task<string> GetResponseString(string json)
+        {
+            string output
+                = await ScriptExecutor.ExecutePython(
+                    ScriptName,
+                    token: default,
+                    json);
+
+            // Cut out the json element, ignore the logs and other outputs
+            int startIndex = output.IndexOf('{');
+            int lastIndex = output.LastIndexOf('}') + 1;
+
+            return output.Substring(
+                startIndex,
+                lastIndex - startIndex);
+        }
+
+        private static void HandleError(ExtractVideoResponse response)
+        {
+            switch (response.Error)
             {
-                Console.WriteLine(output);
-                throw;
+                default:
+                    if (response.VideoInfo == null)
+                    {
+                        throw new Exception($"Unrecognized error {response.Error} {response.ErrorDescription}");    
+                    }
+                    break;
             }
         }
 
         private static JsonElement.ArrayEnumerator? GetFormats(JsonElement root)
         {
-            return root.GetPropertyOrNull("formats")?
-                .EnumerateArray();
+            return root.GetPropertyOrNull("formats")?.EnumerateArray();
         }
 
         private static VideoInfo GetCombinedVideoInfo(JsonElement? root, JsonElement? highestFormat)

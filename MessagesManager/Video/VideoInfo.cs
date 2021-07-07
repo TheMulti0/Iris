@@ -1,11 +1,11 @@
-using System;
-
-namespace MessagesManager
+﻿namespace MessagesManager
 {
-    public record VideoInfo(
-        string Url,
-        string ThumbnailUrl,
-        TimeSpan? Duration,
-        int? Width,
-        int? Height);
+    internal record VideoInfo
+    {
+        public string ExtractedUrl { get; init; }
+        public string ThumbnailUrl { get; init; }
+        public double? DurationSeconds { get; init; }
+        public int? Width { get; init; }
+        public int? Height { get; init; }
+    }
 }
