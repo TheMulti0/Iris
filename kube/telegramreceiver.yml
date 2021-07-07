@@ -4,7 +4,9 @@ metadata:
   name: telegramreceiversecrets
 type: Opaque
 stringData:
-  accesstoken: accesstoken
+  accesstoken: 1296985114:AAEHzJwBLsqwyItRTf74znQmbqEWVbbzfnw
+  sentry: https://429c834fb12f45b6b365e27458e44c59@o194751.ingest.sentry.io/5577475
+  defaultinterval: 01:00:00
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -26,24 +28,46 @@ spec:
         - image: irisupdate/telegramreceiver:latest
           imagePullPolicy: "Always"
           name: telegramreceiver
+          volumeMounts:
+            - name: config
+              mountPath: /app/cookies.txt
+              subPath: cookies.txt
           env:
+            - name: RabbitMqConnection__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmqsecrets
+                  key: connectionstring
             - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: subscriptionsdbsecrets
                   key: connectionstring
+            - name: SubscriptionsDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsdbsecrets
+                  key: databasename
             - name: ConnectionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: connectionsdbsecrets
                   key: connectionstring
+            - name: ConnectionsDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: connectionsdbsecrets
+                  key: databasename
             - name: Telegram__AccessToken
               valueFrom:
                 secretKeyRef:
                   name: telegramreceiversecrets
                   key: accesstoken
             - name: Telegram__DefaultInterval
-              value: "00:01:00"
+              valueFrom:
+                secretKeyRef:
+                  name: telegramreceiversecrets
+                  key: defaultinterval
             - name: Twitter__ConsumerKey
               valueFrom:
                 secretKeyRef:
@@ -55,5 +79,27 @@ spec:
                   name: twittersecrets
                   key: consumersecret
             - name: Facebook__PageCount
-              value: "1"
+              valueFrom:
+                secretKeyRef:
+                  name: facebooksecrets
+                  key: pagecount
+            - name: Facebook__UserName
+              valueFrom:
+                secretKeyRef:
+                  name: facebooksecrets
+                  key: username
+            - name: Facebook__Password
+              valueFrom:
+                secretKeyRef:
+                  name: facebooksecrets
+                  key: password
+            - name: Sentry__Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: facebooksecrets
+                  key: sentry
       restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: facebookscraper-config

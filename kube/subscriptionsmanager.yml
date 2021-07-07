@@ -1,4 +1,12 @@
 apiVersion: v1
+kind: Secret
+metadata:
+  name: subscriptionsmanagersecrets
+type: Opaque
+stringData:
+  sentry: https://0b05f692e49849bcb942822c87a55612@o194751.ingest.sentry.io/5577476
+---
+apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -33,9 +41,24 @@ spec:
           imagePullPolicy: "Always"
           name: subscriptionsmanager
           env:
+            - name: RabbitMqConnection__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmqsecrets
+                  key: connectionstring
             - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: subscriptionsdbsecrets
                   key: connectionstring
+            - name: SubscriptionsDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsdbsecrets
+                  key: databasename
+            - name: Sentry__Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsmanagersecrets
+                  key: sentry
       restartPolicy: Always

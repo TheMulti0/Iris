@@ -14,14 +14,36 @@ metadata:
   name: rabbitmq
 spec:
   ports:
-    - name: "5672"
+    - name: amqp
       port: 5672
       targetPort: 5672
-    - name: "15672"
+    - name: dashboard
       port: 15672
       targetPort: 15672
   selector:
     app: rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rabbitmq
+  name: rabbitmq-0
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 15672
+      targetPort: 15672
+  selector:
+    app: rabbitmq
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmqsecrets
+type: Opaque
+stringData:
+  connectionstring: amqp://guest:guest@rabbitmq:5672//
 ---
 apiVersion: apps/v1
 kind: Deployment

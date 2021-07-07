@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: scrapersdistributorsecrets
+type: Opaque
+stringData:
+  sentry: https://a854ce90034743b1ab76cf23a8a79467@o194751.ingest.sentry.io/5577477
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,4 +27,15 @@ spec:
       - image: irisupdate/scrapersdistributor:latest
         imagePullPolicy: "Always"
         name: scrapersdistributor
+        env:
+          - name: RabbitMqConnection__ConnectionString
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmqsecrets
+                key: connectionstring
+          - name: Sentry__Dsn
+            valueFrom:
+              secretKeyRef:
+                name: scrapersdistributorsecrets
+                key: sentry
       restartPolicy: Always

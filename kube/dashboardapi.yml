@@ -1,4 +1,12 @@
 apiVersion: v1
+kind: Secret
+metadata:
+  name: dashboardapisecrets
+type: Opaque
+stringData:
+  sentry: https://260ec6d75ca747c8814049541ee14ee6@o194751.ingest.sentry.io/5681887
+---
+apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -38,13 +46,21 @@ spec:
                 secretKeyRef:
                   name: updatesdbsecrets
                   key: connectionstring
+            - name: UpdatesDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: updatesdbsecrets
+                  key: databasename
             - name: IdentityDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: identitydbsecrets
                   key: connectionstring
             - name: IdentityDb__DatabaseName
-              value: IdentityDb
+              valueFrom:
+                secretKeyRef:
+                  name: identitydbsecrets
+                  key: databasename
             - name: TwitterCredentials__ConsumerKey
               valueFrom:
                 secretKeyRef:
@@ -55,4 +71,9 @@ spec:
                 secretKeyRef:
                   name: twittersecrets
                   key: consumersecret
+            - name: Sentry__Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: dashboardapisecrets
+                  key: sentry
       restartPolicy: Always

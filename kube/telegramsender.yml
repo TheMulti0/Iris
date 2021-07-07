@@ -4,9 +4,10 @@ metadata:
   name: telegramsendersecrets
 type: Opaque
 stringData:
-  bottoken: bottoken
-  appid: appid
-  apphash: apphash
+  bottoken: 1296985114:AAEHzJwBLsqwyItRTf74znQmbqEWVbbzfnw
+  appid: "2796714"
+  apphash: 44eae6e9ec943d9d701c9f4b567dbc9e
+  sentry: https://ddf6f2983489423290e3d6753ae6734e@o194751.ingest.sentry.io/5428167
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -29,6 +30,11 @@ spec:
           imagePullPolicy: "Always"
           name: telegramsender
           env:
+            - name: RabbitMqConnection__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmqsecrets
+                  key: connectionstring
             - name: Telegram__BotToken
               valueFrom:
                 secretKeyRef:
@@ -44,4 +50,19 @@ spec:
                 secretKeyRef:
                   name: telegramsendersecrets
                   key: apphash
+            - name: SubscriptionsDb__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsdbsecrets
+                  key: connectionstring
+            - name: SubscriptionsDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsdbsecrets
+                  key: databasename
+            - name: Sentry_Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: telegramsendersecrets
+                  key: sentry
       restartPolicy: Always

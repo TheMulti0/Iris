@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: messagesmanagersecrets
+type: Opaque
+stringData:
+  sentry: https://8764ace6d2784a1ebc64f58fd0f02ff1@o194751.ingest.sentry.io/5577474
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,14 +27,34 @@ spec:
           imagePullPolicy: "Always"
           name: messagesmanager
           env:
+            - name: RabbitMqConnection__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmqsecrets
+                  key: connectionstring
             - name: SubscriptionsDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: subscriptionsdbsecrets
                   key: connectionstring
+            - name: SubscriptionsDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: subscriptionsdbsecrets
+                  key: databasename
             - name: UpdatesDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: updatesdbsecrets
                   key: connectionstring
+            - name: UpdatesDb__DatabaseName
+              valueFrom:
+                secretKeyRef:
+                  name: updatesdbsecrets
+                  key: databasename
+            - name: Sentry__Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: messagesmanagersecrets
+                  key: sentry
       restartPolicy: Always

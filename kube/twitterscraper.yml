@@ -19,13 +19,21 @@ spec:
           imagePullPolicy: "Always"
           name: twitterscraper
           env:
+            - name: RabbitMqConnection__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmqsecrets
+                  key: connectionstring
             - name: UpdatesScraperDb__ConnectionString
               valueFrom:
                 secretKeyRef:
                   name: twittersecrets
                   key: connectionstring
             - name: UpdatesScraperDb__DatabaseName
-              value: TwitterScraperDb
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: databasename
             - name: UpdatesProvider__ConsumerKey
               valueFrom:
                 secretKeyRef:
@@ -36,4 +44,9 @@ spec:
                 secretKeyRef:
                   name: twittersecrets
                   key: consumersecret
+            - name: Sentry__Dsn
+              valueFrom:
+                secretKeyRef:
+                  name: twittersecrets
+                  key: sentry
       restartPolicy: Always
