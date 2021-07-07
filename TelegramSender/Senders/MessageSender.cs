@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,14 +103,7 @@ namespace TelegramSender
                 yield break;
             }
             
-            IEnumerable<string> messageChunks = ChunkText(
-                text,
-                TelegramConstants.MaxTextMessageLength,
-                "\n>>>",
-                '\n',
-                '?',
-                '!',
-                '.');
+            IEnumerable<string> messageChunks = TextChunker.ChunkText(text);
 
             long lastMessageId = 0;
             foreach (string msg in messageChunks)
@@ -136,47 +128,6 @@ namespace TelegramSender
                 },
                 parsedMessage.ReplyToMessageId,
                 token: parsedMessage.CancellationToken);
-        }
-
-        private static IEnumerable<string> ChunkText(
-            string bigString,
-            int maxLength,
-            string suffix,
-            params char[] punctuation)
-        {
-            var chunks = new List<string>();
-
-            int index = 0;
-            var startIndex = 0;
-
-            int bigStringLength = bigString.Length;
-            while (startIndex < bigStringLength)
-            {
-                if (index == bigStringLength - 1)
-                {
-                    suffix = "";
-                }
-                maxLength -= suffix.Length;
-
-                string chunk = startIndex + maxLength >= bigStringLength
-                    ? bigString.Substring(startIndex)
-                    : bigString.Substring(startIndex, maxLength);
-
-                int endIndex = chunk.LastIndexOfAny(punctuation);
-
-                if (endIndex < 0)
-                    endIndex = chunk.LastIndexOf(" ", StringComparison.Ordinal);
-
-                if (endIndex < 0)
-                    endIndex = Math.Min(maxLength - 1, chunk.Length - 1);
-
-                chunks.Add(chunk.Substring(0, endIndex + 1) + suffix);
-
-                index++;
-                startIndex += endIndex + 1;
-            }
-
-            return chunks;
         }
     }
 }
