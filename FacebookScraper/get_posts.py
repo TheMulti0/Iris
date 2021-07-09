@@ -10,6 +10,7 @@ class GetPostsRequest:
     user_id: str
     pages: int
     proxy: Optional[str]
+    timeout: int
     cookies_filename: Optional[str]
 
     def __init__(self, new_dict):
@@ -50,7 +51,8 @@ def get_facebook_posts(request: GetPostsRequest):
     posts = get_posts(
         request.user_id,
         pages=request.pages,
-        cookies=request.cookies_filename)
+        cookies=request.cookies_filename,
+        timeout=request.timeout)
 
     return list(posts)
 
