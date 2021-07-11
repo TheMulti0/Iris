@@ -15,10 +15,15 @@ namespace TelegramSender
                 text,
                 maxLength,
                 suffix,
-                '\n',
-                '?',
-                '!',
-                '.').ToList();
+                "**",
+                "--",
+                "\".",
+                "\n",
+                "?",
+                "!",
+                ".",
+                ":",
+                ",").ToList();
             
             int maxChunkLength = TelegramConstants.MaxTextMessageLength - suffix.Length;
 
@@ -50,7 +55,7 @@ namespace TelegramSender
             string str,
             int maxLength,
             string suffix,
-            params char[] punctuation)
+            params string[] keywords)
         {
             var chunkIndex = 0;
             var charIndex = 0;
@@ -65,7 +70,7 @@ namespace TelegramSender
                     maxChunkLength = maxLength;
                 }
 
-                yield return Cut(str, maxChunkLength, punctuation, charIndex, out int endIndex);
+                yield return Cut(str, maxChunkLength, keywords, charIndex, out int endIndex);
 
                 chunkIndex++;
                 charIndex += endIndex + 1;
@@ -75,7 +80,7 @@ namespace TelegramSender
         private static string Cut(
             string str,
             int maxLength,
-            char[] punctuation, 
+            string[] keywords, 
             int charIndex,
             out int endCharIndex)
         {
@@ -83,7 +88,7 @@ namespace TelegramSender
                 ? str.Substring(charIndex)
                 : str.Substring(charIndex, maxLength);
 
-            int endIndex = chunk.LastIndexOfAny(punctuation);
+            int endIndex = chunk.LastIndexOfAny(keywords);
 
             if (endIndex < 0)
                 endIndex = chunk.LastIndexOf(" ", StringComparison.Ordinal);
