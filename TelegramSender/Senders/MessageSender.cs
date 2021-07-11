@@ -105,7 +105,7 @@ namespace TelegramSender
             
             IEnumerable<string> messageChunks = TextChunker.ChunkText(text);
 
-            long lastMessageId = 0;
+            long lastMessageId = message.ReplyToMessageId;
             foreach (string msg in messageChunks)
             {
                 TdApi.FormattedText parsedMsg = await ParseTextAsync(msg);
