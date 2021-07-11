@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
 using UpdatesScraper;
@@ -9,6 +10,7 @@ namespace FacebookScraper
 {
     public class FacebookUpdatesProvider : IUpdatesProvider
     {
+        private const string SharePrefixPattern = @"‏{0}‏\n‏\d{1,2}‏\s[\w\u0590-\u05FF]+\s·\n";
         private readonly PostsScraper _scraper;
 
         public FacebookUpdatesProvider(FacebookUpdatesProviderConfig config)
@@ -23,11 +25,11 @@ namespace FacebookScraper
             return posts.Select(ToUpdate(user));
         }
 
-        private static Func<Post, Update> ToUpdate(User user)
+        private Func<Post, Update> ToUpdate(User user)
         {
             return post => new Update
             {
-                Content = post.EntireText,
+                Content = CleanText(post),
                 Author = user,
                 CreationDate = post.CreationDate,
                 Url = post.Url,
@@ -35,6 +37,30 @@ namespace FacebookScraper
                 IsRepost = post.SharedPost != null,
                 IsLive = post.IsLive
             };
+        }
+
+        private string CleanText(Post post)
+        {
+            if (post.SharedPost == null)
+            {
+                return post.EntireText;
+            }
+            
+            string sharedPostText = GetSharedPostText(post);
+
+            if (string.IsNullOrEmpty(post.PostTextOnly))
+            {
+                return sharedPostText;
+            }
+
+            return $"{post.PostTextOnly}\n---\n{sharedPostText}";
+        }
+
+        private string GetSharedPostText(Post post)
+        {
+            var regex = new Regex(SharePrefixPattern.Replace("{0}", post.SharedPost.Author.UserName));
+
+            return regex.Replace(post.SharedPost.Text, string.Empty);
         }
 
         private static IEnumerable<IMedia> GetMedia(Post post)
