@@ -69,7 +69,7 @@ namespace TwitterScraper
         private static Func<ITweet, bool> IsTweetPublishable(string userId)
         {
             return tweet => tweet.InReplyToStatusId == null ||
-                            tweet.InReplyToScreenName == userId; 
+                            tweet.InReplyToScreenName.Equals(userId, StringComparison.CurrentCultureIgnoreCase); 
         }
 
         private Func<ITweet, Update> ToUpdate(User user)
