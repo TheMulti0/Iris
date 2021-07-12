@@ -1,4 +1,4 @@
-using System;
+using System.Text.RegularExpressions;
 using Common;
 using Update = Common.Update;
 
@@ -6,6 +6,11 @@ namespace TelegramSender
 {
     public class MessageInfoBuilder
     {
+        private const string TwitterUrl = "https://twitter.com";
+        
+        private const string TwitterUserNamePattern = @"@(?<userName>[\w\d-_]+)";
+        private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
+    
         public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
         {
             string message = GetMessage(update, chatSubscription);
@@ -38,8 +43,25 @@ namespace TelegramSender
             {
                 suffix = $"\n\n\n{suffix}";
             }
+
+            string updateContent = GetContent(update);
+            return prefix + updateContent + suffix;
+        }
+
+        private static string GetContent(Update update)
+        {
+            if (update.Author.Platform != Platform.Twitter)
+            {
+                return update.Content;
+            }
             
-            return prefix + update.Content + suffix;
+            return TwitterUserNameRegex.Replace(
+                update.Content,
+                m =>
+                {
+                    string username = m.Value;
+                    return HyperlinkText(username, $"{TwitterUrl}/{username}");
+                });
         }
 
         private static string ToString(Text text, string url)
@@ -52,7 +74,7 @@ namespace TelegramSender
             switch (text.Mode)
             {
                 case TextMode.HyperlinkedText:
-                    return $"<a href=\"{url}\">{text.Content}</a>";
+                    return HyperlinkText(text.Content, url);
                 
                 case TextMode.Text:
                     return text.Content;
@@ -63,5 +85,7 @@ namespace TelegramSender
 
             return string.Empty;
         }
+
+        private static string HyperlinkText(string text, string url) => $"<a href=\"{url}\">{text}</a>";
     }
 }
