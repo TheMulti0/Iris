@@ -40,7 +40,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
     var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
-    var facebookConfig = rootConfig.GetSection<FacebookUpdatesProviderConfig>("Twitter");
+    var facebookConfig = rootConfig.GetSection<FacebookUpdatesProviderConfig>("Facebook");
     var twitterConfig = rootConfig.GetSection<TwitterUpdatesProviderConfig>("Twitter");
 
     AddMongoDbRepositories(services, mongoConfig);
