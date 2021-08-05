@@ -75,37 +75,15 @@ services:
       - rabbitmq
       - subscriptionsmanager
 
-  facebookscraper:
-    image: irisupdate/facebookscraper:latest
-    build:
-      context: .
-      dockerfile: FacebookScraper/Dockerfile
-    container_name: facebookscraper
-    restart: always
+  scraper.rabbitmq:
+    image: scraper.rabbitmq
+    container_name: scraper.rabbitmq
     env_file:
-      - facebookscraper.env
+      - scraper.rabbitmq.env
     networks:
       - rabbitmq_network
-      - mongodb_network
     depends_on:
       - rabbitmq
-      - mongodb
-
-  twitterscraper:
-    image: irisupdate/twitterscraper:latest
-    build:
-      context: .
-      dockerfile: TwitterScraper/Dockerfile
-    container_name: twitterscraper
-    restart: always
-    env_file:
-      - twitterscraper.env
-    networks:
-      - rabbitmq_network
-      - mongodb_network
-    depends_on:
-      - rabbitmq
-      - mongodb
       
   messagesmanager:
     image: irisupdate/messagesmanager:latest
