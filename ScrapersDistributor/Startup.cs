@@ -5,6 +5,7 @@ using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scraper.RabbitMq.Client;
 using ScrapersDistributor;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
@@ -31,18 +32,14 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     IConfiguration rootConfig = hostContext.Configuration;
     
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
-    var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
-    var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer"); 
-    var pollerConfig = rootConfig.GetSection<SubscriptionsPollerConfig>("SubscriptionsPoller"); 
+    var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer");
+    var clientConfig = rootConfig.GetSection<ScraperRabbitMqClientConfig>("ScraperRabbitMqClient");
 
     services
         .AddRabbitMqConnection(connectionConfig)
-        .AddProducer<PollJob>(producerConfig)
-        .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionsConsumer>()
+        .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionRequestsConsumer>()
         .AddConsumerService<SubscriptionRequest>(consumerConfig)
-        .AddSingleton(pollerConfig)
-        .AddSingleton<ISubscriptionsManagerClient, SubscriptionsManagerClient>()
-        .AddHostedService<SubscriptionsPollerService>()
+        .AddScraperRabbitMqClient(clientConfig.ServerUri, connectionConfig.ConnectionString)
         .BuildServiceProvider();
 }
     

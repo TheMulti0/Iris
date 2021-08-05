@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Scraper.RabbitMq\Scraper.RabbitMq.Client\Scraper.RabbitMq.Client.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
