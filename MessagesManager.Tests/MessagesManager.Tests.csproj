@@ -19,10 +19,4 @@
       <ProjectReference Include="..\MessagesManager\MessagesManager.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="extract_video_prod.py">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>
