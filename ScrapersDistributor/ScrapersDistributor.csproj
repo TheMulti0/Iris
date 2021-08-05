@@ -9,10 +9,10 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+        <PackageReference Include="Scraper.RabbitMq.Client" Version="*" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Scraper.RabbitMq\Scraper.RabbitMq.Client\Scraper.RabbitMq.Client.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
     </ItemGroup>
