@@ -64,7 +64,7 @@ services:
       - subscriptionsmanager
 
   scraper.rabbitmq:
-    image: scraper.rabbitmq
+    image: themulti0/scraper.rabbitmq
     container_name: scraper.rabbitmq
     env_file:
       - scraper.rabbitmq.env
