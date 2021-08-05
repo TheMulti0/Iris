@@ -7,6 +7,7 @@ using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scraper.RabbitMq.Client;
 using SubscriptionsDb;
 using UpdatesDb;
 
@@ -36,6 +37,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"); 
     var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer"); 
     var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
+    var clientConfig = rootConfig.GetSection<ScraperRabbitMqClientConfig>("ScraperRabbitMqClient");
 
     services
         .AddSubscriptionsDb()
@@ -44,7 +46,12 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddRabbitMqConnection(connectionConfig)
         .AddProducer<Message>(producerConfig)
         
+        .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
         .AddConsumerService<Update>(consumerConfig)
+        
+        .AddScraperRabbitMqClient(clientConfig.ServerUri, connectionConfig.ConnectionString)
+        
+        .AddHostedService<NewPostsConsumer>()
         
         .BuildServiceProvider();
 }
