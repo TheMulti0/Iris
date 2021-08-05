@@ -37,8 +37,8 @@ namespace SubscriptionsManager
                 .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<SubscriptionRequest>(producerConfig)
                 .AddSingleton<IConsumer<ChatSubscriptionRequest>, ChatSubscriptionRequestsConsumer>()
-                .AddConsumerService<ChatSubscriptionRequest>(consumerConfig)
-                .AddHostedService<SubscriptionsLoader>();
+                .AddConsumerService<ChatSubscriptionRequest>(consumerConfig);
+                //.AddHostedService<SubscriptionsLoader>();
             
             services.AddControllers();
             services.AddSwaggerGen(
