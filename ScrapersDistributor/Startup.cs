@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scraper.RabbitMq.Client;
 using ScrapersDistributor;
+using RabbitMqConsumerConfig = Extensions.RabbitMqConsumerConfig;
 
 static void ConfigureConfiguration(IConfigurationBuilder builder)
 {
@@ -39,7 +40,10 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddRabbitMqConnection(connectionConfig)
         .AddSingleton<IConsumer<SubscriptionRequest>, SubscriptionRequestsConsumer>()
         .AddConsumerService<SubscriptionRequest>(consumerConfig)
-        .AddScraperRabbitMqClient(clientConfig.ServerUri, connectionConfig.ConnectionString)
+        .AddScraperRabbitMqClient(clientConfig.ServerUri, new Scraper.RabbitMq.Client.RabbitMqConsumerConfig
+        {
+            ConnectionString = connectionConfig.ConnectionString
+        })
         .BuildServiceProvider();
 }
     
