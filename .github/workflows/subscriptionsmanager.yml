@@ -11,7 +11,7 @@ on:
       - "SubscriptionsManager/**"
 
 jobs:
-  build-v4:
+  build-push:
     name: Build image and push to container registry
     runs-on: ubuntu-latest
 
@@ -31,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v2.2.1
         with:
           file: ./SubscriptionsManager/Dockerfile
-          v4 true
+          push: true
           tags: irisupdate/subscriptionsmanager:latest
           
