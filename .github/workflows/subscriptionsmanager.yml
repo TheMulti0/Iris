@@ -2,7 +2,7 @@ name: SubscriptionsManager
 
 on:
   workflow_dispatch:
-  v4
+  push:
     branches: [ v4 ]
     paths:
       - "Extensions/**"
