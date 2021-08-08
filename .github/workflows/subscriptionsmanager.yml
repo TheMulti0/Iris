@@ -1,8 +1,9 @@
 name: SubscriptionsManager
 
 on:
-  push:
-    branches: [ master ]
+  workflow_dispatch:
+  v4
+    branches: [ v4 ]
     paths:
       - "Extensions/**"
       - "Common/**"
@@ -10,7 +11,7 @@ on:
       - "SubscriptionsManager/**"
 
 jobs:
-  build-push:
+  build-v4:
     name: Build image and push to container registry
     runs-on: ubuntu-latest
 
@@ -30,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v2.2.1
         with:
           file: ./SubscriptionsManager/Dockerfile
-          push: true
+          v4 true
           tags: irisupdate/subscriptionsmanager:latest
           
