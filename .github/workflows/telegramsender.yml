@@ -3,7 +3,7 @@ name: TelegramSender
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [ v4 ]
     paths:
       - "Extensions/**"
       - "Common/**"
