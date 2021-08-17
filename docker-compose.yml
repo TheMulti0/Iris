@@ -74,6 +74,16 @@ services:
     depends_on:
       - rabbitmq
       - subscriptionsmanager
+        
+  scraper.rabbitmq:
+    image: scraper.rabbitmq
+    container_name: scraper.rabbitmq
+    env_file:
+      - scraper.rabbitmq.env
+    networks:
+      - rabbitmq_network
+    depends_on:
+      - rabbitmq
 
   facebookscraper:
     image: irisupdate/facebookscraper:latest
@@ -90,6 +100,7 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+      - scraper.rabbitmq
 
   twitterscraper:
     image: irisupdate/twitterscraper:latest
@@ -106,6 +117,7 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+      - scraper.rabbitmq
       
   messagesmanager:
     image: irisupdate/messagesmanager:latest
