@@ -6,32 +6,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
+using Scraper.Net;
 
 namespace UpdatesScraper
 {
     public class UpdatesScraper
     {
         private readonly ScraperConfig _config;
-        private readonly IUpdatesProvider _updatesProvider;
+        private readonly IScraperService _scraperService;
         private readonly IUserLatestUpdateTimesRepository _userLatestUpdateTimesRepository;
         private readonly ISentUpdatesRepository _sentUpdatesRepository;
         private readonly ILogger<UpdatesScraper> _logger;
 
         public UpdatesScraper(
             ScraperConfig config,
-            IUpdatesProvider updatesProvider,
+            IScraperService scraperService,
             IUserLatestUpdateTimesRepository userLatestUpdateTimesRepository,
             ISentUpdatesRepository sentUpdatesRepository,
             ILogger<UpdatesScraper> logger)
         {
             _config = config;
-            _updatesProvider = updatesProvider;
+            _scraperService = scraperService;
             _userLatestUpdateTimesRepository = userLatestUpdateTimesRepository;
             _sentUpdatesRepository = sentUpdatesRepository;
             _logger = logger;
         }
         
-        public async IAsyncEnumerable<Update> ScrapeUser(User user, CancellationToken token)
+        public async IAsyncEnumerable<Update> ScrapeUser(
+            User user,
+            [EnumeratorCancellation] CancellationToken token)
         {
             _logger.LogInformation("Polling {}", user);
 
@@ -50,43 +53,70 @@ namespace UpdatesScraper
 
         private async IAsyncEnumerable<Update> GetUpdates(
             User user,
-            [EnumeratorCancellation] CancellationToken cancellationToken)
+            [EnumeratorCancellation] CancellationToken ct)
         {
-            IEnumerable<Update> updates = await GetUpdatesAsync(user);
+            string platform = GetPlatform(user);
             
-            List<Update> sortedUpdates = updates
-                .Reverse()
-                .OrderBy(update => update.CreationDate).ToList();
-
+            var posts = _scraperService.GetPostsAsync(user.UserId, platform, ct);
+            var updates = posts.Select(update => ToUpdate(update, platform));
+            
             UserLatestUpdateTime userLatestUpdateTime = await GetUserLatestUpdateTime(user);
 
-            var newUpdates = GetNewUpdates(sortedUpdates, userLatestUpdateTime);
+            var newPosts = GetNewUpdates(updates, userLatestUpdateTime);
 
-            await foreach (Update update in newUpdates.WithCancellation(cancellationToken))
+            await foreach (Update update in newPosts.WithCancellation(ct))
             {
                 yield return update;
             }
         }
 
-        private async Task<IEnumerable<Update>> GetUpdatesAsync(User user)
+        private static Update ToUpdate(Post post, string platform)
         {
-            try
+            var author = new User(
+                post.AuthorId,
+                Enum.Parse<Platform>(platform, ignoreCase: true));
+            
+            return new Update
             {
-                var updates = await _updatesProvider.GetUpdatesAsync(user);
-                
-                if (!updates.Any())
-                {
-                    _logger.LogWarning("No results were received when scraping {}", user);
-                }
+                Author = author,
+                Content = post.Content,
+                CreationDate = post.CreationDate,
+                Url = post.Url,
+                IsLive = post.IsLivestream,
+                IsReply = post.Type == PostType.Reply,
+                IsRepost = post.Type == PostType.Repost,
+                Media = post.MediaItems.Select(ToMedia).ToList()
+            };
+        }
 
-                return updates;
-            }
-            catch (Exception e)
+        private static IMedia ToMedia(IMediaItem item)
+        {
+            switch (item)
             {
-                _logger.LogError(e, "Failed to scrape {}", user);
+                case PhotoItem p:
+                    return new Photo(p.Url);
+                case AudioItem a:
+                    return new Audio(a.Url, a.ThumbnailUrl, a.Duration, a.Title, a.Artist);
+                case VideoItem v:
+                    return new Video(v.Url, v.ThumbnailUrl, v.Duration, v.Width, v.Height);
             }
 
-            return Enumerable.Empty<Update>();
+            return null;
+        }
+
+        private static string GetPlatform(User user)
+        {
+            switch (user.Platform)
+            {
+                case Platform.Facebook:
+                    return "facebook";
+                case Platform.Feeds:
+                    return "feeds";
+                case Platform.Twitter:
+                    return "twitter";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private async Task<UserLatestUpdateTime> GetUserLatestUpdateTime(User user)
@@ -101,13 +131,12 @@ namespace UpdatesScraper
         }
 
         private IAsyncEnumerable<Update> GetNewUpdates(
-            IEnumerable<Update> updates,
+            IAsyncEnumerable<Update> updates,
             UserLatestUpdateTime userLatestUpdateTime)
         {
             IAsyncEnumerable<Update> newUpdates = updates
                 .Where(IsNew(userLatestUpdateTime))
-                .OrderBy(update => update.CreationDate)
-                .ToAsyncEnumerable();
+                .OrderBy(update => update.CreationDate);
 
             return _config.StoreSentUpdates 
                 ? newUpdates.WhereAwait(NotSent) 

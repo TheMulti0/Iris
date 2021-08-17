@@ -3,6 +3,9 @@ using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDbGenericRepository;
+using Scraper.Net;
+using Scraper.RabbitMq.Client;
+using Scraper.RabbitMq.Common;
 using SharpCompress;
 using UpdatesScraper.Mock;
 
@@ -37,7 +40,10 @@ namespace UpdatesScraper
             return services
                 .AddRabbitMqConnection(connectionConfig)
                 .AddProducer<Update>(producerConfig)
-                .AddUpdatesProvider<TProvider>()
+                .AddScraperRabbitMqClient(config: new RabbitMqConfig
+                {
+                    ConnectionString = connectionConfig.ConnectionString
+                })
                 .AddUpdatesScraper(scraperConfig)
                 .AddPollJobsConsumer(consumerConfig);
         }
@@ -64,13 +70,6 @@ namespace UpdatesScraper
             return services
                 .AddSingleton<IUserLatestUpdateTimesRepository, MockUserLatestUpdateTimesRepository>()
                 .AddSingleton<ISentUpdatesRepository, MockSentUpdatesRepository>();
-        }
-
-        public static IServiceCollection AddUpdatesProvider<TProvider>(
-            this IServiceCollection services) where TProvider : class, IUpdatesProvider
-        {
-            return services
-                .AddSingleton<IUpdatesProvider, TProvider>();
         }
 
         public static IServiceCollection AddUpdatesScraper(

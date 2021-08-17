@@ -9,6 +9,8 @@
         <PackageReference Include="MongoDB.Bson" Version="2.11.4" />
         <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
         <PackageReference Include="MongoDbGenericRepository" Version="1.4.3" />
+        <PackageReference Include="Scraper.Net" Version="0.1.7" />
+        <PackageReference Include="Scraper.RabbitMq.Client" Version="0.2.2" />
         <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
     </ItemGroup>
 
