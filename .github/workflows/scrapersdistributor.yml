@@ -3,7 +3,7 @@ name: ScrapersDistributor
 on:
   workflow_dispatch:
   push:
-    branches: [ v4 ]
+    branches: [ v5 ]
     paths:
       - "Extensions/**"
       - "Common/**"
