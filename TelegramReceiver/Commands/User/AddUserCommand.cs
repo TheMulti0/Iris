@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Extensions;
 using Nito.AsyncEx;
 using Telegram.Bot.Types.ReplyMarkups;
 using SubscriptionsDb;
@@ -15,19 +14,19 @@ namespace TelegramReceiver
     internal class AddUserCommand : BaseCommand, ICommand
     {
         private readonly IChatSubscriptionsRepository _chatSubscriptionsRepository;
-        private readonly IProducer<ChatSubscriptionRequest> _producer;
+        private readonly ISubscriptionsManager _subscriptionsManager;
         private readonly UserValidator _validator;
         private readonly TimeSpan _defaultInterval;
 
         public AddUserCommand(
             Context context,
             IChatSubscriptionsRepository chatSubscriptionsRepository,
-            IProducer<ChatSubscriptionRequest> producer,
+            ISubscriptionsManager subscriptionsManager,
             UserValidator validator,
             TelegramConfig config) : base(context)
         {
             _chatSubscriptionsRepository = chatSubscriptionsRepository;
-            _producer = producer;
+            _subscriptionsManager = subscriptionsManager;
             _validator = validator;
             _defaultInterval = config.DefaultInterval;
         }
@@ -102,11 +101,7 @@ namespace TelegramReceiver
 
             if (! await _chatSubscriptionsRepository.ExistsAsync(user))
             {
-                _producer.Send(
-                    new ChatSubscriptionRequest(
-                        SubscriptionType.Subscribe,
-                        subscription,
-                        ConnectedChat));
+                _subscriptionsManager.Subscribe(subscription, ConnectedChat);
             }
             
             var chatSubscription = new UserChatSubscription

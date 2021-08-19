@@ -49,6 +49,7 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     AddCommandHandling(services, telegramConfig);
     
     services
+        .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
         .AddLanguages()
         .BuildServiceProvider();
 }
