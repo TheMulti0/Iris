@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDbGenericRepository;
+using Scraper.RabbitMq.Client;
+using Scraper.RabbitMq.Common;
 using TelegramReceiver;
 using TwitterScraper;
 using SubscriptionsDb;
@@ -49,7 +51,11 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
     AddCommandHandling(services, telegramConfig);
     
     services
-        .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
+        .AddSingleton<ISubscriptionsManager, NewSubscriptionsManager>()
+        .AddScraperRabbitMqClient(config: new RabbitMqConfig
+        {
+            ConnectionString = connectionConfig.ConnectionString
+        })
         .AddLanguages()
         .BuildServiceProvider();
 }

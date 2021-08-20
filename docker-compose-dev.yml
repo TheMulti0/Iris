@@ -17,6 +17,7 @@ services:
         
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
+    container_name: rabbitmq
     environment:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     ports:
@@ -25,3 +26,10 @@ services:
     volumes:
       - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+
+  scraper:
+    image: themulti0/scraper.rabbitmq
+    container_name: scraper
+    build:
+      context: .
+      dockerfile: ../Scraper.RabbitMq/Scraper.RabbitMq/Dockerfile

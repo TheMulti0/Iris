@@ -1,11 +1,12 @@
-﻿using Common;
+﻿using System.Threading.Tasks;
+using Common;
 
 namespace TelegramReceiver
 {
     public interface ISubscriptionsManager
     {
-        void Subscribe(Subscription subscription, long chatId);
+        Task Subscribe(Subscription subscription, long chatId);
         
-        void Unsubscribe(Subscription subscription, long chatId);
+        Task Unsubscribe(Subscription subscription, long chatId);
     }
 }

@@ -1,33 +1,38 @@
-﻿using Common;
+﻿using System.Threading.Tasks;
+using Common;
 using Extensions;
 
 namespace TelegramReceiver
 {
-    public class SubscriptionsManager : ISubscriptionsManager
+    public class OldSubscriptionsManager : ISubscriptionsManager
     {
         private readonly IProducer<ChatSubscriptionRequest> _producer;
 
-        public SubscriptionsManager(IProducer<ChatSubscriptionRequest> producer)
+        public OldSubscriptionsManager(IProducer<ChatSubscriptionRequest> producer)
         {
             _producer = producer;
         }
 
-        public void Subscribe(Subscription subscription, long chatId)
+        public Task Subscribe(Subscription subscription, long chatId)
         {
             _producer.Send(
                 new ChatSubscriptionRequest(
                     SubscriptionType.Subscribe,
                     subscription,
                     chatId));
+            
+            return Task.CompletedTask;
         }
 
-        public void Unsubscribe(Subscription subscription, long chatId)
+        public Task Unsubscribe(Subscription subscription, long chatId)
         {
             _producer.Send(
                 new ChatSubscriptionRequest(
                     SubscriptionType.Unsubscribe,
                     subscription,
                     chatId));
+
+            return Task.CompletedTask;
         }
     }
 }
