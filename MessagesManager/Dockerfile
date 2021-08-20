@@ -24,9 +24,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-COPY --from=build /src/MessagesManager/requirements.txt .
-RUN apt-get update -y && apt-get install python3-pip -y
-RUN pip3 install --upgrade pip
-RUN pip3 install -r "requirements.txt"
-
 ENTRYPOINT ["dotnet", "MessagesManager.dll"]

@@ -1,11 +1,13 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Common;
 
-namespace MessagesManager
+namespace TelegramClient.Tests
 {
     public class VideoExtractor
     {
@@ -99,7 +101,7 @@ namespace MessagesManager
             }
         }
 
-        private static JsonElement.ArrayEnumerator? GetFormats(JsonElement root)
+        private static IEnumerable<JsonElement> GetFormats(JsonElement root)
         {
             return root.GetPropertyOrNull("formats")?.EnumerateArray();
         }
@@ -145,5 +147,96 @@ namespace MessagesManager
                 ? TimeSpan.FromSeconds((double) durationSeconds)
                 : null;
         }
+    }
+    
+    internal static class JsonElementExtensions
+    {
+        public static JsonElement? GetPropertyOrNull(
+            this JsonElement element,
+            string propertyName)
+        {
+            try
+            {
+                return element.GetProperty(propertyName);
+            }
+            catch (KeyNotFoundException)
+            {
+                return null;
+            }
+        }
+
+        public static int? GetIntOrNull(
+            this JsonElement element)
+        {
+            try
+            {
+                return element.GetInt32();
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
+        }
+
+        public static double? GetDoubleOrNull(
+            this JsonElement element)
+        {
+            try
+            {
+                return element.GetDouble();
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
+        }
+    }
+    
+    internal record ExtractVideoResponse
+    {
+        [JsonPropertyName("video_info")]
+        public JsonElement? VideoInfo { get; init; }
+
+        [JsonPropertyName("error")]
+        public string Error { get; init; }
+        
+        [JsonPropertyName("error_description")]
+        public string ErrorDescription { get; init; }
+
+        [JsonIgnore]
+        internal ExtractVideoRequest OriginalRequest { get; init; }
+    }
+    
+    internal record ExtractVideoRequest
+    {
+        [JsonPropertyName("url")]
+        public string Url { get; init; }
+        
+        [JsonPropertyName("format")]
+        public string Format { get; init; }
+        
+        [JsonPropertyName("username")]
+        public string UserName { get; init; }
+        
+        [JsonPropertyName("password")]
+        public string Password { get; init; }
+    }
+    
+    public class VideoExtractorConfig
+    {
+        public string FormatRequest { get; set; } = "best";
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+    }
+    
+    internal record VideoInfo
+    {
+        public string ExtractedUrl { get; init; }
+        public string ThumbnailUrl { get; init; }
+        public double? DurationSeconds { get; init; }
+        public int? Width { get; init; }
+        public int? Height { get; init; }
     }
 }

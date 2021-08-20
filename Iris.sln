@@ -39,8 +39,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramReceiver", "Telegra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubscriptionsDb", "SubscriptionsDb\SubscriptionsDb.csproj", "{98CBF355-0CA7-4670-8645-AA36713BA687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagesManager.Tests", "MessagesManager.Tests\MessagesManager.Tests.csproj", "{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramReceiver.Tests", "TelegramReceiver.Tests\TelegramReceiver.Tests.csproj", "{A48DDDF8-19FE-4439-B01A-0859891D37C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubscriptionsDb.Tests", "SubscriptionsDb.Tests\SubscriptionsDb.Tests.csproj", "{A17074BD-44B4-46F5-B783-7B9E39D2F11D}"
@@ -137,10 +135,6 @@ Global
 		{98CBF355-0CA7-4670-8645-AA36713BA687}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98CBF355-0CA7-4670-8645-AA36713BA687}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98CBF355-0CA7-4670-8645-AA36713BA687}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0CB53E5F-A91D-47B8-B5FE-041F46FA7855}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A48DDDF8-19FE-4439-B01A-0859891D37C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A48DDDF8-19FE-4439-B01A-0859891D37C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A48DDDF8-19FE-4439-B01A-0859891D37C5}.Release|Any CPU.ActiveCfg = Release|Any CPU

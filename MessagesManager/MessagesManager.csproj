@@ -19,13 +19,9 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Extensions\Extensions.csproj" />
       <ProjectReference Include="..\SubscriptionsDb\SubscriptionsDb.csproj" />
-      <ProjectReference Include="..\UpdatesDb\UpdatesDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="extract_video.py">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
