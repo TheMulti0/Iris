@@ -7,6 +7,8 @@ using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scraper.RabbitMq.Client;
+using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 using UpdatesDb;
 
@@ -53,7 +55,10 @@ static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection
         .AddSingleton<Screenshotter>()
         
         .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
-        .AddConsumerService<Update>(consumerConfig)
+        .AddScraperRabbitMqClient<NewPostConsumer>(new RabbitMqConfig
+        {
+            ConnectionString = connectionConfig.ConnectionString
+        })
         
         .BuildServiceProvider();
 }
