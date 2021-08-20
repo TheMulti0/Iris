@@ -3,20 +3,21 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
-using TwitterScraper;
+using Scraper.Net;
 
 namespace TelegramReceiver
 {
     public class TwitterValidator : IPlatformValidator
     {
         private const string TwitterUserNamePattern = @"(https?:\/\/(www\.)?(m.)?twitter.com\/)?@?(?<userName>[\w\d-_]+)";
+        private const string PlatformName = "twitter";
         private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
         
-        private readonly TwitterUpdatesProvider _twitter;
+        private readonly IScraperService _service;
 
-        public TwitterValidator(TwitterUpdatesProvider twitter)
+        public TwitterValidator(IScraperService service)
         {
-            _twitter = twitter;
+            _service = service;
         }
 
         public async Task<User> ValidateAsync(string userId)
@@ -30,21 +31,16 @@ namespace TelegramReceiver
 
             User newUser = new User(group.Value.ToLower(), Platform.Twitter);
             
-            IEnumerable<Update> updates = await GetUpdatesAsync(newUser);
+            var post = await GetPost(newUser);
 
-            if (updates == null || !updates.Any())
-            {
-                return null;
-            }
-
-            return newUser;
+            return post == null ? null : newUser;
         }
 
-        private async Task<IEnumerable<Update>> GetUpdatesAsync(User newUser)
+        private async Task<Post> GetPost(User newUser)
         {
             try
             {
-                return await _twitter.GetAllUpdatesAsync(newUser);
+                return await _service.GetPostsAsync(newUser.UserId, PlatformName).FirstOrDefaultAsync();
             }
             catch
             {

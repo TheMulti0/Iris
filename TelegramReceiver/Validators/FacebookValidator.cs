@@ -1,22 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
-using FacebookScraper;
+using Scraper.Net;
+using Post = Scraper.Net.Post;
 
 namespace TelegramReceiver
 {
     public class FacebookValidator : IPlatformValidator
     {
         private const string FacebookUserNamePattern = @"(https?:\/\/(www\.)?(m.)?facebook.com\/)?(?<userName>[\w\d-%.]+)";
+        private const string PlatformName = "facebook";
         private static readonly Regex FacebookUserNameRegex = new(FacebookUserNamePattern);
         
-        private readonly FacebookUpdatesProvider _facebook;
+        private readonly IScraperService _service;
 
-        public FacebookValidator(FacebookUpdatesProvider facebook)
+        public FacebookValidator(IScraperService service)
         {
-            _facebook = facebook;
+            _service = service;
         }
 
         public async Task<User> ValidateAsync(string userId)
@@ -30,21 +31,16 @@ namespace TelegramReceiver
 
             User newUser = new User(group.Value.ToLower(), Platform.Facebook);
 
-            IEnumerable<Update> updates = await GetUpdatesAsync(newUser);
+            var post = await GetPost(newUser);
 
-            if (updates == null || !updates.Any())
-            {
-                return null;
-            }
-
-            return newUser;
+            return post == null ? null : newUser;
         }
 
-        private async Task<IEnumerable<Update>> GetUpdatesAsync(User newUser)
+        private async Task<Post> GetPost(User newUser)
         {
             try
             {
-                return await _facebook.GetUpdatesAsync(newUser);
+                return await _service.GetPostsAsync(newUser.UserId, PlatformName).FirstOrDefaultAsync();
             }
             catch
             {

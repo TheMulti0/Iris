@@ -13,6 +13,7 @@
         <PackageReference Include="morelinq" Version="3.3.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.0" />
         <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+        <PackageReference Include="Scraper.Net.Twitter" Version="0.1.2" />
         <PackageReference Include="Scraper.RabbitMq.Client" Version="0.2.3" />
         <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
         <PackageReference Include="Telegram.Bot" Version="15.7.1" />
@@ -21,9 +22,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Extensions\Extensions.csproj" />
         <ProjectReference Include="..\Common\Common.csproj" />
-        <ProjectReference Include="..\FacebookScraper\FacebookScraper.csproj" />
         <ProjectReference Include="..\SubscriptionsDb\SubscriptionsDb.csproj" />
-        <ProjectReference Include="..\TwitterScraper\TwitterScraper.csproj" />
     </ItemGroup>
 
     <ItemGroup>

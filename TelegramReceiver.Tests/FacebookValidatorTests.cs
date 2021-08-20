@@ -1,14 +1,24 @@
 using System.Threading.Tasks;
-using FacebookScraper;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scraper.Net;
+using Scraper.Net.Facebook;
 
 namespace TelegramReceiver.Tests
 {
     [TestClass]
     public class FacebookValidatorTests
     {
-        private readonly FacebookValidator _validator = new(new FacebookUpdatesProvider(new FacebookUpdatesProviderConfig()));
+        private readonly FacebookValidator _validator;
+
+        public FacebookValidatorTests()
+        {
+            var scraperService = new ServiceCollection()
+                .AddScraper(builder => builder.AddFacebook())
+                .BuildServiceProvider()
+                .GetRequiredService<IScraperService>();
+            _validator = new FacebookValidator(scraperService);
+        }
         
         [TestMethod]
         public Task TestUserName()
