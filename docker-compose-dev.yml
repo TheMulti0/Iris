@@ -1,14 +1,6 @@
 version: '3.4'
 
 services:
-  chrome:
-    image: selenium/standalone-chrome:latest
-    container_name: chrome
-    ports:
-      - 4444:4444
-    environment:
-      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
-  
   mongodb: 
     image: mongo:latest
     container_name: mongodb
@@ -29,7 +21,48 @@ services:
 
   scraper:
     image: themulti0/scraper.rabbitmq
+    restart: always
     container_name: scraper
+    volumes:
+      - ../Scraper.RabbitMq/Scraper.RabbitMq/appsettings.json:/app/appsettings.json
+
+  telegramreceiver:
+    image: irisupdate/telegramreceiver:latest
     build:
       context: .
-      dockerfile: ../Scraper.RabbitMq/Scraper.RabbitMq/Dockerfile
+      dockerfile: TelegramReceiver/Dockerfile
+    container_name: telegramreceiver
+    restart: always
+    volumes:
+      - ./TelegramReceiver/appsettings.json:/app/appsettings.json
+    depends_on:
+      - rabbitmq
+      - mongodb
+      - scraper
+
+  messagesmanager:
+    image: irisupdate/messagesmanager:latest
+    build:
+      context: .
+      dockerfile: MessagesManager/Dockerfile
+    container_name: messagesmanager
+    restart: always
+    volumes:
+      - ./MessagesManager/appsettings.json:/app/appsettings.json
+    depends_on:
+      - rabbitmq
+      - mongodb
+      - scraper
+
+  telegramsender:
+    image: irisupdate/telegramsender:latest
+    build:
+      context: .
+      dockerfile: TelegramSender/Dockerfile
+    container_name: telegramsender
+    restart: always
+    volumes:
+      - ./TelegramSender/appsettings.json:/app/appsettings.json
+    depends_on:
+      - rabbitmq
+      - mongodb

@@ -3,7 +3,7 @@ version: '3.4'
 services:
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
-    container_name: 'rabbitmq'
+    container_name: rabbitmq
     environment:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     ports:
@@ -12,8 +12,6 @@ services:
     volumes:
       - ./rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
-    networks:
-      - rabbitmq_network
 
   mongodb: 
     image: mongo:latest
@@ -25,8 +23,11 @@ services:
       - ./mongo-entrypoint:/docker-entrypoint-initdb.d
     ports:
       - 27017:27017
-    networks:
-      - mongodb_network
+
+  scraper:
+    image: themulti0/scraper.rabbitmq
+    restart: always
+    container_name: scraper
 
   telegramreceiver:
     image: irisupdate/telegramreceiver:latest
@@ -37,12 +38,10 @@ services:
     restart: always
     env_file:
       - telegramreceiver.env
-    networks:
-      - rabbitmq_network
-      - mongodb_network
     depends_on:
       - rabbitmq
       - mongodb
+      - scraper
 
   messagesmanager:
     image: irisupdate/messagesmanager:latest
@@ -53,16 +52,10 @@ services:
     restart: always
     env_file:
       - messagesmanager.env
-    security_opt:
-      - seccomp:unconfined
-    networks:
-      - rabbitmq_network
-      - mongodb_network
-      - chrome_network
     depends_on:
       - rabbitmq
       - mongodb
-      - chrome
+      - scraper
 
   telegramsender:
     image: irisupdate/telegramsender:latest
@@ -73,13 +66,6 @@ services:
     restart: always
     env_file:
       - telegramsender.env
-    networks:
-      - rabbitmq_network
-      - mongodb_network
     depends_on:
       - rabbitmq
       - mongodb
-
-networks:
-  rabbitmq_network:
-  mongodb_network:
