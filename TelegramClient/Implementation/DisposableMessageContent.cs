@@ -9,27 +9,36 @@ namespace TelegramClient
     {
         public TdApi.InputMessageContent Content { get; }
 
-        private readonly IAsyncDisposable _disposable;
+        private readonly IDisposable _disposable;
+        private readonly IAsyncDisposable _asyncDisposable;
 
         public DisposableMessageContent(TdApi.InputMessageContent content)
         {
             Content = content;
         }
         
-        public DisposableMessageContent(TdApi.InputMessageContent content, IAsyncDisposable disposable)
+        public DisposableMessageContent(TdApi.InputMessageContent content, IDisposable disposable)
         {
             Content = content;
             _disposable = disposable;
         }
+        
+        public DisposableMessageContent(TdApi.InputMessageContent content, IAsyncDisposable asyncDisposable)
+        {
+            Content = content;
+            _asyncDisposable = asyncDisposable;
+        }
 
         public async ValueTask DisposeAsync()
         {
-            if (_disposable == null)
+            _disposable?.Dispose();
+            
+            if (_asyncDisposable == null)
             {
                 return;
             }
 
-            await _disposable.DisposeAsync();
+            await _asyncDisposable.DisposeAsync();
         }
     }
 }

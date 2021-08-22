@@ -61,7 +61,7 @@ namespace TelegramSender
         {
             Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
 
-            var inputFileStream = new InputFileStream(GetStreamAsync);
+            var inputFileStream = new InputRemoteStream(GetStreamAsync);
 
             return new TdApi.InputMessageContent.InputMessagePhoto
             {

@@ -5,7 +5,7 @@ using TdLib;
 
 namespace TelegramClient
 {
-    public sealed class InputFileStream : TdApi.InputFile, IAsyncDisposable
+    public sealed class InputRemoteStream : TdApi.InputFile, IAsyncDisposable
     {
         private static readonly Random Random = new();
 
@@ -13,7 +13,7 @@ namespace TelegramClient
         private readonly string _filePath;
         private readonly FileStream _fileStream;
 
-        public InputFileStream(
+        public InputRemoteStream(
             Func<Task<Stream>> getStreamAsync)
         {
             _getStreamAsync = getStreamAsync;

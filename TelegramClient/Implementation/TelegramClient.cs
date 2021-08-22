@@ -43,10 +43,16 @@ namespace TelegramClient
         {
             var content = new DisposableMessageContent(inputMessageContent);
 
-            bool hasFileStream = inputMessageContent.HasInputFileStream(out InputFileStream file);
-            if (hasFileStream)
+            bool hasRemoteStream = inputMessageContent.HasInputFile(out InputRemoteStream file);
+            if (hasRemoteStream)
             {
-                content = await inputMessageContent.WithInputFileStreamAsync(file);
+                content = await inputMessageContent.WithInputRemoteStreamAsync(file);
+            }
+
+            bool hasRecyclingFile = inputMessageContent.HasInputFile(out InputRecyclingLocalFile r);
+            if (hasRecyclingFile)
+            {
+                content = inputMessageContent.WithInputRecyclingLocalFile(r);
             }
 
             try
@@ -73,7 +79,7 @@ namespace TelegramClient
             }
             finally
             {
-                if (hasFileStream)
+                if (hasRemoteStream || hasRecyclingFile)
                 {
                     await content.DisposeAsync();
                 }
@@ -152,7 +158,7 @@ namespace TelegramClient
             string url,
             TdApi.InputMessageContent inputMessageContent)
         {
-            var file = new InputFileStream(new RemoteFileStream(url).GetStreamAsync);
+            var file = new InputRemoteStream(new RemoteFileStream(url).GetStreamAsync);
 
             return inputMessageContent.WithFile(file);
         }
@@ -196,7 +202,7 @@ namespace TelegramClient
         {
             var contents = await inputMessageContents
                 .ToAsyncEnumerable()
-                .SelectAwait(ExtractStreamFiles)
+                .SelectAwait(ExtractFiles)
                 .ToListAsync(token);
 
             try
@@ -219,11 +225,15 @@ namespace TelegramClient
             }
         }
 
-        private static async ValueTask<DisposableMessageContent> ExtractStreamFiles(TdApi.InputMessageContent content)
+        private static async ValueTask<DisposableMessageContent> ExtractFiles(TdApi.InputMessageContent content)
         {
-            if (content.HasInputFileStream(out InputFileStream file))
+            if (content.HasInputFile(out InputRemoteStream file))
             {
-                return await content.WithInputFileStreamAsync(file);
+                return await content.WithInputRemoteStreamAsync(file);
+            }
+            if (content.HasInputFile(out InputRecyclingLocalFile r))
+            {
+                return content.WithInputRecyclingLocalFile(r);
             }
 
             return new DisposableMessageContent(content);

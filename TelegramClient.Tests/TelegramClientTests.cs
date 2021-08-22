@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -30,6 +31,22 @@ namespace TelegramClient.Tests
             
             var chatId = rootConfig.GetValue<long>("TelegramClientTestChatId");
             _chatId = (await _client.GetChatAsync(chatId)).Id;
+        }
+
+        [TestMethod]
+        public async Task TestRecyclingFile()
+        {
+            const string filePath = "myfile.txt";
+            await File.WriteAllTextAsync(filePath, "my text");
+
+            await _client.SendMessageAsync(
+                _chatId,
+                new TdApi.InputMessageContent.InputMessageDocument
+                {
+                    Document = new InputRecyclingLocalFile(filePath)
+                });
+            
+            Assert.IsFalse(File.Exists(filePath));
         }
         
         [DataTestMethod]

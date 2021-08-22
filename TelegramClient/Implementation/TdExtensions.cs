@@ -138,10 +138,10 @@ namespace TelegramClient
             return true;
         }
 
-        public static bool HasInputFileStream(this TdApi.InputMessageContent content, out InputFileStream file)
+        public static bool HasInputFile<T>(this TdApi.InputMessageContent content, out T file) where T : TdApi.InputFile
         {
             if (content.HasFile(out TdApi.InputFile f) &&
-                f is InputFileStream s)
+                f is T s)
             {
                 file = s;
                 return true;
@@ -246,13 +246,21 @@ namespace TelegramClient
             };
         }
         
-        public static async Task<DisposableMessageContent> WithInputFileStreamAsync(this TdApi.InputMessageContent content, InputFileStream file)
+        public static DisposableMessageContent WithInputRecyclingLocalFile(this TdApi.InputMessageContent content, InputRecyclingLocalFile file)
+        {
+            TdApi.InputMessageContent newContent = content
+                .WithFile(file);
+
+            return new DisposableMessageContent(newContent, file);
+        }
+        
+        public static async Task<DisposableMessageContent> WithInputRemoteStreamAsync(this TdApi.InputMessageContent content, InputRemoteStream file)
         {
             TdApi.InputMessageContent newContent = content
                 .WithFile(await file.CreateLocalInputFileAsync());
 
             if (!newContent.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
-                thumbnail.Thumbnail is not InputFileStream s)
+                thumbnail.Thumbnail is not InputRemoteStream s)
             {
                 return new DisposableMessageContent(newContent, file);
             }
