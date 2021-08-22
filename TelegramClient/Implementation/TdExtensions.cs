@@ -248,10 +248,15 @@ namespace TelegramClient
         
         public static DisposableMessageContent WithInputRecyclingLocalFile(this TdApi.InputMessageContent content, InputRecyclingLocalFile file)
         {
-            TdApi.InputMessageContent newContent = content
-                .WithFile(file);
-
-            return new DisposableMessageContent(newContent, file);
+            if (!content.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
+                thumbnail.Thumbnail is not InputRecyclingLocalFile r)
+            {
+                return new DisposableMessageContent(content, file);
+            }
+            
+            return new DisposableMessageContent(
+                content,
+                new AggregateDisposable(file, r));
         }
         
         public static async Task<DisposableMessageContent> WithInputRemoteStreamAsync(this TdApi.InputMessageContent content, InputRemoteStream file)
