@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Common;
 using Extensions;
@@ -17,31 +16,7 @@ namespace TelegramReceiver
     {
         public static async Task Main()
         {
-            await new HostBuilder()
-                .ConfigureAppConfiguration(ConfigureConfiguration)
-                .ConfigureLogging(CustomConsoleDiExtensions.ConfigureLogging)
-                .ConfigureServices(ConfigureServices)
-                .RunConsoleAsync();
-        }
-
-        private static void ConfigureConfiguration(IConfigurationBuilder builder)
-        {
-            string environmentName =
-                Environment.GetEnvironmentVariable("ENVIRONMENT");
-
-            const string fileName = "appsettings";
-            const string fileType = "json";
-
-            string basePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                Environment.GetEnvironmentVariable("CONFIG_DIRECTORY") ?? string.Empty);
-
-            builder
-                .SetBasePath(basePath)
-                .AddJsonFile($"{fileName}.{fileType}", false)
-                .AddJsonFile($"{fileName}.{environmentName}.{fileType}", true) // Overrides default appsettings.json
-                .AddUserSecrets<TelegramConfig>()
-                .AddEnvironmentVariables();
+            await StartupFactory.Run(ConfigureServices);
         }
 
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)

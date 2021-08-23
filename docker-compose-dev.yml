@@ -8,7 +8,7 @@ services:
       - 27017:27017
         
   rabbitmq:
-    image: 'rabbitmq:3.6-management-alpine'
+    image: rabbitmq:3.6-management-alpine
     container_name: rabbitmq
     environment:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
@@ -22,6 +22,9 @@ services:
   scraper:
     image: themulti0/scraper.rabbitmq
     restart: always
+    build:
+      context: ../Scraper.RabbitMq
+      dockerfile: Scraper.RabbitMq/Dockerfile
     container_name: scraper
     volumes:
       - ../Scraper.RabbitMq/Scraper.RabbitMq/appsettings.json:/app/appsettings.json

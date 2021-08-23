@@ -4,8 +4,7 @@
     "MessagesManager": {
       "commandName": "Project",
       "environmentVariables": {
-        "ENVIRONMENT": "Development",
-        "CONFIG_DIRECTORY": "../../../"
+        "ENVIRONMENT": "Development"
       }
     },
     "Docker": {
