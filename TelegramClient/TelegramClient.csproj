@@ -13,4 +13,10 @@
       <PackageReference Include="tdlib.native" Version="1.6.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="ffprobe.exe" />
+      <None Remove="ffplay.exe" />
+      <None Remove="ffmpeg.exe" />
+    </ItemGroup>
+
 </Project>

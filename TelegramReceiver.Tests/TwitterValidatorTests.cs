@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +16,7 @@ namespace TelegramReceiver.Tests
         {
             var rootConfig = new ConfigurationBuilder().AddUserSecrets<TwitterValidator>().Build();
 
-            var config = rootConfig.GetSection<TwitterConfig>("Twitter");
+            var config = rootConfig.GetSection("Twitter").Get<TwitterConfig>();
             
             var scraperService = new ServiceCollection()
                 .AddScraper(builder => builder.AddTwitter(config))

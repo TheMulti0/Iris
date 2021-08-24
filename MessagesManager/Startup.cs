@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Common;
-using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,21 +20,12 @@ namespace MessagesManager
         {
             IConfiguration rootConfig = hostContext.Configuration;
 
-            var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection"); 
-            var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
+            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>(); 
 
             services
                 .AddSubscriptionsDb()
-
-                .AddRabbitMqConnection(connectionConfig)
-                .AddProducer<Message>(producerConfig)
-        
-                .AddSingleton<IConsumer<Update>, UpdatesConsumer>()
-                .AddScraperRabbitMqClient<NewPostConsumer>(new RabbitMqConfig
-                {
-                    ConnectionString = connectionConfig.ConnectionString
-                })
-        
+                .AddSingleton<UpdateConsumer>()
+                .AddScraperRabbitMqClient<NewPostConsumer>(connectionConfig)
                 .BuildServiceProvider();
         }   
     }

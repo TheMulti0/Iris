@@ -3,36 +3,32 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Extensions;
 using Microsoft.Extensions.Logging;
 using SubscriptionsDb;
 
 namespace MessagesManager
 {
-    internal class UpdatesConsumer : IConsumer<Update>
+    public class UpdateConsumer
     {
-        private readonly IProducer<Message> _producer;
         private readonly IChatSubscriptionsRepository _subscriptionsRepository;
-        private readonly ILogger<UpdatesConsumer> _logger;
+        private readonly ILogger<UpdateConsumer> _logger;
 
-        public UpdatesConsumer(
-            IProducer<Message> producer,
+        public UpdateConsumer(
             IChatSubscriptionsRepository subscriptionsRepository,
-            ILogger<UpdatesConsumer> logger)
+            ILogger<UpdateConsumer> logger)
         {
-            _producer = producer;
             _subscriptionsRepository = subscriptionsRepository;
             _logger = logger;
         }
 
-        public async Task ConsumeAsync(Update update, CancellationToken token)
+        public async Task<Message> ConsumeAsync(Update update, CancellationToken token)
         {
             _logger.LogInformation("Received {}", update);
 
             SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(update.Author);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
-            _producer.Send(new Message(update, destinationChats.ToList()));    
+            return new Message(update, destinationChats.ToList());    
         }
     }
 }

@@ -2,7 +2,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
-using Extensions;
 using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -24,7 +23,7 @@ namespace TelegramClient.Tests
         {
             var rootConfig = new ConfigurationBuilder().AddUserSecrets<TelegramClientTests>().Build();
 
-            var config = rootConfig.GetSection<TelegramClientConfig>("TelegramClientConfig");
+            var config = rootConfig.GetSection("TelegramClientConfig").Get<TelegramClientConfig>();
             var factory = new TelegramClientFactory(config, NullLogger<TelegramClientFactory>.Instance);
             
             _client = await factory.CreateAsync();

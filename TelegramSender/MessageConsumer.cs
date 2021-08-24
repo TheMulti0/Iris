@@ -3,11 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Common;
-using Extensions;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using SubscriptionsDb;
@@ -20,13 +19,12 @@ using User = Common.User;
 
 namespace TelegramSender
 {
-    public class MessagesConsumer : IConsumer<Message>
+    public class MessageConsumer : IConsumer<Message>
     {
         private readonly IChatSubscriptionsRepository _repository;
-        private readonly IProducer<ChatSubscriptionRequest> _producer;
         private readonly ISenderFactory _senderFactory;
         private readonly MessageInfoBuilder _messageInfoBuilder;
-        private readonly ILogger<MessagesConsumer> _logger;
+        private readonly ILogger<MessageConsumer> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
         private MessageSender _sender;
         
@@ -43,23 +41,23 @@ namespace TelegramSender
             Converters = { new MediaJsonConverter() }
         };
 
-        public MessagesConsumer(
+        public MessageConsumer(
             IChatSubscriptionsRepository repository,
-            IProducer<ChatSubscriptionRequest> producer,
             ISenderFactory senderFactory,
             MessageInfoBuilder messageInfoBuilder,
             ILoggerFactory loggerFactory)
         {
             _repository = repository;
-            _producer = producer;
             _senderFactory = senderFactory;
             _messageInfoBuilder = messageInfoBuilder;
-            _logger = loggerFactory.CreateLogger<MessagesConsumer>();
+            _logger = loggerFactory.CreateLogger<MessageConsumer>();
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
 
-        public async Task ConsumeAsync(Message message, CancellationToken token)
+        public async Task Consume(ConsumeContext<Message> context)
         {
+            Message message = context.Message;
+            
             _sender ??= await _senderFactory.CreateAsync();
 
             _logger.LogInformation("Received {}", message);
@@ -216,22 +214,23 @@ namespace TelegramSender
 
         private async Task RemoveChatSubscription(User author, long chatId)
         {
-            if (await CanSubscriptionBeRemoved(author, chatId))
-            {
-                return;
-            }
-
-            _logger.LogInformation("Removing subscription of {} from chat {}", author, chatId);
-            await _repository.RemoveAsync(author, chatId);
-
-            if (! await _repository.ExistsAsync(author))
-            {
-                _producer.Send(
-                    new ChatSubscriptionRequest(
-                        SubscriptionType.Unsubscribe,
-                        new Subscription(author, null), 
-                        chatId));
-            }
+            // TODO Remove chat subscription
+            // if (await CanSubscriptionBeRemoved(author, chatId))
+            // {
+            //     return;
+            // }
+            //
+            // _logger.LogInformation("Removing subscription of {} from chat {}", author, chatId);
+            // await _repository.RemoveAsync(author, chatId);
+            //
+            // if (! await _repository.ExistsAsync(author))
+            // {
+            //     _producer.Send(
+            //         new ChatSubscriptionRequest(
+            //             SubscriptionType.Unsubscribe,
+            //             new Subscription(author, null), 
+            //             chatId));
+            // }
         }
 
         private async Task<bool> CanSubscriptionBeRemoved(User author, long chatId)

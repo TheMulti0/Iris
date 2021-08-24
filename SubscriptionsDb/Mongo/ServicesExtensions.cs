@@ -1,6 +1,5 @@
 ﻿using System;
 using Common;
-using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDbGenericRepository;
@@ -28,7 +27,7 @@ namespace SubscriptionsDb
 
         private static IMongoDbContext CreateMongoDbContext(IConfiguration config)
         {
-            var mongoDbConfig = config.GetSection<MongoDbConfig>("SubscriptionsDb");
+            var mongoDbConfig = config.GetSection("SubscriptionsDb").Get<MongoDbConfig>();
 
             return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
         }

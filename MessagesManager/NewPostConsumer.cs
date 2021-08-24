@@ -10,16 +10,20 @@ namespace MessagesManager
 {
     public class NewPostConsumer : IConsumer<NewPost>
     {
-        private readonly Extensions.IConsumer<Update> _consumer;
+        private readonly UpdateConsumer _updateConsumer;
 
-        public NewPostConsumer(Extensions.IConsumer<Update> consumer)
+        public NewPostConsumer(UpdateConsumer updateConsumer)
         {
-            _consumer = consumer;
+            _updateConsumer = updateConsumer;
         }
 
         public async Task Consume(ConsumeContext<NewPost> context)
         {
-            await _consumer.ConsumeAsync(ToUpdate(context.Message), context.CancellationToken);
+            Message message = await _updateConsumer.ConsumeAsync(
+                ToUpdate(context.Message),
+                context.CancellationToken);
+
+            await context.Send(message);
         }
 
         private static Update ToUpdate(NewPost newPost)
@@ -53,7 +57,7 @@ namespace MessagesManager
                 case AudioItem a:
                     return new Audio(a.Url, a.ThumbnailUrl, a.Duration, a.Title, a.Artist);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(item));
             }
         }
     }

@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using Common;
-using Extensions;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 using TelegramClient;
 
@@ -20,22 +21,32 @@ namespace TelegramSender
         {
             IConfiguration rootConfig = hostContext.Configuration;
     
-            var telegramConfig = rootConfig.GetSection<TelegramClientConfig>("Telegram");
-            var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
-            var consumerConfig = rootConfig.GetSection<RabbitMqConsumerConfig>("RabbitMqConsumer");
-            var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
+            var telegramConfig = rootConfig.GetSection("Telegram").Get<RabbitMqConfig>();
+            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
     
             services
                 .AddSubscriptionsDb()
-                .AddRabbitMqConnection(connectionConfig)
                 .AddLanguages()
+                .AddMassTransit(
+                    x =>
+                    {
+                        x.AddConsumer<MessageConsumer>();
+                        
+                        x.UsingRabbitMq(
+                            (context, cfg) =>
+                            {
+                                cfg.Host(connectionConfig.ConnectionString);
+                                
+                                cfg.ConfigureJsonDeserializer(JsonConfigurator.Configure);
+                                
+                                cfg.ConfigureEndpoints(context);
+                            });
+                    })
+                .AddMassTransitHostedService()
                 .AddSingleton(telegramConfig)
                 .AddSingleton<TelegramClientFactory>()
                 .AddSingleton<ISenderFactory, SenderFactory>()
                 .AddSingleton<MessageInfoBuilder>()
-                .AddProducer<ChatSubscriptionRequest>(producerConfig)
-                .AddSingleton<IConsumer<Message>, MessagesConsumer>()
-                .AddConsumerService<Message>(consumerConfig)
                 .BuildServiceProvider();
         }
     }

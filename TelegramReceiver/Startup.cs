@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Common;
-using Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,22 +22,16 @@ namespace TelegramReceiver
         {
             IConfiguration rootConfig = hostContext.Configuration;
 
-            var mongoConfig = rootConfig.GetSection<MongoDbConfig>("ConnectionsDb");
-            var connectionConfig = rootConfig.GetSection<RabbitMqConnectionConfig>("RabbitMqConnection");
-            var producerConfig = rootConfig.GetSection<RabbitMqProducerConfig>("RabbitMqProducer");
-            var telegramConfig = rootConfig.GetSection<TelegramConfig>("Telegram");
+            var mongoConfig = rootConfig.GetSection("ConnectionsDb").Get<MongoDbConfig>();
+            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
+            var telegramConfig = rootConfig.GetSection("Telegram").Get<TelegramConfig>();
 
             services
                 .AddMongoDbRepositories(mongoConfig)
-                .AddRabbitMq(connectionConfig, producerConfig)
                 .AddValidators()
                 .AddCommandHandling(telegramConfig)
                 .AddSingleton<ISubscriptionsManager, NewSubscriptionsManager>()
-                .AddScraperRabbitMqClient(
-                    config: new RabbitMqConfig
-                    {
-                        ConnectionString = connectionConfig.ConnectionString
-                    })
+                .AddScraperRabbitMqClient(config: connectionConfig)
                 .AddLanguages()
                 .BuildServiceProvider();
         }
@@ -65,16 +58,6 @@ namespace TelegramReceiver
         private static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
         {
             return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
-        }
-
-        private static IServiceCollection AddRabbitMq(
-            this IServiceCollection services,
-            RabbitMqConnectionConfig connectionConfig,
-            RabbitMqProducerConfig producerConfig)
-        {
-            return services
-                .AddRabbitMqConnection(connectionConfig)
-                .AddProducer<ChatSubscriptionRequest>(producerConfig);
         }
 
         private static IServiceCollection AddValidators(this IServiceCollection services)
