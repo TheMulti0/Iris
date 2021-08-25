@@ -30,7 +30,7 @@ namespace TelegramReceiver
                 .AddMongoDbRepositories(mongoConfig)
                 .AddValidators()
                 .AddCommandHandling(telegramConfig)
-                .AddSingleton<ISubscriptionsManager, NewSubscriptionsManager>()
+                .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
                 .AddScraperRabbitMqClient(config: connectionConfig)
                 .AddLanguages()
                 .BuildServiceProvider();

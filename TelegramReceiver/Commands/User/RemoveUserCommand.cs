@@ -39,7 +39,7 @@ namespace TelegramReceiver
 
             if (! await _chatSubscriptionsRepository.ExistsAsync(user))
             {
-                await _subscriptionsManager.Unsubscribe(subscription, ConnectedChat);                
+                await _subscriptionsManager.Unsubscribe(subscription);                
             }
         }
     }

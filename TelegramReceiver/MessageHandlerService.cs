@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SubscriptionsDb;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Update = Telegram.Bot.Types.Update;
@@ -17,20 +18,34 @@ namespace TelegramReceiver
     {
         private readonly ITelegramBotClient _client;
         private readonly CommandExecutor _commandExecutor;
+        private readonly IChatSubscriptionsRepository _repository;
+        private readonly ISubscriptionsManager _manager;
         private readonly ILogger<MessageHandlerService> _logger;
 
         public MessageHandlerService(
             TelegramConfig config,
             CommandExecutor commandExecutor,
+            IChatSubscriptionsRepository repository,
+            ISubscriptionsManager manager,
             ILogger<MessageHandlerService> logger)
         {
             _client = new TelegramBotClient(config.AccessToken);
             _commandExecutor = commandExecutor;
+            _repository = repository;
+            _manager = manager;
             _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
+            {
+                TimeSpan minInterval = subscriptionEntity.Chats.Select(chatSubscription => chatSubscription.Interval).Min();
+                var subscription = new Subscription(subscriptionEntity.User, minInterval, DateTime.Now);
+                
+                await _manager.Subscribe(subscription);
+            }
+            
             var identity = await _client.GetMeAsync(stoppingToken);
 
             _logger.LogInformation(

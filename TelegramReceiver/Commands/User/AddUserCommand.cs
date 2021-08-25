@@ -101,7 +101,7 @@ namespace TelegramReceiver
 
             if (! await _chatSubscriptionsRepository.ExistsAsync(user))
             {
-                await _subscriptionsManager.Subscribe(subscription, ConnectedChat);
+                await _subscriptionsManager.Subscribe(subscription);
             }
             
             var chatSubscription = new UserChatSubscription

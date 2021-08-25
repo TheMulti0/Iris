@@ -5,22 +5,22 @@ using Scraper.RabbitMq.Client;
 
 namespace TelegramReceiver
 {
-    public class NewSubscriptionsManager : ISubscriptionsManager
+    public class SubscriptionsManager : ISubscriptionsManager
     {
         private readonly INewPostSubscriptionsClient _client;
 
-        public NewSubscriptionsManager(INewPostSubscriptionsClient client)
+        public SubscriptionsManager(INewPostSubscriptionsClient client)
         {
             _client = client;
         }
 
-        public async Task Subscribe(Subscription subscription, long chatId)
+        public async Task Subscribe(Subscription subscription)
         {
             string platform = GetPlatform(subscription);
             await _client.AddOrUpdateSubscription(subscription.User.UserId, platform, (TimeSpan)subscription.Interval);
         }
 
-        public async Task Unsubscribe(Subscription subscription, long chatId)
+        public async Task Unsubscribe(Subscription subscription)
         {
             string platform = GetPlatform(subscription);
             await _client.RemoveSubscription(subscription.User.UserId, platform);
