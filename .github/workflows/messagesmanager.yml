@@ -3,13 +3,11 @@ name: MessagesManager
 on:
   workflow_dispatch:
   push:
-    branches: [ v4 ]
+    branches: [ master ]
     paths:
-      - "Extensions/**"
       - "Common/**"
       - "MessagesManager/**"
       - "SubscriptionsDb/**"
-      - "UpdatesDb/**"
     
 jobs:
   build-push:

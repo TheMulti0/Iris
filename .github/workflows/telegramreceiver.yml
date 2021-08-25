@@ -3,14 +3,11 @@ name: TelegramReceiver
 on:
   workflow_dispatch:
   push:
-    branches: [ v4 ]
+    branches: [ master ]
     paths:
-      - "Extensions/**"
       - "Common/**"
       - "TelegramReceiver/**"
       - "SubscriptionsDb/**"
-      - "FacebookScraper/**"
-      - "TwitterScraper/**"
     
 jobs:
   build-push:
