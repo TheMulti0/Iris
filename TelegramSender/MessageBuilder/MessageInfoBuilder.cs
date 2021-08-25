@@ -66,7 +66,7 @@ namespace TelegramSender
                 newPost.Post.Content,
                 m =>
                 {
-                    string username = m.Value;
+                    string username = m.Groups["userName"].Value;
                     return HyperlinkText(username, $"{TwitterUrl}/{username}");
                 });
         }

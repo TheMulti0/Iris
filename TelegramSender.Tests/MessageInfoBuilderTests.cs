@@ -1,5 +1,7 @@
 ﻿using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scraper.Net;
+using Scraper.RabbitMq.Common;
 
 namespace TelegramSender.Tests
 {
@@ -17,10 +19,13 @@ namespace TelegramSender.Tests
             };
             
             var messageInfo = _builder.Build(
-                new Update
+                new NewPost
                 {
-                    Author = new User(string.Empty, Platform.Twitter),
-                    Content = "hyperlink @themulti0 and @realDonaldTrump"
+                    Platform = "twitter",
+                    Post = new Post
+                    {
+                        Content = "hyperlink @themulti0 and @realDonaldTrump"
+                    }
                 },
                 new UserChatSubscription
                 {
