@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Scraper.RabbitMq.Common;
 
 namespace Common
 {
     public record Message(
-        Update Update,
+        NewPost NewPost,
         List<UserChatSubscription> DestinationChats)
     {
         public override string ToString()
         {
-            return $"Message: {Update}, Destined to {DestinationChats.Count} chats";
+            return $"NewPost: {NewPost}, Destined to {DestinationChats.Count} chats";
         }
     }
 }

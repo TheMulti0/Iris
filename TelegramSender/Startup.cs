@@ -4,6 +4,7 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scraper.Net;
 using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 using TelegramClient;
@@ -39,7 +40,7 @@ namespace TelegramSender
                             {
                                 cfg.Host(connectionConfig.ConnectionString);
                                 
-                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMedia));
+                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMediaItem));
                                 
                                 cfg.ConfigureEndpoints(context);
                             });

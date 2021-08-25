@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Common;
+using Scraper.Net;
 using Telegram.Bot.Types;
 
 namespace TelegramSender
 {
     public record MessageInfo(
         string Message,
-        IEnumerable<IMedia> Media,
+        IEnumerable<IMediaItem> MediaItems,
         ChatId ChatId,
         CancellationToken CancellationToken = default,
         int ReplyToMessageId = 0,

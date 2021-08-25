@@ -1,6 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Common;
-using Update = Common.Update;
+using Scraper.Net;
+using Scraper.Net.Screenshot;
+using Scraper.RabbitMq.Common;
 
 namespace TelegramSender
 {
@@ -11,29 +15,32 @@ namespace TelegramSender
         private const string TwitterUserNamePattern = @"@(?<userName>[\w\d-_]+)";
         private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
     
-        public MessageInfo Build(Update update, UserChatSubscription chatSubscription)
+        public MessageInfo Build(NewPost newPost, UserChatSubscription chatSubscription)
         {
-            string message = GetMessage(update, chatSubscription);
+            string message = GetMessage(newPost, chatSubscription);
 
-            if (chatSubscription.SendScreenshotOnly && update.Screenshot != null)
+            IEnumerable<IMediaItem> screenshots = newPost.Post.MediaItems
+                .Where(item => item is ScreenshotItem)
+                .ToList();
+            if (chatSubscription.SendScreenshotOnly && screenshots.Any())
             {
                 return new MessageInfo(
                     message,
-                    new []{ new BytesPhoto(update.Screenshot) },
+                    screenshots,
                     chatSubscription.ChatInfo.Id);
             }
             
             return new MessageInfo(
                 message,
-                update.Media,
+                newPost.Post.MediaItems,
                 chatSubscription.ChatInfo.Id,
                 DisableWebPagePreview: !chatSubscription.ShowUrlPreview);
         }
 
-        private static string GetMessage(Update update, UserChatSubscription chatSubscription)
+        private static string GetMessage(NewPost newPost, UserChatSubscription chatSubscription)
         {
-            var prefix = ToString(chatSubscription.Prefix, update.Url);
-            var suffix = ToString(chatSubscription.Suffix, update.Url);
+            var prefix = ToString(chatSubscription.Prefix, newPost.Post.Url);
+            var suffix = ToString(chatSubscription.Suffix, newPost.Post.Url);
 
             if (prefix != string.Empty)
             {
@@ -44,19 +51,19 @@ namespace TelegramSender
                 suffix = $"\n\n\n{suffix}";
             }
 
-            string updateContent = GetContent(update);
+            string updateContent = GetContent(newPost);
             return prefix + updateContent + suffix;
         }
 
-        private static string GetContent(Update update)
+        private static string GetContent(NewPost newPost)
         {
-            if (update.Author.Platform != Platform.Twitter)
+            if (newPost.Platform != "twitter")
             {
-                return update.Content;
+                return newPost.Post.Content;
             }
             
             return TwitterUserNameRegex.Replace(
-                update.Content,
+                newPost.Post.Content,
                 m =>
                 {
                     string username = m.Value;

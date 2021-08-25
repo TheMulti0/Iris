@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Common;
+using Scraper.Net;
 using TdLib;
-using TelegramClient;
 
 namespace TelegramSender
 {
@@ -16,34 +13,31 @@ namespace TelegramSender
 
             int mediaIndex = 0;
             
-            foreach (IMedia media in message.Media)
+            foreach (IMediaItem mediaItem in message.MediaItems)
             {
-                yield return media.ToInputMessageContentAsync(GetCaption(mediaIndex));
+                yield return mediaItem.ToInputMessageContentAsync(GetCaption(mediaIndex));
                 
                 mediaIndex++;
             }
         }
         
         public static TdApi.InputMessageContent ToInputMessageContentAsync(
-            this IMedia media,
+            this IMediaItem media,
             TdApi.FormattedText caption)
         {
             switch (media)
             {
-                case Photo p:
+                case PhotoItem p:
                     return p.ToInputPhoto(caption);
                 
-                case BytesPhoto p:
-                    return p.ToInputPhotoAsync(caption);
-
-                case Video v:
+                case VideoItem v:
                     return v.ToInputVideo(caption);
             }
 
             return null;
         }
 
-        private static TdApi.InputMessageContent ToInputPhoto(this Photo photo, TdApi.FormattedText caption)
+        private static TdApi.InputMessageContent ToInputPhoto(this PhotoItem photo, TdApi.FormattedText caption)
         {
             return new TdApi.InputMessageContent.InputMessagePhoto
             {
@@ -55,22 +49,22 @@ namespace TelegramSender
             };
         }
         
-        private static TdApi.InputMessageContent ToInputPhotoAsync(
-            this BytesPhoto photo,
-            TdApi.FormattedText caption)
-        {
-            Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
+        // private static TdApi.InputMessageContent ToInputPhotoAsync(
+        //     this BytesPhoto photo,
+        //     TdApi.FormattedText caption)
+        // {
+        //     Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
+        //
+        //     var inputFileStream = new InputRemoteStream(GetStreamAsync);
+        //
+        //     return new TdApi.InputMessageContent.InputMessagePhoto
+        //     {
+        //         Caption = caption,
+        //         Photo = inputFileStream
+        //     };
+        // }
 
-            var inputFileStream = new InputRemoteStream(GetStreamAsync);
-
-            return new TdApi.InputMessageContent.InputMessagePhoto
-            {
-                Caption = caption,
-                Photo = inputFileStream
-            };
-        }
-
-        private static TdApi.InputMessageContent ToInputVideo(this Video video, TdApi.FormattedText caption)
+        private static TdApi.InputMessageContent ToInputVideo(this VideoItem video, TdApi.FormattedText caption)
         {
             int height = video.Height ?? 0;
             int width = video.Width ?? 0;

@@ -8,13 +8,13 @@ using System.Threading.Tasks.Dataflow;
 using Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Scraper.RabbitMq.Common;
 using Telegram.Bot.Types;
 using SubscriptionsDb;
 using TdLib;
 using TelegramClient;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using Message = Common.Message;
-using Update = Common.Update;
 using User = Common.User;
 
 namespace TelegramSender
@@ -73,7 +73,7 @@ namespace TelegramSender
 
             foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
             {
-                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.Update);
+                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.NewPost);
 
                 if (parsedMessageInfo == null)
                 {
@@ -96,7 +96,7 @@ namespace TelegramSender
             
             IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, chatSubscription);
             
-            _logger.LogInformation("Successfully sent update {} to chat id {}", message.Update, chatSubscription.ChatInfo.Id);
+            _logger.LogInformation("Successfully sent update {} to chat id {}", message.NewPost, chatSubscription.ChatInfo.Id);
             
             return GetInputMessageContents(sentMessages);
         }
@@ -121,23 +121,23 @@ namespace TelegramSender
         private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
         {
             var chatId = chatInfo.ChatInfo.Id;
-            Update update = message.Update;
+            var newPost = message.NewPost;
 
-            ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, update);
+            ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, newPost);
 
             if (parsed == null)
             {
                 return Enumerable.Empty<TdApi.Message>();
             }
 
-            return await SendAsync(_sender, parsed, update, chatId);
+            return await SendAsync(_sender, parsed, newPost, chatId);
         }
 
-        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription subscription, Update update)
+        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription subscription, NewPost newPost)
         {
             try
             {
-                MessageInfo messageInfo = _messageInfoBuilder.Build(update, subscription);
+                MessageInfo messageInfo = _messageInfoBuilder.Build(newPost, subscription);
             
                 return await _sender.ParseAsync(messageInfo);
             }
@@ -145,7 +145,8 @@ namespace TelegramSender
             {
                 if (e.Message == "CHANNEL_INVALID")
                 {
-                    await RemoveChatSubscription(update.Author, subscription.ChatInfo.Id);
+                    // TODO remove chat subscription
+                    //await RemoveChatSubscription(newPost.Author, subscription.ChatInfo.Id);
                 }
             }
             return null;
@@ -153,21 +154,21 @@ namespace TelegramSender
 
         private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
         {
-            _logger.LogInformation("Sending update {} to chat id {}", message.Update, chatInfo.ChatInfo.Id);
+            _logger.LogInformation("Sending update {} to chat id {}", message.NewPost, chatInfo.ChatInfo.Id);
             
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatInfo.ChatInfo.Id, _ => new ActionBlock<Task>(task => task));
 
             await chatSender.SendAsync(
-                SendAsync(_sender, messageInfo, message.Update, chatInfo.ChatInfo.Id));
+                SendAsync(_sender, messageInfo, message.NewPost, chatInfo.ChatInfo.Id));
                 
-            _logger.LogInformation("Successfully sent update {} to chat id {}", message.Update, chatInfo.ChatInfo.Id);
+            _logger.LogInformation("Successfully sent update {} to chat id {}", message.NewPost, chatInfo.ChatInfo.Id);
         }
 
         private async Task<IEnumerable<TdApi.Message>> SendAsync(
             MessageSender sender,
             ParsedMessageInfo message,
-            Update originalUpdate,
+            NewPost originalPost,
             long chat)
         {
             try
@@ -176,45 +177,45 @@ namespace TelegramSender
             }
             catch (MessageSendFailedException e)
             {
-                foreach (IMedia media in originalUpdate.Media)
+                foreach (var media in originalPost.Post.MediaItems)
                 {
                     _logger.LogWarning(JsonSerializer.Serialize(media, _jsonSerializerOptions));
                 }
-                await HandleException(originalUpdate, chat, e);
+                await HandleException(originalPost, chat, e);
             }
             catch (TdException e)
             {
-                await HandleException(originalUpdate, chat, e);
+                await HandleException(originalPost, chat, e);
             }
             catch (Exception e)
             {
-                Report(originalUpdate, chat, e);
+                Report(originalPost, chat, e);
             }
 
             return Enumerable.Empty<TdApi.Message>();
         }
 
-        private void Report(Update originalUpdate, long chat, Exception e)
+        private void Report(NewPost originalPost, long chat, Exception e)
         {
-            _logger.LogError(e, "Failed to send update {} to chat id {}", originalUpdate, chat);
+            _logger.LogError(e, "Failed to send update {} to chat id {}", originalPost, chat);
         }
 
-        private async Task HandleException(Update originalUpdate, long chat, Exception e)
+        private async Task HandleException(NewPost originalPost, long chat, Exception e)
         {
+            // TODO Remove chat subscription
             if (RemoveSubscriptionOnMessages.Contains(e.Message))
             {
-                await RemoveChatSubscription(originalUpdate.Author, chat);
+                //await RemoveChatSubscription(originalPost.Author, chat);
             }
             else
             {
-                Report(originalUpdate, chat, e);
+                Report(originalPost, chat, e);
                 throw e;
             }
         }
 
         private async Task RemoveChatSubscription(User author, long chatId)
         {
-            // TODO Remove chat subscription
             // if (await CanSubscriptionBeRemoved(author, chatId))
             // {
             //     return;

@@ -1,63 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using MassTransit;
-using Scraper.Net;
+using Microsoft.Extensions.Logging;
 using Scraper.RabbitMq.Common;
+using SubscriptionsDb;
 
 namespace MessagesManager
 {
     public class NewPostConsumer : IConsumer<NewPost>
     {
-        private readonly UpdateConsumer _updateConsumer;
+        private readonly IChatSubscriptionsRepository _subscriptionsRepository;
+        private readonly ILogger<NewPostConsumer> _logger;
 
-        public NewPostConsumer(UpdateConsumer updateConsumer)
+        public NewPostConsumer(
+            IChatSubscriptionsRepository subscriptionsRepository,
+            ILogger<NewPostConsumer> logger)
         {
-            _updateConsumer = updateConsumer;
+            _subscriptionsRepository = subscriptionsRepository;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<NewPost> context)
         {
-            Message message = await _updateConsumer.ConsumeAsync(
-                ToUpdate(context.Message));
+            NewPost newPost = context.Message;
+            _logger.LogInformation("Received {}", newPost);
+
+            var user = GetUser(newPost);
+            
+            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(user);
+            List<UserChatSubscription> destinationChats = entity.Chats.ToList();
+
+            var message = new Message(newPost, destinationChats.ToList());
 
             await context.Publish(message);
         }
 
-        private static Update ToUpdate(NewPost newPost)
+        private static User GetUser(NewPost newPost)
         {
-            var platform = newPost.Platform;
-            var actualPlatform = Enum.Parse<Platform>(platform, true);
+            var platform = Enum.Parse<Platform>(newPost.Platform, true);
             
-            var post = newPost.Post;
-
-            return new Update
-            {
-                Author = new User(post.AuthorId, actualPlatform),
-                Content = post.Content,
-                Url = post.Url,
-                CreationDate = post.CreationDate,
-                IsLive = post.IsLivestream,
-                IsReply = post.Type == PostType.Reply,
-                IsRepost = post.Type == PostType.Repost,
-                Media = post.MediaItems.Select(ToMedia).ToList()
-            };
-        }
-
-        private static IMedia ToMedia(IMediaItem item)
-        {
-            switch (item)
-            {
-                case PhotoItem p:
-                    return new Photo(p.Url);
-                case VideoItem v:
-                    return new Video(v.Url, v.ThumbnailUrl, v.Duration, v.Width, v.Height);
-                case AudioItem a:
-                    return new Audio(a.Url, a.ThumbnailUrl, a.Duration, a.Title, a.Artist);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(item));
-            }
+            return new User(newPost.Post.AuthorId, platform);
         }
     }
 }

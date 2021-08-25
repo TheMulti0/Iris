@@ -24,8 +24,7 @@ namespace MessagesManager
 
             services
                 .AddSubscriptionsDb()
-                .AddSingleton<UpdateConsumer>()
-                .AddScraperRabbitMqClient(typeof(NewPostConsumer), connectionConfig, typeof(IMedia))
+                .AddScraperRabbitMqClient(typeof(NewPostConsumer), connectionConfig)
                 .BuildServiceProvider();
         }   
     }
