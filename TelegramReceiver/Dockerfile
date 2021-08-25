@@ -6,7 +6,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
 COPY ["TelegramReceiver/TelegramReceiver.csproj", "TelegramReceiver/"]
-COPY ["Extensions/Extensions.csproj", "Extensions/"]
 COPY ["Common/Common.csproj", "Common/"]
 COPY ["SubscriptionsDb/SubscriptionsDb.csproj", "SubscriptionsDb/"]
 RUN dotnet restore "TelegramReceiver/TelegramReceiver.csproj"

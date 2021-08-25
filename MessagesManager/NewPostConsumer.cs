@@ -20,10 +20,9 @@ namespace MessagesManager
         public async Task Consume(ConsumeContext<NewPost> context)
         {
             Message message = await _updateConsumer.ConsumeAsync(
-                ToUpdate(context.Message),
-                context.CancellationToken);
+                ToUpdate(context.Message));
 
-            await context.Send(message);
+            await context.Publish(message);
         }
 
         private static Update ToUpdate(NewPost newPost)

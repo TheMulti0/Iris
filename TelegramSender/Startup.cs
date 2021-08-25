@@ -20,11 +20,13 @@ namespace TelegramSender
         private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
             IConfiguration rootConfig = hostContext.Configuration;
-    
-            var telegramConfig = rootConfig.GetSection("Telegram").Get<RabbitMqConfig>();
+
+            var telegramConfig = rootConfig.GetSection("Telegram")
+                .Get<TelegramClientConfig>();
             var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
     
             services
+                .AddLogging()
                 .AddSubscriptionsDb()
                 .AddLanguages()
                 .AddMassTransit(
@@ -37,14 +39,13 @@ namespace TelegramSender
                             {
                                 cfg.Host(connectionConfig.ConnectionString);
                                 
-                                cfg.ConfigureJsonDeserializer(JsonConfigurator.Configure);
+                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMedia));
                                 
                                 cfg.ConfigureEndpoints(context);
                             });
                     })
                 .AddMassTransitHostedService()
-                .AddSingleton(telegramConfig)
-                .AddSingleton<TelegramClientFactory>()
+                .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()
                 .AddSingleton<MessageInfoBuilder>()
                 .BuildServiceProvider();

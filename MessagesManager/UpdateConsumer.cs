@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Microsoft.Extensions.Logging;
@@ -21,7 +20,7 @@ namespace MessagesManager
             _logger = logger;
         }
 
-        public async Task<Message> ConsumeAsync(Update update, CancellationToken token)
+        public async Task<Message> ConsumeAsync(Update update)
         {
             _logger.LogInformation("Received {}", update);
 
