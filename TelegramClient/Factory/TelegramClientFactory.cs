@@ -49,6 +49,9 @@ namespace TelegramClient
             
             await AuthenticateAsync();
 
+            TdApi.User me = await _client.GetMeAsync();
+            _logger.LogInformation("Logged in as {}", me.Username);
+
             return new TelegramClient(_client, _config);
         }
 
