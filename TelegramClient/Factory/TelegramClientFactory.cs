@@ -35,24 +35,32 @@ namespace TelegramClient
 
         public async Task<ITelegramClient> CreateAsync()
         {
-            var startupState = new StartupState(false, false);
-            
-            await foreach (TdApi.Update update in _client.OnUpdateReceived().ToAsyncEnumerable())
+            try
             {
-                startupState = await UpdateStartupStateAsync(update, startupState);
-                
-                if (startupState.IsComplete)
-                {
-                    break;
-                }
-            }
+                var startupState = new StartupState(false, false);
             
-            await AuthenticateAsync();
+                await foreach (TdApi.Update update in _client.OnUpdateReceived().ToAsyncEnumerable())
+                {
+                    startupState = await UpdateStartupStateAsync(update, startupState);
+                
+                    if (startupState.IsComplete)
+                    {
+                        break;
+                    }
+                }
+            
+                await AuthenticateAsync();
 
-            TdApi.User me = await _client.GetMeAsync();
-            _logger.LogInformation("Logged in as {}", me.Username);
+                TdApi.User me = await _client.GetMeAsync();
+                _logger.LogInformation("Logged in as {}", me.Username);
 
-            return new TelegramClient(_client, _config);
+                return new TelegramClient(_client, _config);
+            }
+            catch (TdException e)
+            {
+                _logger.LogError(e, "Failed to authenticate");
+                throw;
+            }
         }
 
         private async Task<StartupState> UpdateStartupStateAsync(TdApi.Update update, StartupState state)
