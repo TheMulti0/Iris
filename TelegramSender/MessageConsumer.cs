@@ -154,7 +154,7 @@ namespace TelegramSender
 
         private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
         {
-            _logger.LogInformation("Sending update {} to chat id {}", message.NewPost, chatInfo.ChatInfo.Id);
+            _logger.LogInformation("Sending {} to chat id {}", message.NewPost.Post.Url, chatInfo.ChatInfo.Id);
             
             ActionBlock<Task> chatSender = _chatSenders
                 .GetOrAdd(chatInfo.ChatInfo.Id, _ => new ActionBlock<Task>(task => task));
@@ -162,7 +162,7 @@ namespace TelegramSender
             await chatSender.SendAsync(
                 SendAsync(_sender, messageInfo, message.NewPost, chatInfo.ChatInfo.Id));
                 
-            _logger.LogInformation("Successfully sent update {} to chat id {}", message.NewPost, chatInfo.ChatInfo.Id);
+            _logger.LogInformation("Successfully sent {} to chat id {}", message.NewPost.Post.Url, chatInfo.ChatInfo.Id);
         }
 
         private async Task<IEnumerable<TdApi.Message>> SendAsync(

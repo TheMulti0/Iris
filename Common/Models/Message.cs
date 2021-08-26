@@ -9,7 +9,7 @@ namespace Common
     {
         public override string ToString()
         {
-            return $"NewPost: {NewPost}, Destined to {DestinationChats.Count} chats";
+            return $"{NewPost.Post.Url}, destined to {DestinationChats.Count} chat/s";
         }
     }
 }
