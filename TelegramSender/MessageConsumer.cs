@@ -96,7 +96,7 @@ namespace TelegramSender
             
             IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, chatSubscription);
             
-            _logger.LogInformation("Successfully sent update {} to chat id {}", message.NewPost, chatSubscription.ChatInfo.Id);
+            _logger.LogInformation("Successfully sent {} to chat id {}", message.NewPost.Post.Url, chatSubscription.ChatInfo.Id);
             
             return GetInputMessageContents(sentMessages);
         }
@@ -197,7 +197,7 @@ namespace TelegramSender
 
         private void Report(NewPost originalPost, long chat, Exception e)
         {
-            _logger.LogError(e, "Failed to send update {} to chat id {}", originalPost, chat);
+            _logger.LogError(e, "Failed to send {} to chat id {}", originalPost.Post.Url, chat);
         }
 
         private async Task HandleException(NewPost originalPost, long chat, Exception e)
