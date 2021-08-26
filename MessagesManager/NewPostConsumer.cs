@@ -26,7 +26,7 @@ namespace MessagesManager
         public async Task Consume(ConsumeContext<NewPost> context)
         {
             NewPost newPost = context.Message;
-            _logger.LogInformation("Received {}", newPost);
+            _logger.LogInformation("Received {}", newPost.Post.Url);
 
             var user = GetUser(newPost);
             
