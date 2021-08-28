@@ -17,7 +17,6 @@ namespace SubscriptionsDb
             var context = new Lazy<IMongoDbContext>(() => dbContext ?? CreateMongoDbContext(config));
             
             return services
-                .AddSingleton(context.Value)
                 .AddSingleton<IChatSubscriptionsRepository>(provider =>
                 {
                     config = provider.GetService<IConfiguration>();
