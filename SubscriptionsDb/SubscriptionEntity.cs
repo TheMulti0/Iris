@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Common;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -12,7 +12,9 @@ namespace SubscriptionsDb
         [BsonId]
         public ObjectId Id { get; set; }
         
-        public User User { get; set; }
+        public string UserId { get; set; }
+        
+        public string Platform { get; set; }
 
         public int Version { get; set; }
 

@@ -12,6 +12,13 @@ namespace TelegramReceiver
 {
     internal class PlatformsCommand : BaseCommand, ICommand
     {
+        private static readonly string[] Platforms =
+        {
+            "facebook",
+            "twitter",
+            "feeds"
+        };
+
         public PlatformsCommand(Context context): base(context)
         {
         }
@@ -42,18 +49,14 @@ namespace TelegramReceiver
         
         private InlineKeyboardMarkup GetMarkup()
         {
-            InlineKeyboardButton ToButton(Platform platform)
+            InlineKeyboardButton ToButton(string platform)
             {
                 return InlineKeyboardButton.WithCallbackData(
                     Dictionary.GetPlatform(platform),
-                    $"{Route.Subscriptions}-{Enum.GetName(platform)}");
+                    $"{Route.Subscriptions}-{platform}");
             }
             
-            IEnumerable<IEnumerable<InlineKeyboardButton>> platformButtons = Enum.GetValues<Platform>()
-                .Except(new []
-                {
-                    Platform.Feeds
-                })
+            IEnumerable<IEnumerable<InlineKeyboardButton>> platformButtons = Platforms
                 .Select(ToButton)
                 .Concat(new []
                 {

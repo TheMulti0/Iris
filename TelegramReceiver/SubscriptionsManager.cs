@@ -16,16 +16,12 @@ namespace TelegramReceiver
 
         public async Task Subscribe(Subscription subscription)
         {
-            string platform = GetPlatform(subscription);
-            await _client.AddOrUpdateSubscription(subscription.User.UserId, platform, (TimeSpan)subscription.Interval);
+            await _client.AddOrUpdateSubscription(subscription.UserId, subscription.Platform, (TimeSpan)subscription.Interval);
         }
 
         public async Task Unsubscribe(Subscription subscription)
         {
-            string platform = GetPlatform(subscription);
-            await _client.RemoveSubscription(subscription.User.UserId, platform);
+            await _client.RemoveSubscription(subscription.UserId, subscription.Platform);
         }
-
-        private static string GetPlatform(Subscription subscription) => subscription.User.Platform.ToString().ToLower();
     }
 }

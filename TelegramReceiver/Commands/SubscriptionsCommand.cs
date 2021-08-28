@@ -27,7 +27,7 @@ namespace TelegramReceiver
             List<SubscriptionEntity> currentUsers = _chatSubscriptionsRepository
                 .Get()
                 .Where(
-                    user => user.User.Platform == SelectedPlatform &&
+                    user => user.Platform == SelectedPlatform &&
                             user.Chats.Any(chat => chat.ChatInfo.Id == ConnectedChat))
                 .ToList();
 
@@ -89,7 +89,7 @@ namespace TelegramReceiver
         private InlineKeyboardButton UserToButton(SubscriptionEntity user)
         {
             return InlineKeyboardButton.WithCallbackData(
-                $"{user.User.UserId}",
+                $"{user.UserId}",
                 $"{Route.User.ToString()}-{user.Id}");
         }
 

@@ -8,7 +8,7 @@ namespace SubscriptionsDb
 {
     public class MockChatSubscriptionsRepository : IChatSubscriptionsRepository
     {
-        public Task<bool> ExistsAsync(User user) => Task.FromResult(false);
+        public Task<bool> ExistsAsync(string userId, string platform) => Task.FromResult(false);
 
         public IQueryable<SubscriptionEntity> Get()
         {
@@ -17,7 +17,8 @@ namespace SubscriptionsDb
                 {
                     new()
                     {
-                        User = new User("user", Platform.Facebook),
+                        UserId = "user",
+                        Platform = "facebook",
                         Chats = new List<UserChatSubscription>()
                     }
                 });
@@ -32,22 +33,23 @@ namespace SubscriptionsDb
                 });
         }
 
-        public Task<SubscriptionEntity> GetAsync(User user)
+        public Task<SubscriptionEntity> GetAsync(string userId, string platform)
         {
             return Task.FromResult(
                 new SubscriptionEntity
                 {
-                    User = user,
+                    UserId = userId,
+                    Platform = platform,
                     Chats = new List<UserChatSubscription>()
                 });
         }
 
-        public Task AddOrUpdateAsync(User user, UserChatSubscription chat)
+        public Task AddOrUpdateAsync(string userId, string platform, UserChatSubscription chat)
         {
             return Task.CompletedTask;
         }
 
-        public Task RemoveAsync(User user, long chatId)
+        public Task RemoveAsync(string userId, string platform, long chatId)
         {
             return Task.CompletedTask;
         }

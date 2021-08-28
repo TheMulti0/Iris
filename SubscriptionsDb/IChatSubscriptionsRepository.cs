@@ -7,16 +7,16 @@ namespace SubscriptionsDb
 {
     public interface IChatSubscriptionsRepository
     {
-        Task<bool> ExistsAsync(User user);
+        Task<bool> ExistsAsync(string userId, string platform);
         
         IQueryable<SubscriptionEntity> Get();
         
         Task<SubscriptionEntity> GetAsync(ObjectId id);
         
-        Task<SubscriptionEntity> GetAsync(User user);
+        Task<SubscriptionEntity> GetAsync(string userId, string platform);
         
-        Task AddOrUpdateAsync(User user, UserChatSubscription chat);
+        Task AddOrUpdateAsync(string userId, string platform, UserChatSubscription chat);
 
-        Task RemoveAsync(User user, long chatId);
+        Task RemoveAsync(string userId, string platform, long chatId);
     }
 }

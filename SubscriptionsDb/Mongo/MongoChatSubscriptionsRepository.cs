@@ -18,13 +18,11 @@ namespace SubscriptionsDb
             _collection = context.GetCollection<SubscriptionEntity>();
         }
 
-        public Task<bool> ExistsAsync(User user)
+        public Task<bool> ExistsAsync(string userId, string platform)
         {
-            (string userId, Platform platform) = user;
-            
             return _collection
                 .AsQueryable()
-                .Where(subscription => subscription.User.UserId == userId && subscription.User.Platform == platform)
+                .Where(subscription => subscription.UserId == userId && subscription.Platform == platform)
                 .AnyAsync();
         }
 
@@ -42,25 +40,24 @@ namespace SubscriptionsDb
                 .FirstOrDefaultAsync();
         }
 
-        public Task<SubscriptionEntity> GetAsync(User user)
+        public Task<SubscriptionEntity> GetAsync(string userId, string platform)
         {
-            (string userId, Platform platform) = user;
-            
             return _collection
                 .AsQueryable()
-                .Where(subscription => subscription.User.UserId == userId && subscription.User.Platform == platform)
+                .Where(subscription => subscription.UserId == userId && subscription.Platform == platform)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task AddOrUpdateAsync(User user, UserChatSubscription chat)
+        public async Task AddOrUpdateAsync(string userId, string platform, UserChatSubscription chat)
         {
-            SubscriptionEntity existing = await GetAsync(user);
+            SubscriptionEntity existing = await GetAsync(userId, platform);
 
             List<UserChatSubscription> userChatSubscriptions = GetSubscriptions(existing, chat);
 
             var subscription = new SubscriptionEntity
             {
-                User = user,
+                UserId = userId,
+                Platform = platform,
                 Chats = userChatSubscriptions
             };
             
@@ -75,7 +72,7 @@ namespace SubscriptionsDb
             {
                 updateSuccess = await Update(
                     subscription,
-                    await GetAsync(user));
+                    await GetAsync(userId, platform));
             }
             while (!updateSuccess);
         }
@@ -103,9 +100,9 @@ namespace SubscriptionsDb
             return existing.Chats;
         }
 
-        public async Task RemoveAsync(User user, long chatId)
+        public async Task RemoveAsync(string userId, string platform, long chatId)
         {
-            SubscriptionEntity existing = await GetAsync(user);
+            SubscriptionEntity existing = await GetAsync(userId, platform);
             if (existing == null)
             {
                 return;
@@ -115,7 +112,7 @@ namespace SubscriptionsDb
 
             if (existing.Chats.Contains(chat) && existing.Chats.Count == 1)
             {
-                await Remove(user, existing);
+                await Remove(userId, platform, existing);
 
                 return;
             }
@@ -127,20 +124,20 @@ namespace SubscriptionsDb
             {
                 updateSuccess = await Update(
                     existing,
-                    await GetAsync(user));
+                    await GetAsync(userId, platform));
             }
             while (!updateSuccess);
         }
 
-        private async Task Remove(User user, SubscriptionEntity existing)
+        private async Task Remove(string userId, string platform, SubscriptionEntity existing)
         {
             bool removeSuccess;
             do
             {
-                existing = await GetAsync(user);
+                existing = await GetAsync(userId, platform);
 
                 DeleteResult result = await _collection.DeleteOneAsync(
-                    s => s.Version == existing.Version && s.User == user);
+                    s => s.Version == existing.Version && s.UserId == userId && s.Platform == platform);
 
                 removeSuccess = result.IsAcknowledged && result.DeletedCount > 0;
             }
@@ -159,7 +156,7 @@ namespace SubscriptionsDb
 
             UpdateResult result = await _collection
                 .UpdateOneAsync(
-                    subscription => subscription.Version == version && subscription.User == newUser.User,
+                    subscription => subscription.Version == version && subscription.UserId == newUser.UserId && subscription.Platform == newUser.Platform,
                     update);
 
             if (result.IsAcknowledged)

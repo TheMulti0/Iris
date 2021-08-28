@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Common;
 using SubscriptionsDb;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -22,7 +21,7 @@ namespace TelegramReceiver
         
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            var user = (await Subscription).User;
+            var user = await Subscription;
 
             await Remove(user);
 
@@ -31,13 +30,13 @@ namespace TelegramReceiver
                 Context with { SelectedPlatform = user.Platform });
         }
 
-        private async Task Remove(User user)
+        private async Task Remove(SubscriptionEntity user)
         {
-            var subscription = new Subscription(user, null);
+            var subscription = new Subscription(user.UserId, user.Platform, null);
             
-            await _chatSubscriptionsRepository.RemoveAsync(user, ConnectedChat);
+            await _chatSubscriptionsRepository.RemoveAsync(user.UserId, user.Platform, ConnectedChat);
 
-            if (! await _chatSubscriptionsRepository.ExistsAsync(user))
+            if (! await _chatSubscriptionsRepository.ExistsAsync(user.UserId, user.Platform))
             {
                 await _subscriptionsManager.Unsubscribe(subscription);                
             }

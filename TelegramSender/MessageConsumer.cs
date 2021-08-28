@@ -14,12 +14,10 @@ using SubscriptionsDb;
 using TdLib;
 using TelegramClient;
 using JsonSerializer = System.Text.Json.JsonSerializer;
-using Message = Common.Message;
-using User = Common.User;
 
 namespace TelegramSender
 {
-    public class MessageConsumer : IConsumer<Message>
+    public class MessageConsumer : IConsumer<SendMessage>
     {
         private readonly IChatSubscriptionsRepository _repository;
         private readonly ISenderFactory _senderFactory;
@@ -54,9 +52,9 @@ namespace TelegramSender
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
 
-        public async Task Consume(ConsumeContext<Message> context)
+        public async Task Consume(ConsumeContext<SendMessage> context)
         {
-            Message message = context.Message;
+            SendMessage message = context.Message;
             
             _sender ??= await _senderFactory.CreateAsync();
 
@@ -65,7 +63,7 @@ namespace TelegramSender
             await ConsumeMessageAsync(message);
         }
 
-        private async Task ConsumeMessageAsync(Message message)
+        private async Task ConsumeMessageAsync(SendMessage message)
         {
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
@@ -90,7 +88,7 @@ namespace TelegramSender
             }
         }
 
-        private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(Message message)
+        private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(SendMessage message)
         {
             UserChatSubscription chatSubscription = message.DestinationChats.First();
             
@@ -118,7 +116,7 @@ namespace TelegramSender
                 .Select(m => m.Content.ToInputMessageContentAsync());
         }
 
-        private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(Message message, UserChatSubscription chatInfo)
+        private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(SendMessage message, UserChatSubscription chatInfo)
         {
             var chatId = chatInfo.ChatInfo.Id;
             var newPost = message.NewPost;
@@ -152,7 +150,7 @@ namespace TelegramSender
             return null;
         }
 
-        private async Task SendChatMessage(Message message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
+        private async Task SendChatMessage(SendMessage message, UserChatSubscription chatInfo, ParsedMessageInfo messageInfo)
         {
             _logger.LogInformation("Sending {} to chat id {}", message.NewPost.Post.Url, chatInfo.ChatInfo.Id);
             
@@ -234,16 +232,16 @@ namespace TelegramSender
             // }
         }
 
-        private async Task<bool> CanSubscriptionBeRemoved(User author, long chatId)
-        {
-            var subscription = await _repository.GetAsync(author);
-            var userChatSubscription = subscription.Chats.FirstOrDefault(chatSubscription => chatSubscription.ChatInfo.Id == chatId);
-
-            DateTime now = DateTime.Now;
-            DateTime? subscriptionDate = userChatSubscription?.SubscriptionDate;
-
-            return now - subscriptionDate > InvalidSubscriptionExpiration;
-        }
+        // private async Task<bool> CanSubscriptionBeRemoved(User author, long chatId)
+        // {
+        //     var subscription = await _repository.GetAsync(author);
+        //     var userChatSubscription = subscription.Chats.FirstOrDefault(chatSubscription => chatSubscription.ChatInfo.Id == chatId);
+        //
+        //     DateTime now = DateTime.Now;
+        //     DateTime? subscriptionDate = userChatSubscription?.SubscriptionDate;
+        //
+        //     return now - subscriptionDate > InvalidSubscriptionExpiration;
+        // }
 
         public async Task FlushAsync()
         {

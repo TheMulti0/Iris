@@ -20,7 +20,7 @@ namespace TelegramReceiver
             _service = service;
         }
 
-        public async Task<User> ValidateAsync(string userId)
+        public async Task<string> ValidateAsync(string userId)
         {
             Group group = TwitterUserNameRegex.Match(userId)?.Groups["userName"];
 
@@ -29,18 +29,18 @@ namespace TelegramReceiver
                 return null;
             }
 
-            User newUser = new User(group.Value.ToLower(), Platform.Twitter);
+            var newUser = group.Value.ToLower();
             
             var post = await GetPost(newUser);
 
             return post == null ? null : newUser;
         }
 
-        private async Task<Post> GetPost(User newUser)
+        private async Task<Post> GetPost(string newUser)
         {
             try
             {
-                return await _service.GetPostsAsync(newUser.UserId, PlatformName).FirstOrDefaultAsync();
+                return await _service.GetPostsAsync(newUser, PlatformName).FirstOrDefaultAsync();
             }
             catch
             {

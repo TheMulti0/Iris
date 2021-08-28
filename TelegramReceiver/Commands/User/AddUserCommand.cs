@@ -7,7 +7,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 using SubscriptionsDb;
 using Message = Telegram.Bot.Types.Message;
 using Update = Telegram.Bot.Types.Update;
-using User = Common.User;
 
 namespace TelegramReceiver
 {
@@ -33,7 +32,7 @@ namespace TelegramReceiver
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
         {
-            Platform platform = SelectedPlatform ?? throw new NullReferenceException();
+            var platform = SelectedPlatform ?? throw new NullReferenceException();
             
             await SendRequestMessage(platform, token);
 
@@ -47,10 +46,9 @@ namespace TelegramReceiver
             
             Message message = nextUpdate.Message;
             
-            var request = new User(message.Text, platform);
-            var user = await _validator.ValidateAsync(request);
+            string userId = await _validator.ValidateAsync(message.Text, platform);
 
-            if (user == null)
+            if (userId == null)
             {
                 await Client.SendTextMessageAsync(
                     chatId: ContextChat,
@@ -63,15 +61,15 @@ namespace TelegramReceiver
                     Context with { Trigger = null, SelectedPlatform = SelectedPlatform });
             }
             
-            await AddUser(message, user, token);
+            await AddUser(message, userId, platform, token);
 
             return new RedirectResult(
                 Route.User,
-                Context with { Trigger = null, Subscription = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(user)) });
+                Context with { Trigger = null, Subscription = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(userId, platform)) });
         }
 
         private Task SendRequestMessage(
-            Platform platform,
+            string platform,
             CancellationToken token)
         {
             var inlineKeyboardMarkup = new InlineKeyboardMarkup(new []
@@ -92,14 +90,15 @@ namespace TelegramReceiver
         
         private async Task AddUser(
             Message message,
-            User user,
+            string userId,
+            string platform,
             CancellationToken token)
         {   
             TimeSpan interval = _defaultInterval;
 
-            var subscription = new Subscription(user, interval, DateTime.Now);
+            var subscription = new Subscription(userId, platform, interval, DateTime.Now);
 
-            if (! await _chatSubscriptionsRepository.ExistsAsync(user))
+            if (! await _chatSubscriptionsRepository.ExistsAsync(userId, platform))
             {
                 await _subscriptionsManager.Subscribe(subscription);
             }
@@ -126,11 +125,11 @@ namespace TelegramReceiver
                 SubscriptionDate = DateTime.Now
             };
 
-            await _chatSubscriptionsRepository.AddOrUpdateAsync(user, chatSubscription);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(userId, platform, chatSubscription);
 
             await Client.SendTextMessageAsync(
                 chatId: ContextChat,
-                text: $"{Dictionary.Added} {user.UserId}",
+                text: $"{Dictionary.Added} {userId}",
                 replyToMessageId: message.MessageId,
                 cancellationToken: token);
         }

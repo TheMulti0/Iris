@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
@@ -28,21 +27,12 @@ namespace MessagesManager
             NewPost newPost = context.Message;
             _logger.LogInformation("Received {}", newPost.Post.Url);
 
-            var user = GetUser(newPost);
-            
-            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(user);
+            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
-            var message = new Message(newPost, destinationChats.ToList());
+            var message = new SendMessage(newPost, destinationChats.ToList());
 
             await context.Publish(message);
-        }
-
-        private static User GetUser(NewPost newPost)
-        {
-            var platform = Enum.Parse<Platform>(newPost.Platform, true);
-            
-            return new User(newPost.Post.AuthorId, platform);
         }
     }
 }

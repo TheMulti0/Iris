@@ -20,7 +20,7 @@ namespace TelegramReceiver
         LanguageDictionary Dictionary,
         bool IsSuperUser)
     {
-        public Platform? SelectedPlatform { get; init; }
+        public string SelectedPlatform { get; init; }
 
         public Chat ConnectedChat { get; init; }
     }

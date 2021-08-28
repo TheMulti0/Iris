@@ -3,7 +3,7 @@ using Scraper.RabbitMq.Common;
 
 namespace Common
 {
-    public record Message(
+    public record SendMessage(
         NewPost NewPost,
         List<UserChatSubscription> DestinationChats)
     {

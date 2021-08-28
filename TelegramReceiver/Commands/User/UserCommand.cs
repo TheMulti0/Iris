@@ -31,7 +31,7 @@ namespace TelegramReceiver
 
             UserChatSubscription chatSubscription = entity.Chats.First(info => info.ChatInfo.Id == ConnectedChat);
 
-            string text = GetText(entity.User, chatSubscription);
+            string text = GetText(entity, chatSubscription);
 
             InlineKeyboardMarkup inlineKeyboardMarkup = GetMarkup(entity, chatSubscription);
 
@@ -58,7 +58,7 @@ namespace TelegramReceiver
             return new NoRedirectResult();
         }
 
-        private string GetText(User user, UserChatSubscription subscription)
+        private string GetText(SubscriptionEntity user, UserChatSubscription subscription)
         {
             var text = new StringBuilder($"{Dictionary.SettingsFor} {user.UserId}:");
             text.AppendLine("\n");
@@ -79,7 +79,7 @@ namespace TelegramReceiver
             string showUrlPreview = subscription.ShowUrlPreview ? Dictionary.Enabled : Dictionary.Disabled;
             text.AppendLine($"<b>{Dictionary.ShowUrlPreview}:</b> {showUrlPreview}");
             
-            if (SelectedPlatform != Platform.Twitter)
+            if (SelectedPlatform != "twitter")
             {
                 return text.ToString();
             }
@@ -112,7 +112,7 @@ namespace TelegramReceiver
                     $"{Route.ToggleShowUrlPreview}-{entity.Id}"),
             };
 
-            if (SelectedPlatform == Platform.Twitter)
+            if (SelectedPlatform == "twitter")
             {
                 buttons = buttons.Concat(
                     new [] 

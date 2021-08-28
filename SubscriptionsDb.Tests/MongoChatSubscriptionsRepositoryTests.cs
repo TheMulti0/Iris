@@ -14,7 +14,8 @@ namespace SubscriptionsDb.Tests
     {
         private const long TestChat = 11;
         private readonly IChatSubscriptionsRepository _repository;
-        private readonly User TestUser = new User("Test", Platform.Facebook);
+        private readonly string TestUser = "Test";
+        private readonly string TestPlatform = "facebook";
 
         public MongoChatSubscriptionsRepositoryTests()
         {
@@ -37,7 +38,7 @@ namespace SubscriptionsDb.Tests
         {
             var user = TestUser;
             
-            await _repository.AddOrUpdateAsync(user, new UserChatSubscription
+            await _repository.AddOrUpdateAsync(TestUser, TestPlatform, new UserChatSubscription
             {
                 ChatInfo = new ChatInfo
                 {
@@ -45,7 +46,7 @@ namespace SubscriptionsDb.Tests
                 },
             });
             
-            Assert.IsTrue(await _repository.ExistsAsync(user));
+            Assert.IsTrue(await _repository.ExistsAsync(TestUser, TestPlatform));
         }
         
         [TestMethod]
@@ -56,7 +57,7 @@ namespace SubscriptionsDb.Tests
             await TestAdd();
 
             TimeSpan newInterval = TimeSpan.FromDays(1);
-            await _repository.AddOrUpdateAsync(user, new UserChatSubscription
+            await _repository.AddOrUpdateAsync(TestUser, TestPlatform, new UserChatSubscription
             {
                 ChatInfo = new ChatInfo
                 {
@@ -65,7 +66,7 @@ namespace SubscriptionsDb.Tests
                 Interval = newInterval
             });
 
-            var subscriptionEntity = await _repository.GetAsync(user);
+            var subscriptionEntity = await _repository.GetAsync(TestUser, TestPlatform);
             
             Assert.AreEqual(newInterval, subscriptionEntity.Chats.First(subscription => subscription.ChatInfo.Id == TestChat).Interval);
         }

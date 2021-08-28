@@ -63,24 +63,24 @@ namespace Common
         public string EnterContent { get; set; }
         public string Mode { get; set; }
         
-        public string GetPlatform(Platform platform)
+        public string GetPlatform(string platform)
         {
             string p = null;
             
             switch (platform)
             {
-                case Common.Platform.Facebook:
+                case "facebook":
                     p = Facebook;
                     break;
-                case Common.Platform.Twitter:
+                case "twitter":
                     p = Twitter;
                     break;
-                case Common.Platform.Feeds:
+                case "feeds":
                     p = Feeds;
                     break;
             }
             
-            return p ?? Enum.GetName(platform);
+            return p;
         }
         
         public string GetTextMode(TextMode mode)

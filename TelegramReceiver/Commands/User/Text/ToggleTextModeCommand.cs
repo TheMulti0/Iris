@@ -43,7 +43,7 @@ namespace TelegramReceiver
                 chat.Suffix.Mode = mode;
             }
             
-            await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.User, chat);
+            await _chatSubscriptionsRepository.AddOrUpdateAsync(entity.UserId, entity.Platform, chat);
 
             return new RedirectResult(Route.SetText);
         }

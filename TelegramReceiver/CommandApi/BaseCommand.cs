@@ -22,7 +22,7 @@ namespace TelegramReceiver
         protected readonly LanguageDictionary Dictionary;
         protected readonly Connection Connection;
         protected readonly bool IsSuperUser;
-        protected readonly Platform? SelectedPlatform;
+        protected readonly string SelectedPlatform;
         protected readonly long ConnectedChat;
         protected readonly Language Language;
         
@@ -34,19 +34,19 @@ namespace TelegramReceiver
 
             SelectedPlatform = context.SelectedPlatform 
                                ?? ExtractPlatform(Trigger?.CallbackQuery) 
-                               ?? Subscription.Task.Result?.User?.Platform;
+                               ?? Subscription.Task.Result?.Platform;
             
             ConnectedChat = Connection?.ChatId ?? ContextChat;
             Language = Connection?.Language ?? Language.English;
         }
 
-        private static Platform? ExtractPlatform(CallbackQuery query)
+        private static string ExtractPlatform(CallbackQuery query)
         {
             try
             {
                 string[] items = query.Data.Split("-");
             
-                return Enum.Parse<Platform>(items.Last());
+                return items.Last();
             }
             catch
             {

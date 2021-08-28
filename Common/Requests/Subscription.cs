@@ -5,23 +5,27 @@ namespace Common
 {
     public record Subscription
     {
-        public User User { get; }
+        public string UserId { get; }
+        
+        public string Platform { get; }
         
         [JsonConverter(typeof(NullableTimeSpanConverter))]
         public TimeSpan? Interval { get; init; }
 
         public DateTime? MinimumEarliestUpdateTime { get; set; }
 
-        public Subscription(User user, TimeSpan? interval)
+        public Subscription(string userId, string platform, TimeSpan? interval)
         {
-            User = user;
+            UserId = userId;
+            Platform = platform;
             Interval = interval;
         }
         
         [JsonConstructor]
-        public Subscription(User user, TimeSpan? interval, DateTime? minimumEarliestUpdateTime)
+        public Subscription(string userId, string platform, TimeSpan? interval, DateTime? minimumEarliestUpdateTime)
         {
-            User = user;
+            UserId = userId;
+            Platform = platform;
             Interval = interval;
             MinimumEarliestUpdateTime = minimumEarliestUpdateTime;
         }
@@ -29,13 +33,14 @@ namespace Common
         public override string ToString()
         {
             return MinimumEarliestUpdateTime == null
-                ? $"{{ Subscription: {User}, Interval: {Interval} }}"
-                : $"{{ Subscription: {User}, Interval: {Interval}, From: {MinimumEarliestUpdateTime} }}";
+                ? $"{{ Subscription: [{Platform}] {UserId}, Interval: {Interval} }}"
+                : $"{{ Subscription: [{Platform}] {UserId}, Interval: {Interval}, From: {MinimumEarliestUpdateTime} }}";
         }
 
-        public void Deconstruct(out User user, out TimeSpan? interval)
+        public void Deconstruct(out string userId, out string platform, out TimeSpan? interval)
         {
-            user = User;
+            userId = UserId;
+            platform = Platform;
             interval = Interval;
         }
     }

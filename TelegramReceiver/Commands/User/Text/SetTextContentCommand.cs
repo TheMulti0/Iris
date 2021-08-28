@@ -81,7 +81,7 @@ namespace TelegramReceiver
                 chat.Suffix.Content = newContent;
             }
             
-            await _repository.AddOrUpdateAsync(entity.User, chat);
+            await _repository.AddOrUpdateAsync(entity.UserId, entity.Platform, chat);
         }
     }
 }

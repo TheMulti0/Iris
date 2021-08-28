@@ -6,28 +6,28 @@ namespace TelegramReceiver
 {
     internal class UserValidator
     {
-        private readonly Dictionary<Platform, IPlatformValidator> _validators;
+        private readonly Dictionary<string, IPlatformValidator> _validators;
 
         public UserValidator(
             FacebookValidator facebook,
             TwitterValidator twitter)
         {
-            _validators = new Dictionary<Platform, IPlatformValidator>
+            _validators = new Dictionary<string, IPlatformValidator>
             {
                 {
-                    Platform.Facebook,
+                    "facebook",
                     facebook
                 },
                 {
-                    Platform.Twitter,
+                    "twitter",
                     twitter
                 }
             };
         }
         
-        public Task<User> ValidateAsync(User request)
+        public Task<string> ValidateAsync(string userId, string platform)
         {
-            return _validators[request.Platform].ValidateAsync(request.UserId);
+            return _validators[platform].ValidateAsync(userId);
         }
     }
 
