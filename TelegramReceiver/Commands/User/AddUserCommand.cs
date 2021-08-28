@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 using Nito.AsyncEx;
 using Telegram.Bot.Types.ReplyMarkups;
 using SubscriptionsDb;
@@ -16,18 +17,21 @@ namespace TelegramReceiver
         private readonly ISubscriptionsManager _subscriptionsManager;
         private readonly UserValidator _validator;
         private readonly TimeSpan _defaultInterval;
+        private readonly ILogger<AddUserCommand> _logger;
 
         public AddUserCommand(
             Context context,
             IChatSubscriptionsRepository chatSubscriptionsRepository,
             ISubscriptionsManager subscriptionsManager,
             UserValidator validator,
-            TelegramConfig config) : base(context)
+            TelegramConfig config,
+            ILogger<AddUserCommand> logger) : base(context)
         {
             _chatSubscriptionsRepository = chatSubscriptionsRepository;
             _subscriptionsManager = subscriptionsManager;
             _validator = validator;
             _defaultInterval = config.DefaultInterval;
+            _logger = logger;
         }
 
         public async Task<IRedirectResult> ExecuteAsync(CancellationToken token)
@@ -45,11 +49,22 @@ namespace TelegramReceiver
             }
             
             Message message = nextUpdate.Message;
-            
-            string userId = await _validator.ValidateAsync(message.Text, platform);
 
-            if (userId == null)
+            string requestId = message.Text;
+            try
             {
+                string userId = await _validator.ValidateAsync(requestId, platform);
+
+                await AddUser(message, userId, platform, token);
+
+                return new RedirectResult(
+                    Route.User,
+                    Context with { Trigger = null, Subscription = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(userId, platform)) });
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e, "Failed to validate [{}] {}", platform, requestId);
+                
                 await Client.SendTextMessageAsync(
                     chatId: ContextChat,
                     text: Dictionary.UserNotFound,
@@ -60,12 +75,6 @@ namespace TelegramReceiver
                     Route.Subscriptions,
                     Context with { Trigger = null, SelectedPlatform = SelectedPlatform });
             }
-            
-            await AddUser(message, userId, platform, token);
-
-            return new RedirectResult(
-                Route.User,
-                Context with { Trigger = null, Subscription = new AsyncLazy<SubscriptionEntity>(() => _chatSubscriptionsRepository.GetAsync(userId, platform)) });
         }
 
         private Task SendRequestMessage(

@@ -1,58 +1,50 @@
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scraper.Net;
-using Scraper.Net.Facebook;
 
 namespace TelegramReceiver.Tests
 {
     [TestClass]
     public class FacebookValidatorTests
     {
-        private readonly FacebookValidator _validator;
+        private readonly FacebookUserIdExtractor _userIdExtractor;
 
         public FacebookValidatorTests()
         {
-            var scraperService = new ServiceCollection()
-                .AddScraper(builder => builder.AddFacebook())
-                .BuildServiceProvider()
-                .GetRequiredService<IScraperService>();
-            _validator = new FacebookValidator(scraperService);
+            _userIdExtractor = new FacebookUserIdExtractor();
         }
         
         [TestMethod]
-        public Task TestUserName()
+        public void TestUserName()
         {
-            return Test("NaftaliBennett");
+            Test("NaftaliBennett");
         }
         
         [TestMethod]
-        public Task TestProfileUrl()
+        public void TestProfileUrl()
         {
-            return Test("https://www.facebook.com/NaftaliBennett");
+            Test("https://www.facebook.com/NaftaliBennett");
         }
 
         [TestMethod]
-        public Task TestMobileProfileUrl()
+        public void TestMobileProfileUrl()
         {
-            return Test("https://m.facebook.com/NaftaliBennett");
+            Test("https://m.facebook.com/NaftaliBennett");
         }
 
         [TestMethod]
-        public Task TestComplicatedProfileUrl()
+        public void TestComplicatedProfileUrl()
         {
-            return Test("https://www.facebook.com/%D7%A8%D7%95%D7%A0%D7%99-%D7%A1%D7%A1%D7%95%D7%91%D7%A8-Roni-Sassover-100178875444889");
+            Test("https://www.facebook.com/%D7%A8%D7%95%D7%A0%D7%99-%D7%A1%D7%A1%D7%95%D7%91%D7%A8-Roni-Sassover-100178875444889");
         }
 
         [TestMethod]
-        public Task TestPostUrl()
+        public void TestPostUrl()
         {
-            return Test("https://www.facebook.com/NaftaliBennett/videos/1511862265871708");
+            Test("https://www.facebook.com/NaftaliBennett/videos/1511862265871708");
         }
 
-        private async Task Test(string userId)
+        private void Test(string userId)
         {
-            Assert.IsNotNull(await _validator.ValidateAsync(userId));
+            Assert.IsNotNull(_userIdExtractor.Get(userId));
         }
     }
 }

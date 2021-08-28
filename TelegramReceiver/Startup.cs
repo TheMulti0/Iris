@@ -63,12 +63,10 @@ namespace TelegramReceiver
         private static IServiceCollection AddValidators(this IServiceCollection services)
         {
             return services
-                .AddSingleton<FacebookValidator>()
-                .AddSingleton<TwitterValidator>()
+                .AddSingleton<FacebookUserIdExtractor>()
+                .AddSingleton<TwitterUserIdExtractor>()
                 .AddSingleton(
-                    provider => new UserValidator(
-                        provider.GetService<FacebookValidator>(),
-                        provider.GetService<TwitterValidator>()));
+                    provider => ActivatorUtilities.CreateInstance<UserValidator>(provider));
         }
 
         private static IServiceCollection AddCommandHandling(

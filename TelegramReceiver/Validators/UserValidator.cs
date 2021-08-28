@@ -1,18 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Common;
+using Scraper.Net;
 
 namespace TelegramReceiver
 {
     internal class UserValidator
     {
-        private readonly Dictionary<string, IPlatformValidator> _validators;
+        private readonly IScraperService _service;
+        private readonly Dictionary<string, IPlatformUserIdExtractor> _extractors;
 
         public UserValidator(
-            FacebookValidator facebook,
-            TwitterValidator twitter)
+            IScraperService service,
+            FacebookUserIdExtractor facebook,
+            TwitterUserIdExtractor twitter)
         {
-            _validators = new Dictionary<string, IPlatformValidator>
+            _service = service;
+            
+            _extractors = new Dictionary<string, IPlatformUserIdExtractor>
             {
                 {
                     "facebook",
@@ -25,9 +32,36 @@ namespace TelegramReceiver
             };
         }
         
-        public Task<string> ValidateAsync(string userId, string platform)
+        public async Task<string> ValidateAsync(string userId, string platform)
         {
-            return _validators[platform].ValidateAsync(userId);
+            var newUserId = GetUserId(userId, platform);
+
+            var post = await ScrapeSinglePost(newUserId, platform);
+            if (post == null)
+            {
+                throw new NullReferenceException(nameof(post));
+            }
+
+            return newUserId;
+        }
+
+        private string GetUserId(string userId, string platform)
+        {
+            if (!_extractors.ContainsKey(platform))
+            {
+                return userId;
+            }
+            
+            return _extractors[platform].Get(userId) ?? userId;
+        }
+        
+        private async Task<Post> ScrapeSinglePost(string userId, string platform)
+        {
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            
+            return await _service
+                .GetPostsAsync(userId, platform, cts.Token)
+                .FirstOrDefaultAsync(cts.Token);
         }
     }
 

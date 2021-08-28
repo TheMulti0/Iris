@@ -65,22 +65,17 @@ namespace Common
         
         public string GetPlatform(string platform)
         {
-            string p = null;
-            
             switch (platform)
             {
                 case "facebook":
-                    p = Facebook;
-                    break;
+                    return Facebook;
                 case "twitter":
-                    p = Twitter;
-                    break;
+                    return Twitter;
                 case "feeds":
-                    p = Feeds;
-                    break;
+                    return Feeds;
+                default:
+                    return platform;
             }
-            
-            return p;
         }
         
         public string GetTextMode(TextMode mode)
