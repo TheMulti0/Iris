@@ -3,11 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Scraper.Net;
 using Scraper.RabbitMq.Common;
 using Telegram.Bot.Types;
 using SubscriptionsDb;
@@ -19,6 +21,7 @@ namespace TelegramSender
 {
     public class MessageConsumer : IConsumer<SendMessage>
     {
+        private readonly VideoDownloader _videoDownloader;
         private readonly IChatSubscriptionsRepository _repository;
         private readonly ISenderFactory _senderFactory;
         private readonly MessageInfoBuilder _messageInfoBuilder;
@@ -40,11 +43,13 @@ namespace TelegramSender
         };
 
         public MessageConsumer(
+            VideoDownloader videoDownloader,
             IChatSubscriptionsRepository repository,
             ISenderFactory senderFactory,
             MessageInfoBuilder messageInfoBuilder,
             ILoggerFactory loggerFactory)
         {
+            _videoDownloader = videoDownloader;
             _repository = repository;
             _senderFactory = senderFactory;
             _messageInfoBuilder = messageInfoBuilder;
@@ -59,19 +64,67 @@ namespace TelegramSender
             _sender ??= await _senderFactory.CreateAsync();
 
             _logger.LogInformation("Received {}", message);
-            
-            await ConsumeMessageAsync(message);
+
+            message = await WithDownloadedMediaAsync(message, context.CancellationToken);
+
+            await ConsumeMessageAsync(message, context.CancellationToken);
         }
 
-        private async Task ConsumeMessageAsync(SendMessage message)
+        private async Task<SendMessage> WithDownloadedMediaAsync(SendMessage message, CancellationToken ct)
+        {
+            NewPost newPost = message.NewPost;
+            if (newPost.Platform != "facebook")
+            {
+                return message;
+            }
+            
+            Post post = newPost.Post;
+            IEnumerable<VideoItem> videos = post.MediaItems.OfType<VideoItem>().ToList();
+
+            if (!videos.Any())
+            {
+                return message;
+            }
+            
+            string thumbnailUrl = videos
+                .Select(i => i.ThumbnailUrl)
+                .FirstOrDefault(url => url != null);
+
+            var item = await DownloadVideoItem(post, thumbnailUrl, ct);
+
+            IEnumerable<IMediaItem> newMediaItems = post.MediaItems
+                .Where(i => i is not VideoItem)
+                .Append(item);
+
+            return message with { NewPost = newPost with { Post = post with { MediaItems = newMediaItems } } };
+        }
+
+        private async Task<LocalVideoItem> DownloadVideoItem(Post post, string thumbnailUrl, CancellationToken ct)
+        {
+            bool downloadThumbnail = thumbnailUrl == null;
+
+            var item = await _videoDownloader.DownloadAsync(
+                post.Url,
+                downloadThumbnail: downloadThumbnail,
+                ct: ct);
+
+            if (!downloadThumbnail)
+            {
+                return item with { ThumbnailUrl = thumbnailUrl, IsThumbnailLocal = false };
+            }
+
+            return item;
+        }
+
+        private async Task ConsumeMessageAsync(SendMessage message, CancellationToken ct)
         {
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
-            List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(message)).ToList();
+            List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(message, ct)).ToList();
 
             foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
             {
-                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.NewPost);
+                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.NewPost, ct);
 
                 if (parsedMessageInfo == null)
                 {
@@ -88,11 +141,11 @@ namespace TelegramSender
             }
         }
 
-        private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(SendMessage message)
+        private async Task<IEnumerable<TdApi.InputMessageContent>> SendFirstChatMessage(SendMessage message, CancellationToken ct)
         {
             UserChatSubscription chatSubscription = message.DestinationChats.First();
             
-            IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, chatSubscription);
+            IEnumerable<TdApi.Message> sentMessages = await SendSingleChatMessage(message, chatSubscription, ct);
             
             _logger.LogInformation("Successfully sent {} to chat id {}", message.NewPost.Post.Url, chatSubscription.ChatInfo.Id);
             
@@ -116,12 +169,12 @@ namespace TelegramSender
                 .Select(m => m.Content.ToInputMessageContentAsync());
         }
 
-        private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(SendMessage message, UserChatSubscription chatInfo)
+        private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(SendMessage message, UserChatSubscription chatInfo, CancellationToken ct)
         {
             var chatId = chatInfo.ChatInfo.Id;
             var newPost = message.NewPost;
 
-            ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, newPost);
+            ParsedMessageInfo parsed = await GetParsedMessageInfo(chatInfo, newPost, ct);
 
             if (parsed == null)
             {
@@ -131,11 +184,11 @@ namespace TelegramSender
             return await SendAsync(_sender, parsed, newPost, chatId);
         }
 
-        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription subscription, NewPost newPost)
+        private async Task<ParsedMessageInfo> GetParsedMessageInfo(UserChatSubscription subscription, NewPost newPost, CancellationToken ct)
         {
             try
             {
-                MessageInfo messageInfo = _messageInfoBuilder.Build(newPost, subscription);
+                MessageInfo messageInfo = _messageInfoBuilder.Build(newPost, subscription, ct);
             
                 return await _sender.ParseAsync(messageInfo);
             }

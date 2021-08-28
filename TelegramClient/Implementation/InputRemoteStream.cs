@@ -22,9 +22,9 @@ namespace TelegramClient
             _fileStream = new FileStream(_filePath, FileMode.Create);
         }
 
-        private static string CreateUniqueFilePath()
+        public static string CreateUniqueFilePath()
         {
-            long currentTime = new DateTimeOffset().ToUnixTimeSeconds();
+            long currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
             int random = Random.Next();
             
             return $"{currentTime}-{random}";

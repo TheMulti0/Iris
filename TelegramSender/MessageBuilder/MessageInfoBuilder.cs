@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Common;
 using Scraper.Net;
 using Scraper.Net.Screenshot;
@@ -15,7 +16,7 @@ namespace TelegramSender
         private const string TwitterUserNamePattern = @"@(?<userName>[\w\d-_]+)";
         private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
     
-        public MessageInfo Build(NewPost newPost, UserChatSubscription chatSubscription)
+        public MessageInfo Build(NewPost newPost, UserChatSubscription chatSubscription, CancellationToken ct)
         {
             string message = GetMessage(newPost, chatSubscription);
 
@@ -27,13 +28,15 @@ namespace TelegramSender
                 return new MessageInfo(
                     message,
                     screenshots,
-                    chatSubscription.ChatInfo.Id);
+                    chatSubscription.ChatInfo.Id,
+                    ct);
             }
             
             return new MessageInfo(
                 message,
                 newPost.Post.MediaItems,
                 chatSubscription.ChatInfo.Id,
+                ct,
                 DisableWebPagePreview: !chatSubscription.ShowUrlPreview);
         }
 

@@ -25,6 +25,7 @@ namespace TelegramSender
             var telegramConfig = rootConfig.GetSection("Telegram")
                 .Get<TelegramClientConfig>();
             var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
+            var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>();
     
             services
                 .AddLogging()
@@ -46,6 +47,7 @@ namespace TelegramSender
                             });
                     })
                 .AddMassTransitHostedService()
+                .AddSingleton(provider => ActivatorUtilities.CreateInstance<VideoDownloader>(provider, downloaderConfig))
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()
                 .AddSingleton<MessageInfoBuilder>()

@@ -32,7 +32,8 @@ namespace TelegramSender.Tests
                     Prefix = disabledText,
                     Suffix = disabledText,
                     ChatInfo = new ChatInfo()
-                });
+                },
+                default);
             
             Assert.IsNotNull(messageInfo);
         }
