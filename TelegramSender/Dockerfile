@@ -20,12 +20,11 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Install ffmpeg and curl and python3
+# Install ffmpeg and curl and pip3
 RUN apt update -y
-RUN apt install -y ffmpeg curl python3
+RUN apt install -y ffmpeg curl python3-pip
 
 # Download youtube-dl
-RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-RUN chmod a+rx /usr/local/bin/youtube-dl
+RUN pip install youtube-dl
 
 ENTRYPOINT ["dotnet", "TelegramSender.dll"]
