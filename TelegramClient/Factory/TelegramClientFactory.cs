@@ -37,7 +37,7 @@ namespace TelegramClient
         {
             try
             {
-                var startupState = new StartupState(false, false);
+                var startupState = new StartupState(false, false, false);
             
                 await foreach (TdApi.Update update in _client.OnUpdateReceived().ToAsyncEnumerable())
                 {
@@ -67,18 +67,22 @@ namespace TelegramClient
         {
             switch (update)
             {
-                case TdApi.Update.UpdateAuthorizationState authState when authState.AuthorizationState.GetType() == typeof(TdApi.AuthorizationState.AuthorizationStateWaitTdlibParameters):
+                case TdApi.Update.UpdateAuthorizationState{ AuthorizationState: TdApi.AuthorizationState.AuthorizationStateWaitTdlibParameters }:
                     await _client.SetTdlibParametersAsync(_tdlibParameters);
                     
                     return state with { ParametersSet = true };
                 
-                case TdApi.Update.UpdateAuthorizationState authState when authState.AuthorizationState.GetType() == typeof(TdApi.AuthorizationState.AuthorizationStateWaitEncryptionKey):
+                case TdApi.Update.UpdateAuthorizationState{ AuthorizationState: TdApi.AuthorizationState.AuthorizationStateWaitEncryptionKey }:
                     await _client.CheckDatabaseEncryptionKeyAsync();
                     
                     return state with { DatabaseEncryptionKeyChecked = true };
+                
+                case TdApi.Update.UpdateAuthorizationState{ AuthorizationState: TdApi.AuthorizationState.AuthorizationStateReady }:
+                    return state with { IsReady = true };
+                
+                default:
+                    return state;
             }
-
-            return state;
         }
 
         private async Task AuthenticateAsync() => await _client.CheckAuthenticationBotTokenAsync(_config.BotToken);
