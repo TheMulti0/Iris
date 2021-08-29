@@ -30,7 +30,7 @@ namespace TelegramClient
             };
 
             _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamDefault()).Wait();
-            _client.SetLogVerbosityLevelAsync(2).Wait(); // Set log level to warning
+            _client.SetLogVerbosityLevelAsync(25).Wait(); // Set log level to warning
         }
 
         public async Task<ITelegramClient> CreateAsync()
