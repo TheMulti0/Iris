@@ -20,7 +20,7 @@ services:
     image: themulti0/scraper.rabbitmq
     restart: always
     build:
-      context: ../Scraper.RabbitMq
+      context: ../Scraper.RabbitMq/src
       dockerfile: Scraper.RabbitMq/Dockerfile
     container_name: scraper
     volumes:
