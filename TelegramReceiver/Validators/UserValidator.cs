@@ -41,8 +41,12 @@ namespace TelegramReceiver
             {
                 throw new NullReferenceException(nameof(post));
             }
-
-            return newUserId;
+            
+            string postAuthorId = post.AuthorId;
+            
+            return string.IsNullOrWhiteSpace(postAuthorId) 
+                ? newUserId 
+                : postAuthorId;
         }
 
         private string GetUserId(string userId, string platform)
