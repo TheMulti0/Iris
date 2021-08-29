@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Scraper.Net;
 using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 
@@ -26,6 +27,12 @@ namespace MessagesManager
         {
             NewPost newPost = context.Message;
             _logger.LogInformation("Received {}", newPost.Post.Url);
+
+            if (newPost.Post.Type == PostType.Reply)
+            {
+                _logger.LogInformation("Dumping {}", newPost.Post.Url);
+                return;
+            }
 
             SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
