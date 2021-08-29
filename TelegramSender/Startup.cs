@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using Common;
+using GreenPipes;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,14 +36,21 @@ namespace TelegramSender
                 .AddMassTransit(
                     x =>
                     {
-                        x.AddConsumer<MessageConsumer>();
+                        x.AddConsumer<MessageConsumer>(
+                            c =>
+                            {
+                                c.UseMessageRetry(
+                                    r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                                c.UseScheduledRedelivery(
+                                    r => r.None());
+                            });
                         
                         x.UsingRabbitMq(
                             (context, cfg) =>
                             {
                                 cfg.Host(connectionConfig.ConnectionString);
                                 
-                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMediaItem));
+                                cfg.ConfigureInterfaceJsonSerialization();
                                 
                                 cfg.ConfigureEndpoints(context);
                             });
