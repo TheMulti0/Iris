@@ -25,6 +25,6 @@ RUN apt update -y
 RUN apt install -y ffmpeg curl python3-pip
 
 # Download youtube-dl
-RUN pip install youtube-dl
+RUN pip3 install youtube-dl
 
 ENTRYPOINT ["dotnet", "TelegramSender.dll"]
