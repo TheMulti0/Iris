@@ -33,22 +33,12 @@ namespace TelegramSender
             bool downloadThumbnail = true,
             CancellationToken ct = default)
         {
-            var overrideOptions = new OptionSet
-            {
-                Output = InputRemoteStream.CreateUniqueFilePath()
-            };
-            RunResult<string> result = await _youtubeDl.RunVideoDownload(
-                url,
-                overrideOptions: overrideOptions,
-                ct: ct);
-
-            if (!result.Success)
+            string videoPath = await DownloadVideo(url, ct);
+            if (videoPath == null)
             {
                 return null;
             }
             
-            string videoPath = result.Data;
-
             IMediaAnalysis analysis = await FFProbe.AnalyseAsync(videoPath);
 
             string thumbnailPath = null;
@@ -60,6 +50,26 @@ namespace TelegramSender
             }
 
             return new LocalVideoItem(videoPath, thumbnailPath, analysis);
+        }
+
+        private async Task<string> DownloadVideo(string url, CancellationToken ct)
+        {
+            var overrideOptions = new OptionSet
+            {
+                Output = InputRemoteStream.CreateUniqueFilePath()
+            };
+            RunResult<string> result = await _youtubeDl.RunVideoDownload(
+                url,
+                overrideOptions: overrideOptions,
+                ct: ct);
+
+            if (result.Success)
+            {
+                return result.Data;
+            }
+            
+            string message = string.Join('\n', result.ErrorOutput);
+            throw new YoutubeDlException(message);
         }
 
         private async Task<string> GetThumbnail(string videoPath, int durationMilli)
