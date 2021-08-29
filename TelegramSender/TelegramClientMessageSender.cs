@@ -16,11 +16,10 @@ namespace TelegramSender
 {
     public class TelegramClientMessageSender : ITelegramMessageSender
     {
-        private readonly ISenderFactory _senderFactory;
         private readonly MessageInfoBuilder _messageInfoBuilder;
         private readonly ILogger<TelegramClientMessageSender> _logger;
         private readonly ConcurrentDictionary<ChatId, ActionBlock<Task>> _chatSenders;
-        private MessageSender _sender;
+        private readonly MessageSender _sender;
         
         private static readonly string[] RemoveSubscriptionOnMessages =
         {
@@ -34,20 +33,13 @@ namespace TelegramSender
             MessageInfoBuilder messageInfoBuilder,
             ILoggerFactory loggerFactory)
         {
-            _senderFactory = senderFactory;
+            _sender = senderFactory.CreateAsync().Result;
             _messageInfoBuilder = messageInfoBuilder;
             _logger = loggerFactory.CreateLogger<TelegramClientMessageSender>();
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
 
         public async Task ConsumeAsync(SendMessage message, CancellationToken ct)
-        {
-            _sender ??= await _senderFactory.CreateAsync();
-
-            await ConsumeMessageAsync(message, ct);
-        }
-
-        private async Task ConsumeMessageAsync(SendMessage message, CancellationToken ct)
         {
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
@@ -120,7 +112,7 @@ namespace TelegramSender
             try
             {
                 MessageInfo messageInfo = _messageInfoBuilder.Build(newPost, subscription, ct);
-            
+                
                 return await _sender.ParseAsync(messageInfo);
             }
             catch (TdException e)

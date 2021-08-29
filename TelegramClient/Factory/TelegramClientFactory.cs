@@ -28,9 +28,9 @@ namespace TelegramClient
                 SystemLanguageCode = "en",
                 SystemVersion = "Win 10.0"
             };
-
+            
             _client.SetLogStreamAsync(new TdApi.LogStream.LogStreamDefault()).Wait();
-            _client.SetLogVerbosityLevelAsync(25).Wait(); // Set log level to warning
+            _client.SetLogVerbosityLevelAsync(0).Wait(); // Set log level to warning
         }
 
         public async Task<ITelegramClient> CreateAsync()
