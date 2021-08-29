@@ -27,25 +27,25 @@ namespace SubscriptionsDb.Migrator
         {
             try
             {
-                foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
-                {
-                    await foreach (UserChatSubscription subscription in InsertChat(subscriptionEntity, stoppingToken))
-                    {
-                        if (subscription.ChatInfo != null)
-                        {
-                            await _repository.AddOrUpdateAsync(subscriptionEntity.User, subscription);
-                    
-                            Console.WriteLine($"Migrated user chat subscription {subscription.ChatInfo.Id}");    
-                        }
-                        else
-                        {
-                            //await _repository.RemoveAsync(subscriptionEntity.User, subscription.ChatId);
-                            
-                            //Console.WriteLine($"Removed user chat subscription {subscription.ChatId}");
-                        }
-                        
-                    }
-                }
+                // foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
+                // {
+                //     await foreach (UserChatSubscription subscription in InsertChat(subscriptionEntity, stoppingToken))
+                //     {
+                //         if (subscription.ChatInfo != null)
+                //         {
+                //             await _repository.AddOrUpdateAsync(subscriptionEntity.User, subscription);
+                //     
+                //             Console.WriteLine($"Migrated user chat subscription {subscription.ChatInfo.Id}");    
+                //         }
+                //         else
+                //         {
+                //             //await _repository.RemoveAsync(subscriptionEntity.User, subscription.ChatId);
+                //             
+                //             //Console.WriteLine($"Removed user chat subscription {subscription.ChatId}");
+                //         }
+                //         
+                //     }
+                // }
             }
             catch(Exception e)
             {
