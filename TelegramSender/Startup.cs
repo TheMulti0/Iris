@@ -30,8 +30,6 @@ namespace TelegramSender
             var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>() ?? new();
     
             services
-                .AddLogging()
-                .AddSubscriptionsDb()
                 .AddLanguages()
                 .AddMassTransit(
                     x =>
@@ -44,7 +42,7 @@ namespace TelegramSender
                                 c.UseScheduledRedelivery(
                                     r => r.None());
                             });
-                        
+
                         x.UsingRabbitMq(
                             (context, cfg) =>
                             {
@@ -60,6 +58,7 @@ namespace TelegramSender
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()
                 .AddSingleton<MessageInfoBuilder>()
+                .AddSingleton<ITelegramMessageSender, TelegramClientMessageSender>()
                 .BuildServiceProvider();
         }
     }
