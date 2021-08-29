@@ -70,7 +70,7 @@ namespace TelegramSender
                 m =>
                 {
                     string username = m.Groups["userName"].Value;
-                    return HyperlinkText(username, $"{TwitterUrl}/{username}");
+                    return HyperlinkText($"@{username}", $"{TwitterUrl}/{username}");
                 });
         }
 
