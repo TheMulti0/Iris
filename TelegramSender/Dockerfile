@@ -19,4 +19,13 @@ RUN dotnet publish "TelegramSender.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Install youtube-dl
+RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+RUN chmod a+rx /usr/local/bin/youtube-dl
+
+# Install ffmpeg
+RUN apt update
+RUN apt install ffmpeg
+
 ENTRYPOINT ["dotnet", "TelegramSender.dll"]
