@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -14,7 +10,7 @@ using Scraper.RabbitMq.Common;
 
 namespace TelegramSender
 {
-    public class MessageConsumer : IConsumer<SendMessage>, IAsyncDisposable
+    public class MessageConsumer : IConsumer<SendMessage>
     {
         private readonly ITelegramMessageSender _telegram;
         private readonly VideoDownloader _videoDownloader;
@@ -86,11 +82,6 @@ namespace TelegramSender
             }
 
             return item;
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            await _telegram.FlushAsync();
         }
     }
 }
