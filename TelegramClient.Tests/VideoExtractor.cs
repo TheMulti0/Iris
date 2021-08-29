@@ -9,6 +9,30 @@ using Common;
 
 namespace TelegramClient.Tests
 {
+    public record Video
+    {
+        public string Url { get; }
+        public string ThumbnailUrl { get; init; }
+        [JsonConverter(typeof(NullableTimeSpanConverter))]
+        public TimeSpan? Duration { get; }
+        public int? Width { get; }
+        public int? Height { get; }
+
+        public Video(
+            string url,
+            string thumbnailUrl,
+            TimeSpan? duration = null,
+            int? width = null,
+            int? height = null)
+        {
+            Url = url;
+            ThumbnailUrl = thumbnailUrl;
+            Duration = duration;
+            Width = width;
+            Height = height;
+        }
+    }
+    
     public class VideoExtractor
     {
         private const string ScriptName = "extract_video.py";
