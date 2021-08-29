@@ -26,8 +26,8 @@ namespace TelegramSender
 
             var telegramConfig = rootConfig.GetSection("Telegram")
                 .Get<TelegramClientConfig>();
-            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
-            var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>();
+            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>() ?? new();
+            var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>() ?? new();
     
             services
                 .AddLogging()

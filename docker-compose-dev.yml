@@ -24,7 +24,7 @@ services:
       dockerfile: Scraper.RabbitMq/Dockerfile
     container_name: scraper
     volumes:
-      - ../Scraper.RabbitMq/Scraper.RabbitMq/appsettings.json:/app/appsettings.json
+      - ../Scraper.RabbitMq/src/Scraper.RabbitMq/appsettings.json:/app/appsettings.json
 
   telegramreceiver:
     image: irisupdate/telegramreceiver:latest
