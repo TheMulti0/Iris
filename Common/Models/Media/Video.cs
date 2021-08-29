@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Common
 {
-    public record Video : IMedia
+    public record Video
     {
         public string Url { get; }
         public string ThumbnailUrl { get; init; }

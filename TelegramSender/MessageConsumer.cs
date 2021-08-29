@@ -37,11 +37,6 @@ namespace TelegramSender
             "Have no write access to the chat"
         };
 
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-        {
-            Converters = { new MediaJsonConverter() }
-        };
-
         public MessageConsumer(
             VideoDownloader videoDownloader,
             IChatSubscriptionsRepository repository,
@@ -230,7 +225,7 @@ namespace TelegramSender
             {
                 foreach (var media in originalPost.Post.MediaItems)
                 {
-                    _logger.LogWarning(JsonSerializer.Serialize(media, _jsonSerializerOptions));
+                    _logger.LogWarning(JsonSerializer.Serialize(media));
                 }
                 await HandleException(originalPost, chat, e);
             }
