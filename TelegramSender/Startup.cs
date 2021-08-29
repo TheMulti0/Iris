@@ -48,7 +48,7 @@ namespace TelegramSender
                             {
                                 cfg.Host(connectionConfig.ConnectionString);
                                 
-                                cfg.ConfigureInterfaceJsonSerialization();
+                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMediaItem));
                                 
                                 cfg.ConfigureEndpoints(context);
                             });
