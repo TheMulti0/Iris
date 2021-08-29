@@ -20,12 +20,13 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Install youtube-dl
-RUN wget https://yt-dl.org/downloads/latest/youtube-dl -O /usr/local/bin/youtube-dl
-RUN chmod a+rx /usr/local/bin/youtube-dl
-
 # Install ffmpeg
 RUN apt update
 RUN apt install ffmpeg
+
+# Install youtube-dl
+RUN apt install curl
+RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+RUN chmod a+rx /usr/local/bin/youtube-dl
 
 ENTRYPOINT ["dotnet", "TelegramSender.dll"]
