@@ -20,12 +20,11 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Install ffmpeg
+# Install ffmpeg and curl
 RUN apt update
-RUN apt install ffmpeg
+RUN apt install -y ffmpeg curl
 
-# Install youtube-dl
-RUN apt install curl
+# Download youtube-dl
 RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 RUN chmod a+rx /usr/local/bin/youtube-dl
 
