@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Scraper.Net;
 using TdLib;
@@ -38,7 +39,7 @@ namespace TelegramSender
                     return l.ToInputVideo(caption);
             }
 
-            return null;
+            throw new ArgumentOutOfRangeException(media.GetType().FullName);
         }
 
         private static TdApi.InputMessageContent ToInputPhoto(this PhotoItem photo, TdApi.FormattedText caption)
