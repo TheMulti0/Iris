@@ -10,18 +10,21 @@ namespace TelegramSender
 {
     public class VideoDownloader
     {
+        private readonly VideoDownloaderConfig _config;
         private readonly YoutubeDL _youtubeDl;
         private readonly Random _random;
 
         public VideoDownloader(VideoDownloaderConfig config)
         {
+            _config = config;
+            
             GlobalFFOptions.Configure(new FFOptions
             {
-                BinaryFolder = config.FfBinariesFolder
+                BinaryFolder = _config.FfBinariesFolder
             });
             _youtubeDl = new YoutubeDL
             {
-                YoutubeDLPath = config.YoutubeDlPath,
+                YoutubeDLPath = _config.YoutubeDlPath,
                 FFmpegPath = GlobalFFOptions.GetFFMpegBinaryPath(),
                 RestrictFilenames = true
             };
@@ -56,7 +59,8 @@ namespace TelegramSender
         {
             var overrideOptions = new OptionSet
             {
-                Output = InputRemoteStream.CreateUniqueFilePath()
+                Output = InputRemoteStream.CreateUniqueFilePath(),
+                Cookies = _config.CookiesFileName
             };
             RunResult<string> result = await _youtubeDl.RunVideoDownload(
                 url,
