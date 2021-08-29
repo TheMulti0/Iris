@@ -1,7 +1,7 @@
 ﻿namespace TelegramClient
 {
-    internal record StartupState(bool ParametersSet, bool DatabaseEncryptionKeyChecked, bool IsReady)
+    internal record StartupState(bool ParametersSet, bool DatabaseEncryptionKeyChecked)
     {
-        public bool IsComplete => ParametersSet && DatabaseEncryptionKeyChecked && IsReady;
+        public bool IsComplete => ParametersSet && DatabaseEncryptionKeyChecked;
     }
 }

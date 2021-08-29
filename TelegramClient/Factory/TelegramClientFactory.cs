@@ -37,7 +37,7 @@ namespace TelegramClient
         {
             try
             {
-                var startupState = new StartupState(false, false, false);
+                var startupState = new StartupState(false, false);
             
                 await foreach (TdApi.Update update in _client.OnUpdateReceived().ToAsyncEnumerable())
                 {
@@ -76,9 +76,6 @@ namespace TelegramClient
                     await _client.CheckDatabaseEncryptionKeyAsync();
                     
                     return state with { DatabaseEncryptionKeyChecked = true };
-                
-                case TdApi.Update.UpdateAuthorizationState{ AuthorizationState: TdApi.AuthorizationState.AuthorizationStateReady }:
-                    return state with { IsReady = true };
                 
                 default:
                     return state;
