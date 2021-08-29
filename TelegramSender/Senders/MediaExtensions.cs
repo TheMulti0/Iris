@@ -2,12 +2,13 @@
 using System.Linq;
 using Scraper.Net;
 using TdLib;
+using TelegramClient;
 
 namespace TelegramSender
 {
     internal static class MediaExtensions
     {
-        public static IEnumerable<TdApi.InputMessageContent> GetInputMessageContentAsync(this MessageInfo message, TdApi.FormattedText text)
+        public static IEnumerable<TdApi.InputMessageContent> GetInputMessageContent(this MessageInfo message, TdApi.FormattedText text)
         {
             TdApi.FormattedText GetCaption(int i) => i == 0 && message.FitsInOneMediaMessage ? text : null;
 
@@ -15,13 +16,13 @@ namespace TelegramSender
             
             foreach (IMediaItem mediaItem in message.MediaItems)
             {
-                yield return mediaItem.ToInputMessageContentAsync(GetCaption(mediaIndex));
+                yield return mediaItem.ToInputMessageContent(GetCaption(mediaIndex));
                 
                 mediaIndex++;
             }
         }
         
-        public static TdApi.InputMessageContent ToInputMessageContentAsync(
+        public static TdApi.InputMessageContent ToInputMessageContent(
             this IMediaItem media,
             TdApi.FormattedText caption)
         {
@@ -32,6 +33,9 @@ namespace TelegramSender
                 
                 case VideoItem v:
                     return v.ToInputVideo(caption);
+                
+                case LocalVideoItem l:
+                    return l.ToInputVideo(caption);
             }
 
             return null;
@@ -48,21 +52,6 @@ namespace TelegramSender
                 }
             };
         }
-        
-        // private static TdApi.InputMessageContent ToInputPhotoAsync(
-        //     this BytesPhoto photo,
-        //     TdApi.FormattedText caption)
-        // {
-        //     Task<Stream> GetStreamAsync() => Task.FromResult<Stream>(new MemoryStream(photo.Bytes));
-        //
-        //     var inputFileStream = new InputRemoteStream(GetStreamAsync);
-        //
-        //     return new TdApi.InputMessageContent.InputMessagePhoto
-        //     {
-        //         Caption = caption,
-        //         Photo = inputFileStream
-        //     };
-        // }
 
         private static TdApi.InputMessageContent ToInputVideo(this VideoItem video, TdApi.FormattedText caption)
         {
@@ -91,8 +80,37 @@ namespace TelegramSender
                 SupportsStreaming = true
             };
         }
+        
+        private static TdApi.InputMessageContent ToInputVideo(this LocalVideoItem video, TdApi.FormattedText caption)
+        {
+            int height = video.Height ?? 0;
+            int width = video.Width ?? 0;
 
-        public static TdApi.InputMessageContent ToInputMessageContentAsync(this TdApi.MessageContent content)
+            var remoteThumbnail = new TdApi.InputFile.InputFileRemote
+            {
+                Id = video.ThumbnailUrl
+            };
+            var localThumbnail = new InputRecyclingLocalFile(video.ThumbnailUrl);
+            return new TdApi.InputMessageContent.InputMessageVideo
+            {
+                Caption = caption,
+                Height = height,
+                Width = width,
+                Duration = (int) video.Duration.TotalSeconds,
+                Video = new InputRecyclingLocalFile(video.Url),
+                Thumbnail = new TdApi.InputThumbnail
+                {
+                    Height = height,
+                    Width = width,
+                    Thumbnail = video.IsThumbnailLocal 
+                        ? localThumbnail 
+                        : remoteThumbnail
+                },
+                SupportsStreaming = true
+            };
+        }
+
+        public static TdApi.InputMessageContent ToInputMessageContent(this TdApi.MessageContent content)
         {
             switch (content)
             {

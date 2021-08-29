@@ -97,7 +97,7 @@ namespace TelegramSender
         {
             return messages
                 .Where(m => m.Content is not TdApi.MessageContent.MessageText)
-                .Select(m => m.Content.ToInputMessageContentAsync());
+                .Select(m => m.Content.ToInputMessageContent());
         }
 
         private async Task<IEnumerable<TdApi.Message>> SendSingleChatMessage(SendMessage message, UserChatSubscription chatInfo, CancellationToken ct)
