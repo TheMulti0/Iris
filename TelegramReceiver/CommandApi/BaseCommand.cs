@@ -45,13 +45,19 @@ namespace TelegramReceiver
             try
             {
                 string[] items = query.Data.Split("-");
-            
-                return items.Last();
+
+                string platform = items.Last();
+
+                if (PlatformsCommand.Platforms.Contains(platform))
+                {
+                    return platform;
+                }
             }
             catch
             {
-                return null;
             }
+
+            return null;
         }
 
         protected TextType GetTextType()

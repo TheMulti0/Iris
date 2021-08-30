@@ -12,7 +12,7 @@ namespace TelegramReceiver
 {
     internal class PlatformsCommand : BaseCommand, ICommand
     {
-        private static readonly string[] Platforms =
+        public static readonly string[] Platforms =
         {
             "facebook",
             "twitter",
