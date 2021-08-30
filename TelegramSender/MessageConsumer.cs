@@ -53,12 +53,15 @@ namespace TelegramSender
             {
                 return message;
             }
+
+            string url = videos.FirstOrDefault(video => video.UrlType == UrlType.WebpageUrl)?.Url ??
+                         post.Url;
             
             string thumbnailUrl = videos
                 .Select(i => i.ThumbnailUrl)
-                .FirstOrDefault(url => url != null);
+                .FirstOrDefault(u => u != null);
 
-            var item = await DownloadVideoItem(post, thumbnailUrl, ct);
+            var item = await DownloadVideoItem(url, thumbnailUrl, ct);
 
             IEnumerable<IMediaItem> newMediaItems = post.MediaItems
                 .Where(i => i is not VideoItem)
@@ -67,12 +70,12 @@ namespace TelegramSender
             return message with { NewPost = newPost with { Post = post with { MediaItems = newMediaItems } } };
         }
 
-        private async Task<LocalVideoItem> DownloadVideoItem(Post post, string thumbnailUrl, CancellationToken ct)
+        private async Task<LocalVideoItem> DownloadVideoItem(string url, string thumbnailUrl, CancellationToken ct)
         {
             bool downloadThumbnail = thumbnailUrl == null;
 
             var item = await _videoDownloader.DownloadAsync(
-                post.Url,
+                url,
                 downloadThumbnail: downloadThumbnail,
                 ct: ct);
 
