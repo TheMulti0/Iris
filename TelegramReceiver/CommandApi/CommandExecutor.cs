@@ -49,6 +49,13 @@ namespace TelegramReceiver
                     }
                 },
                 {
+                    Route.Id,
+                    new []
+                    {
+                        "/id"
+                    }
+                },
+                {
                     Route.Settings,
                     new[]
                     {
@@ -314,6 +321,9 @@ namespace TelegramReceiver
             {
                 case Route.Start:
                     return typeof(StartCommand);
+                
+                case Route.Id:
+                    return typeof(IdCommand);
                 
                 case Route.Settings:
                     return typeof(SettingsCommand);

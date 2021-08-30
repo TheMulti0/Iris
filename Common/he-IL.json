@@ -56,5 +56,6 @@
     "HyperlinkedText": "טקסט מקושר",
     "Url": "קישור",
     "EnterContent": "הכנס תוכן",
-    "Mode": "סוג"
+    "Mode": "סוג",
+    "ChatId": "קוד הצ'אט הנוכחי"
 }

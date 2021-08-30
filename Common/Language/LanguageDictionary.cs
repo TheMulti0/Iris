@@ -62,6 +62,7 @@ namespace Common
         public string Url { get; set; }
         public string EnterContent { get; set; }
         public string Mode { get; set; }
+        public string ChatId { get; set; }
         
         public string GetPlatform(string platform)
         {

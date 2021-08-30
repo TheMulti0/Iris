@@ -56,5 +56,6 @@
     "HyperlinkedText": "Hyperlinked Text",
     "Url": "Url",
     "EnterContent": "Enter content",
-    "Mode": "Mode"
+    "Mode": "Mode",
+    "ChatId": "Current chat id"
 }
