@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scraper.Net;
+using Scraper.RabbitMq.Client;
 using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 using TelegramClient;
@@ -31,29 +32,8 @@ namespace TelegramSender
     
             services
                 .AddLanguages()
-                .AddMassTransit(
-                    x =>
-                    {
-                        x.AddConsumer<MessageConsumer>(
-                            c =>
-                            {
-                                c.UseMessageRetry(
-                                    r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                                c.UseScheduledRedelivery(
-                                    r => r.None());
-                            });
-
-                        x.UsingRabbitMq(
-                            (context, cfg) =>
-                            {
-                                cfg.Host(connectionConfig.ConnectionString);
-                                
-                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMediaItem));
-                                
-                                cfg.ConfigureEndpoints(context);
-                            });
-                    })
-                .AddMassTransitHostedService()
+                .AddSubscriptionsDb()
+                .AddScraperRabbitMqClient<NewPostConsumer>(connectionConfig)
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<VideoDownloader>(provider, downloaderConfig))
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()

@@ -39,15 +39,15 @@ namespace TelegramSender
             _chatSenders = new ConcurrentDictionary<ChatId, ActionBlock<Task>>();
         }
 
-        public async Task ConsumeAsync(SendMessage message, CancellationToken ct)
+        public async Task ConsumeAsync(SendMessage sendMessage, CancellationToken ct)
         {
             // The message is first sent to a specific chat, and its uploaded media is then used to be sent concurrently to the remaining chats.
             // This is implemented in order to make sure files are only uploaded once to Telegram's servers.
-            List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(message, ct)).ToList();
+            List<TdApi.InputMessageContent> uploadedContents = (await SendFirstChatMessage(sendMessage, ct)).ToList();
 
-            foreach (UserChatSubscription chatInfo in message.DestinationChats.Skip(1))
+            foreach (UserChatSubscription chatInfo in sendMessage.DestinationChats.Skip(1))
             {
-                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, message.NewPost, ct);
+                ParsedMessageInfo parsedMessageInfo = await GetParsedMessageInfo(chatInfo, sendMessage.NewPost, ct);
 
                 if (parsedMessageInfo == null)
                 {
@@ -60,7 +60,7 @@ namespace TelegramSender
                     ? WithUploadedContents(originalContents, uploadedContents) 
                     : originalContents;
 
-                await SendChatMessage(message, chatInfo, parsedMessageInfo with { Media = messageContents });
+                await SendChatMessage(sendMessage, chatInfo, parsedMessageInfo with { Media = messageContents });
             }
         }
 

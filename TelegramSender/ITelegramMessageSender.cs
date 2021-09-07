@@ -6,7 +6,7 @@ namespace TelegramSender
 {
     public interface ITelegramMessageSender
     {
-        Task ConsumeAsync(SendMessage message, CancellationToken ct);
+        Task ConsumeAsync(SendMessage sendMessage, CancellationToken ct);
 
         Task FlushAsync();
     }

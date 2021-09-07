@@ -7,43 +7,57 @@ using MassTransit;
 using Microsoft.Extensions.Logging;
 using Scraper.Net;
 using Scraper.RabbitMq.Common;
+using SubscriptionsDb;
 
 namespace TelegramSender
 {
-    public class MessageConsumer : IConsumer<SendMessage>
+    public class NewPostConsumer : IConsumer<NewPost>
     {
         private readonly ITelegramMessageSender _telegram;
         private readonly VideoDownloader _videoDownloader;
-        private readonly ILogger<MessageConsumer> _logger;
+        private readonly IChatSubscriptionsRepository _subscriptionsRepository;
+        private readonly ILogger<NewPostConsumer> _logger;
         
-        public MessageConsumer(
+        public NewPostConsumer(
             ITelegramMessageSender telegram,
             VideoDownloader videoDownloader,
+            IChatSubscriptionsRepository subscriptionsRepository,
             ILoggerFactory loggerFactory)
         {
             _telegram = telegram;
             _videoDownloader = videoDownloader;
-            _logger = loggerFactory.CreateLogger<MessageConsumer>();
+            _subscriptionsRepository = subscriptionsRepository;
+            _logger = loggerFactory.CreateLogger<NewPostConsumer>();
         }
 
-        public async Task Consume(ConsumeContext<SendMessage> context)
+        public async Task Consume(ConsumeContext<NewPost> context)
         {
-            SendMessage message = context.Message;
             CancellationToken ct = context.CancellationToken;
+            NewPost newPost = context.Message;
 
-            _logger.LogInformation("Received {}", message);
+            _logger.LogInformation("Received {}", newPost.Post.Url);
 
-            message = await WithDownloadedMediaAsync(message, ct);
+            if (newPost.Post.Type == PostType.Reply)
+            {
+                _logger.LogInformation("Dumping {}", newPost.Post.Url);
+                return;
+            }
 
-            await _telegram.ConsumeAsync(message, ct);
+            newPost = await WithDownloadedMediaAsync(newPost, ct);
+
+            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
+            List<UserChatSubscription> destinationChats = entity.Chats.ToList();
+
+            var sendMessage = new SendMessage(newPost, destinationChats);
+
+            await _telegram.ConsumeAsync(sendMessage, ct);
         }
 
-        private async Task<SendMessage> WithDownloadedMediaAsync(SendMessage message, CancellationToken ct)
+        private async Task<NewPost> WithDownloadedMediaAsync(NewPost newPost, CancellationToken ct)
         {
-            NewPost newPost = message.NewPost;
             if (newPost.Platform != "facebook")
             {
-                return message;
+                return newPost;
             }
             
             Post post = newPost.Post;
@@ -51,7 +65,7 @@ namespace TelegramSender
 
             if (!videos.Any())
             {
-                return message;
+                return newPost;
             }
 
             string url = videos.FirstOrDefault(video => video.UrlType == UrlType.WebpageUrl)?.Url ??
@@ -67,7 +81,7 @@ namespace TelegramSender
                 .Where(i => i is not VideoItem)
                 .Append(item);
 
-            return message with { NewPost = newPost with { Post = post with { MediaItems = newMediaItems } } };
+            return newPost with { Post = post with { MediaItems = newMediaItems } };
         }
 
         private async Task<LocalVideoItem> DownloadVideoItem(string url, string thumbnailUrl, CancellationToken ct)

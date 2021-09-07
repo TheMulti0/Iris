@@ -1,8 +1,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Common;
-using MessagesManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

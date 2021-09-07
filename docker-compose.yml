@@ -40,20 +40,6 @@ services:
       - mongodb
       - scraper
 
-  messagesmanager:
-    image: irisupdate/messagesmanager:latest
-    build:
-      context: .
-      dockerfile: MessagesManager/Dockerfile
-    container_name: messagesmanager
-    restart: always
-    env_file:
-      - messagesmanager.env
-    depends_on:
-      - rabbitmq
-      - mongodb
-      - scraper
-
   telegramsender:
     image: irisupdate/telegramsender:latest
     build:
