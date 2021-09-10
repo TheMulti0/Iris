@@ -67,7 +67,7 @@ namespace Common
 
         private static void ConfigureLogging(HostBuilderContext context, ILoggingBuilder builder)
         {
-            builder.AddConfiguration();
+            builder.AddConfiguration(context.Configuration);
             builder.AddTheMulti0Console();
             builder.AddSentry();
         }
