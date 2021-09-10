@@ -28,13 +28,13 @@ namespace Common
         public static IServiceCollection AddMassTransit(
             this IServiceCollection services,
             RabbitMqConfig config,
-            Action<IServiceCollectionBusConfigurator> configure)
+            Action<IServiceCollectionBusConfigurator> configure = null)
         {
             return services
                 .AddMassTransit(
                     x =>
                     {
-                        configure(x);
+                        configure?.Invoke(x);
                         
                         x.UsingRabbitMq(
                             (context, cfg) =>
