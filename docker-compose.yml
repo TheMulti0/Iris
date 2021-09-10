@@ -25,6 +25,17 @@ services:
     image: themulti0/scraper.rabbitmq
     restart: always
     container_name: scraper
+    depends_on:
+      - rabbitmq
+      - mongodb
+    
+  postslistener:
+    image: themulti0/postslistener
+    restart: always
+    container_name: postslistener
+    depends_on:
+      - rabbitmq
+      - mongodb
 
   telegramreceiver:
     image: irisupdate/telegramreceiver:latest
@@ -38,7 +49,6 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
-      - scraper
 
   telegramsender:
     image: irisupdate/telegramsender:latest

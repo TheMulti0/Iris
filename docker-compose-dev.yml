@@ -17,14 +17,24 @@ services:
       - 15672:15672
 
   scraper:
-    image: themulti0/scraper.rabbitmq
+    image: themulti0/scraper
     restart: always
     build:
-      context: ../Scraper.RabbitMq/src
-      dockerfile: Scraper.RabbitMq/Dockerfile
+      context: ../Scraper.MassTransit/src
+      dockerfile: Scraper.MassTransit/Dockerfile
     container_name: scraper
     volumes:
-      - ../Scraper.RabbitMq/src/Scraper.RabbitMq/appsettings.json:/app/appsettings.json
+      - ../Scraper.MassTransit/src/Scraper.MassTransit/appsettings.json:/app/appsettings.json
+
+  postslistener:
+    image: themulti0/postslistener
+    restart: always
+    build:
+      context: ../Scraper.MassTransit/src
+      dockerfile: PostsListener/Dockerfile
+    container_name: postslistener
+    volumes:
+      - ../Scraper.MassTransit/src/PostsListener/appsettings.json:/app/appsettings.json
 
   telegramreceiver:
     image: irisupdate/telegramreceiver:latest
