@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Common;
 using Microsoft.Extensions.Logging;
-using Scraper.RabbitMq.Common;
+using Scraper.MassTransit.Common;
 using TdLib;
 using Telegram.Bot.Types;
 using TelegramClient;

@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Common;
+using Scraper.MassTransit.Common;
 using Scraper.Net;
 using Scraper.Net.Screenshot;
-using Scraper.RabbitMq.Common;
 
 namespace TelegramSender
 {

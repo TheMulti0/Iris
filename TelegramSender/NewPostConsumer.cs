@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Common;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Scraper.MassTransit.Common;
 using Scraper.Net;
-using Scraper.RabbitMq.Common;
 using SubscriptionsDb;
 
 namespace TelegramSender

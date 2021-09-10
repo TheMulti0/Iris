@@ -1,14 +1,10 @@
-using System;
 using System.Threading.Tasks;
 using Common;
-using GreenPipes;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Scraper.Net;
-using Scraper.RabbitMq.Client;
-using Scraper.RabbitMq.Common;
+using PostsListener.Client;
+using Scraper.MassTransit.Common;
 using SubscriptionsDb;
 using TelegramClient;
 
@@ -29,11 +25,13 @@ namespace TelegramSender
                 .Get<TelegramClientConfig>();
             var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>() ?? new();
             var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>() ?? new();
-    
+
             services
                 .AddLanguages()
                 .AddSubscriptionsDb()
-                .AddScraperRabbitMqClient<NewPostConsumer>(connectionConfig)
+                .AddMassTransit(
+                    connectionConfig,
+                    x => x.AddPostsListenerClient<NewPostConsumer>())
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<VideoDownloader>(provider, downloaderConfig))
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()

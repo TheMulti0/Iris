@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MassTransit;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Configuration;
+using Scraper.MassTransit.Common;
+using Scraper.Net;
 using TheMulti0.Console;
 
 namespace Common
@@ -19,6 +23,30 @@ namespace Common
                 .ConfigureLogging(ConfigureLogging)
                 .ConfigureServices(configureServices)
                 .RunConsoleAsync();
+        }
+
+        public static IServiceCollection AddMassTransit(
+            this IServiceCollection services,
+            RabbitMqConfig config,
+            Action<IServiceCollectionBusConfigurator> configure)
+        {
+            return services
+                .AddMassTransit(
+                    x =>
+                    {
+                        configure(x);
+                        
+                        x.UsingRabbitMq(
+                            (context, cfg) =>
+                            {
+                                cfg.Host(config.ConnectionString);
+                            
+                                cfg.ConfigureInterfaceJsonSerialization(typeof(IMediaItem));
+                            
+                                cfg.ConfigureEndpoints(context);
+                            });
+                    })
+                .AddMassTransitHostedService();
         }
 
         private static void ConfigureHostConfiguration(IConfigurationBuilder builder)

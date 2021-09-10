@@ -5,8 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDbGenericRepository;
-using Scraper.RabbitMq.Client;
-using Scraper.RabbitMq.Common;
+using PostsListener.Client;
+using Scraper.MassTransit.Client;
+using Scraper.MassTransit.Common;
 using SubscriptionsDb;
 
 namespace TelegramReceiver
@@ -31,7 +32,9 @@ namespace TelegramReceiver
                 .AddValidators()
                 .AddCommandHandling(telegramConfig)
                 .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
-                .AddScraperRabbitMqClient(config: connectionConfig)
+                .AddMassTransit(
+                    connectionConfig,
+                    x => x.AddPostsListenerClient().AddScraperMassTransitClient())
                 .AddLanguages()
                 .BuildServiceProvider();
         }

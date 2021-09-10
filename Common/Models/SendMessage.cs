@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Scraper.RabbitMq.Common;
+using Scraper.MassTransit.Common;
 
 namespace Common
 {

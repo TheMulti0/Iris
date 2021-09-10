@@ -1,7 +1,7 @@
 ﻿using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scraper.MassTransit.Common;
 using Scraper.Net;
-using Scraper.RabbitMq.Common;
 
 namespace TelegramSender.Tests
 {
