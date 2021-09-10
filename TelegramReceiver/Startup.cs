@@ -32,9 +32,10 @@ namespace TelegramReceiver
                 .AddValidators()
                 .AddCommandHandling(telegramConfig)
                 .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
+                .AddScraperMassTransitClient()
                 .AddMassTransit(
                     connectionConfig,
-                    x => x.AddPostsListenerClient().AddScraperMassTransitClient())
+                    x => x.AddPostsListenerClient())
                 .AddLanguages()
                 .BuildServiceProvider();
         }
