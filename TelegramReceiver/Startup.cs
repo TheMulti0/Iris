@@ -36,7 +36,14 @@ namespace TelegramReceiver
                 .AddMassTransit(
                     connectionConfig,
                     x => x.AddPostsListenerClient())
-                .AddLanguages()
+                .AddLanguages();
+
+            if (rootConfig.GetSection("SubscriptionsUpdater").GetValue<bool>("IsEnabled"))
+            {
+                services.AddHostedService<SubscriptionsUpdater>();
+            }
+            
+            services
                 .BuildServiceProvider();
         }
 
