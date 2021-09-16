@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
@@ -17,6 +18,12 @@ namespace TelegramSender
         public VideoDownloader(VideoDownloaderConfig config)
         {
             _config = config;
+            if (!string.IsNullOrEmpty(_config.CookiesFileName))
+            {
+                var destFileName = $"{_config.CookiesFileName}_youtube-dl";
+                File.Copy(_config.CookiesFileName, destFileName);
+                _config.CookiesFileName = destFileName;
+            }
             
             GlobalFFOptions.Configure(new FFOptions
             {
