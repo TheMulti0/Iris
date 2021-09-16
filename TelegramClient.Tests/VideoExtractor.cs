@@ -72,6 +72,11 @@ namespace TelegramClient.Tests
 
             HandleError(response);
 
+            JsonElement? entries = response.VideoInfo?.GetPropertyOrNull("entries");
+            if (entries != null)
+            {
+                return entries.Value.EnumerateArray().First();
+            }
             return (JsonElement) response.VideoInfo;
         }
 
