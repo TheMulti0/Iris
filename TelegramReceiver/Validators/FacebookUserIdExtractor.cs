@@ -1,9 +1,4 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Common;
-using Scraper.Net;
-using Post = Scraper.Net.Post;
+﻿using System.Text.RegularExpressions;
 
 namespace TelegramReceiver
 {

@@ -12,10 +12,7 @@ namespace TelegramReceiver
         private readonly IScraperService _service;
         private readonly Dictionary<string, IPlatformUserIdExtractor> _extractors;
 
-        public UserValidator(
-            IScraperService service,
-            FacebookUserIdExtractor facebook,
-            TwitterUserIdExtractor twitter)
+        public UserValidator(IScraperService service)
         {
             _service = service;
             
@@ -23,20 +20,24 @@ namespace TelegramReceiver
             {
                 {
                     "facebook",
-                    facebook
+                    new FacebookUserIdExtractor()
                 },
                 {
                     "twitter",
-                    twitter
+                    new TwitterUserIdExtractor()
+                },
+                {
+                    "youtube",
+                    new YoutubeUserIdExtractor()
                 }
             };
         }
         
         public async Task<string> ValidateAsync(string userId, string platform)
         {
-            var newUserId = GetUserId(userId, platform);
+            string newUserId = GetUserId(userId, platform);
 
-            var post = await ScrapeSinglePost(newUserId, platform);
+            Post post = await ScrapeSinglePost(newUserId, platform);
             if (post == null)
             {
                 throw new NullReferenceException(nameof(post));

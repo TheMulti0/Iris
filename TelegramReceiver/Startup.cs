@@ -29,7 +29,7 @@ namespace TelegramReceiver
 
             services
                 .AddMongoDbRepositories(mongoConfig)
-                .AddValidators()
+                .AddSingleton<UserValidator>()
                 .AddCommandHandling(telegramConfig)
                 .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
                 .AddScraperMassTransitClient()
@@ -69,15 +69,6 @@ namespace TelegramReceiver
         private static IMongoDbContext CreateMongoDbContext(MongoDbConfig mongoDbConfig)
         {
             return new MongoDbContext(mongoDbConfig.ConnectionString, mongoDbConfig.DatabaseName);
-        }
-
-        private static IServiceCollection AddValidators(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<FacebookUserIdExtractor>()
-                .AddSingleton<TwitterUserIdExtractor>()
-                .AddSingleton(
-                    provider => ActivatorUtilities.CreateInstance<UserValidator>(provider));
         }
 
         private static IServiceCollection AddCommandHandling(
