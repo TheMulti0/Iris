@@ -29,6 +29,7 @@ namespace Common
         public string Facebook { get; set; }
         public string Twitter { get; set; }
         public string Feeds { get; set; }
+        public string Youtube { get; set; }
         public string ChooseLanguage { get; set; }
         public string Repost { get; set; }
         public string ShowPrefix { get; set; }
@@ -74,6 +75,8 @@ namespace Common
                     return Twitter;
                 case "feeds":
                     return Feeds;
+                case "youtube":
+                    return Youtube;
                 default:
                     return platform;
             }
