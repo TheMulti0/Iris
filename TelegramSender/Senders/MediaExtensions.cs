@@ -7,7 +7,7 @@ using TelegramClient;
 
 namespace TelegramSender
 {
-    internal static class MediaExtensions
+    public static class MediaExtensions
     {
         public static IEnumerable<TdApi.InputMessageContent> GetInputMessageContent(this MessageInfo message, TdApi.FormattedText text)
         {
@@ -81,7 +81,7 @@ namespace TelegramSender
                 SupportsStreaming = true
             };
         }
-        
+
         private static TdApi.InputMessageContent ToInputVideo(this LocalVideoItem video, TdApi.FormattedText caption)
         {
             int height = video.Height ?? 0;

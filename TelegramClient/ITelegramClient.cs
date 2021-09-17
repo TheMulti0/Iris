@@ -20,6 +20,7 @@ namespace TelegramClient
             long replyToMessageId = 0,
             TdApi.ReplyMarkup replyMarkup = null,
             TdApi.SendMessageOptions options = null,
+            Action<FileUploadProgress> progress = null,
             CancellationToken token = default);
 
         Task<IEnumerable<TdApi.Message>> SendMessageAlbumAsync(

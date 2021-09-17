@@ -246,40 +246,75 @@ namespace TelegramClient
             };
         }
         
-        public static DisposableMessageContent WithInputRecyclingLocalFile(this TdApi.InputMessageContent content, InputRecyclingLocalFile file)
+        public static async Task<DisposableMessageContent> WithInputRecyclingLocalFileAsync(this TdApi.InputMessageContent content, InputRecyclingLocalFile file)
         {
-            if (!content.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
-                thumbnail.Thumbnail is not InputRecyclingLocalFile r)
+            var withoutThumbnail = new DisposableMessageContent(content, file);
+            if (!content.HasThumbnail(out TdApi.InputThumbnail thumbnail))
             {
-                return new DisposableMessageContent(content, file);
+                return withoutThumbnail;
             }
-            
-            return new DisposableMessageContent(
-                content,
-                new AggregateDisposable(file, r));
+
+            return await HandleThumbnail(content, file, thumbnail);
         }
-        
+
         public static async Task<DisposableMessageContent> WithInputRemoteStreamAsync(this TdApi.InputMessageContent content, InputRemoteStream file)
         {
             TdApi.InputMessageContent newContent = content
                 .WithFile(await file.CreateLocalInputFileAsync());
 
-            if (!newContent.HasThumbnail(out TdApi.InputThumbnail thumbnail) ||
-                thumbnail.Thumbnail is not InputRemoteStream s)
+            var withoutThumbnail = new DisposableMessageContent(newContent, file);
+            if (!newContent.HasThumbnail(out TdApi.InputThumbnail thumbnail))
             {
-                return new DisposableMessageContent(newContent, file);
+                return withoutThumbnail;
             }
             
-            TdApi.InputThumbnail inputThumbnail = thumbnail
-                .WithFile(await s.CreateLocalInputFileAsync());
-
-            newContent = newContent.WithThumbnail(inputThumbnail);
-            
-            return new DisposableMessageContent(
-                newContent,
-                new AggregateAsyncDisposable(file, s));
+            return await HandleThumbnail(content, file, thumbnail);
         }
-        
+
+        private static async Task<DisposableMessageContent> HandleThumbnail(
+            TdApi.InputMessageContent content,
+            object disposableFile,
+            TdApi.InputThumbnail thumbnail)
+        {
+            switch (thumbnail.Thumbnail)
+            {
+                case InputRecyclingLocalFile r:
+                    return new DisposableMessageContent(
+                        content,
+                        new AggregateAsyncDisposable(disposableFile, r));
+
+                case InputRemoteStream s:
+                    return await WithThumbnailAsync(content, disposableFile, thumbnail, s);
+                
+                case TdApi.InputFile.InputFileRemote r:
+                    // Remote thumbnail must be downloaded if file is not remote
+                    var stream = new InputRemoteStream(new RemoteFileStream(r.Id).GetStreamAsync);
+                    
+                    return await WithThumbnailAsync(content, disposableFile, thumbnail, stream);
+
+                default:
+                    return new DisposableMessageContent(
+                        content.WithThumbnail(thumbnail),
+                        new AggregateAsyncDisposable(disposableFile));
+            }
+        }
+
+        private static async Task<DisposableMessageContent> WithThumbnailAsync(
+            TdApi.InputMessageContent content,
+            object disposableFile,
+            TdApi.InputThumbnail thumbnail,
+            InputRemoteStream thumbnailStream)
+        {
+            TdApi.InputThumbnail inputThumbnail = thumbnail
+                .WithFile(await thumbnailStream.CreateLocalInputFileAsync());
+
+            content = content.WithThumbnail(inputThumbnail);
+
+            return new DisposableMessageContent(
+                content,
+                new AggregateAsyncDisposable(disposableFile, thumbnailStream));
+        }
+
         public static TdApi.InputMessageContent WithThumbnail(this TdApi.InputMessageContent content, TdApi.InputThumbnail thumbnail)
         {
             switch (content)

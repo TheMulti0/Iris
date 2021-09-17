@@ -39,6 +39,7 @@ namespace TelegramClient
             long replyToMessageId = 0,
             TdApi.ReplyMarkup replyMarkup = null,
             TdApi.SendMessageOptions options = null,
+            Action<FileUploadProgress> progress = null,
             CancellationToken token = default)
         {
             var content = new DisposableMessageContent(inputMessageContent);
@@ -52,7 +53,7 @@ namespace TelegramClient
             bool hasRecyclingFile = inputMessageContent.HasInputFile(out InputRecyclingLocalFile r);
             if (hasRecyclingFile)
             {
-                content = inputMessageContent.WithInputRecyclingLocalFile(r);
+                content = await inputMessageContent.WithInputRecyclingLocalFileAsync(r);
             }
 
             try
@@ -64,7 +65,7 @@ namespace TelegramClient
                     replyMarkup: replyMarkup,
                     options: options);
 
-                return await GetMatchingMessageEvents(message)
+                return await GetMatchingMessageEvents(message, progress)
                     .SelectAwaitWithCancellation(
                         (update, t) =>
                             GetMessageAsync(
@@ -86,23 +87,33 @@ namespace TelegramClient
             }
         }
 
-        private IAsyncEnumerable<TdApi.Update> GetMatchingMessageEvents(TdApi.Message message) => OnUpdateReceived
-            .ToAsyncEnumerable()
-            .Timeout(_config.MessageSendTimeout)
-            .Where(
-                u =>
-                {
-                    switch (u)
+        private IAsyncEnumerable<TdApi.Update> GetMatchingMessageEvents(
+            TdApi.Message message,
+            Action<FileUploadProgress> progress)
+        {
+            return OnUpdateReceived
+                .ToAsyncEnumerable()
+                .Timeout(_config.MessageSendTimeout)
+                .Where(
+                    u =>
                     {
-                        case TdApi.Update.UpdateMessageSendSucceeded m when m.OldMessageId == message.Id:
-                            return true;
+                        switch (u)
+                        {
+                            case TdApi.Update.UpdateFile f when f.File.Id == message.Id:
+                                progress?.Invoke(
+                                    new FileUploadProgress(f.File.Remote.UploadedSize, f.File.ExpectedSize));
+                                return false;
 
-                        case TdApi.Update.UpdateMessageSendFailed f when f.OldMessageId == message.Id:
-                            return true;
-                    }
+                            case TdApi.Update.UpdateMessageSendSucceeded m when m.OldMessageId == message.Id:
+                                return true;
 
-                    return false;
-                });
+                            case TdApi.Update.UpdateMessageSendFailed f when f.OldMessageId == message.Id:
+                                return true;
+                        }
+
+                        return false;
+                    });
+        }
 
         private async ValueTask<TdApi.Message> GetMessageAsync(
             TdApi.Update update,
@@ -151,6 +162,7 @@ namespace TelegramClient
                 replyToMessageId,
                 replyMarkup,
                 options,
+                null,
                 token);
         }
 
@@ -233,7 +245,7 @@ namespace TelegramClient
             }
             if (content.HasInputFile(out InputRecyclingLocalFile r))
             {
-                return content.WithInputRecyclingLocalFile(r);
+                return await content.WithInputRecyclingLocalFileAsync(r);
             }
 
             return new DisposableMessageContent(content);

@@ -1,23 +1,28 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TelegramClient
 {
     public class AggregateAsyncDisposable : IAsyncDisposable
     {
-        private readonly IAsyncDisposable[] _disposeAsyncMethods;
+        private readonly object[] _disposables;
 
         public AggregateAsyncDisposable(
-            params IAsyncDisposable[] disposeAsyncMethods)
+            params object[] disposables)
         {
-            _disposeAsyncMethods = disposeAsyncMethods;
+            _disposables = disposables;
         }
 
         public async ValueTask DisposeAsync()
         {
-            foreach (IAsyncDisposable disposable in _disposeAsyncMethods)
+            foreach (IAsyncDisposable asyncDisposable in _disposables.OfType<IAsyncDisposable>())
             {
-                await disposable.DisposeAsync();
+                await asyncDisposable.DisposeAsync();
+            }
+            foreach (IDisposable disposable in _disposables.OfType<IDisposable>())
+            {
+                disposable.Dispose();
             }
         }
     }

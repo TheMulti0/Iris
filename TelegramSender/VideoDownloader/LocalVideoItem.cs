@@ -25,7 +25,7 @@ namespace TelegramSender
         {
             Url = path;
             ThumbnailUrl = thumbnailUrl;
-            IsThumbnailLocal = true;
+            IsThumbnailLocal = thumbnailUrl != null;
             Duration = analysis.Duration;
             Width = analysis.PrimaryVideoStream?.Width;
             Height = analysis.PrimaryVideoStream?.Height;

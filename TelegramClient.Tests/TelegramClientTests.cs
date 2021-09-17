@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TdLib;
+using TelegramSender;
 
 namespace TelegramClient.Tests
 {
@@ -15,6 +17,7 @@ namespace TelegramClient.Tests
         private static long _chatId;
 
         private readonly VideoExtractor _videoExtractor = new(new VideoExtractorConfig());
+        private readonly VideoDownloader _videoDownloader = new(new VideoDownloaderConfig());
 
         [ClassInitialize]
         public static async Task Initialize(TestContext context)
@@ -133,6 +136,32 @@ namespace TelegramClient.Tests
         }
 
         [DataTestMethod]
+        [DataRow("https://www.facebook.com/396697410351933/videos/3732920580089470")]
+        //[DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
+        // Should take a long time because this test is supposed to download and upload heavy video files to Telegram
+        public async Task TestPreDownloadedVideoMessage(string toBeDownloadedVideoUrl)
+        {
+            var videoItem = await _videoDownloader.DownloadAsync(toBeDownloadedVideoUrl);
+
+            var inputMessageContent = videoItem.ToInputMessageContent(new TdApi.FormattedText());
+
+            await TestSendMessage(inputMessageContent);
+        }
+        
+        [DataTestMethod]
+        [DataRow("https://www.youtube.com/watch?v=78g-Qsoe3po")]
+        // Should take a long time because this test is supposed to download and upload heavy video files to Telegram
+        public async Task TestPreDownloadedVideoMessageWithRemoteThumbnail(string videoUrl)
+        {
+            var remote = await _videoExtractor.ExtractVideo(videoUrl);
+            var local = await _videoDownloader.DownloadAsync(videoUrl, downloadThumbnail: false) with { ThumbnailUrl = remote.ThumbnailUrl };
+
+            var inputMessageContent = local.ToInputMessageContent(new TdApi.FormattedText());
+
+            await TestSendMessage(inputMessageContent);
+        }
+
+        [DataTestMethod]
         [DataRow("https://images.unsplash.com/photo-1529736576495-1ed4a29ca7e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=752&q=80", "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4", "https://www.facebook.com/396697410351933/videos/3732920580089470")]
         public async Task TestMixedAlbumMessage(string photoUrl, string directVideoUrl, string toBeExtractedStreamVideoUrl)
         {
@@ -171,20 +200,39 @@ namespace TelegramClient.Tests
         {
             Video extractedVideo = await _videoExtractor.ExtractVideo(toBeExtractedStreamVideoUrl);
 
+            var inputThumbnail = new TdApi.InputThumbnail
+            {
+                Width = extractedVideo.Width ?? 0,
+                Height = extractedVideo.Height ?? 0,
+                Thumbnail = new TdApi.InputFile.InputFileRemote
+                {
+                    Id = extractedVideo.ThumbnailUrl
+                }
+            };
             return new TdApi.InputMessageContent.InputMessageVideo
             {
                 Video = new TdApi.InputFile.InputFileRemote
                 {
                     Id = extractedVideo.Url
-                }
+                },
+                Thumbnail = extractedVideo.ThumbnailUrl != null 
+                    ? inputThumbnail 
+                    : null
             };
         }
 
         private static async Task TestSendMessage(TdApi.InputMessageContent messageContent)
         {
+            void LogFileUploadProgress(FileUploadProgress progress)
+            {
+                double percentage = (double) progress.UploadedSize / progress.TotalSize * 100;
+                Debug.WriteLine($"Uploaded {percentage:F3}%");
+            }
+
             TdApi.Message message = await _client.SendMessageAsync(
                 _chatId,
-                messageContent);
+                messageContent,
+                progress: LogFileUploadProgress);
 
             Assert.IsNotNull(message);
         }
