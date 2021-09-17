@@ -27,6 +27,10 @@ namespace TelegramReceiver
                     new TwitterUserIdExtractor()
                 },
                 {
+                    "feeds",
+                    new FeedsUserIdExtractor()
+                },
+                {
                     "youtube",
                     new YoutubeUserIdExtractor()
                 }
