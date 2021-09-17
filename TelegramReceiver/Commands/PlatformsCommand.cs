@@ -16,7 +16,8 @@ namespace TelegramReceiver
         {
             "facebook",
             "twitter",
-            "feeds"
+            "feeds",
+            "youtube"
         };
 
         public PlatformsCommand(Context context): base(context)
