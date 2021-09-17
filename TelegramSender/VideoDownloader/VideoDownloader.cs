@@ -21,7 +21,7 @@ namespace TelegramSender
             if (!string.IsNullOrEmpty(_config.CookiesFileName))
             {
                 var destFileName = $"{_config.CookiesFileName}_youtube-dl";
-                File.Copy(_config.CookiesFileName, destFileName);
+                File.Copy(_config.CookiesFileName, destFileName, overwrite: true);
                 _config.CookiesFileName = destFileName;
             }
             
