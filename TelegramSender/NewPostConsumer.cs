@@ -13,6 +13,12 @@ namespace TelegramSender
 {
     public class NewPostConsumer : IConsumer<NewPost>
     {
+        private readonly string[] _platformWithHighQualityMedia =
+        {
+            "twitter",
+            "feeds"
+        };
+        
         private readonly ITelegramMessageSender _telegram;
         private readonly VideoDownloader _videoDownloader;
         private readonly IChatSubscriptionsRepository _subscriptionsRepository;
@@ -55,7 +61,7 @@ namespace TelegramSender
 
         private async Task<NewPost> WithProcessedMediaAsync(NewPost newPost, CancellationToken ct)
         {
-            if (newPost.Platform != "facebook")
+            if (_platformWithHighQualityMedia.Contains(newPost.Platform))
             {
                 return newPost;
             }
