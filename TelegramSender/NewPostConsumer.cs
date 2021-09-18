@@ -43,7 +43,7 @@ namespace TelegramSender
                 return;
             }
 
-            newPost = await WithDownloadedMediaAsync(newPost, ct);
+            newPost = await WithProcessedMediaAsync(newPost, ct);
 
             SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
@@ -53,7 +53,7 @@ namespace TelegramSender
             await _telegram.ConsumeAsync(sendMessage, ct);
         }
 
-        private async Task<NewPost> WithDownloadedMediaAsync(NewPost newPost, CancellationToken ct)
+        private async Task<NewPost> WithProcessedMediaAsync(NewPost newPost, CancellationToken ct)
         {
             if (newPost.Platform != "facebook")
             {
@@ -63,9 +63,14 @@ namespace TelegramSender
             Post post = newPost.Post;
             IEnumerable<VideoItem> videos = post.MediaItems.OfType<VideoItem>().ToList();
 
-            if (!videos.Any() || post.IsLivestream)
+            if (!videos.Any())
             {
                 return newPost;
+            }
+
+            if (post.IsLivestream)
+            {
+                return newPost with { Post = post with { MediaItems = post.MediaItems.Except(videos) }};
             }
 
             string url = videos.FirstOrDefault(video => video.UrlType == UrlType.WebpageUrl)?.Url ??
