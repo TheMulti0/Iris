@@ -20,18 +20,18 @@ namespace TelegramSender
         };
         
         private readonly ITelegramMessageSender _telegram;
-        private readonly VideoDownloader _videoDownloader;
+        private readonly HighQualityVideoExtractor _hq;
         private readonly IChatSubscriptionsRepository _subscriptionsRepository;
         private readonly ILogger<NewPostConsumer> _logger;
         
         public NewPostConsumer(
             ITelegramMessageSender telegram,
-            VideoDownloader videoDownloader,
+            HighQualityVideoExtractor hq,
             IChatSubscriptionsRepository subscriptionsRepository,
             ILoggerFactory loggerFactory)
         {
             _telegram = telegram;
-            _videoDownloader = videoDownloader;
+            _hq = hq;
             _subscriptionsRepository = subscriptionsRepository;
             _logger = loggerFactory.CreateLogger<NewPostConsumer>();
         }
@@ -95,18 +95,18 @@ namespace TelegramSender
             return newPost with { Post = post with { MediaItems = newMediaItems } };
         }
 
-        private async Task<LocalVideoItem> DownloadVideoItem(string url, string thumbnailUrl, CancellationToken ct)
+        private async Task<IMediaItem> DownloadVideoItem(string url, string thumbnailUrl, CancellationToken ct)
         {
             bool downloadThumbnail = thumbnailUrl == null;
 
-            var item = await _videoDownloader.DownloadAsync(
+            var item = await _hq.ExtractAsync(
                 url,
                 downloadThumbnail: downloadThumbnail,
                 ct: ct);
 
-            if (!downloadThumbnail)
+            if (!downloadThumbnail && item is LocalVideoItem l)
             {
-                return item with { ThumbnailUrl = thumbnailUrl, IsThumbnailLocal = false };
+                return l with { ThumbnailUrl = thumbnailUrl, IsThumbnailLocal = false };
             }
 
             return item;
