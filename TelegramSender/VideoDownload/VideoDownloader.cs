@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
@@ -11,30 +10,14 @@ namespace TelegramSender
 {
     public class VideoDownloader
     {
-        private readonly VideoDownloaderConfig _config;
         private readonly YoutubeDL _youtubeDl;
+        private readonly string _cookiesFileName;
         private readonly Random _random;
 
-        public VideoDownloader(VideoDownloaderConfig config)
+        public VideoDownloader(YoutubeDL youtubeDl, string cookiesFileName)
         {
-            _config = config;
-            if (!string.IsNullOrEmpty(_config.CookiesFileName))
-            {
-                var destFileName = $"{_config.CookiesFileName}_youtube-dl";
-                File.Copy(_config.CookiesFileName, destFileName, overwrite: true);
-                _config.CookiesFileName = destFileName;
-            }
-            
-            GlobalFFOptions.Configure(new FFOptions
-            {
-                BinaryFolder = _config.FfBinariesFolder
-            });
-            _youtubeDl = new YoutubeDL
-            {
-                YoutubeDLPath = _config.YoutubeDlPath,
-                FFmpegPath = GlobalFFOptions.GetFFMpegBinaryPath(),
-                RestrictFilenames = true
-            };
+            _youtubeDl = youtubeDl;
+            _cookiesFileName = cookiesFileName;
             _random = new Random();
         }
 
@@ -67,7 +50,7 @@ namespace TelegramSender
             var overrideOptions = new OptionSet
             {
                 Output = InputRemoteStream.CreateUniqueFilePath(),
-                Cookies = _config.CookiesFileName
+                Cookies = _cookiesFileName
             };
             RunResult<string> result = await _youtubeDl.RunVideoDownload(
                 url,

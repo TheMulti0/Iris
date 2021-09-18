@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YoutubeDLSharp;
@@ -6,15 +6,13 @@ using YoutubeDLSharp;
 namespace TelegramSender.Tests
 {
     [TestClass]
-    public class VideoDownloaderTests
+    public class HighQualityVideoExtractorTests
     {
-        private readonly VideoDownloader _videoDownloader;
+        private readonly HighQualityVideoExtractor _hq;
 
-        public VideoDownloaderTests()
+        public HighQualityVideoExtractorTests()
         {
-            _videoDownloader = new VideoDownloader(
-                new YoutubeDL(),
-                null);
+            _hq = new HighQualityVideoExtractor(new VideoExtractorConfig());
         }
 
         [DataTestMethod]
@@ -25,17 +23,9 @@ namespace TelegramSender.Tests
         [DataRow("https://facebook.com/shirlypinto89/videos/968529917218882")]
         public async Task TestLightStreamVideoMessage(string toBeExtractedStreamVideoUrl)
         {
-            LocalVideoItem downloaded = await _videoDownloader.DownloadAsync(toBeExtractedStreamVideoUrl);
+            var file = await _hq.ExtractAsync(toBeExtractedStreamVideoUrl);
 
-            Assert.IsNotNull(downloaded.Url);
-            Assert.IsTrue(File.Exists(downloaded.Url));
-            File.Delete(downloaded.Url);
-            
-            if (downloaded.ThumbnailUrl != null)
-            {
-                Assert.IsTrue(File.Exists(downloaded.ThumbnailUrl));
-                File.Delete(downloaded.ThumbnailUrl);
-            }
+            Assert.IsNotNull(file.Url);
         }
     }
 }

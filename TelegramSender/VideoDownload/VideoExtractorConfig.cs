@@ -1,6 +1,6 @@
 namespace TelegramSender
 {
-    public class VideoDownloaderConfig
+    public class VideoExtractorConfig
     {
         public string YoutubeDlPath { get; set; }
 #if _WINDOWS
@@ -12,5 +12,7 @@ namespace TelegramSender
         public string FfBinariesFolder { get; set; } = "";
 
         public string CookiesFileName { get; set; }
+
+        public bool DownloadOnly { get; set; }
     }
 }

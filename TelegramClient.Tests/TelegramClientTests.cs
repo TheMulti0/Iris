@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scraper.Net;
 using TdLib;
 using TelegramSender;
 
@@ -17,7 +19,10 @@ namespace TelegramClient.Tests
         private static long _chatId;
 
         private readonly VideoExtractor _videoExtractor = new(new VideoExtractorConfig());
-        private readonly VideoDownloader _videoDownloader = new(new VideoDownloaderConfig());
+        private readonly HighQualityVideoExtractor _hqExtractor = new(new TelegramSender.VideoExtractorConfig
+        {
+            DownloadOnly = true
+        });
 
         [ClassInitialize]
         public static async Task Initialize(TestContext context)
@@ -141,7 +146,7 @@ namespace TelegramClient.Tests
         // Should take a long time because this test is supposed to download and upload heavy video files to Telegram
         public async Task TestPreDownloadedVideoMessage(string toBeDownloadedVideoUrl)
         {
-            var videoItem = await _videoDownloader.DownloadAsync(toBeDownloadedVideoUrl);
+            var videoItem = await _hqExtractor.ExtractAsync(toBeDownloadedVideoUrl);
 
             var inputMessageContent = videoItem.ToInputMessageContent(new TdApi.FormattedText());
 
@@ -154,11 +159,26 @@ namespace TelegramClient.Tests
         public async Task TestPreDownloadedVideoMessageWithRemoteThumbnail(string videoUrl)
         {
             var remote = await _videoExtractor.ExtractVideo(videoUrl);
-            var local = await _videoDownloader.DownloadAsync(videoUrl, downloadThumbnail: false) with { ThumbnailUrl = remote.ThumbnailUrl };
+            var hq = await _hqExtractor.ExtractAsync(videoUrl, downloadThumbnail: false);
 
-            var inputMessageContent = local.ToInputMessageContent(new TdApi.FormattedText());
+            var inputMessageContent = GetInputMessageContent(hq, remote.ThumbnailUrl);
 
             await TestSendMessage(inputMessageContent);
+        }
+
+        private static TdApi.InputMessageContent GetInputMessageContent(IMediaItem mediaItem, string thumbnailUrl)
+        {
+            switch (mediaItem)
+            {
+                case VideoItem i:
+                    i = i with { ThumbnailUrl = thumbnailUrl };
+                    return i.ToInputMessageContent(new TdApi.FormattedText());
+                case LocalVideoItem c:
+                    c = c with { ThumbnailUrl = thumbnailUrl };
+                    return c.ToInputMessageContent(new TdApi.FormattedText());
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         [DataTestMethod]

@@ -24,7 +24,7 @@ namespace TelegramSender
             var telegramConfig = rootConfig.GetSection("Telegram")
                 .Get<TelegramClientConfig>();
             var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>() ?? new();
-            var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoDownloaderConfig>() ?? new();
+            var downloaderConfig = rootConfig.GetSection("VideoDownloader").Get<VideoExtractorConfig>() ?? new();
             var concurrencyLimit = rootConfig.GetSection("ConcurrencyLimit").Get<int>();
 
             services
