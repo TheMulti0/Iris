@@ -15,18 +15,20 @@ namespace TelegramReceiver.Tests
         [TestMethod]
         public void TestChannelId()
         {
-            Test("UCwNPPl_oX8oUtKVMLxL13jg");
+            Test("UC4x7LYSzgGH-TMKc9J8pwgQ", "UC4x7LYSzgGH-TMKc9J8pwgQ");
         }
         
         [TestMethod]
         public void TestChannelUrl()
         {
-            Test("https://www.youtube.com/channel/UCwNPPl_oX8oUtKVMLxL13jg");
+            Test("https://www.youtube.com/channel/UCwNPPl_oX8oUtKVMLxL13jg", "UCwNPPl_oX8oUtKVMLxL13jg");
         }
         
-        private void Test(string userId)
+        private void Test(string userId, string expected)
         {
-            Assert.IsNotNull(_userIdExtractor.Get(userId));
+            string extracted = _userIdExtractor.Get(userId);
+            Assert.IsNotNull(extracted);
+            Assert.AreEqual(expected, extracted);
         }
     }
 }
