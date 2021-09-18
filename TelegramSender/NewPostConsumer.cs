@@ -63,7 +63,7 @@ namespace TelegramSender
             Post post = newPost.Post;
             IEnumerable<VideoItem> videos = post.MediaItems.OfType<VideoItem>().ToList();
 
-            if (!videos.Any())
+            if (!videos.Any() || post.IsLivestream)
             {
                 return newPost;
             }
