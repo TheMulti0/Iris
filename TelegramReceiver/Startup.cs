@@ -31,7 +31,10 @@ namespace TelegramReceiver
                 .AddMongoDbRepositories(mongoConfig)
                 .AddSingleton<UserValidator>()
                 .AddCommandHandling(telegramConfig)
-                .AddSingleton<ISubscriptionsManager, SubscriptionsManager>()
+                .AddSingleton<ISubscriptionsManager>(
+                    provider => new SubscriptionsManager(
+                        provider.GetRequiredService<INewPostSubscriptionsClient>(),
+                        rootConfig.GetValue<bool>("SubscribeToOldPosts")))
                 .AddScraperMassTransitClient()
                 .AddMassTransit(
                     connectionConfig,
