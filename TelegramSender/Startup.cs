@@ -25,14 +25,13 @@ namespace TelegramSender
                 .Get<TelegramClientConfig>();
             var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>() ?? new();
             var extractorConfig = rootConfig.GetSection("VideoExtractor").Get<VideoExtractorConfig>() ?? new();
-            var concurrencyLimit = rootConfig.GetSection("ConcurrencyLimit").Get<int>();
 
             services
                 .AddLanguages()
                 .AddSubscriptionsDb()
                 .AddMassTransit(
                     connectionConfig,
-                    x => x.AddPostsListenerClient<NewPostConsumer>(concurrencyLimit))
+                    x => x.AddPostsListenerClient<NewPostConsumer>())
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<HighQualityVideoExtractor>(provider, extractorConfig))
                 .AddSingleton(provider => ActivatorUtilities.CreateInstance<TelegramClientFactory>(provider, telegramConfig))
                 .AddSingleton<ISenderFactory, SenderFactory>()
