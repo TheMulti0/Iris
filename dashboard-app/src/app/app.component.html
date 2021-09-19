@@ -1,0 +1,7 @@
+<h1>PostsListener</h1>
+
+<ng-container *ngIf="newPostSubscriptions.items$ | async as nps">
+  <div *ngFor="let s of nps">
+    {{ s | json }}
+  </div>
+</ng-container>
