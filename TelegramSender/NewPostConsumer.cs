@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -49,7 +50,14 @@ namespace TelegramSender
                 return;
             }
 
-            newPost = await WithProcessedMediaAsync(newPost, ct);
+            try
+            {
+                newPost = await WithProcessedMediaAsync(newPost, ct);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to process media");
+            }
 
             SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
