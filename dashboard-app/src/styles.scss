@@ -1,5 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'material-common' as mat-common;
+
+@include mat-common.main();
+
+html,
+body {
+  height: 100%;
+}
 
 * {
   font-family: "Roboto", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--b-background);
 }
