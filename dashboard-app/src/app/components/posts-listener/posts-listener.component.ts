@@ -10,6 +10,7 @@ import { PostsListenerService } from 'src/app/services/posts-listener.service';
 })
 export class PostsListenerComponent implements OnInit {
   
+  displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
   newPostSubscriptions!: ItemsObserver<NewPostSubscription[]>;
 
   constructor(
@@ -20,6 +21,20 @@ export class PostsListenerComponent implements OnInit {
     this.newPostSubscriptions = new ItemsObserver(
       () => this.postsListener.getSubscriptions()
     );
+  }
+
+  async remove(element: NewPostSubscription) {
+    await this.postsListener
+      .removeSubscription(element.id, element.platform)
+      .toPromise();
+  }
+
+  async increment(element: NewPostSubscription) {
+    await this.postsListener
+      .addOrUpdateSubscription(element.id, element.platform, element.pollInterval + 1, '')
+      .toPromise();
+    
+    this.newPostSubscriptions.next();
   }
 
 }

@@ -20,17 +20,17 @@ export class PostsListenerService {
   addOrUpdateSubscription(
     id: string,
     platform: string,
-    pollInterval: string,
+    pollInterval: number,
     earliestPostDate: string
   ): Observable<void> {
     const response: Observable<HttpResponse<Object>> = this.httpClient.post(
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
-      {
-        pollInterval: pollInterval,
-        earliestPostDate: earliestPostDate,
-      },
+      {},
       {
         observe: 'response',
+        params: {
+          pollInterval: pollInterval
+        },
       }
     );
 
@@ -45,6 +45,9 @@ export class PostsListenerService {
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
       {
         observe: 'response',
+        params: {
+          pollInterval: pollInterval
+        },
       }
     );
 
