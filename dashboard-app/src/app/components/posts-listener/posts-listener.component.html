@@ -1,0 +1,14 @@
+<h1>PostsListener</h1>
+
+<div class="subscriptions" *ngIf="newPostSubscriptions.items$ | async as nps">
+  <div *ngFor="let s of nps" class="subscription">
+    <span class="header">Platform:</span>
+    <span class="content">{{ s.platform }}</span>
+
+    <span class="header">Id:</span>
+    <span class="content">{{ s.id }}</span>
+
+    <span class="header">Poll Interval:</span>
+    <span class="content">{{ s.pollInterval }}</span>
+  </div>
+</div>

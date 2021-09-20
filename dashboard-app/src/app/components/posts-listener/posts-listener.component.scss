@@ -1,0 +1,18 @@
+.subscriptions {
+  display: flex;
+  flex-direction: colun;
+  flex-wrap: wrap;
+}
+
+.subscription {
+  display: grid;
+  grid-template-columns: repeat(2, 50%); /* see notes below */
+
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 10px;
+  padding: 20px;
+}
+
+.header {
+  font-weight: bold;
+}

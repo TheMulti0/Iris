@@ -4,10 +4,12 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { PostsListenerComponent } from './components/posts-listener/posts-listener.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PostsListenerComponent
   ],
   imports: [
     BrowserModule,
