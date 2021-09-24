@@ -41,7 +41,15 @@ namespace TelegramSender
         {
             CancellationToken ct = context.CancellationToken;
             NewPost newPost = context.Message;
+            
+            await foreach (NewPost post in ProcessAsync(newPost, ct))
+            {
+                await ConsumeSingle(post, ct);
+            }
+        }
 
+        private async Task ConsumeSingle(NewPost newPost, CancellationToken ct)
+        {
             _logger.LogInformation("Received {}", newPost.Post.Url);
 
             if (newPost.Post.Type == PostType.Reply)
@@ -52,7 +60,7 @@ namespace TelegramSender
 
             try
             {
-                newPost = await WithProcessedMediaAsync(newPost, ct);
+                newPost = await ProcessSinglePostAsync(newPost, ct);
             }
             catch (Exception e)
             {
@@ -67,29 +75,62 @@ namespace TelegramSender
             await _telegram.ConsumeAsync(sendMessage, ct);
         }
 
-        private async Task<NewPost> WithProcessedMediaAsync(NewPost newPost, CancellationToken ct)
+        private IAsyncEnumerable<NewPost> ProcessAsync(NewPost newPost, CancellationToken ct)
         {
             if (_platformWithHighQualityMedia.Contains(newPost.Platform))
             {
-                return newPost;
+                return new[] { newPost }.ToAsyncEnumerable();
             }
-            
-            Post post = newPost.Post;
+
+            return GetAll(newPost.Post)
+                .ToAsyncEnumerable()
+                .Select(post => newPost with { Post = post });
+        }
+
+        private static IEnumerable<Post> GetAll(Post post)
+        {
+            Post currentPost = post;
+            while (true)
+            {
+                yield return currentPost;
+
+                Post reply = currentPost.ReplyPost;
+                if (reply == null)
+                {
+                    break;
+                }
+                
+                currentPost = reply;
+            }
+        }
+
+        private async Task<NewPost> ProcessSinglePostAsync(NewPost post, CancellationToken ct)
+        {
+            IEnumerable<IMediaItem> items = await GetMediaItems(post.Post, ct);
+
+            return post with { Post = post.Post with { MediaItems = items } };
+        }
+        
+
+        private async Task<IEnumerable<IMediaItem>> GetMediaItems(
+            Post post,
+            CancellationToken ct)
+        {
             IEnumerable<VideoItem> videos = post.MediaItems.OfType<VideoItem>().ToList();
 
             if (!videos.Any())
             {
-                return newPost;
+                return post.MediaItems;
             }
 
             if (post.IsLivestream)
             {
-                return newPost with { Post = post with { MediaItems = post.MediaItems.Except(videos) }};
+                return post.MediaItems.Except(videos);
             }
 
-            string url = videos.FirstOrDefault(video => video.UrlType == UrlType.WebpageUrl)?.Url ??
-                         post.Url;
-            
+            string url = videos
+                .FirstOrDefault(video => video.UrlType == UrlType.WebpageUrl)?.Url ?? post.Url;
+
             string thumbnailUrl = videos
                 .Select(i => i.ThumbnailUrl)
                 .FirstOrDefault(u => u != null);
@@ -100,7 +141,7 @@ namespace TelegramSender
                 .Where(i => i is not VideoItem)
                 .Append(item);
 
-            return newPost with { Post = post with { MediaItems = newMediaItems } };
+            return newMediaItems;
         }
 
         private async Task<IMediaItem> DownloadVideoItem(string url, string thumbnailUrl, CancellationToken ct)
