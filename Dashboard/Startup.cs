@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -69,7 +68,7 @@ namespace Dashboard
 
         private void ConfigureJson(JsonOptions options)
         {
-            options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
+            options.JsonSerializerOptions.Converters.Add(new TimeSpanMillisecondsConverter());
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
@@ -85,7 +84,7 @@ namespace Dashboard
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dashboard v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

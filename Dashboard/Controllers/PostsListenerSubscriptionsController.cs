@@ -26,7 +26,12 @@ namespace Dashboard.Controllers
         }
 
         [HttpPost("{platform}/{id}")]
-        public async Task AddOrUpdate(string id, string platform, TimeSpan pollInterval, DateTime earliestPostDate, CancellationToken ct)
+        public async Task AddOrUpdate(
+            string id,
+            string platform,
+            TimeSpan pollInterval,
+            DateTime earliestPostDate,
+            CancellationToken ct)
         {
             await _client.AddOrUpdateSubscription(id, platform, pollInterval, earliestPostDate, ct);
         }

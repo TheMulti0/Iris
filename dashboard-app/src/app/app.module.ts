@@ -1,25 +1,22 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PostsListenerComponent } from './components/posts-listener/posts-listener.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AppMaterialModule } from './app-material.module';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { PostsListenerComponent } from './components/posts-listener/posts-listener.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent, PostsListenerComponent],
   imports: [
-    BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
+    AppMaterialModule,
+    BrowserModule,
     BrowserAnimationsModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule
+    HttpClientModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

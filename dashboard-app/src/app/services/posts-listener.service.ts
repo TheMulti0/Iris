@@ -21,16 +21,23 @@ export class PostsListenerService {
     id: string,
     platform: string,
     pollInterval: number,
-    earliestPostDate: string
+    earliestPostDate: string | undefined
   ): Observable<void> {
+
+    let params: any = {
+      pollInterval: pollInterval,
+    };
+
+    if (earliestPostDate != undefined) {
+      params.earliestPostDate = earliestPostDate;
+    }
+
     const response: Observable<HttpResponse<Object>> = this.httpClient.post(
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
-      {},
+      undefined,
       {
         observe: 'response',
-        params: {
-          pollInterval: pollInterval
-        },
+        params: params,
       }
     );
 
@@ -44,10 +51,7 @@ export class PostsListenerService {
     const response: Observable<HttpResponse<Object>> = this.httpClient.delete(
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
       {
-        observe: 'response',
-        params: {
-          pollInterval: pollInterval
-        },
+        observe: 'response'
       }
     );
 
