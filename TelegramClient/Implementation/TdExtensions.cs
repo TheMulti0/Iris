@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Remutable.Extensions;
@@ -8,18 +10,25 @@ namespace TelegramClient
 {
     public static class TdExtensions
     {
+        public static string Format(this IEnumerable<TdApi.InputMessageContent> contents)
+        {
+            return string.Join(
+                " - ",
+                contents.Select(content => content.Format()));
+        }
+        
         public static string Format(this TdApi.InputMessageContent content)
         {
             switch (content)
             {
                 case TdApi.InputMessageContent.InputMessageVideo v:
-                    return $"Video {v.Video.Format()}, Thumbnail {v.Thumbnail}, {v.Width}x{v.Height}";
+                    return $"Video {v.Video.Format()}, Thumbnail {v.Thumbnail.Thumbnail.Format()}, {v.Width}x{v.Height}";
                 
                 case TdApi.InputMessageContent.InputMessageText t:
                     return $"Text {t.Text}";
                 
                 case TdApi.InputMessageContent.InputMessagePhoto p:
-                    return $"Photo {p.Photo.Format()}, Thumbnail {p.Thumbnail}, {p.Width}x{p.Height}";
+                    return $"Photo {p.Photo.Format()}, Thumbnail {p.Thumbnail.Thumbnail.Format()}, {p.Width}x{p.Height}";
                 
                 default:
                     return content.GetType().FullName;

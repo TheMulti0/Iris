@@ -191,8 +191,7 @@ namespace TelegramClient
             TdApi.SendMessageOptions options = null,
             CancellationToken token = default)
         {
-            IEnumerable<string> types = inputMessageContents.Select(content => content.Format());
-            _logger.LogDebug("Send message album {} to {}", string.Join(" - ", types), chatId);
+            _logger.LogDebug("Send message album {} to {}", inputMessageContents.Format(), chatId);
             
             try
             {
@@ -233,9 +232,18 @@ namespace TelegramClient
 
             try
             {
+                TdApi.InputMessageContent[] messageContents = contents.Select(c => c.Content).ToArray();
+                
+                _logger.LogDebug(
+                    "Send message album unsafe, chatId: {}, inputMessageContents: {}, replyToMessageId: {}, options: {}",
+                    chatId,
+                    messageContents.Format(),
+                    replyToMessageId,
+                    options);
+                
                 TdApi.Messages messages = await _client.SendMessageAlbumAsync(
                     chatId: chatId,
-                    inputMessageContents: contents.Select(c => c.Content).ToArray(),
+                    inputMessageContents: messageContents,
                     replyToMessageId: replyToMessageId,
                     options: options);
 
