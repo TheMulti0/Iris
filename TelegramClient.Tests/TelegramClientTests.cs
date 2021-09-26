@@ -30,7 +30,7 @@ namespace TelegramClient.Tests
             var rootConfig = new ConfigurationBuilder().AddUserSecrets<TelegramClientTests>().Build();
 
             var config = rootConfig.GetSection("TelegramClientConfig").Get<TelegramClientConfig>();
-            var factory = new TelegramClientFactory(config, NullLogger<TelegramClientFactory>.Instance);
+            var factory = new TelegramClientFactory(config, NullLoggerFactory.Instance);
             
             _client = await factory.CreateAsync();
             

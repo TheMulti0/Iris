@@ -8,16 +8,18 @@ namespace TelegramClient
     public class TelegramClientFactory
     {
         private readonly TelegramClientConfig _config;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly TdClient _client = new();
         private readonly TdApi.TdlibParameters _tdlibParameters;
         private readonly ILogger<TelegramClientFactory> _logger;
 
         public TelegramClientFactory(
             TelegramClientConfig config,
-            ILogger<TelegramClientFactory> logger)
+            ILoggerFactory loggerFactory)
         {
             _config = config;
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<TelegramClientFactory>();
 
             _tdlibParameters = new TdApi.TdlibParameters
             {
@@ -54,7 +56,7 @@ namespace TelegramClient
                 TdApi.User me = await _client.GetMeAsync();
                 _logger.LogInformation("Logged in as {}", me.Username);
 
-                return new TelegramClient(_client, _config);
+                return new TelegramClient(_client, _config, _loggerFactory.CreateLogger<TelegramClient>());
             }
             catch (TdException e)
             {
