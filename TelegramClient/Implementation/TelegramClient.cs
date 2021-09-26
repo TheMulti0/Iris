@@ -14,6 +14,7 @@ namespace TelegramClient
         private readonly TdClient _client;
         private readonly TelegramClientConfig _config;
         private readonly ILogger<TelegramClient> _logger;
+        private readonly TdApi.SendMessageOptions _defaultSendMessageOptions = new();
         public IObservable<TdApi.Update> OnUpdateReceived { get; }
 
         public TelegramClient(
@@ -225,6 +226,8 @@ namespace TelegramClient
             TdApi.SendMessageOptions options,
             CancellationToken token)
         {
+            options ??= _defaultSendMessageOptions;
+            
             var contents = await inputMessageContents
                 .ToAsyncEnumerable()
                 .SelectAwait(ExtractFiles)
