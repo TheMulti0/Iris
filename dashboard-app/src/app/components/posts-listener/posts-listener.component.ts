@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
+import { timer } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
@@ -15,7 +18,7 @@ interface Element {
 @Component({
   selector: 'app-posts-listener',
   templateUrl: './posts-listener.component.html',
-  styleUrls: ['./posts-listener.component.scss']
+  styleUrls: ['./posts-listener.component.scss'],
 })
 export class PostsListenerComponent implements OnInit {
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
@@ -24,22 +27,27 @@ export class PostsListenerComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private snackBar: MatSnackBar,
     private postsListener: PostsListenerService
   ) {
     this.newPostSubscriptions = new ItemsObserver(() =>
-      this.postsListener.getSubscriptions()
+      timer(undefined, 5000).pipe(
+        switchMap(() => this.postsListener.getSubscriptions())
+      )
     );
   }
-  
+
   ngOnInit() {
-    this.newPostSubscriptions.items$.subscribe(items => this.onNewItems(items));
+    this.newPostSubscriptions.items$.subscribe((items) =>
+      this.onNewSubscriptions(items)
+    );
   }
 
   add() {
     const subscription = {
       id: '',
       platform: '',
-      pollInterval: ''
+      pollInterval: '',
     };
 
     const form = this.fb.group({
@@ -53,7 +61,7 @@ export class PostsListenerComponent implements OnInit {
       isNew: true,
       isEditable: true,
       form: form,
-      subscription: subscription
+      subscription: subscription,
     };
 
     this.dataSource.data.unshift(element);
@@ -73,56 +81,110 @@ export class PostsListenerComponent implements OnInit {
     item.isEditable = true;
   }
 
-  submit(item: Element) {
-    item.isEditable = false;
+  submit(element: Element) {
+    element.isEditable = false;
 
-    if (item.form === undefined) {
-      console.log('Form is undefined! ', + item);
+    if (element.form === undefined) {
+      console.log('Form is undefined! ', +element);
+      return;
     }
-    else {
-      item.subscription = item.form.value;
-      this.addOrUpdate(item.form.value);
-    }
+
+    const formValue = element.form.value;
+
+    element.subscription = formValue;
+    this.addOrUpdate(formValue);
+    element.isNew = false;
   }
 
-  onNewItems(subscriptions: NewPostSubscription[]) {
-    const items: Element[] = subscriptions.map(subscription => {
+  async close(element: Element, index: number) {
+    if (element.isNew) {
+      this.removeFromDataSource(index);
+      return;
+    }
+
+    element.isEditable = false;
+    element.form = undefined;
+  }
+
+  private onNewSubscriptions(subscriptions: NewPostSubscription[]) {
+    const elements: Element[] = subscriptions.map((subscription) => {
+      const existing = this.dataSource.data.find(
+        (e) =>
+          e.subscription.id === subscription.id &&
+          e.subscription.platform === subscription.platform
+      );
+
       return {
-        isNew: false,
-        isEditable: false,
-        subscription: subscription
+        isNew: existing?.isNew ?? false,
+        isEditable: existing?.isEditable ?? false,
+        form: existing?.form,
+        subscription: subscription,
       };
-    })
+    });
 
-    console.log(items);
-    this.dataSource.data = items;
+    this.dataSource.data = [
+      ...this.dataSource.data.filter((element) => element.isNew),
+      ...elements,
+    ];
+
+    console.log(elements);
   }
 
-  async remove(item: Element, index: number) {
-    this.dataSource.data.splice(index, 1);
-    this.dataSource._updateChangeSubscription();
+  async remove(element: Element, index: number) {
+    this.removeFromDataSource(index);
 
-    if (!item.isNew) {
-      const subscription = item.subscription;
+    const { id, platform } = element.subscription;
 
-      await this.postsListener
-        .removeSubscription(subscription.id, subscription.platform)
-        .toPromise();
-  
-      this.newPostSubscriptions.next();
-    }
-  }
-
-  async addOrUpdate(element: NewPostSubscription) {
-    await this.postsListener
-      .addOrUpdateSubscription(
-        element.id,
-        element.platform,
-        element.pollInterval,
-        undefined
-      )
+    const response = await this.postsListener
+      .removeSubscription(id, platform)
       .toPromise();
 
-    this.newPostSubscriptions.next();
+    if (response.ok) {
+      this.notify('Removed', platform, id);
+      this.newPostSubscriptions.next();
+    } else {
+      this.notify('Failed to remove', platform, id);
+    }
+  }
+
+  async poll(element: Element) {
+    const { id, platform } = element.subscription;
+
+    const response = await this.postsListener
+      .triggerPoll(id, platform)
+      .toPromise();
+
+    if (response.ok) {
+      this.notify('Triggered poll for', platform, id);
+    } else {
+      this.notify('Failed to trigger poll for', platform, id);
+    }
+  }
+
+  private removeFromDataSource(index: number) {
+    this.dataSource.data.splice(index, 1);
+    this.dataSource._updateChangeSubscription();
+  }
+
+  private async addOrUpdate(subscription: NewPostSubscription) {
+    const { id, platform, pollInterval } = subscription;
+
+    const response = await this.postsListener
+      .addOrUpdateSubscription(id, platform, pollInterval, undefined)
+      .toPromise();
+
+    if (response.ok) {
+      this.notify('Updated', platform, id);
+      this.newPostSubscriptions.next();
+    } else {
+      this.notify('Failed to add', platform, id);
+    }
+  }
+
+  private notify(message: string, id: string, platform: string) {
+    const config: MatSnackBarConfig = {
+      duration: 2000,
+    };
+    this.snackBar.open(`${message} [${platform}] ${id}`, undefined, config);
   }
 }

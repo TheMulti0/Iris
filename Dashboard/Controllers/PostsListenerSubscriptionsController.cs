@@ -36,6 +36,15 @@ namespace Dashboard.Controllers
             await _client.AddOrUpdateSubscription(id, platform, pollInterval, earliestPostDate, ct);
         }
         
+        [HttpPost("{platform}/{id}/poll")]
+        public async Task TriggerPoll(
+            string id,
+            string platform,
+            CancellationToken ct)
+        {
+            await _client.TriggerPoll(id, platform, ct);
+        }
+        
         [HttpDelete("{platform}/{id}")]
         public async Task Remove(string id, string platform, CancellationToken ct)
         {

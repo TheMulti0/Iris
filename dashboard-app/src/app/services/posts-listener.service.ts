@@ -22,7 +22,7 @@ export class PostsListenerService {
     platform: string,
     pollInterval: string,
     earliestPostDate: string | undefined
-  ): Observable<void> {
+  ): Observable<HttpResponseBase> {
 
     let params: any = {
       pollInterval: pollInterval,
@@ -32,7 +32,7 @@ export class PostsListenerService {
       params.earliestPostDate = earliestPostDate;
     }
 
-    const response: Observable<HttpResponse<Object>> = this.httpClient.post(
+    return this.httpClient.post(
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
       undefined,
       {
@@ -40,16 +40,12 @@ export class PostsListenerService {
         params: params,
       }
     );
-
-    return response.pipe(
-      filter((r) => r.ok),
-      mapTo(void 0)
-    );
   }
 
   triggerPoll(id: string, platform: string): Observable<HttpResponseBase> {
-    return this.httpClient.delete(
+    return this.httpClient.post(
       `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}/poll`,
+      undefined,
       {
         observe: 'response'
       }
