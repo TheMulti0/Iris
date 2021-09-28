@@ -1,4 +1,4 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -20,7 +20,7 @@ export class PostsListenerService {
   addOrUpdateSubscription(
     id: string,
     platform: string,
-    pollInterval: number,
+    pollInterval: string,
     earliestPostDate: string | undefined
   ): Observable<void> {
 
@@ -47,17 +47,21 @@ export class PostsListenerService {
     );
   }
 
-  removeSubscription(id: string, platform: string): Observable<void> {
-    const response: Observable<HttpResponse<Object>> = this.httpClient.delete(
-      `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
+  triggerPoll(id: string, platform: string): Observable<HttpResponseBase> {
+    return this.httpClient.delete(
+      `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}/poll`,
       {
         observe: 'response'
       }
     );
+  }
 
-    return response.pipe(
-      filter((r) => r.ok),
-      mapTo(void 0)
-    );
+  removeSubscription(id: string, platform: string): Observable<HttpResponseBase> {
+    return this.httpClient.delete(
+      `${environment.baseUrl}/PostsListenerSubscriptions/${platform}/${id}`,
+      {
+        observe: 'response'
+      }
+    );;
   }
 }

@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
+
+interface Element {
+  isNew: boolean;
+  isEditable: boolean;
+  form?: FormGroup;
+  subscription: NewPostSubscription;
+}
 
 @Component({
   selector: 'app-posts-listener',
@@ -10,75 +18,99 @@ import { PostsListenerService } from 'src/app/services/posts-listener.service';
   styleUrls: ['./posts-listener.component.scss']
 })
 export class PostsListenerComponent implements OnInit {
-  form: FormGroup;
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
-  newPostSubscriptions!: ItemsObserver<NewPostSubscription[]>;
+  newPostSubscriptions: ItemsObserver<NewPostSubscription[]>;
+  dataSource = new MatTableDataSource<Element>();
 
   constructor(
     private fb: FormBuilder,
     private postsListener: PostsListenerService
   ) {
-    this.form = this.fb.group({
-      items: this.fb.array([]),
-    });
-  }
-  
-  ngOnInit() {
     this.newPostSubscriptions = new ItemsObserver(() =>
       this.postsListener.getSubscriptions()
     );
-
+  }
+  
+  ngOnInit() {
     this.newPostSubscriptions.items$.subscribe(items => this.onNewItems(items));
   }
 
-  isEditable(index: number) {
-    return this.getItems().controls[index].value.isEditable;
-  }
+  add() {
+    const subscription = {
+      id: '',
+      platform: '',
+      pollInterval: ''
+    };
 
-  edit(index: number) {
-    this.getItems().controls[index].patchValue({
-      isEditable: true
+    const form = this.fb.group({
+      id: [],
+      platform: [],
+      pollInterval: [],
     });
+    form.setValue(subscription);
+
+    const element = {
+      isNew: true,
+      isEditable: true,
+      form: form,
+      subscription: subscription
+    };
+
+    this.dataSource.data.unshift(element);
+    this.dataSource._updateChangeSubscription();
   }
 
-  submit(index: number) {
-    const formControl = this.getItems().controls[index];
+  edit(item: Element) {
+    const subscription = item.subscription;
 
-    formControl.patchValue({
-      isEditable: false
+    const form = this.fb.group({
+      id: [subscription.id],
+      platform: [subscription.platform],
+      pollInterval: [subscription.pollInterval],
     });
 
-    this.addOrUpdate(formControl.value);
+    item.form = form;
+    item.isEditable = true;
   }
 
-  onNewItems(items: NewPostSubscription[]) {
-    console.log('hi')
-    const array = this.getItems();
+  submit(item: Element) {
+    item.isEditable = false;
 
-    array.clear();
-
-    items.forEach((item) => {
-      const itemForm = this.fb.group({
-        isEditable: [false],
-        id: [item.id],
-        platform: [item.platform],
-        pollInterval: [item.pollInterval],
-      });
-
-      array.push(itemForm);
-    });
+    if (item.form === undefined) {
+      console.log('Form is undefined! ', + item);
+    }
+    else {
+      item.subscription = item.form.value;
+      this.addOrUpdate(item.form.value);
+    }
   }
 
-  private getItems(): FormArray {
-    return this.form.controls.items as FormArray;
+  onNewItems(subscriptions: NewPostSubscription[]) {
+    const items: Element[] = subscriptions.map(subscription => {
+      return {
+        isNew: false,
+        isEditable: false,
+        subscription: subscription
+      };
+    })
+
+    console.log(items);
+    this.dataSource.data = items;
   }
 
-  async remove(element: NewPostSubscription) {
-    // await this.postsListener
-    //   .removeSubscription(element.id, element.platform)
-    //   .toPromise();
+  async remove(item: Element, index: number) {
+    this.dataSource.data.splice(index, 1);
+    this.dataSource._updateChangeSubscription();
 
-    //this.newPostSubscriptions.next();
+    if (!item.isNew) {
+      const subscription = item.subscription;
+
+      await this.postsListener
+        .removeSubscription(subscription.id, subscription.platform)
+        .toPromise();
+  
+      this.newPostSubscriptions.next();
+    }
   }
 
   async addOrUpdate(element: NewPostSubscription) {

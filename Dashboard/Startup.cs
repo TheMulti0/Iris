@@ -68,7 +68,7 @@ namespace Dashboard
 
         private void ConfigureJson(JsonOptions options)
         {
-            options.JsonSerializerOptions.Converters.Add(new TimeSpanMillisecondsConverter());
+            options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
