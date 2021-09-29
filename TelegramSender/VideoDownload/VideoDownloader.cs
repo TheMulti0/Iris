@@ -11,13 +11,18 @@ namespace TelegramSender
     public class VideoDownloader
     {
         private readonly YoutubeDL _youtubeDl;
-        private readonly string _cookiesFileName;
+        private readonly OptionSet _defaultOptions;
         private readonly Random _random;
 
         public VideoDownloader(YoutubeDL youtubeDl, string cookiesFileName)
         {
             _youtubeDl = youtubeDl;
-            _cookiesFileName = cookiesFileName;
+            _youtubeDl.YoutubeDLPath += " --compat-options multistreams --concurrent-fragments"; 
+            _defaultOptions = new OptionSet
+            {
+                Cookies = cookiesFileName
+            };
+
             _random = new Random();
         }
 
@@ -47,11 +52,10 @@ namespace TelegramSender
 
         private async Task<string> DownloadVideo(string url, CancellationToken ct)
         {
-            var overrideOptions = new OptionSet
+            var overrideOptions = _defaultOptions.OverrideOptions(new OptionSet
             {
-                Output = InputRemoteStream.CreateUniqueFilePath(),
-                Cookies = _cookiesFileName
-            };
+                Output = InputRemoteStream.CreateUniqueFilePath()
+            });
             RunResult<string> result = await _youtubeDl.RunVideoDownload(
                 url,
                 overrideOptions: overrideOptions,
