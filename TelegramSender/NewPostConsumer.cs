@@ -77,11 +77,6 @@ namespace TelegramSender
 
         private IAsyncEnumerable<NewPost> ProcessAsync(NewPost newPost, CancellationToken ct)
         {
-            if (_platformWithHighQualityMedia.Contains(newPost.Platform))
-            {
-                return new[] { newPost }.ToAsyncEnumerable();
-            }
-
             return GetAll(newPost.Post)
                 .ToAsyncEnumerable()
                 .Select(post => newPost with { Post = post });
@@ -104,11 +99,16 @@ namespace TelegramSender
             }
         }
 
-        private async Task<NewPost> ProcessSinglePostAsync(NewPost post, CancellationToken ct)
+        private async Task<NewPost> ProcessSinglePostAsync(NewPost newPost, CancellationToken ct)
         {
-            IEnumerable<IMediaItem> items = await GetMediaItems(post.Post, ct);
+            if (_platformWithHighQualityMedia.Contains(newPost.Platform))
+            {
+                return newPost;
+            }
+            
+            IEnumerable<IMediaItem> items = await GetMediaItems(newPost.Post, ct);
 
-            return post with { Post = post.Post with { MediaItems = items } };
+            return newPost with { Post = newPost.Post with { MediaItems = items } };
         }
         
 
