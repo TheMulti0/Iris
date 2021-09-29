@@ -7,6 +7,10 @@ import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
+import {
+  Notification,
+  NotificationComponent,
+} from '../notification/notification.component';
 
 interface Element {
   isNew: boolean;
@@ -44,6 +48,10 @@ export class PostsListenerComponent implements OnInit {
   }
 
   add() {
+    if (this.dataSource.data.find((e) => e.isNew) !== undefined) {
+      return;
+    }
+
     const subscription = {
       id: '',
       platform: '',
@@ -82,6 +90,7 @@ export class PostsListenerComponent implements OnInit {
   }
 
   submit(element: Element) {
+    element.isNew = false;
     element.isEditable = false;
 
     if (element.form === undefined) {
@@ -93,7 +102,6 @@ export class PostsListenerComponent implements OnInit {
 
     element.subscription = formValue;
     this.addOrUpdate(formValue);
-    element.isNew = false;
   }
 
   async close(element: Element, index: number) {
@@ -140,10 +148,20 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify('Removed', platform, id);
+      this.notify({
+        message: 'Removed',
+        id: id,
+        platform: platform,
+        type: 'Error',
+      });
       this.newPostSubscriptions.next();
     } else {
-      this.notify('Failed to remove', platform, id);
+      this.notify({
+        message: 'Failed to remove',
+        id: id,
+        platform: platform,
+        type: 'Error',
+      });
     }
   }
 
@@ -155,9 +173,19 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify('Triggered poll for', platform, id);
+      this.notify({
+        message: 'Triggered poll for',
+        id: id,
+        platform: platform,
+        type: 'Success',
+      });
     } else {
-      this.notify('Failed to trigger poll for', platform, id);
+      this.notify({
+        message: 'Failed to trigger poll for',
+        id: id,
+        platform: platform,
+        type: 'Error',
+      });
     }
   }
 
@@ -174,17 +202,26 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify('Updated', platform, id);
+      this.notify({
+        message: 'Updated',
+        id: id,
+        platform: platform,
+        type: 'Success',
+      });
       this.newPostSubscriptions.next();
     } else {
-      this.notify('Failed to add', platform, id);
+      this.notify({
+        message: 'Failed to update',
+        id: id,
+        platform: platform,
+        type: 'Error',
+      });
     }
   }
 
-  private notify(message: string, id: string, platform: string) {
-    const config: MatSnackBarConfig = {
-      duration: 2000,
-    };
-    this.snackBar.open(`${message} [${platform}] ${id}`, undefined, config);
+  private notify(options: Notification) {
+    this.snackBar.openFromComponent(NotificationComponent, {
+      data: options,
+    });
   }
 }
