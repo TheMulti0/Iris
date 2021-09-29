@@ -4,9 +4,9 @@ namespace TelegramSender
     {
         public string YoutubeDlPath { get; set; }
 #if _WINDOWS
-            = "yt-dlp.exe";
+            = "youtube-dl.exe";
 #else
-            = "yt-dlp";
+            = "youtube-dl";
 #endif
 
         public string FfBinariesFolder { get; set; } = "";

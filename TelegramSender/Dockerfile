@@ -24,7 +24,7 @@ COPY --from=publish /app/publish .
 RUN apt update -y
 RUN apt install -y ffmpeg curl python3-pip
 
-# Download yt-dlp
-RUN pip3 install yt-dlp
+# Download youtube-dl
+RUN pip3 install youtube-dl
 
 ENTRYPOINT ["dotnet", "TelegramSender.dll"]
