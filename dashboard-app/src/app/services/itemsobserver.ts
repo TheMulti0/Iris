@@ -1,27 +1,39 @@
-import { BehaviorSubject, combineLatest, Observable, of, PartialObserver, Subscription, timer } from 'rxjs';
-import { concatAll, mergeAll, share, switchMap, shareReplay } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  timer,
+} from 'rxjs';
+import { switchMap, shareReplay, } from 'rxjs/operators';
 
+// This is a hot observable which is generated from a cold observable.
+// Every manual refresh call or timer interval the observable will connect
+// to the newly created cold observable.
 
-export class ItemsObserver<T> extends Observable<T> {
-  items$: Observable<T>;
+export class RefreshableObservable<T> extends Observable<T> {
 
-  private trigger = new BehaviorSubject<void>(void 0);
+  onRefresh: BehaviorSubject<void>;
 
-  constructor(next: () => Observable<T>) {
-    super();
+  constructor(
+    next: () => Observable<T>,
+    intervalMs: number,
+  ) {
+    const onRefresh = new BehaviorSubject<void>(void 0);
 
-    const onTimer = timer(undefined, environment.pollingIntervalMs);
+    const onTimer = timer(undefined, intervalMs);
 
-    const onTrigger = this.trigger;
-
-    this.items$ = combineLatest([onTimer, onTrigger]).pipe(
+    const items$ = combineLatest([onRefresh, onTimer]).pipe(
       switchMap(() => next()),
-      share()
+      shareReplay({ refCount: true, bufferSize: 1 })
     );
+
+    super(o => items$.subscribe(o));
+
+    // this classes fields must be set after the base class constructor call
+    this.onRefresh = onRefresh;
   }
 
   refresh() {
-    this.trigger.next();
+    this.onRefresh.next();
   }
 }

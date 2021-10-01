@@ -1,9 +1,8 @@
-import { HttpClient, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpClient, HttpResponseBase } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { NewPostSubscription } from '../models/posts-listener.model';
-import { filter, mapTo } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

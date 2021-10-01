@@ -1,4 +1,4 @@
-<mat-table class="mat-elevation-z8" [dataSource]="subscriptions.items$">
+<mat-table class="mat-elevation-z8" [dataSource]="subscriptions$">
   <ng-container>
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
@@ -37,7 +37,7 @@
   <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>
 
-<mat-table class="mat-elevation-z8" [dataSource]="subscriptions.items$">
+<mat-table class="mat-elevation-z8" [dataSource]="subscriptions$">
     <ng-container>
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>

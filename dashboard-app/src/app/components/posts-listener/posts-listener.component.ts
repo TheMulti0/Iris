@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
-import { ItemsObserver } from 'src/app/services/itemsobserver';
+import { RefreshableObservable } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
 import { environment } from 'src/environments/environment';
 
@@ -25,7 +25,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
   dataSource = new MatTableDataSource<Element>();
 
-  private newPostSubscriptions: ItemsObserver<NewPostSubscription[]>;
+  private newPostSubscriptions$: RefreshableObservable<NewPostSubscription[]>;
   private itemsSubscription!: Subscription;
 
   constructor(
@@ -33,19 +33,19 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private postsListener: PostsListenerService
   ) {
-    this.newPostSubscriptions = new ItemsObserver(() =>
-      this.postsListener.getSubscriptions()
+    this.newPostSubscriptions$ = new RefreshableObservable(
+      () => this.postsListener.getSubscriptions(),
+      environment.pollingIntervalMs
     );
   }
 
   ngOnInit() {
-    this.itemsSubscription = this.newPostSubscriptions.items$.subscribe(
-      (items) => this.onNewSubscriptions(items)
+    this.itemsSubscription = this.newPostSubscriptions$.subscribe((items) =>
+      this.onNewSubscriptions(items)
     );
   }
 
   ngOnDestroy() {
-    console.log('destroy')
     this.itemsSubscription?.unsubscribe();
   }
 
@@ -151,7 +151,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     if (response.ok) {
       this.notify('Removed', id, platform, 'Error');
-      this.newPostSubscriptions.refresh();
+      this.newPostSubscriptions$.refresh();
     } else {
       this.notify('Failed to remove', id, platform, 'Error');
     }
@@ -185,7 +185,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     if (response.ok) {
       this.notify('Updated', id, platform, 'Success');
-      this.newPostSubscriptions.refresh();
+      this.newPostSubscriptions$.refresh();
     } else {
       this.notify('Failed to update', id, platform, 'Error');
     }

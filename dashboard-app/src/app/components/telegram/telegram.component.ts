@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ItemsObserver } from 'src/app/services/itemsobserver';
+import { RefreshableObservable } from 'src/app/services/itemsobserver';
 import { TelegramService } from '../../services/telegram.service';
 import { TelegramSubscription } from '../../models/telegram.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-telegram',
@@ -10,11 +11,12 @@ import { TelegramSubscription } from '../../models/telegram.model';
 })
 export class TelegramComponent implements OnInit {
   displayedColumns: string[] = ['id', 'userId', 'platform', 'chats'];
-  subscriptions: ItemsObserver<TelegramSubscription[]>;
+  subscriptions$: RefreshableObservable<TelegramSubscription[]>;
 
   constructor(private telegram: TelegramService) {
-    this.subscriptions = new ItemsObserver(() =>
-      this.telegram.getSubscriptions()
+    this.subscriptions$ = new RefreshableObservable(
+      () => this.telegram.getSubscriptions(),
+      environment.pollingIntervalMs
     );
   }
 
