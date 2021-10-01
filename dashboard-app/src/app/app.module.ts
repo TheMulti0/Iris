@@ -7,9 +7,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PostsListenerComponent } from './components/posts-listener/posts-listener.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LayoutComponent } from './components/layout/layout.component';
 
 @NgModule({
-  declarations: [AppComponent, PostsListenerComponent],
+  declarations: [AppComponent, PostsListenerComponent, LayoutComponent],
   imports: [
     AppRoutingModule,
     AppMaterialModule,

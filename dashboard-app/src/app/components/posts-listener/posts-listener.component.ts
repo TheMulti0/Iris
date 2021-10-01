@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
@@ -20,10 +20,12 @@ interface Element {
   templateUrl: './posts-listener.component.html',
   styleUrls: ['./posts-listener.component.scss'],
 })
-export class PostsListenerComponent implements OnInit {
+export class PostsListenerComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
-  newPostSubscriptions: ItemsObserver<NewPostSubscription[]>;
   dataSource = new MatTableDataSource<Element>();
+
+  private newPostSubscriptions: ItemsObserver<NewPostSubscription[]>;
+  private itemsSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -38,9 +40,13 @@ export class PostsListenerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.newPostSubscriptions.items$.subscribe((items) =>
-      this.onNewSubscriptions(items)
+    this.itemsSubscription = this.newPostSubscriptions.items$.subscribe(
+      (items) => this.onNewSubscriptions(items)
     );
+  }
+
+  ngOnDestroy() {
+    this.itemsSubscription?.unsubscribe();
   }
 
   add() {
