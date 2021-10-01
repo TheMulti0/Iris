@@ -14,6 +14,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
     {
       path: '/posts-listener',
       name: 'Posts Listener'
+    },
+    {
+      path: '/telegram',
+      name: 'Telegram'
     }
   ]
 

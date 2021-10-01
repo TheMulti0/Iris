@@ -8,9 +8,11 @@ import { PostsListenerComponent } from './components/posts-listener/posts-listen
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutComponent } from './components/layout/layout.component';
+import { ScraperComponent } from './components/scraper/scraper.component';
+import { TelegramComponent } from './components/telegram/telegram.component';
 
 @NgModule({
-  declarations: [AppComponent, PostsListenerComponent, LayoutComponent],
+  declarations: [AppComponent, PostsListenerComponent, LayoutComponent, ScraperComponent, TelegramComponent],
   imports: [
     AppRoutingModule,
     AppMaterialModule,

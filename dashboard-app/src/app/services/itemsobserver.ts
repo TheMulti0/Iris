@@ -1,19 +1,27 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, PartialObserver, Subscription, timer } from 'rxjs';
+import { concatAll, mergeAll, share, switchMap, shareReplay } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
-export class ItemsObserver<T> {
+
+export class ItemsObserver<T> extends Observable<T> {
   items$: Observable<T>;
 
-  private subject = new BehaviorSubject<void>(void 0);
+  private trigger = new BehaviorSubject<void>(void 0);
 
   constructor(next: () => Observable<T>) {
-    this.items$ = this.subject.pipe(
+    super();
+
+    const onTimer = timer(undefined, environment.pollingIntervalMs);
+
+    const onTrigger = this.trigger;
+
+    this.items$ = combineLatest([onTimer, onTrigger]).pipe(
       switchMap(() => next()),
-      shareReplay(1)
+      share()
     );
   }
 
-  next() {
-    this.subject.next();
+  refresh() {
+    this.trigger.next();
   }
 }

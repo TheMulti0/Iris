@@ -7,6 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
+import { environment } from 'src/environments/environment';
 
 interface Element {
   isNew: boolean;
@@ -33,9 +34,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
     private postsListener: PostsListenerService
   ) {
     this.newPostSubscriptions = new ItemsObserver(() =>
-      timer(undefined, 5000).pipe(
-        switchMap(() => this.postsListener.getSubscriptions())
-      )
+      this.postsListener.getSubscriptions()
     );
   }
 
@@ -46,6 +45,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('destroy')
     this.itemsSubscription?.unsubscribe();
   }
 
@@ -151,7 +151,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     if (response.ok) {
       this.notify('Removed', id, platform, 'Error');
-      this.newPostSubscriptions.next();
+      this.newPostSubscriptions.refresh();
     } else {
       this.notify('Failed to remove', id, platform, 'Error');
     }
@@ -185,7 +185,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     if (response.ok) {
       this.notify('Updated', id, platform, 'Success');
-      this.newPostSubscriptions.next();
+      this.newPostSubscriptions.refresh();
     } else {
       this.notify('Failed to update', id, platform, 'Error');
     }
