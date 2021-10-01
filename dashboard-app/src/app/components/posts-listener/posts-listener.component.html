@@ -72,10 +72,7 @@
 
       <mat-cell *matCellDef="let element; let index = index">
         <ng-container *ngIf="!element.isEditable; else editable">
-          <button 
-            mat-icon-button 
-            matTooltip="Edit"
-            (click)="edit(element)">
+          <button mat-icon-button matTooltip="Edit" (click)="edit(element)">
             <mat-icon>edit</mat-icon>
           </button>
 
@@ -84,7 +81,7 @@
             matTooltip="Remove"
             (click)="remove(element, index)"
           >
-            <mat-icon>delete</mat-icon>
+            <mat-icon>delete_outline</mat-icon>
           </button>
 
           <button

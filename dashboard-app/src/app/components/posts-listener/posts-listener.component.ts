@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { ItemsObserver } from 'src/app/services/itemsobserver';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
-import {
-  Notification,
-  NotificationComponent,
-} from '../notification/notification.component';
 
 interface Element {
   isNew: boolean;
@@ -148,20 +144,10 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify({
-        message: 'Removed',
-        id: id,
-        platform: platform,
-        type: 'Error',
-      });
+      this.notify('Removed', id, platform, 'Error');
       this.newPostSubscriptions.next();
     } else {
-      this.notify({
-        message: 'Failed to remove',
-        id: id,
-        platform: platform,
-        type: 'Error',
-      });
+      this.notify('Failed to remove', id, platform, 'Error');
     }
   }
 
@@ -173,19 +159,9 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify({
-        message: 'Triggered poll for',
-        id: id,
-        platform: platform,
-        type: 'Success',
-      });
+      this.notify('Triggered poll for', id, platform, 'Success');
     } else {
-      this.notify({
-        message: 'Failed to trigger poll for',
-        id: id,
-        platform: platform,
-        type: 'Error',
-      });
+      this.notify('Failed to trigger poll for', id, platform, 'Error');
     }
   }
 
@@ -202,26 +178,23 @@ export class PostsListenerComponent implements OnInit {
       .toPromise();
 
     if (response.ok) {
-      this.notify({
-        message: 'Updated',
-        id: id,
-        platform: platform,
-        type: 'Success',
-      });
+      this.notify('Updated', id, platform, 'Success');
       this.newPostSubscriptions.next();
     } else {
-      this.notify({
-        message: 'Failed to update',
-        id: id,
-        platform: platform,
-        type: 'Error',
-      });
+      this.notify('Failed to update', id, platform, 'Error');
     }
   }
 
-  private notify(options: Notification) {
-    this.snackBar.openFromComponent(NotificationComponent, {
-      data: options,
+  private notify(
+    message: string,
+    id: string,
+    platform: string,
+    type: 'Success' | 'Error'
+  ) {
+    const actualMessage = `${message} [${platform}] ${id}`;
+
+    this.snackBar.open(actualMessage, undefined, {
+      panelClass: type === 'Success' ? 'success-snackbar' : 'error-snackbar',
     });
   }
 }
