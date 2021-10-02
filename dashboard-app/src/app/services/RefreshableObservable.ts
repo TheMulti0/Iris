@@ -15,7 +15,7 @@ export class RefreshableObservable<T> extends Observable<T> {
   onRefresh: BehaviorSubject<void>;
 
   constructor(
-    next: () => Observable<T>,
+    cold: Observable<T>,
     intervalMs: number,
   ) {
     const onRefresh = new BehaviorSubject<void>(void 0);
@@ -23,7 +23,7 @@ export class RefreshableObservable<T> extends Observable<T> {
     const onTimer = timer(undefined, intervalMs);
 
     const items$ = combineLatest([onRefresh, onTimer]).pipe(
-      switchMap(() => next()),
+      switchMap(() => cold),
       shareReplay({ refCount: true, bufferSize: 1 })
     );
 

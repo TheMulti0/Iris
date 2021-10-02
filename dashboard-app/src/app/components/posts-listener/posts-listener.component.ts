@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subscription, timer } from 'rxjs';
+import { defer, Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
-import { RefreshableObservable } from 'src/app/services/itemsobserver';
+import { RefreshableObservable } from 'src/app/services/RefreshableObservable';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
 import { environment } from 'src/environments/environment';
 
@@ -34,7 +34,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
     private postsListener: PostsListenerService
   ) {
     this.newPostSubscriptions$ = new RefreshableObservable(
-      () => this.postsListener.getSubscriptions(),
+      this.postsListener.getSubscriptions(),
       environment.pollingIntervalMs
     );
   }

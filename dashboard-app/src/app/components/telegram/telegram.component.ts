@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RefreshableObservable } from 'src/app/services/itemsobserver';
+import { RefreshableObservable } from 'src/app/services/RefreshableObservable';
 import { TelegramService } from '../../services/telegram.service';
 import { TelegramSubscription } from '../../models/telegram.model';
 import { environment } from 'src/environments/environment';
@@ -15,7 +15,7 @@ export class TelegramComponent implements OnInit {
 
   constructor(private telegram: TelegramService) {
     this.subscriptions$ = new RefreshableObservable(
-      () => this.telegram.getSubscriptions(),
+      this.telegram.getSubscriptions(),
       environment.pollingIntervalMs
     );
   }
