@@ -48,7 +48,10 @@
         class="example-element-detail"
         [@detailExpand]="element.expanded ? 'expanded' : 'collapsed'"
       >
-        <div>expanded</div>
+        <pre *ngFor="let chat of element.chats">
+        {{ chat | json }}
+      </pre
+        >
       </mat-cell>
     </ng-container>
   </ng-container>

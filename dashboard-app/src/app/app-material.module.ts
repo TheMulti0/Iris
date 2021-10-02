@@ -10,6 +10,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRippleModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTreeModule } from '@angular/material/tree';
 
 const modules = [
   MatButtonModule,
@@ -23,6 +24,7 @@ const modules = [
   MatTooltipModule,
   MatRippleModule,
   MatExpansionModule,
+  MatTreeModule,
 ];
 
 @NgModule({
