@@ -143,7 +143,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
       .toPromise();
 
     if (response.ok) {
-      this.notify('Removed', id, platform, 'Error');
+      this.notify('Removed', id, platform, 'Success');
       this.newPostSubscriptions$.refresh();
     } else {
       this.notify('Failed to remove', id, platform, 'Error');
@@ -194,6 +194,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     this.snackBar.open(actualMessage, undefined, {
       panelClass: type === 'Success' ? 'success-snackbar' : 'error-snackbar',
+      duration: 2000
     });
   }
 }
