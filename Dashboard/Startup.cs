@@ -1,16 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using PostsListener.Client;
 using Scraper.MassTransit.Client;
@@ -70,6 +65,7 @@ namespace Dashboard
         {
             options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.Converters.Add(new BsonObjectIdConverter());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
