@@ -22,6 +22,10 @@ export class LayoutComponent implements OnInit {
       name: 'Posts Listener',
     },
     {
+      path: '/scraper',
+      name: 'Scraper',
+    },
+    {
       path: '/telegram',
       name: 'Telegram',
     },
@@ -30,11 +34,13 @@ export class LayoutComponent implements OnInit {
   constructor(private router: Router) {}
 
   async ngOnInit() {
-    this.currentPath = await this.router.events.pipe(
-      first((e) => e instanceof NavigationEnd),
-      map((e) => (e as NavigationEnd).url),
-      timeout(500)
-    ).toPromise();
+    this.currentPath = await this.router.events
+      .pipe(
+        first((e) => e instanceof NavigationEnd),
+        map((e) => (e as NavigationEnd).url),
+        timeout(500)
+      )
+      .toPromise();
   }
 
   click(path: string) {
