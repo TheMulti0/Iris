@@ -1,4 +1,8 @@
-<mat-table class="mat-elevation-z8" [dataSource]="subscriptions$">
+<mat-table
+  class="mat-elevation-z8"
+  [dataSource]="subscriptions$"
+  multiTemplateDataRows
+>
   <ng-container>
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
@@ -9,12 +13,12 @@
     </ng-container>
 
     <ng-container matColumnDef="userId">
-        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-  
-        <mat-cell *matCellDef="let element; let index = index">
-          {{ element.userId }}
-        </mat-cell>
-      </ng-container>
+      <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+
+      <mat-cell *matCellDef="let element; let index = index">
+        {{ element.userId }}
+      </mat-cell>
+    </ng-container>
 
     <ng-container matColumnDef="platform">
       <mat-header-cell *matHeaderCellDef>Platform</mat-header-cell>
@@ -28,51 +32,34 @@
       <mat-header-cell *matHeaderCellDef>Chats</mat-header-cell>
 
       <mat-cell *matCellDef="let element">
-        {{ element }}
+        <button mat-raised-button (click)="click(element)">
+          {{ element.expanded ? "Hide" : "Show" }}
+          {{ element.chats.length }} chat{{
+            element.chats.length > 1 ? "s" : ""
+          }}
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="details">
+      <mat-cell
+        *matCellDef="let element"
+        [attr.colspan]="displayedColumns.length"
+        class="example-element-detail"
+        [@detailExpand]="element.expanded ? 'expanded' : 'collapsed'"
+      >
+        <div>expanded</div>
       </mat-cell>
     </ng-container>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  <mat-row
+    *matRowDef="let row; columns: displayedColumns"
+    class="normal-row"
+  ></mat-row>
+  <mat-row
+    *matRowDef="let row; columns: ['details']"
+    class="details-row"
+  ></mat-row>
 </mat-table>
-
-<mat-table class="mat-elevation-z8" [dataSource]="subscriptions$">
-    <ng-container>
-      <ng-container matColumnDef="id">
-        <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-  
-        <mat-cell *matCellDef="let element; let index = index">
-          {{ element.id }}
-        </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="userId">
-          <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-    
-          <mat-cell *matCellDef="let element; let index = index">
-            {{ element.userId }}
-          </mat-cell>
-        </ng-container>
-  
-      <ng-container matColumnDef="platform">
-        <mat-header-cell *matHeaderCellDef>Platform</mat-header-cell>
-  
-        <mat-cell *matCellDef="let element">
-          {{ element.platform }}
-        </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="chats">
-        <mat-header-cell *matHeaderCellDef>Chats</mat-header-cell>
-  
-        <mat-cell *matCellDef="let element">
-          {{ element }}
-        </mat-cell>
-      </ng-container>
-    </ng-container>
-  
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-  </mat-table>
-  

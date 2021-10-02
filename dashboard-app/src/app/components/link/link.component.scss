@@ -8,7 +8,7 @@ span {
   user-select: none;
 }
 
-.selected {
+span.selected {
   color: var(--p-400);
   background-color: var(--b-background);
 }
