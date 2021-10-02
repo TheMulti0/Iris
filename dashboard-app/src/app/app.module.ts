@@ -10,9 +10,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutComponent } from './components/layout/layout.component';
 import { ScraperComponent } from './components/scraper/scraper.component';
 import { TelegramComponent } from './components/telegram/telegram.component';
+import { LinkComponent } from './components/link/link.component';
 
 @NgModule({
-  declarations: [AppComponent, PostsListenerComponent, LayoutComponent, ScraperComponent, TelegramComponent],
+  declarations: [AppComponent, PostsListenerComponent, LayoutComponent, ScraperComponent, TelegramComponent, LinkComponent],
   imports: [
     AppRoutingModule,
     AppMaterialModule,

@@ -1,16 +1,13 @@
 <mat-toolbar>
-  <div class="routes">
-    <span
-      matRipple
-      *ngFor="let route of routes"
-      (click)="click(route.path)"
-      [style.color]="
-        currentRoutePath === route.path ? 'var(--p-400)' : undefined
-      "
-      [routerLink]="route.path"
+  <div class="links">
+    <app-link
+      *ngFor="let link of links"
+      [path]="link.path"
+      [name]="link.name"
+      [selected]="currentPath === link.path"
+      (press)="click($event)"
     >
-      {{ route.name }}
-    </span>
+    </app-link>
   </div>
 </mat-toolbar>
 

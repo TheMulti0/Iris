@@ -131,8 +131,6 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
       ...this.dataSource.data.filter((element) => element.isNew),
       ...elements,
     ];
-
-    console.log(elements);
   }
 
   async remove(element: Element, index: number) {

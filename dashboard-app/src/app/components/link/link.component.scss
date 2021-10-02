@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+}
+
+span {
+  padding: 10px;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.selected {
+  color: var(--p-400);
+  background-color: var(--b-background);
+}

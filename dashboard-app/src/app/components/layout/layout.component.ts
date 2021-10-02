@@ -1,44 +1,43 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavigationEnd, NavigationStart, RouteConfigLoadEnd, Router, RouterEvent } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationStart,
+  RouteConfigLoadEnd,
+  Router,
+  RouterEvent,
+} from '@angular/router';
 import { Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, first, map, tap, timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })
-export class LayoutComponent implements OnInit, OnDestroy {
-  currentRoutePath: string = '/';
-  routes = [
+export class LayoutComponent implements OnInit {
+  currentPath!: string;
+  links = [
     {
       path: '/posts-listener',
-      name: 'Posts Listener'
+      name: 'Posts Listener',
     },
     {
       path: '/telegram',
-      name: 'Telegram'
-    }
-  ]
-
-  private routeSubscription!: Subscription;
+      name: 'Telegram',
+    },
+  ];
 
   constructor(private router: Router) {}
 
-  ngOnInit() {
-    this.routeSubscription = this.router.events
-      .pipe(
-        filter((e) => e instanceof NavigationEnd),
-        map((e) => e as NavigationEnd )
-      )
-      .subscribe((e) => (this.currentRoutePath = e.url));
-  }
-
-  ngOnDestroy() {
-    this.routeSubscription?.unsubscribe();
+  async ngOnInit() {
+    this.currentPath = await this.router.events.pipe(
+      first((e) => e instanceof NavigationEnd),
+      map((e) => (e as NavigationEnd).url),
+      timeout(500)
+    ).toPromise();
   }
 
   click(path: string) {
-    this.currentRoutePath = path;
+    this.currentPath = path;
   }
 }

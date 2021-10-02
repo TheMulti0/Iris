@@ -12,8 +12,7 @@ export class TelegramService {
   constructor(private httpClient: HttpClient) {}
 
   private readonly subscriptions$ = new RefreshableObservable(
-    this.getSubscriptions(),
-    environment.pollingIntervalMs
+    this.getSubscriptions()
   );
 
   getRefreshableSubscriptions(): RefreshableObservable<TelegramSubscription[]> {
