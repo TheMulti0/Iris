@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   baseUrl: 'http://localhost:5000',
-  pollingIntervalMs: 1000
+  pollingIntervalMs: 10000
 };
 
 /*

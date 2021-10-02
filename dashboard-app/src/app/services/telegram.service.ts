@@ -3,18 +3,26 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TelegramSubscription } from '../models/telegram.model';
+import { RefreshableObservable } from './RefreshableObservable';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TelegramService {
+  constructor(private httpClient: HttpClient) {}
 
-  constructor(
-    private httpClient: HttpClient
-  ) { }
+  private readonly subscriptions$ = new RefreshableObservable(
+    this.getSubscriptions(),
+    environment.pollingIntervalMs
+  );
+
+  getRefreshableSubscriptions(): RefreshableObservable<TelegramSubscription[]> {
+    return this.subscriptions$;
+  }
 
   getSubscriptions(): Observable<TelegramSubscription[]> {
     return this.httpClient.get<TelegramSubscription[]>(
-      `${environment.baseUrl}/TelegramSubscriptions`);
+      `${environment.baseUrl}/TelegramSubscriptions`
+    );
   }
 }
