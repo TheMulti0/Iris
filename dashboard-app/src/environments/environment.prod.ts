@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  baseUrl: '/api',
+  pollingIntervalMs: 10000
 };
