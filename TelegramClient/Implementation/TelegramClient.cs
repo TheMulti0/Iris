@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TdLib;
 
 namespace TelegramClient
@@ -12,24 +13,30 @@ namespace TelegramClient
     {
         private readonly TdClient _client;
         private readonly TelegramClientConfig _config;
+        private readonly ILogger<TelegramClient> _logger;
+        private readonly TdApi.SendMessageOptions _defaultSendMessageOptions = new();
         public IObservable<TdApi.Update> OnUpdateReceived { get; }
 
         public TelegramClient(
             TdClient client,
-            TelegramClientConfig config)
+            TelegramClientConfig config,
+            ILogger<TelegramClient> logger)
         {
             _client = client;
             _config = config;
+            _logger = logger;
             OnUpdateReceived = client.OnUpdateReceived();
         }
 
         public Task<TdApi.FormattedText> ParseTextAsync(string text, TdApi.TextParseMode parseMode)
         {
+            _logger.LogDebug("Parse text {}", text);
             return _client.ParseTextEntitiesAsync(text, parseMode);
         }
 
         public Task<TdApi.Chat> GetChatAsync(long chatId)
         {
+            _logger.LogDebug("Get chat {}", chatId);
             return _client.GetChatAsync(chatId);
         }
 
@@ -42,6 +49,7 @@ namespace TelegramClient
             Action<FileUploadProgress> progress = null,
             CancellationToken token = default)
         {
+            _logger.LogDebug("Send message {} to {}", inputMessageContent.Format(), chatId);
             var content = new DisposableMessageContent(inputMessageContent);
 
             bool hasRemoteStream = inputMessageContent.HasInputFile(out InputRemoteStream file);
@@ -131,6 +139,8 @@ namespace TelegramClient
 
                 case TdApi.Update.UpdateMessageSendFailed f:
                 {
+                    _logger.LogDebug("Message send failed {}", f.ErrorMessage);
+                    
                     return await HandleMessageSendFailed(
                         f,
                         chatId,
@@ -182,6 +192,8 @@ namespace TelegramClient
             TdApi.SendMessageOptions options = null,
             CancellationToken token = default)
         {
+            _logger.LogDebug("Send message album {} to {}", inputMessageContents.Format(), chatId);
+            
             try
             {
                 return await SendMessageAlbumUnsafe(
@@ -191,8 +203,10 @@ namespace TelegramClient
                     options,
                     token);
             }
-            catch (MessageSendFailedException)
+            catch (MessageSendFailedException e)
             {
+                _logger.LogDebug("Message album send failed {}, trying to send downloaded message", e.Message);
+                
                 TdApi.InputMessageContent[] contents = GetDownloadedMessageContents(inputMessageContents)
                     .ToArray();
 
@@ -212,6 +226,8 @@ namespace TelegramClient
             TdApi.SendMessageOptions options,
             CancellationToken token)
         {
+            options ??= _defaultSendMessageOptions;
+            
             var contents = await inputMessageContents
                 .ToAsyncEnumerable()
                 .SelectAwait(ExtractFiles)
@@ -219,9 +235,18 @@ namespace TelegramClient
 
             try
             {
+                TdApi.InputMessageContent[] messageContents = contents.Select(c => c.Content).ToArray();
+                
+                _logger.LogDebug(
+                    "Send message album unsafe, chatId: {}, inputMessageContents: {}, replyToMessageId: {}, options: {}",
+                    chatId,
+                    messageContents.Format(),
+                    replyToMessageId,
+                    options);
+                
                 TdApi.Messages messages = await _client.SendMessageAlbumAsync(
                     chatId: chatId,
-                    inputMessageContents: contents.Select(c => c.Content).ToArray(),
+                    inputMessageContents: messageContents,
                     replyToMessageId: replyToMessageId,
                     options: options);
 
@@ -325,6 +350,8 @@ namespace TelegramClient
             if (inputMessageContent.HasFile(out TdApi.InputFile file) &&
                 file.HasUrl(out string url))
             {
+                _logger.LogDebug("Trying to send downloaded message");
+                
                 return await SendDownloadedMessage(
                     chatId,
                     url,

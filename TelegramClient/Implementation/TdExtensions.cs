@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Remutable.Extensions;
@@ -8,6 +10,58 @@ namespace TelegramClient
 {
     public static class TdExtensions
     {
+        public static string Format(this IEnumerable<TdApi.InputMessageContent> contents)
+        {
+            return string.Join(
+                " - ",
+                contents.Select(content => content.Format()));
+        }
+        
+        public static string Format(this TdApi.InputMessageContent content)
+        {
+            switch (content)
+            {
+                case TdApi.InputMessageContent.InputMessageVideo v:
+                    return $"Video {v.Video.Format()}, Thumbnail {v.Thumbnail?.Thumbnail.Format()}, {v.Width}x{v.Height} size";
+                
+                case TdApi.InputMessageContent.InputMessageText t:
+                    return $"Text {t.Text}";
+                
+                case TdApi.InputMessageContent.InputMessagePhoto p:
+                    return $"Photo {p.Photo.Format()}, Thumbnail {p.Thumbnail?.Thumbnail.Format()}, {p.Width}x{p.Height} size";
+                
+                default:
+                    return content.GetType().FullName;
+            }
+        }
+        
+        public static string Format(this TdApi.InputFile file)
+        {
+            switch (file)
+            {
+                case InputRemoteStream s:
+                    return $"RemoteStream";
+                    
+                case InputRecyclingLocalFile rl:
+                    return $"RecyclingLocal {rl.Path}";
+                    
+                case TdApi.InputFile.InputFileRemote r:
+                    return $"Remote {r.Id}";
+                    
+                case TdApi.InputFile.InputFileLocal l:
+                    return $"Local {l.Path}";
+                    
+                case TdApi.InputFile.InputFileId i:
+                    return $"Id {i.Id}";
+                    
+                case TdApi.InputFile.InputFileGenerated g:
+                    return $"Generated {g.OriginalPath}";
+                
+                default:
+                    return file.GetType().FullName;    
+            }
+        }
+        
         public static IObservable<TdApi.Update> OnUpdateReceived(this TdClient client)
         {
             return Observable.FromEventPattern<TdApi.Update>(
