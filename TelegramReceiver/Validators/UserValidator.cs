@@ -10,12 +10,16 @@ namespace TelegramReceiver
     internal class UserValidator
     {
         private readonly IScraperService _service;
+        private readonly bool _validate;
         private readonly Dictionary<string, IPlatformUserIdExtractor> _extractors;
 
-        public UserValidator(IScraperService service)
+        public UserValidator(
+            IScraperService service,
+            bool validate)
         {
             _service = service;
-            
+            _validate = validate;
+
             _extractors = new Dictionary<string, IPlatformUserIdExtractor>
             {
                 {
@@ -41,6 +45,11 @@ namespace TelegramReceiver
         {
             string newUserId = GetUserId(userId, platform);
 
+            if (!_validate)
+            {
+                return newUserId;
+            }
+            
             Post post = await ScrapeSinglePost(newUserId, platform);
             if (post == null)
             {

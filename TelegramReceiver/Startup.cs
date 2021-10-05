@@ -8,6 +8,7 @@ using MongoDbGenericRepository;
 using PostsListener.Client;
 using Scraper.MassTransit.Client;
 using Scraper.MassTransit.Common;
+using Scraper.Net;
 using SubscriptionsDb;
 
 namespace TelegramReceiver
@@ -29,7 +30,7 @@ namespace TelegramReceiver
 
             services
                 .AddMongoDbRepositories(mongoConfig)
-                .AddSingleton<UserValidator>()
+                .AddSingleton(provider => new UserValidator(provider.GetRequiredService<IScraperService>(), rootConfig.GetValue<bool>("ValidateUsers")))
                 .AddCommandHandling(telegramConfig)
                 .AddSingleton<ISubscriptionsManager>(
                     provider => new SubscriptionsManager(
