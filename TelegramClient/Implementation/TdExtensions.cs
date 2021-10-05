@@ -302,13 +302,15 @@ namespace TelegramClient
         
         public static async Task<DisposableMessageContent> WithInputRecyclingLocalFileAsync(this TdApi.InputMessageContent content, InputRecyclingLocalFile file)
         {
-            var withoutThumbnail = new DisposableMessageContent(content, file);
+            var newContent = content.WithFile(file);
+            
+            var withoutThumbnail = new DisposableMessageContent(newContent, file);
             if (!content.HasThumbnail(out TdApi.InputThumbnail thumbnail))
             {
                 return withoutThumbnail;
             }
 
-            return await HandleThumbnail(content, file, thumbnail);
+            return await HandleThumbnail(newContent, file, thumbnail);
         }
 
         public static async Task<DisposableMessageContent> WithInputRemoteStreamAsync(this TdApi.InputMessageContent content, InputRemoteStream file)
@@ -322,7 +324,7 @@ namespace TelegramClient
                 return withoutThumbnail;
             }
             
-            return await HandleThumbnail(content, file, thumbnail);
+            return await HandleThumbnail(newContent, file, thumbnail);
         }
 
         private static async Task<DisposableMessageContent> HandleThumbnail(
