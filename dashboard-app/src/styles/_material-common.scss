@@ -1,0 +1,59 @@
+@use "~@angular/material" as mat;
+$plt-primary: mat.define-palette(mat.$blue-grey-palette);
+$plt-accent: mat.define-palette(mat.$grey-palette, A200, A100, A400);
+$plt-warn: mat.define-palette(mat.$red-palette);
+$theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $plt-primary,
+      accent: $plt-accent,
+      warn: $plt-warn,
+    ),
+  )
+);
+$plt-background: map-get($theme, background);
+$plt-foreground: map-get($theme, foreground);
+$plt-primary-contrast: map-get($plt-primary, contrast);
+$plt-accent-contrast: map-get($plt-accent, contrast);
+$plt-warn-contrast: map-get($plt-warn, contrast);
+@mixin main() {
+  @include mat.core();
+  @include mat.all-component-themes($theme);
+  $p-keys: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900;
+  $a-keys: (
+    100: A100,
+    200: A200,
+    400: A400,
+    700: A700,
+  );
+  :root {
+    @each $key in $p-keys {
+      --p-#{$key}: #{map-get($plt-primary, $key)};
+    }
+    @each $key, $value in $a-keys {
+      --a-#{$key}: #{map-get($plt-accent, $value)};
+    }
+    @each $key in $p-keys {
+      --w-#{$key}: #{map-get($plt-warn, $key)};
+    }
+    @each $key, $value in $plt-background {
+      --b-#{$key}: #{$value};
+    }
+    @each $key, $value in $plt-foreground {
+      --f-#{$key}: #{$value};
+    }
+    @each $key in $p-keys {
+      --pc-#{$key}: #{map-get($plt-primary-contrast, $key)};
+    }
+    @each $key, $value in $a-keys {
+      --ac-#{$key}: #{map-get($plt-accent-contrast, $value)};
+    }
+    @each $key in $p-keys {
+      --wc-#{$key}: #{map-get($plt-warn-contrast, $key)};
+    }
+  }
+}
+
+.mat-typography {
+  color: var(--f-base);
+}
