@@ -73,3 +73,15 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+
+  dashboardapp:
+    image: irisupdate/dashboardapp:latest
+    build:
+      context: dashboard-app
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    container_name: dashboardapp
+    restart: always
+    depends_on:
+      - dashboard
