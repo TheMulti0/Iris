@@ -62,3 +62,14 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+
+  dashboard:
+    image: irisupdate/dashboard:latest
+    build:
+      context: .
+      dockerfile: Dashboard/Dockerfile
+    container_name: dashboard
+    restart: always
+    depends_on:
+      - rabbitmq
+      - mongodb
