@@ -1,4 +1,4 @@
-name: Dashboard
+name: DashboardApp
 
 on:
   workflow_dispatch:
