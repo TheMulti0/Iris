@@ -1,59 +1,55 @@
 <mat-table
   class="mat-elevation-z8"
-  [dataSource]="subscriptions$"
+  [dataSource]="dataSource"
   multiTemplateDataRows
+  matSort
 >
-  <ng-container>
-    <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
 
-      <mat-cell *matCellDef="let element; let index = index">
-        {{ element.id }}
-      </mat-cell>
-    </ng-container>
+    <mat-cell *matCellDef="let element; let index = index">
+      {{ element.id }}
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="userId">
-      <mat-header-cell *matHeaderCellDef>User id</mat-header-cell>
+  <ng-container matColumnDef="userId">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>User id</mat-header-cell>
 
-      <mat-cell *matCellDef="let element; let index = index">
-        {{ element.userId }}
-      </mat-cell>
-    </ng-container>
+    <mat-cell *matCellDef="let element; let index = index">
+      {{ element.userId }}
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="platform">
-      <mat-header-cell *matHeaderCellDef>Platform</mat-header-cell>
+  <ng-container matColumnDef="platform">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Platform</mat-header-cell>
 
-      <mat-cell *matCellDef="let element">
-        {{ element.platform }}
-      </mat-cell>
-    </ng-container>
+    <mat-cell *matCellDef="let element">
+      {{ element.platform }}
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="chats">
-      <mat-header-cell *matHeaderCellDef>Chats</mat-header-cell>
+  <ng-container matColumnDef="chats">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Chats</mat-header-cell>
 
-      <mat-cell *matCellDef="let element">
-        <button mat-raised-button (click)="click(element)">
-          {{ element.expanded ? "Hide" : "Show" }}
-          {{ element.chats.length }} chat{{
-            element.chats.length > 1 ? "s" : ""
-          }}
-        </button>
-      </mat-cell>
-    </ng-container>
+    <mat-cell *matCellDef="let element">
+      <button mat-raised-button (click)="click(element)">
+        {{ element.expanded ? "Hide" : "Show" }}
+        {{ element.chats.length }} chat{{ element.chats.length > 1 ? "s" : "" }}
+      </button>
+    </mat-cell>
+  </ng-container>
 
-    <ng-container matColumnDef="details">
-      <mat-cell
-        *matCellDef="let element"
-        [attr.colspan]="displayedColumns.length"
-        class="example-element-detail"
-        [@detailExpand]="element.expanded ? 'expanded' : 'collapsed'"
-      >
-        <pre *ngFor="let chat of element.chats">
+  <ng-container matColumnDef="details">
+    <mat-cell
+      *matCellDef="let element"
+      [attr.colspan]="displayedColumns.length"
+      class="example-element-detail"
+      [@detailExpand]="element.expanded ? 'expanded' : 'collapsed'"
+    >
+      <pre *ngFor="let chat of element.chats">
         {{ chat | json }}
-      </pre
-        >
-      </mat-cell>
-    </ng-container>
+      </pre>
+    </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

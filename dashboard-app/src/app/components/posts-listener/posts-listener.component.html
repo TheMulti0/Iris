@@ -2,116 +2,114 @@
   <mat-icon> add </mat-icon>
 </button>
 
-<mat-table class="mat-elevation-z8" [dataSource]="dataSource">
-  <ng-container>
-    <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
+<mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
 
-      <mat-cell *matCellDef="let element; let index = index">
-        <mat-form-field
-          *ngIf="element.isEditable; else id"
-          [formGroup]="element.form"
+    <mat-cell *matCellDef="let element; let index = index">
+      <mat-form-field
+        *ngIf="element.isEditable; else id"
+        [formGroup]="element.form"
+      >
+        <input matInput placeholder="Id" formControlName="id" required />
+      </mat-form-field>
+
+      <ng-template #id>
+        {{ element.subscription.id }}
+      </ng-template>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="platform">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Platform</mat-header-cell>
+
+    <mat-cell *matCellDef="let element">
+      <mat-form-field
+        *ngIf="element.isEditable; else platform"
+        [formGroup]="element.form"
+      >
+        <input
+          matInput
+          placeholder="Platform"
+          formControlName="platform"
+          required
+        />
+      </mat-form-field>
+
+      <ng-template #platform>
+        {{ element.subscription.platform }}
+      </ng-template>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="pollInterval">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Poll interval</mat-header-cell>
+
+    <mat-cell *matCellDef="let element">
+      <mat-form-field
+        *ngIf="element.isEditable; else pollInterval"
+        [formGroup]="element.form"
+      >
+        <input
+          matInput
+          placeholder="Poll interval"
+          formControlName="pollInterval"
+          required
+        />
+      </mat-form-field>
+
+      <ng-template #pollInterval>
+        {{ element.subscription.pollInterval }}
+      </ng-template>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+
+    <mat-cell *matCellDef="let element; let index = index">
+      <ng-container *ngIf="!element.isEditable; else editable">
+        <button mat-icon-button matTooltip="Edit" (click)="edit(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          matTooltip="Remove"
+          (click)="remove(element, index)"
         >
-          <input matInput placeholder="Id" formControlName="id" required />
-        </mat-form-field>
+          <mat-icon>delete_outline</mat-icon>
+        </button>
 
-        <ng-template #id>
-          {{ element.subscription.id }}
-        </ng-template>
-      </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="platform">
-      <mat-header-cell *matHeaderCellDef>Platform</mat-header-cell>
-
-      <mat-cell *matCellDef="let element">
-        <mat-form-field
-          *ngIf="element.isEditable; else platform"
-          [formGroup]="element.form"
+        <button
+          mat-icon-button
+          matTooltip="Trigger poll"
+          (click)="poll(element)"
         >
-          <input
-            matInput
-            placeholder="Platform"
-            formControlName="platform"
-            required
-          />
-        </mat-form-field>
+          <mat-icon>sync</mat-icon>
+        </button>
+      </ng-container>
 
-        <ng-template #platform>
-          {{ element.subscription.platform }}
-        </ng-template>
-      </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="pollInterval">
-      <mat-header-cell *matHeaderCellDef>Poll interval</mat-header-cell>
-
-      <mat-cell *matCellDef="let element">
-        <mat-form-field
-          *ngIf="element.isEditable; else pollInterval"
-          [formGroup]="element.form"
+      <ng-template #editable>
+        <button
+          mat-icon-button
+          matTooltip="Submit"
+          [disabled]="!element.form.valid"
+          (click)="submit(element)"
         >
-          <input
-            matInput
-            placeholder="Poll interval"
-            formControlName="pollInterval"
-            required
-          />
-        </mat-form-field>
+          <mat-icon>done</mat-icon>
+        </button>
 
-        <ng-template #pollInterval>
-          {{ element.subscription.pollInterval }}
-        </ng-template>
-      </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-
-      <mat-cell *matCellDef="let element; let index = index">
-        <ng-container *ngIf="!element.isEditable; else editable">
-          <button mat-icon-button matTooltip="Edit" (click)="edit(element)">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            matTooltip="Remove"
-            (click)="remove(element, index)"
-          >
-            <mat-icon>delete_outline</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            matTooltip="Trigger poll"
-            (click)="poll(element)"
-          >
-            <mat-icon>sync</mat-icon>
-          </button>
-        </ng-container>
-
-        <ng-template #editable>
-          <button
-            mat-icon-button
-            matTooltip="Submit"
-            [disabled]="!element.form.valid"
-            (click)="submit(element)"
-          >
-            <mat-icon>done</mat-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            matTooltip="Close"
-            *ngIf="element.isEditable"
-            (click)="close(element, index)"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </ng-template>
-      </mat-cell>
-    </ng-container>
+        <button
+          mat-icon-button
+          matTooltip="Close"
+          *ngIf="element.isEditable"
+          (click)="close(element, index)"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-template>
+    </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

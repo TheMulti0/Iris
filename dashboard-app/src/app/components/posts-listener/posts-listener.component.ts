@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { NewPostSubscription } from 'src/app/models/posts-listener.model';
 import { RefreshableObservable } from 'src/app/services/RefreshableObservable';
 import { PostsListenerService } from 'src/app/services/posts-listener.service';
+import { MatSort } from '@angular/material/sort';
 
 interface Element {
   isNew: boolean;
@@ -19,9 +26,13 @@ interface Element {
   templateUrl: './posts-listener.component.html',
   styleUrls: ['./posts-listener.component.scss'],
 })
-export class PostsListenerComponent implements OnInit, OnDestroy {
+export class PostsListenerComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
   dataSource = new MatTableDataSource<Element>();
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   private newPostSubscriptions$: RefreshableObservable<NewPostSubscription[]>;
   private itemsSubscription!: Subscription;
@@ -31,13 +42,22 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private postsListener: PostsListenerService
   ) {
-    this.newPostSubscriptions$ = this.postsListener.getRefreshableSubscriptions();
+    this.newPostSubscriptions$ =
+      this.postsListener.getRefreshableSubscriptions();
   }
 
   ngOnInit() {
     this.itemsSubscription = this.newPostSubscriptions$.subscribe((items) =>
       this.onNewSubscriptions(items)
     );
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data: Element, header: string) => {
+      const subscription: any = data.subscription;
+      return subscription[header];
+    };
   }
 
   ngOnDestroy() {
@@ -194,7 +214,7 @@ export class PostsListenerComponent implements OnInit, OnDestroy {
 
     this.snackBar.open(actualMessage, undefined, {
       panelClass: type === 'Success' ? 'success-snackbar' : 'error-snackbar',
-      duration: 2000
+      duration: 2000,
     });
   }
 }

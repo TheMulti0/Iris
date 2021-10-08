@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
 import { RefreshableObservable } from 'src/app/services/RefreshableObservable';
 import { TelegramService } from '../../services/telegram.service';
 import { TelegramSubscription } from '../../models/telegram.model';
@@ -9,6 +15,9 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-telegram',
@@ -25,15 +34,39 @@ import {
     ]),
   ],
 })
-export class TelegramComponent implements OnInit {
+export class TelegramComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['id', 'userId', 'platform', 'chats'];
+  dataSource = new MatTableDataSource<TelegramSubscription>();
+
   subscriptions$: RefreshableObservable<TelegramSubscription[]>;
+  subscription!: Subscription;
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private telegram: TelegramService) {
     this.subscriptions$ = this.telegram.getRefreshableSubscriptions();
   }
+  ngOnInit() {
+    this.subscription = this.subscriptions$.subscribe(
+      (items) => (this.dataSource.data = items)
+    );
+  }
 
-  ngOnInit(): void {}
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data: TelegramSubscription, header: string) => {
+      if (header == 'chats') {
+        return data.chats.length;
+      }
+
+      const subscription: any = data;
+      return subscription[header];
+    };
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   click(element: any) {
     if (element.expanded == true) {
