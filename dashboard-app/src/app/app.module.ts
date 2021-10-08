@@ -6,7 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PostsListenerComponent } from './components/posts-listener/posts-listener.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutComponent } from './components/layout/layout.component';
 import { ScraperComponent } from './components/scraper/scraper.component';
 import { TelegramComponent } from './components/telegram/telegram.component';
@@ -20,6 +20,7 @@ import { LinkComponent } from './components/link/link.component';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
     ReactiveFormsModule,
   ],
   providers: [],

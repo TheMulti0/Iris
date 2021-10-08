@@ -31,6 +31,7 @@ export class PostsListenerComponent
 {
   displayedColumns: string[] = ['id', 'platform', 'pollInterval', 'actions'];
   dataSource = new MatTableDataSource<Element>();
+  filterValue!: string;
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -44,6 +45,14 @@ export class PostsListenerComponent
   ) {
     this.newPostSubscriptions$ =
       this.postsListener.getRefreshableSubscriptions();
+
+    this.dataSource.sortingDataAccessor = (data: Element, header: string) => {
+      const subscription: any = data.subscription;
+      return subscription[header];
+    };
+
+    this.dataSource.filterPredicate = (data: Element, filter: string) =>
+      data.subscription.id.startsWith(filter);
   }
 
   ngOnInit() {
@@ -54,14 +63,14 @@ export class PostsListenerComponent
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data: Element, header: string) => {
-      const subscription: any = data.subscription;
-      return subscription[header];
-    };
   }
 
   ngOnDestroy() {
     this.itemsSubscription?.unsubscribe();
+  }
+
+  applyFilter() {
+    this.dataSource.filter = this.filterValue.trim().toLowerCase();
   }
 
   add() {

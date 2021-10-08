@@ -1,3 +1,13 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .mat-mini-fab {
   margin: 10px;
+}
+
+.inline-form {
+  margin-top: 10px;
 }

@@ -41,11 +41,28 @@ export class TelegramComponent implements OnInit, AfterViewInit, OnDestroy {
   subscriptions$: RefreshableObservable<TelegramSubscription[]>;
   subscription!: Subscription;
 
+  filterValue!: string;
+
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private telegram: TelegramService) {
     this.subscriptions$ = this.telegram.getRefreshableSubscriptions();
+
+    this.dataSource.sortingDataAccessor = (
+      data: TelegramSubscription,
+      header: string
+    ) => {
+      if (header == 'chats') {
+        return data.chats.length;
+      }
+
+      const subscription: any = data;
+      return subscription[header];
+    };
+    this.dataSource.filterPredicate = (data, filter) =>
+      data.userId.startsWith(filter);
   }
+
   ngOnInit() {
     this.subscription = this.subscriptions$.subscribe(
       (items) => (this.dataSource.data = items)
@@ -54,18 +71,14 @@ export class TelegramComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data: TelegramSubscription, header: string) => {
-      if (header == 'chats') {
-        return data.chats.length;
-      }
-
-      const subscription: any = data;
-      return subscription[header];
-    };
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  applyFilter() {
+    this.dataSource.filter = this.filterValue.trim().toLowerCase();
   }
 
   click(element: any) {

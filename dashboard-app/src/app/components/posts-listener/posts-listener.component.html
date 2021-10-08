@@ -1,6 +1,25 @@
-<button mat-mini-fab (click)="add()" matTooltip="Add">
-  <mat-icon> add </mat-icon>
-</button>
+<div class="header">
+  <mat-form-field class="filter">
+    <input
+      matInput
+      placeholder="Filter"
+      [(ngModel)]="filterValue"
+      (keyup)="applyFilter()"
+    />
+    <button
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="filterValue = ''; applyFilter()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <button mat-mini-fab (click)="add()" matTooltip="Add">
+    <mat-icon> add </mat-icon>
+  </button>
+</div>
 
 <mat-table class="mat-elevation-z8" [dataSource]="dataSource" matSort>
   <ng-container matColumnDef="id">
@@ -10,6 +29,7 @@
       <mat-form-field
         *ngIf="element.isEditable; else id"
         [formGroup]="element.form"
+        class="inline-form"
       >
         <input matInput placeholder="Id" formControlName="id" required />
       </mat-form-field>
@@ -21,7 +41,9 @@
   </ng-container>
 
   <ng-container matColumnDef="platform">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Platform</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header
+      >Platform</mat-header-cell
+    >
 
     <mat-cell *matCellDef="let element">
       <mat-form-field
@@ -43,7 +65,9 @@
   </ng-container>
 
   <ng-container matColumnDef="pollInterval">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Poll interval</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header
+      >Poll interval</mat-header-cell
+    >
 
     <mat-cell *matCellDef="let element">
       <mat-form-field
