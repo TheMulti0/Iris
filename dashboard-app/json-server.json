@@ -1,0 +1,574 @@
+{
+    "PostsListenerSubscriptions": [
+        {
+            "platform": "facebook",
+            "id": "abirkarashulman",
+            "pollInterval": "02:00:00"
+        },
+        {
+            "platform": "facebook",
+            "id": "hebpmo",
+            "pollInterval": "00:30:00"
+        },
+        {
+            "platform": "twitter",
+            "id": "naftalibennett",
+            "pollInterval": "00:10:00"
+        },
+        {
+            "platform": "twitter",
+            "id": "yomtobkalfon",
+            "pollInterval": "00:30:00"
+        },
+        {
+            "platform": "youtube",
+            "id": "UC4x7LYSzgGH-TMKc9J8pwgQ",
+            "pollInterval": "02:00:00"
+        },
+        {
+            "platform": "twitter",
+            "id": "orbachnir",
+            "pollInterval": "01:00:00"
+        },
+        {
+            "platform": "youtube",
+            "id": "UC4XJnRPZjXhgvVMhXKNSJvQ",
+            "pollInterval": "02:00:00"
+        },
+        {
+            "platform": "facebook",
+            "id": "silman.idit",
+            "pollInterval": "02:00:00"
+        }
+    ],
+    "TelegramSubscriptions": [
+        {
+            "id": "60c9b845146bd99751640b1d",
+            "userId": "ayelet.benshaul.shaked",
+            "platform": "facebook",
+            "version": 9,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "שרת הפנים, איילת שקד בפייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-17T03:38:32.259Z"
+                },
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001347913583,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T05:01:13.247Z"
+                }
+            ]
+        },
+        {
+            "id": "60c9b84d146bd99751640b1e",
+            "userId": "ayelet__shaked",
+            "platform": "twitter",
+            "version": 14,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "שרת הפנים, איילת שקד בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-17T03:39:50.42Z"
+                }
+            ]
+        },
+        {
+            "id": "60c9b851146bd99751640b1f",
+            "userId": "naftalibennett",
+            "platform": "twitter",
+            "version": 12,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "ראש הממשלה, נפתלי בנט בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-17T03:39:08.478Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc4d90146bd99751640b22",
+            "userId": "matankahana",
+            "platform": "twitter",
+            "version": 21,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": 787579706,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "suffix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "לציוץ בטוויטר"
+                    },
+                    "showUrlPreview": true,
+                    "subscriptionDate": "2021-06-18T07:38:56.113Z"
+                },
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "השר לשירותי דת, מתן כהנא בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T07:39:42.584Z"
+                },
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001313863498,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "suffix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "לציוץ בטוויטר"
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-07-20T14:46:41.983Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc4e45146bd99751640b23",
+            "userId": "matankahanany",
+            "platform": "facebook",
+            "version": 10,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "השר לשירותי דת, מתן כהנא בפייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T07:41:57.137Z"
+                },
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": 787579706,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "Text",
+                        "content": "★פייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-09-05T14:49:09.186Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc50e3146bd99751640b24",
+            "userId": "silman.idit",
+            "platform": "facebook",
+            "version": 5,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "יו\"ר הקואליציה, ח\"כ עידית סילמן בפייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T07:53:07.312Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc5136146bd99751640b26",
+            "userId": "orbachnir",
+            "platform": "twitter",
+            "version": 5,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "ח\"כ ניר אורבך בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T07:54:30.583Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc514d146bd99751640b27",
+            "userId": "iditsilman",
+            "platform": "twitter",
+            "version": 6,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "יו\"ר הקואליציה, ח\"כ עידית סילמן בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T07:54:53.546Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc6b9011083188449709c3",
+            "userId": "abirkarashulman",
+            "platform": "facebook",
+            "version": 6,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "סגן השר, ח\"כ אביר קארה בפייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T09:46:56.252Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc6ba811083188449709c4",
+            "userId": "shirlypinto89",
+            "platform": "facebook",
+            "version": 5,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "ח\"כ שירלי פינטו בפייסבוק:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T09:47:20.203Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc6bd711083188449709c5",
+            "userId": "abirkara2",
+            "platform": "twitter",
+            "version": 6,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "סגן השר, ח\"כ אביר קארה בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T09:48:07.063Z"
+                }
+            ]
+        },
+        {
+            "id": "60cc6bf111083188449709c6",
+            "userId": "shirlypinto",
+            "platform": "twitter",
+            "version": 8,
+            "chats": [
+                {
+                    "interval": "00:20:00",
+                    "chatInfo": {
+                        "id": -1001272856893,
+                        "type": "Private",
+                        "title": null,
+                        "description": null,
+                        "username": null,
+                        "firstName": null,
+                        "lastName": null,
+                        "allMembersAreAdministrators": false,
+                        "inviteLink": null
+                    },
+                    "sendScreenshotOnly": false,
+                    "prefix": {
+                        "enabled": true,
+                        "mode": "HyperlinkedText",
+                        "content": "ח\"כ שירלי פינטו בטוויטר:"
+                    },
+                    "suffix": {
+                        "enabled": false,
+                        "mode": "Text",
+                        "content": ""
+                    },
+                    "showUrlPreview": false,
+                    "subscriptionDate": "2021-06-18T09:48:33.282Z"
+                }
+            ]
+        }
+    ]
+}
