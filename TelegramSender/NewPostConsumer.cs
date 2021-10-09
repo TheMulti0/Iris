@@ -67,7 +67,7 @@ namespace TelegramSender
                 _logger.LogError(e, "Failed to process media");
             }
 
-            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.AuthorId, newPost.Platform);
+            SubscriptionEntity entity = await _subscriptionsRepository.GetAsync(newPost.Post.Author.Id, newPost.Platform);
             List<UserChatSubscription> destinationChats = entity.Chats.ToList();
 
             var sendMessage = new SendMessage(newPost, destinationChats);

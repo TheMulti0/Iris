@@ -60,18 +60,30 @@ namespace TelegramSender
 
         private static string GetContent(NewPost newPost)
         {
-            if (newPost.Platform != "twitter")
+            PostAuthor originalAuthor = newPost.Post.OriginalAuthor;
+
+            switch (newPost.Platform)
             {
-                return newPost.Post.Content;
-            }
-            
-            return TwitterUserNameRegex.Replace(
-                newPost.Post.Content,
-                m =>
+                case "twitter":
+                    return TwitterUserNameRegex.Replace(
+                        newPost.Post.Content,
+                        m =>
+                        {
+                            string username = m.Groups["userName"].Value;
+                            return HyperlinkText($"@{username}", $"{TwitterUrl}/{username}");
+                        });
+                
+                case "facebook" when originalAuthor != null:
                 {
-                    string username = m.Groups["userName"].Value;
-                    return HyperlinkText($"@{username}", $"{TwitterUrl}/{username}");
-                });
+                    string name = originalAuthor.DisplayName;
+
+                    return newPost.Post.Content
+                        .ReplaceFirst(name, HyperlinkText(name, originalAuthor.Url));
+                }
+
+                default:
+                    return newPost.Post.Content;
+            }
         }
 
         private static string ToString(Text text, string url)

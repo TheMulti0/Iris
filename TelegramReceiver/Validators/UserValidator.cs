@@ -56,7 +56,7 @@ namespace TelegramReceiver
                 throw new NullReferenceException(nameof(post));
             }
             
-            string postAuthorId = post.AuthorId;
+            string postAuthorId = post.Author.Id;
             
             return string.IsNullOrWhiteSpace(postAuthorId) 
                 ? newUserId 
