@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Common;
 using Scraper.MassTransit.Common;
@@ -11,11 +10,6 @@ namespace TelegramSender
 {
     public class MessageInfoBuilder
     {
-        private const string TwitterUrl = "https://twitter.com";
-        
-        private const string TwitterUserNamePattern = @"@(?<userName>[\w\d-_]+)";
-        private static readonly Regex TwitterUserNameRegex = new(TwitterUserNamePattern);
-    
         public MessageInfo Build(NewPost newPost, UserChatSubscription chatSubscription, CancellationToken ct)
         {
             string message = GetMessage(newPost, chatSubscription);
@@ -60,30 +54,31 @@ namespace TelegramSender
 
         private static string GetContent(NewPost newPost)
         {
-            PostAuthor originalAuthor = newPost.Post.OriginalAuthor;
+            Post post = newPost.Post;
 
+            string content = GetContentWithSuppliedHyperlinks(post);
+            PostAuthor originalAuthor = post.OriginalAuthor;
+            
             switch (newPost.Platform)
             {
-                case "twitter":
-                    return TwitterUserNameRegex.Replace(
-                        newPost.Post.Content,
-                        m =>
-                        {
-                            string username = m.Groups["userName"].Value;
-                            return HyperlinkText($"@{username}", $"{TwitterUrl}/{username}");
-                        });
-                
                 case "facebook" when originalAuthor != null:
                 {
                     string name = originalAuthor.DisplayName;
 
-                    return newPost.Post.Content
+                    return content
                         .ReplaceFirst(name, HyperlinkText(name, originalAuthor.Url));
                 }
 
                 default:
-                    return newPost.Post.Content;
+                    return content;
             }
+        }
+
+        private static string GetContentWithSuppliedHyperlinks(Post post)
+        {
+            return post.Hyperlinks.Aggregate(
+                post.Content,
+                (content, hyperlink) => content.Replace(hyperlink.Text, hyperlink.Url));
         }
 
         private static string ToString(Text text, string url)
