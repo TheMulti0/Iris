@@ -4,9 +4,9 @@ namespace TelegramSender
     {
         public string YoutubeDlPath { get; set; }
 #if _WINDOWS
-            = "youtube-dl.exe";
+            = "yt-dlp.exe";
 #else
-            = "youtube-dl";
+            = "yt-dlp-dl";
 #endif
 
         public string FfBinariesFolder { get; set; } = "";
@@ -14,5 +14,7 @@ namespace TelegramSender
         public string CookiesFileName { get; set; }
 
         public bool DownloadOnly { get; set; }
+
+        public int ConcurrentFragments { get; set; } = 4;
     }
 }

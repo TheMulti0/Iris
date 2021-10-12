@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,12 +37,29 @@ namespace TelegramSender
                 FFmpegPath = GlobalFFOptions.GetFFMpegBinaryPath(),
                 RestrictFilenames = true
             };
-            
-            _downloader = new VideoDownloader(youtubeDl, config.CookiesFileName);
-            _extractor = new Scraper.Net.YoutubeDl.VideoExtractor(youtubeDl, new OptionSet
+            var overrideOptions = new OptionSet
             {
-                Cookies = config.CookiesFileName
-            });
+                Cookies = config.CookiesFileName,
+                CustomOptions = GetCustomYtDlpOptions()
+            };
+            
+            _downloader = new VideoDownloader(youtubeDl, overrideOptions);
+            _extractor = new Scraper.Net.YoutubeDl.VideoExtractor(youtubeDl, overrideOptions);
+        }
+
+        private IOption[] GetCustomYtDlpOptions()
+        {
+            return new IOption[]
+            {
+                new Option<string>(isCustom: true, "--compat-options")
+                {
+                    Value = "youtube-dl"
+                },
+                new Option<int>(isCustom: true, "--concurrent-fragments")
+                {
+                    Value = _config.ConcurrentFragments
+                }
+            };
         }
 
         private static string CloneCookies(VideoExtractorConfig config)
