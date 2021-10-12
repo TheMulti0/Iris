@@ -78,7 +78,7 @@ namespace TelegramSender
         {
             return post.Hyperlinks.Aggregate(
                 post.Content,
-                (content, hyperlink) => content.Replace(hyperlink.Text, hyperlink.Url));
+                (content, hyperlink) => content.Replace(hyperlink.Text, HyperlinkText(hyperlink.Text, hyperlink.Url)));
         }
 
         private static string ToString(Text text, string url)
