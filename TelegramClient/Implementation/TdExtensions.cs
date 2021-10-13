@@ -22,13 +22,13 @@ namespace TelegramClient
             switch (content)
             {
                 case TdApi.InputMessageContent.InputMessageVideo v:
-                    return $"Video {v.Video.Format()}, Thumbnail {v.Thumbnail?.Thumbnail.Format()}, Caption length {v.Caption.Text.Length}, {v.Width}x{v.Height} size";
+                    return $"Video {v.Video.Format()}, Thumbnail {v.Thumbnail?.Thumbnail?.Format()}, Caption length {v.Caption?.Text?.Length}, {v.Width}x{v.Height} size";
                 
                 case TdApi.InputMessageContent.InputMessageText t:
-                    return $"Text {t.Text}, Caption length {t.Text.Text.Length}";
+                    return $"Text {t.Text}, Caption length {t.Text?.Text?.Length}";
                 
                 case TdApi.InputMessageContent.InputMessagePhoto p:
-                    return $"Photo {p.Photo.Format()}, Thumbnail {p.Thumbnail?.Thumbnail.Format()}, Caption length {p.Caption.Text.Length}, {p.Width}x{p.Height} size";
+                    return $"Photo {p.Photo.Format()}, Thumbnail {p.Thumbnail?.Thumbnail?.Format()}, Caption length {p.Caption?.Text?.Length}, {p.Width}x{p.Height} size";
                 
                 default:
                     return content.GetType().FullName;
