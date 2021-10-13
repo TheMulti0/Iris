@@ -6,7 +6,7 @@ namespace TelegramSender
 #if _WINDOWS
             = "yt-dlp.exe";
 #else
-            = "yt-dlp-dl";
+            = "yt-dlp";
 #endif
 
         public string FfBinariesFolder { get; set; } = "";
