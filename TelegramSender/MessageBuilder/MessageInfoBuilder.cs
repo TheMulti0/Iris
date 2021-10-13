@@ -56,7 +56,10 @@ namespace TelegramSender
         {
             Post post = newPost.Post;
 
-            string content = GetContentWithSuppliedHyperlinks(post);
+            string content = newPost.Post.Content != null 
+                ? GetContentWithSuppliedHyperlinks(post) 
+                : null;
+            
             PostAuthor originalAuthor = post.OriginalAuthor;
             
             switch (newPost.Platform)
@@ -65,7 +68,7 @@ namespace TelegramSender
                 {
                     string name = originalAuthor.DisplayName;
 
-                    return content
+                    return content?
                         .ReplaceFirst(name, HyperlinkText(name, originalAuthor.Url));
                 }
 
