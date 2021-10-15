@@ -64,7 +64,7 @@ namespace TelegramReceiver
         {
             return Enum.Parse<TextType>(Trigger.CallbackQuery.Data.Split("-")[1]); 
         }
-
+        
         protected string GetChatTitle(Chat connectedChat)
         {
             return string.IsNullOrEmpty(connectedChat?.Title) 

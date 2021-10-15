@@ -22,6 +22,7 @@
         ToggleShowUrlPreview,
         SetTextContent,
         ToggleTextMode,
+        ToggleTextStyle,
         ToggleText
     }
 }

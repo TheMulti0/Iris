@@ -55,8 +55,10 @@
     "SetTextContent": "קבע תוכן טקסט",
     "Text": "טקסט",
     "HyperlinkedText": "טקסט מקושר",
+    "HyperlinkedAuthor": "קישור לכותב",
     "Url": "קישור",
     "EnterContent": "הכנס תוכן",
     "Mode": "סוג",
-    "ChatId": "קוד הצ'אט הנוכחי"
+    "ChatId": "קוד הצ'אט הנוכחי",
+    "Style": "גופן"
 }

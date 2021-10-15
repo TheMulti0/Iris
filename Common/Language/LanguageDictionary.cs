@@ -60,10 +60,12 @@ namespace Common
         public string SetTextContent { get; set; }
         public string Text { get; set; }
         public string HyperlinkedText { get; set; }
+        public string HyperlinkedAuthor { get; set; }
         public string Url { get; set; }
         public string EnterContent { get; set; }
         public string Mode { get; set; }
         public string ChatId { get; set; }
+        public string Style { get; set; }
         
         public string GetPlatform(string platform)
         {
@@ -97,9 +99,17 @@ namespace Common
                 case TextMode.Url:
                     t = Url;
                     break;
+                case TextMode.HyperlinkedAuthor:
+                    t = HyperlinkedAuthor;
+                    break;
             }
             
             return t ?? Enum.GetName(mode);
+        }
+        
+        public string GetTextStyle(TextStyle style)
+        {
+            return Enum.GetName(style);
         }
     }
 }

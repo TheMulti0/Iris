@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -36,8 +37,8 @@ namespace TelegramSender
 
         private static string GetMessage(NewPost newPost, UserChatSubscription chatSubscription)
         {
-            var prefix = ToString(chatSubscription.Prefix, newPost.Post.Url);
-            var suffix = ToString(chatSubscription.Suffix, newPost.Post.Url);
+            var prefix = ToString(chatSubscription.Prefix, newPost.Post.Url, newPost.Post.Author);
+            var suffix = ToString(chatSubscription.Suffix, newPost.Post.Url, newPost.Post.Author);
 
             if (prefix != string.Empty)
             {
@@ -56,7 +57,7 @@ namespace TelegramSender
         {
             Post post = newPost.Post;
 
-            string content = newPost.Post.Content != null 
+            string content = post.Content != null 
                 ? GetContentWithSuppliedHyperlinks(post) 
                 : null;
             
@@ -84,7 +85,29 @@ namespace TelegramSender
                 (content, hyperlink) => content.Replace(hyperlink.Text, HyperlinkText(hyperlink.Text, hyperlink.Url)));
         }
 
-        private static string ToString(Text text, string url)
+        private static string ToString(Text text, string url, PostAuthor author)
+        {
+            var content = GetTextContent(text, url, author);
+
+            if (content == string.Empty)
+            {
+                return content;
+            }
+
+            switch (text.Style)
+            {
+                default:
+                    return content;
+                
+                case TextStyle.Bold:
+                    return $"<b>{content}</b>";
+                
+                case TextStyle.Italic:
+                    return $"<em>{content}</em>";
+            }
+        }
+
+        private static string GetTextContent(Text text, string url, PostAuthor author)
         {
             if (!text.Enabled)
             {
@@ -96,9 +119,12 @@ namespace TelegramSender
                 case TextMode.HyperlinkedText:
                     return HyperlinkText(text.Content, url);
                 
+                case TextMode.HyperlinkedAuthor:
+                    return HyperlinkText(author.DisplayName ?? author.Id, author.Url);
+
                 case TextMode.Text:
                     return text.Content;
-                
+
                 case TextMode.Url:
                     return url;
             }

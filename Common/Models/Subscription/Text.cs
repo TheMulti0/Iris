@@ -6,6 +6,8 @@
         
         public TextMode Mode { get; set; }
         
+        public TextStyle Style { get; set; }
+        
         public string Content { get; set; }
     }
 }

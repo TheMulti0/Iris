@@ -55,8 +55,10 @@
     "SetTextContent": "Set Text Content",
     "Text": "Text",
     "HyperlinkedText": "Hyperlinked Text",
+    "HyperlinkedAuthor": "Hyperlinked Author",
     "Url": "Url",
     "EnterContent": "Enter content",
     "Mode": "Mode",
-    "ChatId": "Current chat id"
+    "ChatId": "Current chat id",
+    "Style": "Style"
 }

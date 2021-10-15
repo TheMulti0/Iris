@@ -4,6 +4,7 @@
     {
         HyperlinkedText,
         Text,
-        Url
+        Url,
+        HyperlinkedAuthor
     }
 }

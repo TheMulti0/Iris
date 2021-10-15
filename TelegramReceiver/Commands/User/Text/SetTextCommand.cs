@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Common;
 using MoreLinq.Extensions;
 using SubscriptionsDb;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramReceiver
@@ -58,7 +57,11 @@ namespace TelegramReceiver
 
                 InlineKeyboardButton.WithCallbackData(
                     $"{Dictionary.Mode}: {Dictionary.GetTextMode(text.Mode)}",
-                    $"{Route.ToggleTextMode}-{GetTextType()}-{entity.Id}")
+                    $"{Route.ToggleTextMode}-{GetTextType()}-{entity.Id}"),
+                
+                InlineKeyboardButton.WithCallbackData(
+                    $"{Dictionary.Style}: {Dictionary.GetTextStyle(text.Style)}",
+                    $"{Route.ToggleTextStyle}-{GetTextType()}-{entity.Id}")
             };
 
             var disabledButtons = new[]
@@ -75,7 +78,7 @@ namespace TelegramReceiver
                     $"{Route.User}-{entity.Id}")
             };
 
-            if (text.Mode != TextMode.Url)
+            if (text.Mode is TextMode.HyperlinkedText or TextMode.Text)
             {
                 enabledButtons = enabledButtons.Concat(setContentButton).ToArray();
             }

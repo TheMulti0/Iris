@@ -379,6 +379,9 @@ namespace TelegramReceiver
                 case Route.ToggleTextMode:
                     return typeof(ToggleTextModeCommand);
                 
+                case Route.ToggleTextStyle:
+                    return typeof(ToggleTextStyleCommand);
+                
                 case Route.ToggleText:
                     return typeof(ToggleTextCommand);
 
