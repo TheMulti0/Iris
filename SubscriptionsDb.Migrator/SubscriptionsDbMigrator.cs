@@ -14,12 +14,10 @@ namespace SubscriptionsDb.Migrator
 {
     public class SubscriptionsDbMigrator : BackgroundService
     {
-        private readonly TelegramBotClient _client;
         private readonly IChatSubscriptionsRepository _repository;
 
-        public SubscriptionsDbMigrator(TelegramBotClient client, IChatSubscriptionsRepository repository)
+        public SubscriptionsDbMigrator(IChatSubscriptionsRepository repository)
         {
-            _client = client;
             _repository = repository;
         }
 
@@ -27,25 +25,19 @@ namespace SubscriptionsDb.Migrator
         {
             try
             {
-                // foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
-                // {
-                //     await foreach (UserChatSubscription subscription in InsertChat(subscriptionEntity, stoppingToken))
-                //     {
-                //         if (subscription.ChatInfo != null)
-                //         {
-                //             await _repository.AddOrUpdateAsync(subscriptionEntity.User, subscription);
-                //     
-                //             Console.WriteLine($"Migrated user chat subscription {subscription.ChatInfo.Id}");    
-                //         }
-                //         else
-                //         {
-                //             //await _repository.RemoveAsync(subscriptionEntity.User, subscription.ChatId);
-                //             
-                //             //Console.WriteLine($"Removed user chat subscription {subscription.ChatId}");
-                //         }
-                //         
-                //     }
-                // }
+                foreach (SubscriptionEntity subscriptionEntity in _repository.Get())
+                {
+                    foreach (UserChatSubscription subscription in subscriptionEntity.Chats)
+                    {
+                        subscription.Prefix.Style = TextStyle.Bold;
+                        subscription.Suffix.Style = TextStyle.Bold;
+
+                        await _repository.AddOrUpdateAsync(
+                            subscriptionEntity.UserId,
+                            subscriptionEntity.Platform,
+                            subscription);
+                    }
+                }
             }
             catch(Exception e)
             {

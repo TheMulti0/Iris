@@ -23,13 +23,9 @@ namespace SubscriptionsDb.Migrator
             IConfiguration rootConfig = hostContext.Configuration;
 
             var mongoConfig = rootConfig.GetSection("ConnectionsDb").Get<MongoDbConfig>();
-            var telegramConfig = rootConfig.GetSection("Telegram").Get<TelegramClientConfig>();
 
-            AddConnectionsDb(services, mongoConfig)
-                .AddSubscriptionsDb()
-                .AddSingleton(new TelegramBotClient(telegramConfig.BotToken))
+            services.AddSubscriptionsDb()
                 .AddHostedService<SubscriptionsDbMigrator>()
-                .AddHostedService<ConnectionsDbMigrator>()
                 .BuildServiceProvider();
         }
 
