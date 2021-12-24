@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Dashboard\Dashboard.csproj" />
+      <ProjectReference Include="..\TelegramReceiver\TelegramReceiver.csproj" />
+      <ProjectReference Include="..\TelegramSender\TelegramSender.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.Development.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="PostsListener" Version="0.3.12" />
+      <PackageReference Include="Scraper.Net.Facebook" Version="0.2.6" />
+      <PackageReference Include="Scraper.Net.Feeds" Version="0.2.1" />
+      <PackageReference Include="Scraper.Net.Twitter" Version="0.2.1" />
+      <PackageReference Include="Scraper.Net.Youtube" Version="0.2.0" />
+    </ItemGroup>
+
+</Project>

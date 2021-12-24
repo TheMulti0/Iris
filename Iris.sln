@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelegramSender.Tests", "Tel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dashboard", "Dashboard\Dashboard.csproj", "{3F34FE9B-50E2-42ED-BD0E-26F92D5271F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SingleInstanceApp", "SingleInstanceApp\SingleInstanceApp.csproj", "{9DB6F67C-68F1-46EA-9A35-C11539FF7561}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{3F34FE9B-50E2-42ED-BD0E-26F92D5271F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F34FE9B-50E2-42ED-BD0E-26F92D5271F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F34FE9B-50E2-42ED-BD0E-26F92D5271F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB6F67C-68F1-46EA-9A35-C11539FF7561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB6F67C-68F1-46EA-9A35-C11539FF7561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB6F67C-68F1-46EA-9A35-C11539FF7561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB6F67C-68F1-46EA-9A35-C11539FF7561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Common;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,12 +21,11 @@ namespace TelegramReceiver
             await StartupFactory.Run(ConfigureServices);
         }
 
-        private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
+        public static ConfigureServicesResult ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
             IConfiguration rootConfig = hostContext.Configuration;
 
             var mongoConfig = rootConfig.GetSection("ConnectionsDb").Get<MongoDbConfig>();
-            var connectionConfig = rootConfig.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
             var telegramConfig = rootConfig.GetSection("Telegram").Get<TelegramConfig>();
 
             services
@@ -36,19 +36,14 @@ namespace TelegramReceiver
                     provider => new SubscriptionsManager(
                         provider.GetRequiredService<INewPostSubscriptionsClient>(),
                         rootConfig.GetValue<bool>("SubscribeToOldPosts")))
-                .AddScraperMassTransitClient()
-                .AddMassTransit(
-                    connectionConfig,
-                    x => x.AddPostsListenerClient())
                 .AddLanguages();
 
             if (rootConfig.GetSection("SubscriptionsUpdater").GetValue<bool>("IsEnabled"))
             {
                 services.AddHostedService<SubscriptionsUpdater>();
             }
-            
-            services
-                .BuildServiceProvider();
+
+            return ConfigureServicesResult.MassTransit(x => x.AddPostsListenerClient());
         }
 
         private static IServiceCollection AddMongoDbRepositories(

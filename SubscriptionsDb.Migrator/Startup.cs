@@ -18,15 +18,16 @@ namespace SubscriptionsDb.Migrator
             await StartupFactory.Run(ConfigureServices);
         }
     
-        private static void ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
+        private static ConfigureServicesResult ConfigureServices(HostBuilderContext hostContext, IServiceCollection services)
         {
             IConfiguration rootConfig = hostContext.Configuration;
 
             var mongoConfig = rootConfig.GetSection("ConnectionsDb").Get<MongoDbConfig>();
 
             services.AddSubscriptionsDb()
-                .AddHostedService<SubscriptionsDbMigrator>()
-                .BuildServiceProvider();
+                .AddHostedService<SubscriptionsDbMigrator>();
+
+            return ConfigureServicesResult.Empty();
         }
 
         private static IServiceCollection AddConnectionsDb(

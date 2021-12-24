@@ -1,5 +1,9 @@
+using System;
 using System.Text.Json.Serialization;
 using Common;
+using MassTransit;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
+using MassTransit.ExtensionsDependencyInjectionIntegration.MultiBus;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +28,7 @@ namespace Dashboard
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddCors(options =>
             {
@@ -51,14 +55,11 @@ namespace Dashboard
                         });
                 });
             
-            var connectionConfig = Configuration.GetSection("RabbitMqConnection").Get<RabbitMqConfig>();
-
             services
                 .AddSubscriptionsDb()
-                .AddScraperMassTransitClient()
-                .AddMassTransit(
-                    connectionConfig,
-                    x => x.AddPostsListenerClient());
+                .AddScraperMassTransitClient();
+
+            StartupFactory.AddMassTransit(context, services, x => x.AddPostsListenerClient());
         }
 
         private void ConfigureJson(JsonOptions options)
