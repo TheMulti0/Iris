@@ -15,4 +15,10 @@ RUN dotnet publish "SingleInstanceApp.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+COPY --from=build /src/SingleInstanceApp/requirements.txt .
+RUN apt-get update -y && apt-get install python3-pip -y 
+RUN pip3 install --upgrade pip
+RUN pip3 install -r "requirements.txt"
+
 ENTRYPOINT ["dotnet", "SingleInstanceApp.dll"]
