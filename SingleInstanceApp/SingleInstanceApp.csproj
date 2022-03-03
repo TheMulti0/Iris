@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Dashboard\Dashboard.csproj" />
       <ProjectReference Include="..\TelegramReceiver\TelegramReceiver.csproj" />
       <ProjectReference Include="..\TelegramSender\TelegramSender.csproj" />
     </ItemGroup>
